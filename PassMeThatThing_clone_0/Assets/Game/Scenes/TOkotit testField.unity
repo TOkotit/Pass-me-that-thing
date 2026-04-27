@@ -543,6 +543,11 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!4 &1719862423 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2844235055189762223, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
+  m_PrefabInstance: {fileID: 2326433598183487260}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &221616523343416885
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -656,6 +661,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1938138360
       objectReference: {fileID: 0}
+    - target: {fileID: 3779980114589459851, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
+      propertyPath: moveSpeed
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779980114589459851, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
+      propertyPath: doorVisual
+      value: 
+      objectReference: {fileID: 1719862423}
     - target: {fileID: 6739817151201675917, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
       propertyPath: m_Name
       value: Door
