@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Systems
 {
+    
+    // почти то же самое, что и Coroutines, только работает через подвязывание к монобеху на сцене, не является сам монобехом
+    // и может вызываться из нативных c# классов
     public class Timer
     {
         private float _time;
@@ -46,7 +49,6 @@ namespace Systems
 
                 yield return null;
             }
-
             TimeIsOver?.Invoke();
         }
     }

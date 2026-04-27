@@ -8,31 +8,31 @@ namespace Systems
     public class GameInputManager
     {
         public GameInput GameInput { get; private set; }
-        private MapsInput currentMap;
+        private InputMapType _current;
         public GameInputManager()
         {
             GameInput = new GameInput();
             GameInput.Gameplay.Enable();
-            currentMap = MapsInput.Gameplay;
+            _current = InputMapType.Gameplay;
             Debug.Log("InputManager initialized");
         }
 
-        public void ToggleMap(MapsInput map)
+        public void ToggleMap(InputMapType map)
         {
-            DisableMap(currentMap);
+            DisableMap(_current);
             EnableMap(map);
-            currentMap = map;
+            _current = map;
         }
         
-        private void EnableMap(MapsInput map)
+        private void EnableMap(InputMapType map)
         {
             switch (map)
             {
-                case MapsInput.Gameplay:
+                case InputMapType.Gameplay:
                     GameInput.Gameplay.Enable();
                     break;
                 
-                case MapsInput.UI:
+                case InputMapType.UI:
                     //GameInput.UI.Enable();
                     break;
                 default:
@@ -40,14 +40,14 @@ namespace Systems
             }
         }
 
-        private void DisableMap(MapsInput map)
+        private void DisableMap(InputMapType map)
         {
             switch (map)
             {
-                case MapsInput.Gameplay:
+                case InputMapType.Gameplay:
                     GameInput.Gameplay.Disable();
                     break;
-                case MapsInput.UI:
+                case InputMapType.UI:
                     //GameInput.UI.Disable();
                     break;
                 default:

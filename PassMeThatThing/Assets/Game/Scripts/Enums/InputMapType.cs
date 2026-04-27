@@ -1,9 +1,8 @@
 ﻿namespace Enums
 {
-    public enum MapsInput
+    public enum InputMapType
     {
         Gameplay,
         UI
-        
     }
 }
