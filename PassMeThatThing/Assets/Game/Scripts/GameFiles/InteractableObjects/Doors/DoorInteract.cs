@@ -59,6 +59,9 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
 
         [Command]
         private void CmdToggleDoor() => isOpen = !isOpen;
+        
+        [Server]
+        private void SrvToggleDoor() => isOpen = !isOpen;
 
         [Server]
         public void OpenDoor() => isOpen = true;
@@ -77,8 +80,8 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         // {
         //     if (Time.time % 5f < 0.02f)
         //     {
-        //         isOpen = !isOpen;
-        //         Debug.Log($"[SERVER] Gate state: {isOpen}");
+        //         SrvToggleDoor();
+        //         Debug.Log($"[SERVER] Door state: {isOpen}");
         //     }
         // }
         

@@ -60,6 +60,10 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         private void CmdToggleGate() => isOpen = !isOpen;
         
         [Server]
+        private void SrbToggleGate() => isOpen = !isOpen;
+
+        
+        [Server]
         public void OpenGate() => isOpen = true;
         
         [Server]
@@ -78,7 +82,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         // {
         //     if (Time.time % 5f < 0.02f)
         //     {
-        //         isOpen = !isOpen;
+        //         SrbToggleGate();
         //         Debug.Log($"[SERVER] Gate state: {isOpen}");
         //     }
         // }

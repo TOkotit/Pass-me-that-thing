@@ -1,4 +1,5 @@
-﻿using Systems;
+﻿using Mirror;
+using Systems;
 using UIRoot;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace DI
     /// </summary>
     public class RootScope : LifetimeScope
     {
+        
+        [SerializeField] private GameObject networkManager;
+        
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("RootScope.Configure called");
@@ -27,6 +31,12 @@ namespace DI
             var uiRootView = uiRoot.GetComponent<UIRootView>();
             builder.RegisterInstance<UIRootView>(uiRootView);
             
+            
+            var networkManagerInstance = Instantiate(networkManager); 
+            DontDestroyOnLoad(networkManagerInstance.gameObject);
+            builder.RegisterComponent(networkManagerInstance);
+
+
             
             builder.Register<GameInputManager>(Lifetime.Singleton);
 
