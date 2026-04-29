@@ -5,10 +5,11 @@ using UnityEngine.InputSystem;
 
 namespace Systems
 {
-    public class GameInputManager
+    public class GameInputManager : IDisposable
     {
         public GameInput GameInput { get; private set; }
         private InputMapType _current;
+        
         public GameInputManager()
         {
             GameInput = new GameInput();
@@ -33,7 +34,7 @@ namespace Systems
                     break;
                 
                 case InputMapType.UI:
-                    //GameInput.UI.Enable();
+                    GameInput.UI.Enable();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(map), map, null);
@@ -48,11 +49,21 @@ namespace Systems
                     GameInput.Gameplay.Disable();
                     break;
                 case InputMapType.UI:
-                    //GameInput.UI.Disable();
+                    GameInput.UI.Disable();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(map), map, null);
             }
         }
+
+        public void Dispose()
+        {
+            if (GameInput != null)
+            {
+                GameInput.Gameplay.Disable();
+                GameInput.UI.Disable();
+                GameInput.Dispose();
+                Debug.Log("Global GameInput disposed safely");
+            }        }
     }
 }

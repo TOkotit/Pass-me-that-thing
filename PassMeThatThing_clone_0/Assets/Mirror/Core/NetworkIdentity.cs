@@ -758,7 +758,7 @@ namespace Mirror
                 }
                 catch (Exception e)
                 {
-                    Debug.LogException(e, comp);
+                        Debug.LogException(e, comp);
                 }
             }
         }

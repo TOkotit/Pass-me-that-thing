@@ -32,15 +32,20 @@ namespace DI
             builder.RegisterInstance<UIRootView>(uiRootView);
             
             
-            var networkManagerInstance = Instantiate(networkManager); 
-            DontDestroyOnLoad(networkManagerInstance.gameObject);
-            builder.RegisterComponent(networkManagerInstance);
-
-
+            var networkManagerGo = Instantiate(networkManager);
+            DontDestroyOnLoad(networkManagerGo);
+            
+            var networkManagerComponent = networkManagerGo.GetComponent<NetworkManager>();
+            if (!networkManagerComponent)
+            {
+                Debug.LogError("NetworkManager component not found on networkManager prefab.");
+            }
+            else
+            {
+                builder.RegisterComponent(networkManagerComponent);
+            }
             
             builder.Register<GameInputManager>(Lifetime.Singleton);
-
-            
             builder.Register<GameManager>(Lifetime.Singleton);
             
             

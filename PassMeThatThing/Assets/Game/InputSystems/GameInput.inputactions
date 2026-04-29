@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "GameInput",
     "maps": [
         {
@@ -33,7 +34,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Dash",
+                    "name": "Sprint",
                     "type": "Button",
                     "id": "ea636a6c-c492-49c2-9819-3eb8402ac4f9",
                     "expectedControlType": "",
@@ -161,7 +162,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -228,6 +229,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "PauseMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "2f65d4c8-bf91-447a-ae8d-7733a01f9c30",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "6e9e3a09-b31e-4bdf-8a53-a694dfd8a924",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "75d7ecc5-0c60-4906-8d0d-884bb9ca3b47",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
