@@ -29,6 +29,8 @@ namespace Game.Gameplay.Root
             
             InitUI();
             _gameManager.SetState(GameState.Gameplay);
+            
+            
         }
         
 

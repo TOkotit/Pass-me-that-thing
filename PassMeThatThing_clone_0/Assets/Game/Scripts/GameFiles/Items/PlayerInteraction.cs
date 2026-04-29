@@ -1,4 +1,7 @@
 using System;
+using Systems;
+using UnityEngine.InputSystem;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Items
 {
@@ -8,50 +11,86 @@ namespace Game.Scripts.GameFiles.Items
     public class PlayerInteraction : NetworkBehaviour
     {
         public float interactionDistance = 3f;
-        public LayerMask itemLayer; // Слой, на котором лежат предметы
-        public Camera playerCamera;
+        public LayerMask itemLayer;
     
         private PlayerInventory inventory;
-
+        private GameInput _gameInput;
+        
+        [Inject]
+        private void Construct(GameInputManager gameInputManager)
+        {
+            _gameInput = gameInputManager.GameInput;
+        }
+        
         void Start()
         {
             inventory = GetComponent<PlayerInventory>();
-            playerCamera = Camera.main;
+            
+            
+            if (isLocalPlayer) 
+                TrySubscribe();
         }
 
-        void Update()
+        private void OnDestroy()
         {
-            // Ввод обрабатываем ТОЛЬКО для локального игрока
-            if (!isLocalPlayer) return;
-
-            if (Input.GetKeyDown(KeyCode.E)) // Поднять
-            {
-                TryPickUp();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q)) // Выкинуть активный предмет
-            {
-                inventory.CmdDropItem(0); // Например, выкидываем первый слот
-            }
+            if (isLocalPlayer) 
+                TryUnsubscribe();
         }
 
+        private void TrySubscribe()
+        {
+            if (_gameInput == null) {
+                Debug.LogError($"[{gameObject.name}] GameInput is NULL during TrySubscribe!");
+                return;
+            }
+
+            _gameInput.Gameplay.Interact.performed += OnPickUp;
+            _gameInput.Gameplay.Drop.performed += OnDrop;
+        }
+
+        private void TryUnsubscribe()
+        {
+            if (_gameInput == null) return;
+
+            try
+            {
+                _gameInput.Gameplay.Interact.performed -= OnPickUp;
+                _gameInput.Gameplay.Drop.performed -= OnDrop;
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Failed to unsubscribe safely: {ex}");
+            }
+        }
+        
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(transform.position, 2);
         }
 
+
+        private void OnPickUp(InputAction.CallbackContext context)
+        {
+            TryPickUp();
+        }
+
+        private void OnDrop(InputAction.CallbackContext context)
+        {
+            inventory.CmdDropItem(0);
+        }
+        
         void TryPickUp()
         {
             var targetsInRadius = new Collider[10];
             var size = Physics.OverlapSphereNonAlloc(transform.position,
-                3, targetsInRadius, itemLayer);
+                interactionDistance, targetsInRadius, itemLayer);
             
             if (size >0)
             {
                 if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
                 {
-                    // Посылаем команду серверу, передавая NetworkIdentity предмета
                     Debug.Log("Trying to pick up an item");
                     inventory.CmdPickUpItem(item.gameObject);
                 }

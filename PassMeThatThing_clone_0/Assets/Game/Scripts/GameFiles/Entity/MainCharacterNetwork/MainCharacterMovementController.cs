@@ -39,7 +39,7 @@ namespace MainCharacter
         public override void OnStartLocalPlayer()
         {
             
-            InjectSelf();
+            // InjectSelf();
             
             _gameInput.Gameplay.Enable();
 
@@ -182,7 +182,7 @@ namespace MainCharacter
         private void InjectSelf()
         {
             var scope = FindObjectOfType<GameplayScope>();
-
+        
             if (scope != null)
             {
                 scope.Container.Inject(this);

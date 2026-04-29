@@ -16,10 +16,12 @@ namespace DI
 {
     public class GameplayScope: LifetimeScope
     {
-
+        [SerializeField] ItemDatabase itemDatabase;
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("GameplayScope.Configure called");
+            
+            builder.RegisterInstance(itemDatabase);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);

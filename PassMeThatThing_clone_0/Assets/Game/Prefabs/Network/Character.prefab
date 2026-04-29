@@ -12,8 +12,11 @@ GameObject:
   - component: {fileID: 4744091563674060375}
   - component: {fileID: 6771174625771565382}
   - component: {fileID: 2005541148785863391}
+  - component: {fileID: -8333019320027799329}
   - component: {fileID: 1653176546855684694}
   - component: {fileID: 5321360770136561435}
+  - component: {fileID: 959548210801160953}
+  - component: {fileID: 1427582601136340144}
   - component: {fileID: 4199553687060972988}
   - component: {fileID: 4820704092716201275}
   m_Layer: 0
@@ -119,6 +122,18 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-8333019320027799329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583732118245975436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1653176546855684694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,6 +173,41 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &959548210801160953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583732118245975436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e867d38d4fb4c47b11118ad0b699626, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!114 &1427582601136340144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583732118245975436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799375a40c494ac2813be2922df824c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  interactionDistance: 3
+  itemLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  playerCamera: {fileID: 0}
 --- !u!114 &4199553687060972988
 MonoBehaviour:
   m_ObjectHideFlags: 0
