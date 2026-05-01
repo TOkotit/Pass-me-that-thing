@@ -17,11 +17,21 @@ public class PlayerInventory : NetworkBehaviour
     [SerializeField] public float throwMultiplier = 2.5f;
     public override void OnStartClient()
     {
-        ServerInventory.OnChange += OnInventoryChanged;
-
-        RefreshLocalModel();
         
         _characterMovement = GetComponent<MainCharacterMovement>();
+        
+        
+        if (!isLocalPlayer)
+            return;
+
+        ServerInventory.OnChange += OnInventoryChanged;
+        RefreshLocalModel();
+    }
+    
+    public override void OnStopClient()
+    {
+        if (isLocalPlayer)
+            ServerInventory.OnChange -= OnInventoryChanged;
     }
     
     private void OnInventoryChanged(SyncDictionary<int, ItemSlot>.Operation op, int index, ItemSlot newItem)
@@ -31,13 +41,12 @@ public class PlayerInventory : NetworkBehaviour
         switch (op)
         {
             case SyncDictionary<int, ItemSlot>.Operation.OP_ADD:
-                _playerInventoryModel.Inventory[index] = newItem;
-                break;
-            case SyncDictionary<int, ItemSlot>.Operation.OP_REMOVE:
-                _playerInventoryModel.Inventory.Remove(index);
-                break;
             case SyncDictionary<int, ItemSlot>.Operation.OP_SET:
                 _playerInventoryModel.Inventory[index] = newItem;
+                break;
+
+            case SyncDictionary<int, ItemSlot>.Operation.OP_REMOVE:
+                _playerInventoryModel.Inventory.Remove(index);
                 break;
         }
     }

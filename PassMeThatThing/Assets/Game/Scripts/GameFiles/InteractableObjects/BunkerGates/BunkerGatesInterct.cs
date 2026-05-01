@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 {
-    public class BunkerGates : NetworkBehaviour
+    public class BunkerGates : NetworkBehaviour, IInteractable
     {
         [Header("Movement")]
         [SerializeField] private Transform gateVisual;
@@ -48,28 +48,25 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             gateVisual.localPosition = position;
         }
 
-        public void ToggleFromClient()
+        public void Interact()
         {
-            if (!isLocalPlayer)
-                return;
-
             CmdToggleGate();
         }
 
-        [Command]
+        [Command(requiresAuthority = false)] 
         private void CmdToggleGate() => isOpen = !isOpen;
         
-        [Server]
-        private void SrbToggleGate() => isOpen = !isOpen;
+        [ServerCallback]
+        public void SrbToggle() => isOpen = !isOpen;
 
         
         [Server]
-        public void OpenGate() => isOpen = true;
+        public void Open() => isOpen = true;
         
         [Server]
-        public void CloseGate() => isOpen = false;
-
-
+        public void Close() => isOpen = false;
+        
+        
         private void OnOpenStateChanged(bool oldValue, bool newValue)
         {
             targetY = newValue ? openY : closedY;

@@ -1,4 +1,5 @@
 using System;
+using Game.Scripts.GameFiles.InteractableObjects;
 using Systems;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -28,20 +29,17 @@ namespace Game.Scripts.GameFiles.Items
             _playerInventoryModel = playerInventoryModel;
         }
 
-        private void Start()
+        public override void OnStartLocalPlayer()
         {
             inventory = GetComponent<PlayerInventory>();
-            
-            
-            if (isLocalPlayer) 
-                TrySubscribe();
+            TrySubscribe();
         }
-
-        private void OnDestroy()
+        
+        public override void OnStopLocalPlayer()
         {
-            if (isLocalPlayer) 
-                TryUnsubscribe();
+            TryUnsubscribe();
         }
+        
 
         private void TrySubscribe()
         {
@@ -50,7 +48,7 @@ namespace Game.Scripts.GameFiles.Items
                 return;
             }
 
-            _gameInput.Gameplay.Interact.performed += OnPickUp;
+            _gameInput.Gameplay.Interact.performed += OnInteract;
             _gameInput.Gameplay.Drop.performed += OnDrop;
             
             _gameInput.Gameplay.Item1.performed += Select1;
@@ -64,7 +62,7 @@ namespace Game.Scripts.GameFiles.Items
 
             try
             {
-                _gameInput.Gameplay.Interact.performed -= OnPickUp;
+                _gameInput.Gameplay.Interact.performed -= OnInteract;
                 _gameInput.Gameplay.Drop.performed -= OnDrop;
                 
                 _gameInput.Gameplay.Item1.performed -= Select1;
@@ -79,15 +77,17 @@ namespace Game.Scripts.GameFiles.Items
         
         private void OnDrawGizmos()
         {
+            
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(interactionZone.position, interactionDistance);
         }
 
 
-        private void OnPickUp(InputAction.CallbackContext context)
+        private void OnInteract(InputAction.CallbackContext context)
         {
-            TryPickUp();
+            TryInteract();
         }
+        
 
         private void OnDrop(InputAction.CallbackContext context)
         {
@@ -101,30 +101,38 @@ namespace Game.Scripts.GameFiles.Items
                 var size = Physics.OverlapSphereNonAlloc(interactionZone.position,
                     interactionDistance, targetsInRadius, itemLayer);
             
-                if (size >0)
-                {
-                    if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
-                    {
-                        _playerInventoryModel.IsAbleInteract =  true;
-                    }
-                }
-                else
-                {
-                    _playerInventoryModel.IsAbleInteract = false;
-                }
-                   
+                _playerInventoryModel.IsAbleInteract = size > 0;
+         
             }
         }
 
-        private void TryPickUp()
+        private void TryInteract()
         {
             if (!_playerInventoryModel.IsAbleInteract) return;
             
-            if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
+            var target = targetsInRadius[0];
+            if (target == null) return;
+            
+            if (target.CompareTag("Item"))
             {
-                Debug.Log("Trying to pick up an item");
-                inventory.CmdPickUpItem(item.gameObject);
+                TryPickUp(target);
             }
+            else if (target.CompareTag("Door"))
+            {
+                TryOpen(target);
+            }
+        }
+
+        private void TryPickUp(Collider target)
+        {
+            if (!target.TryGetComponent(out NetworkItem item)) return;
+            inventory.CmdPickUpItem(item.gameObject);
+        }
+
+        private void TryOpen(Collider target)
+        {
+            var interactable = target.GetComponentInParent<IInteractable>();
+            interactable?.Interact();
         }
 
         private void Select1(InputAction.CallbackContext context)
