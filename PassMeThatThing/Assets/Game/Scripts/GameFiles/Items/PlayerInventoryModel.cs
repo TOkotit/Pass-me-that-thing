@@ -10,7 +10,21 @@ namespace Game.Scripts.GameFiles.Items
     {
         private readonly ObservableDictionary<int, ItemSlot> _inventory = new ();
         private int _activeSlotIndex;
+        private bool _isAbleInteract;
 
+        public bool IsAbleInteract
+        {
+            get => _isAbleInteract;
+            set
+            {
+                if (value != _isAbleInteract) 
+                    OnAbleInteract?.Invoke(value);
+                _isAbleInteract = value;
+            } 
+        }
+        
+        public event Action<bool> OnAbleInteract;
+        
         public ObservableDictionary<int, ItemSlot> Inventory => _inventory;
 
         public int ActiveSlotIndex
@@ -23,7 +37,8 @@ namespace Game.Scripts.GameFiles.Items
                 _activeSlotIndex = value;
             } 
         }
-        
         public event Action<int> OnActiveSlotChanged;
+        
+        
     }
 }

@@ -20,6 +20,8 @@ namespace Game.Gameplay.View.UI
         
         [SerializeField] private Image[] _itemImages;
         
+        [SerializeField] private GameObject _interactionText;
+        
         private int activeSlotIndex;
         
         public TextMeshProUGUI HealthText
@@ -49,6 +51,7 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.InitImage(SetItemImageSprite);
             ViewModel.RequestSubImage(SetItemImageSprite);
+            ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
         }
 
         private void OnDestroy()
@@ -61,7 +64,7 @@ namespace Game.Gameplay.View.UI
             // ViewModel.RequestUnsubStaminaText(UpdateStaminaText);
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
-            
+            ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
             ViewModel.RequestUnsub();
         }
 
@@ -73,6 +76,11 @@ namespace Game.Gameplay.View.UI
         private void UpdateStaminaText(float newValue)
         {
             StaminaText.text = newValue.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void ChangeInteractionTextVisibility(bool isVisible)
+        {
+            _interactionText.SetActive(isVisible);
         }
 
         private void SetActiveItemSlot(int index)

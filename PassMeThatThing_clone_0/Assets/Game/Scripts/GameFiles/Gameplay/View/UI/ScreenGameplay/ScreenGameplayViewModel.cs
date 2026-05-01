@@ -82,6 +82,16 @@ namespace Game.Gameplay.View.UI
         {
             _playerInventoryModel.OnActiveSlotChanged -= f;
         }
+        
+        public void RequestSubInteractionText(Action<bool> f)
+        {
+            _playerInventoryModel.OnAbleInteract += f;
+        }
+        
+        public void RequestUnsubInteractionText(Action<bool> f)
+        {
+            _playerInventoryModel.OnAbleInteract -= f;
+        }
 
         public void InitImage(Action<int, Sprite> f)
         {

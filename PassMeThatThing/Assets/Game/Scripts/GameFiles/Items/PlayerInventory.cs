@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Scripts.GameFiles.Items;
 using UnityEngine;
 using Mirror;
+using Mirror.Examples.RigidbodyPhysics;
 using VContainer;
 
 public class PlayerInventory : NetworkBehaviour
@@ -11,12 +12,16 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
     
+    private MainCharacterMovement _characterMovement;
     
+    [SerializeField] public float throwMultiplier = 2.5f;
     public override void OnStartClient()
     {
         ServerInventory.OnChange += OnInventoryChanged;
 
         RefreshLocalModel();
+        
+        _characterMovement = GetComponent<MainCharacterMovement>();
     }
     
     private void OnInventoryChanged(SyncDictionary<int, ItemSlot>.Operation op, int index, ItemSlot newItem)
@@ -76,14 +81,28 @@ public class PlayerInventory : NetworkBehaviour
     public void CmdDropItem(int index)
     {
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-
-        var data = itemDatabase.GetItem(value.itemId);
         
-        var dropped = Instantiate(data.WorldPrefab,
-            transform.position + transform.forward, Quaternion.identity);
+        var data = itemDatabase.GetItem(value.itemId);
+        var spawnPos = transform.position + transform.forward;
+        var dropped = Instantiate(data.WorldPrefab, spawnPos, Quaternion.identity);
         
         NetworkServer.Spawn(dropped);
         
+        if (dropped.TryGetComponent<Rigidbody>(out var rb))
+        {
+            var moveDir = _characterMovement.MoveDirection;
+            
+            var currentSpeed = 5f; 
+            Debug.Log(_characterMovement);
+            var finalVelocity = moveDir * (throwMultiplier * currentSpeed);
+            
+            if (moveDir.magnitude > 0.1f)
+            {
+                finalVelocity += Vector3.up * 2f;
+            }
+            
+            rb.AddForce(finalVelocity, ForceMode.VelocityChange);
+        }
         ServerInventory.Remove(index);
     }
 }

@@ -10,12 +10,15 @@ namespace Game.Scripts.GameFiles.Items
 
     public class PlayerInteraction : NetworkBehaviour
     {
-        public float interactionDistance = 3f;
+        public float interactionDistance = 1f;
+        public Transform interactionZone;
         public LayerMask itemLayer;
     
         private PlayerInventory inventory;
         private GameInput _gameInput;
         private PlayerInventoryModel _playerInventoryModel;
+        
+        private Collider[] targetsInRadius = new Collider[10];
         
         [Inject]
         private void Construct(GameInputManager gameInputManager,  
@@ -24,8 +27,8 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput = gameInputManager.GameInput;
             _playerInventoryModel = playerInventoryModel;
         }
-        
-        void Start()
+
+        private void Start()
         {
             inventory = GetComponent<PlayerInventory>();
             
@@ -77,7 +80,7 @@ namespace Game.Scripts.GameFiles.Items
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, 2);
+            Gizmos.DrawWireSphere(interactionZone.position, interactionDistance);
         }
 
 
@@ -90,20 +93,37 @@ namespace Game.Scripts.GameFiles.Items
         {
             inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
         }
-        
-        void TryPickUp()
+
+        public void FixedUpdate()
         {
-            var targetsInRadius = new Collider[10];
-            var size = Physics.OverlapSphereNonAlloc(transform.position,
-                interactionDistance, targetsInRadius, itemLayer);
-            
-            if (size >0)
+            if (isLocalPlayer)
             {
-                if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
+                var size = Physics.OverlapSphereNonAlloc(interactionZone.position,
+                    interactionDistance, targetsInRadius, itemLayer);
+            
+                if (size >0)
                 {
-                    Debug.Log("Trying to pick up an item");
-                    inventory.CmdPickUpItem(item.gameObject);
+                    if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
+                    {
+                        _playerInventoryModel.IsAbleInteract =  true;
+                    }
                 }
+                else
+                {
+                    _playerInventoryModel.IsAbleInteract = false;
+                }
+                   
+            }
+        }
+
+        private void TryPickUp()
+        {
+            if (!_playerInventoryModel.IsAbleInteract) return;
+            
+            if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
+            {
+                Debug.Log("Trying to pick up an item");
+                inventory.CmdPickUpItem(item.gameObject);
             }
         }
 
