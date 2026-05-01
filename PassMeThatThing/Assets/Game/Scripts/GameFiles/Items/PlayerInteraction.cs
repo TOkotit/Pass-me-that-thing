@@ -1,4 +1,5 @@
 using System;
+using Game.Scripts.GameFiles.InteractableObjects;
 using Systems;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -10,32 +11,35 @@ namespace Game.Scripts.GameFiles.Items
 
     public class PlayerInteraction : NetworkBehaviour
     {
-        public float interactionDistance = 3f;
+        public float interactionDistance = 1f;
+        public Transform interactionZone;
         public LayerMask itemLayer;
     
         private PlayerInventory inventory;
         private GameInput _gameInput;
+        private PlayerInventoryModel _playerInventoryModel;
+        
+        private Collider[] targetsInRadius = new Collider[10];
         
         [Inject]
-        private void Construct(GameInputManager gameInputManager)
+        private void Construct(GameInputManager gameInputManager,  
+            PlayerInventoryModel playerInventoryModel)
         {
             _gameInput = gameInputManager.GameInput;
-        }
-        
-        void Start()
-        {
-            inventory = GetComponent<PlayerInventory>();
-            
-            
-            if (isLocalPlayer) 
-                TrySubscribe();
+            _playerInventoryModel = playerInventoryModel;
         }
 
-        private void OnDestroy()
+        public override void OnStartLocalPlayer()
         {
-            if (isLocalPlayer) 
-                TryUnsubscribe();
+            inventory = GetComponent<PlayerInventory>();
+            TrySubscribe();
         }
+        
+        public override void OnStopLocalPlayer()
+        {
+            TryUnsubscribe();
+        }
+        
 
         private void TrySubscribe()
         {
@@ -44,8 +48,12 @@ namespace Game.Scripts.GameFiles.Items
                 return;
             }
 
-            _gameInput.Gameplay.Interact.performed += OnPickUp;
+            _gameInput.Gameplay.Interact.performed += OnInteract;
             _gameInput.Gameplay.Drop.performed += OnDrop;
+            
+            _gameInput.Gameplay.Item1.performed += Select1;
+            _gameInput.Gameplay.Item2.performed += Select2;
+            _gameInput.Gameplay.Item3.performed += Select3;
         }
 
         private void TryUnsubscribe()
@@ -54,9 +62,12 @@ namespace Game.Scripts.GameFiles.Items
 
             try
             {
-                _gameInput.Gameplay.Interact.performed -= OnPickUp;
+                _gameInput.Gameplay.Interact.performed -= OnInteract;
                 _gameInput.Gameplay.Drop.performed -= OnDrop;
                 
+                _gameInput.Gameplay.Item1.performed -= Select1;
+                _gameInput.Gameplay.Item2.performed -= Select2;
+                _gameInput.Gameplay.Item3.performed -= Select3;
             }
             catch (Exception ex)
             {
@@ -66,35 +77,76 @@ namespace Game.Scripts.GameFiles.Items
         
         private void OnDrawGizmos()
         {
+            
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, 2);
+            Gizmos.DrawWireSphere(interactionZone.position, interactionDistance);
         }
 
 
-        private void OnPickUp(InputAction.CallbackContext context)
+        private void OnInteract(InputAction.CallbackContext context)
         {
-            TryPickUp();
+            TryInteract();
         }
+        
 
         private void OnDrop(InputAction.CallbackContext context)
         {
-            inventory.CmdDropItem(0);
+            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
+        }
+
+        public void FixedUpdate()
+        {
+            if (isLocalPlayer)
+            {
+                var size = Physics.OverlapSphereNonAlloc(interactionZone.position,
+                    interactionDistance, targetsInRadius, itemLayer);
+            
+                _playerInventoryModel.IsAbleInteract = size > 0;
+         
+            }
+        }
+
+        private void TryInteract()
+        {
+            if (!_playerInventoryModel.IsAbleInteract) return;
+            
+            var target = targetsInRadius[0];
+            if (target == null) return;
+            
+            if (target.CompareTag("Item"))
+            {
+                TryPickUp(target);
+            }
+            else if (target.CompareTag("Door"))
+            {
+                TryOpen(target);
+            }
+        }
+
+        private void TryPickUp(Collider target)
+        {
+            if (!target.TryGetComponent(out NetworkItem item)) return;
+            inventory.CmdPickUpItem(item.gameObject);
+        }
+
+        private void TryOpen(Collider target)
+        {
+            var interactable = target.GetComponentInParent<IInteractable>();
+            interactable?.Interact();
+        }
+
+        private void Select1(InputAction.CallbackContext context)
+        {
+            _playerInventoryModel.ActiveSlotIndex = 0;
         }
         
-        void TryPickUp()
+        private void Select2(InputAction.CallbackContext context)
         {
-            var targetsInRadius = new Collider[10];
-            var size = Physics.OverlapSphereNonAlloc(transform.position,
-                interactionDistance, targetsInRadius, itemLayer);
-            
-            if (size >0)
-            {
-                if (targetsInRadius[0].TryGetComponent(out NetworkItem item))
-                {
-                    Debug.Log("Trying to pick up an item");
-                    inventory.CmdPickUpItem(item.gameObject);
-                }
-            }
+            _playerInventoryModel.ActiveSlotIndex = 1;
+        }
+        private void Select3(InputAction.CallbackContext context)
+        {
+            _playerInventoryModel.ActiveSlotIndex = 2;
         }
     }
 }

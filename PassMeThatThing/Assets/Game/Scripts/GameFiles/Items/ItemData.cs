@@ -6,7 +6,7 @@ public class ItemData : ScriptableObject
     [SerializeField] private string id; 
     [SerializeField] private string itemName;
     [SerializeField] private GameObject worldPrefab; 
-    
+    [SerializeField] private Sprite itemImage;
     [SerializeField] private bool isStackable;
 
     public string ID
@@ -31,5 +31,11 @@ public class ItemData : ScriptableObject
     {
         get => isStackable;
         set => isStackable = value;
+    }
+
+    public Sprite ItemImage
+    {
+        get => itemImage;
+        set => itemImage = value;
     }
 }

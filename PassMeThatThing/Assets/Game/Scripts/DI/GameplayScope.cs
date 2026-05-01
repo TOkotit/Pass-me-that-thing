@@ -6,6 +6,7 @@ using VContainer.Unity;
 using Systems;
 using UnityEngine;
 using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Items;
 using MainCharacter;
 using R3;
 using Unity.VisualScripting;
@@ -22,6 +23,8 @@ namespace DI
             Debug.Log("GameplayScope.Configure called");
             
             builder.RegisterInstance(itemDatabase);
+
+            builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);

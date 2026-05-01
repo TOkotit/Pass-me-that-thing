@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.Doors
 {
-    public class DoorInteract : NetworkBehaviour
+    public class DoorInteract : NetworkBehaviour, IInteractable
     {
         [Header("Movement")]
         [SerializeField] private float closedYRotation = 0f;
@@ -49,29 +49,38 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
             transform.localEulerAngles = rotation;
         }
 
-        public void ToggleFromClient()
+        public void Interact()
         {
-            if (!isLocalPlayer)
-                return;
-
             CmdToggleDoor();
         }
 
-        [Command]
-        private void CmdToggleDoor() => isOpen = !isOpen;
+        [Command(requiresAuthority = false)] 
+        private void CmdToggleDoor() 
+        {
+            isOpen = !isOpen;
+            UpdateTarget(isOpen); 
+        }
         
-        [Server]
-        private void SrvToggleDoor() => isOpen = !isOpen;
+        private void UpdateTarget(bool open)
+        {
+            targetRotationY = open ? openYRotation : closedYRotation;
+            initialized = true;
+        }
+        
+        [ServerCallback]
+        public void SrbToggle() => isOpen = !isOpen;
 
         [Server]
-        public void OpenDoor() => isOpen = true;
+        public void Open() => isOpen = true;
 
         [Server]
-        public void CloseDoor() => isOpen = false;
+        public void Close() => isOpen = false;
+        
 
         private void OnOpenStateChanged(bool oldValue, bool newValue)
         {
-            targetRotationY = newValue ? openYRotation : closedYRotation;
+            UpdateTarget(newValue);
+            
         }
         
         // Отладочный метод для того, чтобы смотреть работу без интеракции

@@ -59,7 +59,6 @@ namespace MainCharacter
                 Cursor.visible = false;
             }
 
-            InjectSelf();
             _initialized = true;
         }
         
@@ -107,18 +106,5 @@ namespace MainCharacter
             _initialized = true;
         }
 
-        public void InjectSelf()
-        {
-            var scope = FindObjectOfType<GameplayScope>();
-            if (scope)
-            {
-                scope.Container.Inject(this);
-                Debug.Log($"{gameObject.name} dependencies injected via GameplayScope");
-            }
-            else
-            {
-                Debug.LogError("GameplayScope not found on scene!");
-            }
-        }
     }
 }

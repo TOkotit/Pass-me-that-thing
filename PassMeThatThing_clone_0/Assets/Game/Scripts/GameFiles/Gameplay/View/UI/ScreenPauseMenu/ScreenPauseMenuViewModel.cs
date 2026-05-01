@@ -12,7 +12,6 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         private readonly ICoroutineRunner _coroutines;
         private readonly GameInputManager _gameInputManager;
         
-        
         public override string Id => "ScreenPauseMenu";
         
         public ScreenPauseMenuViewModel(GameplayUIManager uiManager, IObjectResolver container)
