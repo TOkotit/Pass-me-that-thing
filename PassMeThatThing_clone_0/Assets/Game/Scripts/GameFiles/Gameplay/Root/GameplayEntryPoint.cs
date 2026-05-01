@@ -45,6 +45,9 @@ namespace Game.Gameplay.Root
             var uiSceneRootViewModel = resolver.Resolve<GameplayUIRootViewModel>();
             uiSceneRootBinder.Bind(uiSceneRootViewModel);
             // можно открывать окошки
+            
+            var uiManager = resolver.Resolve<GameplayUIManager>();
+            uiManager.OpenScreenGameplay();
         }
 
         

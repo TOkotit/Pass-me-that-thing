@@ -15,11 +15,14 @@ namespace Game.Scripts.GameFiles.Items
     
         private PlayerInventory inventory;
         private GameInput _gameInput;
+        private PlayerInventoryModel _playerInventoryModel;
         
         [Inject]
-        private void Construct(GameInputManager gameInputManager)
+        private void Construct(GameInputManager gameInputManager,  
+            PlayerInventoryModel playerInventoryModel)
         {
             _gameInput = gameInputManager.GameInput;
+            _playerInventoryModel = playerInventoryModel;
         }
         
         void Start()
@@ -46,6 +49,10 @@ namespace Game.Scripts.GameFiles.Items
 
             _gameInput.Gameplay.Interact.performed += OnPickUp;
             _gameInput.Gameplay.Drop.performed += OnDrop;
+            
+            _gameInput.Gameplay.Item1.performed += Select1;
+            _gameInput.Gameplay.Item2.performed += Select2;
+            _gameInput.Gameplay.Item3.performed += Select3;
         }
 
         private void TryUnsubscribe()
@@ -57,6 +64,9 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.Interact.performed -= OnPickUp;
                 _gameInput.Gameplay.Drop.performed -= OnDrop;
                 
+                _gameInput.Gameplay.Item1.performed -= Select1;
+                _gameInput.Gameplay.Item2.performed -= Select2;
+                _gameInput.Gameplay.Item3.performed -= Select3;
             }
             catch (Exception ex)
             {
@@ -78,7 +88,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnDrop(InputAction.CallbackContext context)
         {
-            inventory.CmdDropItem(0);
+            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
         }
         
         void TryPickUp()
@@ -95,6 +105,20 @@ namespace Game.Scripts.GameFiles.Items
                     inventory.CmdPickUpItem(item.gameObject);
                 }
             }
+        }
+
+        private void Select1(InputAction.CallbackContext context)
+        {
+            _playerInventoryModel.ActiveSlotIndex = 0;
+        }
+        
+        private void Select2(InputAction.CallbackContext context)
+        {
+            _playerInventoryModel.ActiveSlotIndex = 1;
+        }
+        private void Select3(InputAction.CallbackContext context)
+        {
+            _playerInventoryModel.ActiveSlotIndex = 2;
         }
     }
 }

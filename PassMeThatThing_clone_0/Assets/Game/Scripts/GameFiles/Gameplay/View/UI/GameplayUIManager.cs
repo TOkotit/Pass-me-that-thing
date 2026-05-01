@@ -13,8 +13,8 @@ namespace Game.Gameplay.View.UI
 {
     public class GameplayUIManager : UIManager
     {
-        private MainCharacterCamera _mainCharacterCamera;
-        private MainCharacterMovement _mainCharacterMovement;
+        // private MainCharacterCamera _mainCharacterCamera;
+        // private MainCharacterMovement _mainCharacterMovement;
         private GameInputManager _gameInputManager;
 
         private GameplayUIRootViewModel rootUI;
@@ -23,12 +23,12 @@ namespace Game.Gameplay.View.UI
         {
             rootUI = Container.Resolve<GameplayUIRootViewModel>();
             
-            _mainCharacterCamera = Container.Resolve<MainCharacterCamera>();
-            _mainCharacterMovement = Container.Resolve<MainCharacterMovement>();
+            // _mainCharacterCamera = Container.Resolve<MainCharacterCamera>();
+            // _mainCharacterMovement = Container.Resolve<MainCharacterMovement>();
             _gameInputManager = Container.Resolve<GameInputManager>();
             
 
-            _gameInputManager.GameInput.Gameplay.PauseMenu.performed += OnTogglePause;
+            // _gameInputManager.GameInput.Gameplay.PauseMenu.performed += OnTogglePause;
         }
         
         
@@ -36,9 +36,9 @@ namespace Game.Gameplay.View.UI
         public ScreenGameplayViewModel OpenScreenGameplay()
         {
             var viewModel = new ScreenGameplayViewModel(this, Container);
-            _mainCharacterMovement.UnlockMovement();
-            LockUpCursor();
-            UnlockCamera();
+            // _mainCharacterMovement.UnlockMovement();
+            // LockUpCursor();
+            // UnlockCamera();
             rootUI.OpenScreen(viewModel);
             
             _gameInputManager.ToggleMap(InputMapType.Gameplay);
@@ -65,25 +65,25 @@ namespace Game.Gameplay.View.UI
             var viewModel = new ScreenPauseMenuViewModel(this, Container);
             
             
-            _mainCharacterMovement.LockUpMovement();
-            UnlockCursor();
-            LockUpCamera();
+            // _mainCharacterMovement.LockUpMovement();
+            // UnlockCursor();
+            // LockUpCamera();
             rootUI.OpenScreen(viewModel);
             _gameInputManager.ToggleMap(InputMapType.UI);
 
             return viewModel;
         }
         // блокировка камеры
-        public void LockUpCamera()
-        {
-            _mainCharacterCamera.IsCameraRotating = false;
-        }
-        
-        
-        public void UnlockCamera()
-        {
-            _mainCharacterCamera.IsCameraRotating = true;
-        }
+        // public void LockUpCamera()
+        // {
+        //     _mainCharacterCamera.IsCameraRotating = false;
+        // }
+        //
+        //
+        // public void UnlockCamera()
+        // {
+        //     _mainCharacterCamera.IsCameraRotating = true;
+        // }
         // Блокировать или разблокировать курсор
         
         public void LockUpCursor()
