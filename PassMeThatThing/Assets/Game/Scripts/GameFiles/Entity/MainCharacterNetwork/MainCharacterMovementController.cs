@@ -39,8 +39,6 @@ namespace MainCharacter
         public override void OnStartLocalPlayer()
         {
             
-            // InjectSelf();
-            
             _gameInput.Gameplay.Enable();
 
             if (_mainCamera)
@@ -178,20 +176,6 @@ namespace MainCharacter
         }
         
         // ================== DI ==================
-        
-        private void InjectSelf()
-        {
-            var scope = FindObjectOfType<GameplayScope>();
-        
-            if (scope != null)
-            {
-                scope.Container.Inject(this);
-            }
-            else
-            {
-                Debug.LogError("GameplayScope not found!");
-            }
-        }
         
         private void OnDestroy()
         {
