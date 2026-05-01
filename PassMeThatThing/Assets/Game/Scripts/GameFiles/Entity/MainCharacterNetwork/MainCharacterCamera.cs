@@ -11,10 +11,11 @@ namespace MainCharacter
     public class MainCharacterCamera : MonoBehaviour
     {
         [SerializeField] private Camera _camera;
-        [SerializeField] private float _sensitivity = 1f;
-        [SerializeField] private float _maxPitch = 80f;
-        [SerializeField] private bool _lockCursor = true;
-        
+        [SerializeField] private float sensitivity = 1f;
+        [SerializeField] private float maxPitch = 80f;
+        [SerializeField] private bool lockCursor = true;
+        [SerializeField] private float tiltMultiplier = 0.2f;
+        [SerializeField] BodyVerticalAlign bodyVerticalAlign;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -41,18 +42,18 @@ namespace MainCharacter
         
         private void Start()
         {
-            _isLocalPlayer = _ownerIdentity != null && _ownerIdentity.isLocalPlayer;
+            _isLocalPlayer = _ownerIdentity && _ownerIdentity.isLocalPlayer;
 
             if (!_isLocalPlayer)
             {
-                if (_camera != null)
+                if (_camera)
                     _camera.enabled = false;
 
                 enabled = false;
                 return;
             }
 
-            if (_lockCursor)
+            if (lockCursor)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -82,22 +83,22 @@ namespace MainCharacter
 
         private void ReadRotation()
         {
-            if (_gameInput == null || _movementController == null)
+            if (_gameInput == null || !_movementController)
                 return;
 
             var inputDelta = _gameInput.Gameplay.MouseDrag.ReadValue<Vector2>();
 
-            _rotation.x -= inputDelta.y * _sensitivity * 0.01f;
-            _rotation.y += inputDelta.x * _sensitivity * 0.01f;
+            _rotation.x -= inputDelta.y * sensitivity * 0.01f;
+            _rotation.y += inputDelta.x * sensitivity * 0.01f;
 
-            _rotation.x = Mathf.Clamp(_rotation.x, -_maxPitch, _maxPitch);
+            _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
 
-            transform.localRotation = Quaternion.Euler(_rotation.x, 0f, 0f);
+            transform.localRotation = Quaternion.Euler(_rotation.x, _rotation.y, 0f);
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
-            _movementController.transform.rotation = characterRotation; 
-
+                
             _movementController.CmdRotate(characterRotation);
+            bodyVerticalAlign.SetTilt(new Vector3(Math.Clamp(-10 ,-_rotation.x * tiltMultiplier,10) , 0f, 0f));
         }
         
         public void SetupInput(GameInput input)
@@ -109,7 +110,7 @@ namespace MainCharacter
         public void InjectSelf()
         {
             var scope = FindObjectOfType<GameplayScope>();
-            if (scope != null)
+            if (scope)
             {
                 scope.Container.Inject(this);
                 Debug.Log($"{gameObject.name} dependencies injected via GameplayScope");

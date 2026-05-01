@@ -1,26 +1,26 @@
 using System;
 using System.Collections;
 using DI;
+using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using MainCharacter;
 using Mirror;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-[RequireComponent(typeof(CharacterController))]
 public class MainCharacterMovement : NetworkBehaviour
 {
-    private CharacterController _controller;
-    
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 140f;
     [SerializeField] private float sprintMultiplier = 1.5f;
     
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private float gravity = -9.81f;
     
-    [SerializeField] private Transform groundCheck;
+    [SerializeField] private GroundStateManager groundStateManager;
     [SerializeField] private float groundCheckRadius = 0.4f;
     [SerializeField] private LayerMask groundMask;
+
+    [SerializeField] private Rigidbody root;
     
     private bool isCharacterCanMove = true;
     [SyncVar]
@@ -47,14 +47,12 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void Awake()
     {
-        _controller = GetComponent<CharacterController>();
+        root =  GetComponent<Rigidbody>();
     }
 
     
     public override void OnStartClient()
     {
-        if (!isServer)
-            _controller.enabled = false;
     }
 
     [Server]
@@ -86,10 +84,11 @@ public class MainCharacterMovement : NetworkBehaviour
     [Server]
     public void Jump()
     {
-        var grounded = IsGrounded();
+        var grounded = groundStateManager.IsGrounded();
         if (!grounded) return;
         
-        _velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        root.AddForce( new Vector3(0,jumpHeight, 0), ForceMode.Impulse);
+        Debug.Log(jumpHeight * -2f * gravity);
     }
     
     public void SetSprinting(bool isSprinting)
@@ -104,9 +103,8 @@ public class MainCharacterMovement : NetworkBehaviour
         
         
         MoveInternal();
-        ApplyGravity();
 
-        if (IsGrounded() && _velocity.y < 0f)
+        if (groundStateManager.IsGrounded() && _velocity.y < 0f)
             _velocity.y = -2f;
     }
     
@@ -116,19 +114,8 @@ public class MainCharacterMovement : NetworkBehaviour
 
         if (_isSprinting)
             currentSpeed *= sprintMultiplier;
-
-        _controller.Move(_moveDirection * (currentSpeed * Time.fixedDeltaTime));
+        
+        root.AddForce(_moveDirection * currentSpeed);
+        root.AddForce(Vector3.up * gravity);
     }
-    
-    private void ApplyGravity()
-    {
-        _velocity.y += gravity * Time.fixedDeltaTime;
-        _controller.Move(_velocity * Time.fixedDeltaTime);
-    }
-
-    private bool IsGrounded()
-    {
-        return groundCheck && Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
-    }
-    
 }

@@ -19,10 +19,10 @@ public class PlayerInventory : NetworkBehaviour
     [Command]
     public void CmdPickUpItem(GameObject itemObject)
     {
-        if (itemObject == null) return;
+        if (!itemObject) return;
 
         var networkItem = itemObject.GetComponent<NetworkItem>();
-        if (networkItem == null) return;
+        if (!networkItem) return;
         
         inventory.Add(new ItemSlot { itemId = networkItem.itemId, amount = 1 });
         
