@@ -33,7 +33,6 @@ namespace MainCharacter
         public override DamagableModel Damagable => _mainCharacterModel;
         public MainCharacterModel MainCharacterModel => _mainCharacterModel;
         [SerializeField] private GameObject arms;
-        [SerializeField] private string weaponID; //Свойство для теста, потом переделать получение через инвентарь
         public GameObject Arms => arms;
         
     }

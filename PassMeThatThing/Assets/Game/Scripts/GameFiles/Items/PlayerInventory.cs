@@ -63,10 +63,10 @@ public class PlayerInventory : NetworkBehaviour
     [Command]
     public void CmdPickUpItem(GameObject itemObject)
     {
-        if (!itemObject) return;
+        if (itemObject == null) return;
 
         var networkItem = itemObject.GetComponent<NetworkItem>();
-        if (!networkItem) return;
+        if (networkItem == null) return;
         
         var emptyIdx = -1;
         

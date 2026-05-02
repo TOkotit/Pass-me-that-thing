@@ -17,16 +17,17 @@ namespace MainCharacter
         private bool _subscribed;
         private Vector3 _lastSentDirection;
         
+        
         private void Awake()
         {
-            _controllable = GetComponent<MainCharacterMovement>();
+            _controllable = GetComponentInChildren<MainCharacterMovement>();
 
-            if (_controllable == null)
+            if (!_controllable)
                 Debug.LogError("IControllable not found on player");
 
             _mainCamera = GetComponentInChildren<MainCharacterCamera>(true);
 
-            if (_mainCamera == null)
+            if (!_mainCamera)
                 Debug.LogWarning("MainCharacterCamera not found in children");
         }
         
@@ -38,7 +39,7 @@ namespace MainCharacter
         
         public override void OnStartLocalPlayer()
         {
-            
+            InjectSelf();
             _gameInput.Gameplay.Enable();
 
             if (_mainCamera)
@@ -128,6 +129,7 @@ namespace MainCharacter
             _lastSentDirection = moveDirection;
         }
         
+        
         private void OnJumpPerformed(InputAction.CallbackContext context)
         {
             CmdJump();
@@ -176,6 +178,20 @@ namespace MainCharacter
         }
         
         // ================== DI ==================
+        
+        private void InjectSelf()
+        {
+            var scope = FindObjectOfType<GameplayScope>();
+        
+            if (scope)
+            {
+                scope.Container.Inject(this);
+            }
+            else
+            {
+                Debug.LogError("GameplayScope not found!");
+            }
+        }
         
         private void OnDestroy()
         {
