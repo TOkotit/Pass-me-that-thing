@@ -77,6 +77,12 @@ namespace Game.Scripts.GameFiles.Items
         
         private void OnDrawGizmos()
         {
+            if (!Application.isPlaying) return;
+
+            var identity = GetComponent<NetworkIdentity>();
+            if (!identity || !identity.isLocalPlayer) return;
+
+            if (!interactionZone) return;
             
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(interactionZone.position, interactionDistance);

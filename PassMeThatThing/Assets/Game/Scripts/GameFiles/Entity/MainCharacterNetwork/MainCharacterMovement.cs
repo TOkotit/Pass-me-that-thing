@@ -119,7 +119,7 @@ public class MainCharacterMovement : NetworkBehaviour
         if (_isSprinting)
             currentSpeed *= sprintMultiplier;
         
-        root.AddForce(_moveDirection * currentSpeed);
+        root.AddForce(_moveDirection * currentSpeed, ForceMode.Acceleration);
         root.AddForce(Vector3.up * gravity);
     }
 }
