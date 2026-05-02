@@ -97,7 +97,7 @@ namespace MainCharacter
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
                 
             _movementController.CmdRotate(characterRotation);
-            bodyVerticalAlign.SetTilt(new Vector3(Math.Clamp(-10 ,-_rotation.x * tiltMultiplier,10) , 0f, 0f));
+            bodyVerticalAlign.CmdSetTilt(new Vector3(Math.Clamp(-10 ,-_rotation.x * tiltMultiplier,10) , 0f, 0f));
         }
         
         public void SetupInput(GameInput input)

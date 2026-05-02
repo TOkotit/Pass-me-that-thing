@@ -9,17 +9,18 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SerializeField] private ItemDatabase database;
         
-        private Dictionary<string, Queue<GameObject>> _poolDict = new ();
+        private Dictionary<string, Stack<GameObject>> _poolDict = new ();
 
         public void Start()
         {
             InitializePool();
         }
+        
         public void InitializePool()
         {
             foreach (var item in database.allItems)
             {
-                _poolDict[item.ID] = new Queue<GameObject>();
+                _poolDict[item.ID] = new Stack<GameObject>();
 
                 // Регистрируем префаб в Mirror
                 NetworkClient.RegisterPrefab(item.WorldPrefab, 
@@ -43,14 +44,14 @@ namespace Game.Scripts.GameFiles.Items
         {
             var id = spawned.GetComponent<NetworkItem>().itemId;
             spawned.SetActive(false);
-            _poolDict[id].Enqueue(spawned);
+            _poolDict[id].Push(spawned);
         }
         
         public GameObject GetFromPool(string id)
         {
             if (_poolDict.ContainsKey(id) && _poolDict[id].Count > 0)
             {
-                return _poolDict[id].Dequeue();
+                return _poolDict[id].Pop();
             }
             
             var data = database.GetItem(id);

@@ -53,6 +53,10 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public override void OnStartClient()
     {
+        if (!isServer)
+        {
+            root.Sleep();
+        }
     }
 
     [Server]

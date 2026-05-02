@@ -39,7 +39,7 @@ namespace MainCharacter
         
         public override void OnStartLocalPlayer()
         {
-            InjectSelf();
+            // InjectSelf();
             _gameInput.Gameplay.Enable();
 
             if (_mainCamera)
@@ -168,6 +168,7 @@ namespace MainCharacter
         [Command]
         private void CmdMove(Vector3 direction)
         {
+            // Debug.Log($"<color=aliceblue>[{gameObject.name}] Moving to {direction}...");
             _controllable.Move(direction);
         }
         
@@ -179,19 +180,19 @@ namespace MainCharacter
         
         // ================== DI ==================
         
-        private void InjectSelf()
-        {
-            var scope = FindObjectOfType<GameplayScope>();
-        
-            if (scope)
-            {
-                scope.Container.Inject(this);
-            }
-            else
-            {
-                Debug.LogError("GameplayScope not found!");
-            }
-        }
+        // private void InjectSelf()
+        // {
+        //     var scope = FindObjectOfType<GameplayScope>();
+        //
+        //     if (scope)
+        //     {
+        //         scope.Container.Inject(this);
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError("GameplayScope not found!");
+        //     }
+        // }
         
         private void OnDestroy()
         {
