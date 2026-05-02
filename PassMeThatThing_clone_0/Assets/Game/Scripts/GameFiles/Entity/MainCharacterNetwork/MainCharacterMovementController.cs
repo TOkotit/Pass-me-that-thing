@@ -37,6 +37,29 @@ namespace MainCharacter
             _gameInput = gameInputManager.GameInput;
         }
         
+        public override void OnStartClient()
+        {
+            if (isServer) return; // На сервере/хосте физику не трогаем
+
+            // Находим все Rigidbody в этом персонаже (включая руки, ноги и т.д.)
+            var allRbs = GetComponentsInChildren<Rigidbody>();
+            foreach (var rb in allRbs)
+            {
+                rb.isKinematic = true;      // Отключаем влияние сил и гравитации
+                // rb.simulated = false;        // Полностью исключаем из физического обсчета (если версия Unity позволяет)
+                rb.interpolation = RigidbodyInterpolation.None; // На клиенте интерполяция RB не нужна, её сделает NetworkTransform
+                rb.detectCollisions = false;
+            }
+
+            // Выключаем джоинты, чтобы они не пытались стянуть кости
+            var allJoints = GetComponentsInChildren<Joint>();
+            foreach (var joint in allJoints)
+            {
+                joint.connectedBody = null; 
+                
+            }
+        }
+        
         public override void OnStartLocalPlayer()
         {
             // InjectSelf();

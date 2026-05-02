@@ -91,7 +91,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnDrop(InputAction.CallbackContext context)
         {
-            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
+            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, interactionZone.position);
         }
 
         public void FixedUpdate()

@@ -5,7 +5,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    public class ItemSpawner : MonoBehaviour, IInteractable
+    public class ItemSpawner : NetworkBehaviour, IInteractable
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
@@ -18,7 +18,8 @@ namespace Game.Scripts.GameFiles.Items
             _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
         }
         
-        public void Interact()
+        [Command(requiresAuthority = false)] 
+        private void CmdInteractWithObject()
         {
             var itemToDrop = _itemPoolManager.GetFromPool(item.ID);
         
@@ -26,6 +27,11 @@ namespace Game.Scripts.GameFiles.Items
             itemToDrop.SetActive(true);
         
             NetworkServer.Spawn(itemToDrop);
+        }
+        
+        public void Interact()
+        {
+            CmdInteractWithObject();
         }
 
         public void SrbToggle()

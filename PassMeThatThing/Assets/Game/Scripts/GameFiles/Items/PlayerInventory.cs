@@ -93,7 +93,7 @@ public class PlayerInventory : NetworkBehaviour
     }
 
     [Command]
-    public void CmdDropItem(int index)
+    public void CmdDropItem(int index, Vector3 pointToSpawn)
     {
         if (!ServerInventory.TryGetValue(index, out var value)) return;
         
@@ -103,7 +103,7 @@ public class PlayerInventory : NetworkBehaviour
         
         var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
         
-        itemToDrop.transform.position = _interactionZone.position;
+        itemToDrop.transform.position = pointToSpawn;
         itemToDrop.SetActive(true);
         
         NetworkServer.Spawn(itemToDrop);

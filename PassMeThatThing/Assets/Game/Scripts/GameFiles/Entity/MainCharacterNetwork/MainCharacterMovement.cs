@@ -47,7 +47,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void Awake()
     {
-        root =  GetComponent<Rigidbody>();
+        // root =  GetComponent<Rigidbody>();
     }
 
     
@@ -55,7 +55,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (!isServer)
         {
-            root.Sleep();
+            root.isKinematic = true;
         }
     }
 
