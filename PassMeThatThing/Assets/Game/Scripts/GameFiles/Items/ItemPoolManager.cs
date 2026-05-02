@@ -1,0 +1,62 @@
+using VContainer;
+using UnityEngine;
+using Mirror;
+using System.Collections.Generic;
+
+namespace Game.Scripts.GameFiles.Items
+{
+    public class ItemPoolManager : MonoBehaviour
+    {
+        [SerializeField] private ItemDatabase database;
+        
+        private Dictionary<string, Queue<GameObject>> _poolDict = new ();
+
+        public void Start()
+        {
+            InitializePool();
+        }
+        public void InitializePool()
+        {
+            foreach (var item in database.allItems)
+            {
+                _poolDict[item.ID] = new Queue<GameObject>();
+
+                // Регистрируем префаб в Mirror
+                NetworkClient.RegisterPrefab(item.WorldPrefab, 
+                    (msg) => SpawnHandler(msg, item.ID), 
+                    UnspawnHandler);
+            }
+        }
+
+        // Обработчик появления (вызывается на клиентах)
+        public GameObject SpawnHandler(SpawnMessage msg, string itemId)
+        {
+            var obj = GetFromPool(itemId);
+            obj.transform.position = msg.position;
+            obj.transform.rotation = msg.rotation;
+            obj.SetActive(true);
+            return obj;
+        }
+
+        // Обработчик исчезновения (вызывается на клиентах)
+        public void UnspawnHandler(GameObject spawned)
+        {
+            var id = spawned.GetComponent<NetworkItem>().itemId;
+            spawned.SetActive(false);
+            _poolDict[id].Enqueue(spawned);
+        }
+        
+        public GameObject GetFromPool(string id)
+        {
+            if (_poolDict.ContainsKey(id) && _poolDict[id].Count > 0)
+            {
+                return _poolDict[id].Dequeue();
+            }
+            
+            var data = database.GetItem(id);
+            var obj = Instantiate(data.WorldPrefab);
+            obj.GetComponent<NetworkItem>().itemId = id;
+            return obj;
+        }
+    }
+}

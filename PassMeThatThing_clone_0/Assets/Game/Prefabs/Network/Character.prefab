@@ -185,11 +185,12 @@ MonoBehaviour:
   sprintMultiplier: 1.5
   jumpHeight: 2
   gravity: -9.81
-  groundCheck: {fileID: 5052728024384992979}
+  groundStateManager: {fileID: 0}
   groundCheckRadius: 0.1
   groundMask:
     serializedVersion: 2
     m_Bits: 72
+  root: {fileID: 0}
 --- !u!114 &5321360770136561435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 2683616509
+  _assetId: 3465163454
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -468,9 +469,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 2351240095232129046}
-  _sensitivity: 1
-  _maxPitch: 80
-  _lockCursor: 1
+  sensitivity: 1
+  maxPitch: 80
+  lockCursor: 1
+  tiltMultiplier: 0.2
+  bodyVerticalAlign: {fileID: 0}
 --- !u!114 &4018515299612541458
 MonoBehaviour:
   m_ObjectHideFlags: 0
