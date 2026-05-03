@@ -47,12 +47,16 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void Awake()
     {
-        root =  GetComponent<Rigidbody>();
+        // root =  GetComponent<Rigidbody>();
     }
 
     
     public override void OnStartClient()
     {
+        if (!isServer)
+        {
+            root.isKinematic = true;
+        }
     }
 
     [Server]
@@ -115,7 +119,7 @@ public class MainCharacterMovement : NetworkBehaviour
         if (_isSprinting)
             currentSpeed *= sprintMultiplier;
         
-        root.AddForce(_moveDirection * currentSpeed);
+        root.AddForce(_moveDirection * currentSpeed, ForceMode.Acceleration);
         root.AddForce(Vector3.up * gravity);
     }
 }

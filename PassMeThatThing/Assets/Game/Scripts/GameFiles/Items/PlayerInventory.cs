@@ -11,29 +11,35 @@ public class PlayerInventory : NetworkBehaviour
     private int size = 3;
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
-    
-    private MainCharacterMovement _characterMovement;
-    
+    private ItemPoolManager _itemPoolManager;
+    // private MainCharacterMovement _characterMovement;
+
+    [SerializeField] private Transform _interactionZone;
     [SerializeField] public float throwMultiplier = 2.5f;
+
+    [Inject]
+    private void Construct(NetworkManager networkManager)
+    {
+        _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
+    }
+
     public override void OnStartClient()
     {
-        
-        _characterMovement = GetComponent<MainCharacterMovement>();
-        
-        
+        // _characterMovement = GetComponent<MainCharacterMovement>();
+
         if (!isLocalPlayer)
             return;
 
         ServerInventory.OnChange += OnInventoryChanged;
         RefreshLocalModel();
     }
-    
+
     public override void OnStopClient()
     {
         if (isLocalPlayer)
             ServerInventory.OnChange -= OnInventoryChanged;
     }
-    
+
     private void OnInventoryChanged(SyncDictionary<int, ItemSlot>.Operation op, int index, ItemSlot newItem)
     {
         if (!isLocalPlayer) return;
@@ -59,14 +65,14 @@ public class PlayerInventory : NetworkBehaviour
             _playerInventoryModel.Inventory.Add(item);
         }
     }
-    
+
     [Command]
     public void CmdPickUpItem(GameObject itemObject)
     {
-        if (!itemObject) return;
+        if (itemObject == null) return;
 
         var networkItem = itemObject.GetComponent<NetworkItem>();
-        if (!networkItem) return;
+        if (networkItem == null) return;
         
         var emptyIdx = -1;
         
@@ -85,33 +91,39 @@ public class PlayerInventory : NetworkBehaviour
         
         NetworkServer.UnSpawn(itemObject);
     }
-    
+
     [Command]
-    public void CmdDropItem(int index)
+    public void CmdDropItem(int index, Vector3 pointToSpawn)
     {
         if (!ServerInventory.TryGetValue(index, out var value)) return;
         
-        var data = itemDatabase.GetItem(value.itemId);
-        var spawnPos = transform.position + transform.forward;
-        var dropped = Instantiate(data.WorldPrefab, spawnPos, Quaternion.identity);
+        // var data = itemDatabase.GetItem(value.itemId);
+        // var spawnPos = transform.position + transform.forward;
+        // var dropped = Instantiate(data.WorldPrefab, spawnPos, Quaternion.identity);
         
-        NetworkServer.Spawn(dropped);
+        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
         
-        if (dropped.TryGetComponent<Rigidbody>(out var rb))
-        {
-            var moveDir = _characterMovement.MoveDirection;
-            
-            var currentSpeed = 5f; 
-            Debug.Log(_characterMovement);
-            var finalVelocity = moveDir * (throwMultiplier * currentSpeed);
-            
-            if (moveDir.magnitude > 0.1f)
-            {
-                finalVelocity += Vector3.up * 2f;
-            }
-            
-            rb.AddForce(finalVelocity, ForceMode.VelocityChange);
-        }
+        itemToDrop.transform.position = pointToSpawn;
+        itemToDrop.SetActive(true);
+        
+        NetworkServer.Spawn(itemToDrop);
+        
+        // if (itemToDrop.TryGetComponent<Rigidbody>(out var rb))
+        // {
+        //     var moveDir = _characterMovement.MoveDirection;
+        //     
+        //     var currentSpeed = 5f; 
+        //     Debug.Log(_characterMovement);
+        //     var finalVelocity = moveDir * (throwMultiplier * currentSpeed);
+        //     
+        //     if (moveDir.magnitude > 0.1f)
+        //     {
+        //         finalVelocity += Vector3.up * 2f;
+        //     }
+        //     
+        //     rb.AddForce(finalVelocity, ForceMode.VelocityChange);
+        // }
+        
         ServerInventory.Remove(index);
     }
 }

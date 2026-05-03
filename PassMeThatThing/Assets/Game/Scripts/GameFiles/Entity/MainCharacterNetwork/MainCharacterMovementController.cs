@@ -37,9 +37,32 @@ namespace MainCharacter
             _gameInput = gameInputManager.GameInput;
         }
         
+        public override void OnStartClient()
+        {
+            if (isServer) return; // На сервере/хосте физику не трогаем
+
+            // Находим все Rigidbody в этом персонаже (включая руки, ноги и т.д.)
+            var allRbs = GetComponentsInChildren<Rigidbody>();
+            foreach (var rb in allRbs)
+            {
+                rb.isKinematic = true;      // Отключаем влияние сил и гравитации
+                // rb.simulated = false;        // Полностью исключаем из физического обсчета (если версия Unity позволяет)
+                rb.interpolation = RigidbodyInterpolation.None; // На клиенте интерполяция RB не нужна, её сделает NetworkTransform
+                rb.detectCollisions = false;
+            }
+
+            // Выключаем джоинты, чтобы они не пытались стянуть кости
+            var allJoints = GetComponentsInChildren<Joint>();
+            foreach (var joint in allJoints)
+            {
+                joint.connectedBody = null; 
+                
+            }
+        }
+        
         public override void OnStartLocalPlayer()
         {
-            InjectSelf();
+            // InjectSelf();
             _gameInput.Gameplay.Enable();
 
             if (_mainCamera)
@@ -168,6 +191,7 @@ namespace MainCharacter
         [Command]
         private void CmdMove(Vector3 direction)
         {
+            // Debug.Log($"<color=aliceblue>[{gameObject.name}] Moving to {direction}...");
             _controllable.Move(direction);
         }
         
@@ -179,19 +203,19 @@ namespace MainCharacter
         
         // ================== DI ==================
         
-        private void InjectSelf()
-        {
-            var scope = FindObjectOfType<GameplayScope>();
-        
-            if (scope)
-            {
-                scope.Container.Inject(this);
-            }
-            else
-            {
-                Debug.LogError("GameplayScope not found!");
-            }
-        }
+        // private void InjectSelf()
+        // {
+        //     var scope = FindObjectOfType<GameplayScope>();
+        //
+        //     if (scope)
+        //     {
+        //         scope.Container.Inject(this);
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError("GameplayScope not found!");
+        //     }
+        // }
         
         private void OnDestroy()
         {
