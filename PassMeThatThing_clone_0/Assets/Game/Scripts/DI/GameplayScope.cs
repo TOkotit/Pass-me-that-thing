@@ -7,6 +7,7 @@ using Systems;
 using UnityEngine;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using MainCharacter;
 using R3;
 using Unity.VisualScripting;
@@ -30,6 +31,7 @@ namespace DI
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
+            builder.Register<PhysicalItemRegistry>(Lifetime.Singleton);
         }
     }
 }
