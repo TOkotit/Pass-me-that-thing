@@ -39,30 +39,30 @@ namespace MainCharacter
         
         public override void OnStartClient()
         {
-            if (isServer) return; // На сервере/хосте физику не трогаем
+            if (isLocalPlayer) return; 
 
-            // Находим все Rigidbody в этом персонаже (включая руки, ноги и т.д.)
             var allRbs = GetComponentsInChildren<Rigidbody>();
             foreach (var rb in allRbs)
             {
-                rb.isKinematic = true;      // Отключаем влияние сил и гравитации
-                // rb.simulated = false;        // Полностью исключаем из физического обсчета (если версия Unity позволяет)
-                rb.interpolation = RigidbodyInterpolation.None; // На клиенте интерполяция RB не нужна, её сделает NetworkTransform
                 rb.detectCollisions = false;
-            }
-
-            // Выключаем джоинты, чтобы они не пытались стянуть кости
-            var allJoints = GetComponentsInChildren<Joint>();
-            foreach (var joint in allJoints)
-            {
-                joint.connectedBody = null; 
+                var hasNetTransform = rb.TryGetComponent<NetworkTransformReliable>(out var netTransform);
                 
+                if (hasNetTransform)
+                {
+                    rb.isKinematic = true; 
+                    rb.interpolation = RigidbodyInterpolation.Interpolate;
+                }
+                else
+                {
+                    rb.isKinematic = false;
+                    rb.useGravity = true;
+                    rb.WakeUp();
+                }
             }
         }
         
         public override void OnStartLocalPlayer()
         {
-            // InjectSelf();
             _gameInput.Gameplay.Enable();
 
             if (_mainCamera)
@@ -148,74 +148,65 @@ namespace MainCharacter
 
             if (moveDirection == _lastSentDirection && moveDirection == Vector3.zero)
                 return;
-            CmdMove(moveDirection);
+            _controllable.Move(moveDirection);
             _lastSentDirection = moveDirection;
         }
         
         
         private void OnJumpPerformed(InputAction.CallbackContext context)
         {
-            CmdJump();
+            _controllable.Jump();
         }
 
         private void OnSprintStarted(InputAction.CallbackContext context)
         {
-            CmdSprintStarted();
+            _controllable.SetSprinting(true);
         }
 
         private void OnSprintCanceled(InputAction.CallbackContext context)
         {
-            CmdSprintCanceled();
-        }
-        
-        // ================== COMMANDS ==================
-        
-        [Command]
-        private void CmdJump()
-        {
-            _controllable.Jump();
-        }
-
-        [Command]
-        private void CmdSprintStarted()
-        {
-            _controllable.SetSprinting(true); 
-        }
-        
-        [Command]
-        private void CmdSprintCanceled()
-        {
             _controllable.SetSprinting(false);
         }
         
-        [Command]
-        private void CmdMove(Vector3 direction)
-        {
-            // Debug.Log($"<color=aliceblue>[{gameObject.name}] Moving to {direction}...");
-            _controllable.Move(direction);
-        }
-        
-        [Command]
-        public void CmdRotate(Quaternion rotation)
+        public void ControllerRotate(Quaternion rotation)
         {
             _controllable.Rotate(rotation);
         }
         
-        // ================== DI ==================
+        // ================== COMMANDS ==================
         
-        // private void InjectSelf()
+        // [Command]
+        // private void CmdJump()
         // {
-        //     var scope = FindObjectOfType<GameplayScope>();
-        //
-        //     if (scope)
-        //     {
-        //         scope.Container.Inject(this);
-        //     }
-        //     else
-        //     {
-        //         Debug.LogError("GameplayScope not found!");
-        //     }
+        //     _controllable.Jump();
         // }
+        //
+        // [Command]
+        // private void CmdSprintStarted()
+        // {
+        //     _controllable.SetSprinting(true); 
+        // }
+        //
+        // [Command]
+        // private void CmdSprintCanceled()
+        // {
+        //     _controllable.SetSprinting(false);
+        // }
+        //
+        // [Command]
+        // private void CmdMove(Vector3 direction)
+        // {
+        //     // Debug.Log($"<color=aliceblue>[{gameObject.name}] Moving to {direction}...");
+        //     _controllable.Move(direction);
+        // }
+        //
+        // [Command]
+        // public void CmdRotate(Quaternion rotation)
+        // {
+        //     _controllable.Rotate(rotation);
+        // }
+        
+        // ================== DI ==================
         
         private void OnDestroy()
         {

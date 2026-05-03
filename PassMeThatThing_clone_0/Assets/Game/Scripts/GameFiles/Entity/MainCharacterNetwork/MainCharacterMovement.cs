@@ -23,12 +23,8 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private Rigidbody root;
     
     private bool isCharacterCanMove = true;
-    [SyncVar]
     private bool _isSprinting = false;
-    
-    [SyncVar]
     private Vector3 _moveDirection;
-    [SyncVar]
     private Vector3 _velocity;
     
 
@@ -44,54 +40,46 @@ public class MainCharacterMovement : NetworkBehaviour
         get => _moveDirection;
         set => _moveDirection = value;
     }
-    
-    private void Awake()
-    {
-        // root =  GetComponent<Rigidbody>();
-    }
 
     
     public override void OnStartClient()
     {
-        if (!isServer)
+        if (!isLocalPlayer)
         {
             root.isKinematic = true;
         }
     }
 
-    [Server]
     public void Move(Vector3 direction)
     {
         if (isCharacterCanMove)
             _moveDirection = direction;
     }
 
-    [Server]
     public void LockUpMovement()
     {
         isCharacterCanMove = false;
     }
 
-    [Server]
     public void UnlockMovement()
     {
         isCharacterCanMove = true;
     }
     
     
-    [Server]
     public void Rotate(Quaternion rotation)
     {
         transform.rotation = rotation;
     }
     
-    [Server]
     public void Jump()
     {
-        var grounded = groundStateManager.IsGrounded();
-        if (!grounded) return;
+        Debug.Log($"<color=green>Trying to jump on server");
+        if (!groundStateManager.IsGrounded())
+            return;
+        Debug.Log($"<color=green>Well... I'm grounded");
+        root.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
         
-        root.AddForce( new Vector3(0,jumpHeight, 0), ForceMode.Impulse);
         Debug.Log(jumpHeight * -2f * gravity);
     }
     
@@ -102,8 +90,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void FixedUpdate()
     {
-        
-        if (!isServer) return;
+        if (!isLocalPlayer) return;
         
         
         MoveInternal();
