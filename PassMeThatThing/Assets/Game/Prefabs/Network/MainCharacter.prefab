@@ -1435,7 +1435,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1047243114865079847}
   - {fileID: 8498720533798266895}
   - {fileID: 8021082061785335846}
   - {fileID: 360127967911920747}
@@ -1585,7 +1584,7 @@ MonoBehaviour:
   interactionZone: {fileID: 1047243114865079847}
   itemLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
 --- !u!114 &3176778945513367317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2480,6 +2479,7 @@ GameObject:
   - component: {fileID: 6972008711956958972}
   - component: {fileID: 6673101370865257379}
   - component: {fileID: 4570636756147039003}
+  - component: {fileID: 6861131110220141386}
   m_Layer: 8
   m_Name: RightHandGrab
   m_TagString: Untagged
@@ -2647,6 +2647,40 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &6861131110220141386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3618159550628641426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 4366219563928244434}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1 &3796684385266664144
 GameObject:
   m_ObjectHideFlags: 0
@@ -3631,10 +3665,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4927395285961022493}
-  - component: {fileID: 2447738185046492951}
   - component: {fileID: 2025009112748668658}
   - component: {fileID: 4912773935991518358}
-  - component: {fileID: 327002257227160826}
+  - component: {fileID: 2447738185046492951}
   m_Layer: 8
   m_Name: HandlingPivot
   m_TagString: Untagged
@@ -3658,40 +3691,6 @@ Transform:
   - {fileID: 4925432040484134864}
   m_Father: {fileID: 8021082061785335846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2447738185046492951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4677326810371898778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 4927395285961022493}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!54 &2025009112748668658
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3735,7 +3734,7 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &327002257227160826
+--- !u!114 &2447738185046492951
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4085,11 +4084,11 @@ Transform:
   m_GameObject: {fileID: 5810278021926315257}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.40499997, z: 2.3070002}
+  m_LocalPosition: {x: 0, y: -0.19000006, z: 2.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8572835845391485891}
+  m_Father: {fileID: 8498720533798266895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4425290267958934517
 MonoBehaviour:
@@ -5258,6 +5257,7 @@ GameObject:
   - component: {fileID: 4616260084515053752}
   - component: {fileID: 1112904798639818763}
   - component: {fileID: 3883791635408120527}
+  - component: {fileID: 8985101020094495505}
   m_Layer: 8
   m_Name: right hand
   m_TagString: Untagged
@@ -5499,7 +5499,7 @@ MonoBehaviour:
   syncDirection: 1
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 7809725971191443519}
+  target: {fileID: 1168195336085224623}
   syncPosition: 1
   syncRotation: 1
   syncScale: 0
@@ -5518,6 +5518,20 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &8985101020094495505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7118417652258738031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92ab2ef8ca40412f8f800699e718c64c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ToDisable:
+  - {fileID: 7809725971191443519}
 --- !u!1 &8285682312484365845
 GameObject:
   m_ObjectHideFlags: 0
@@ -5840,7 +5854,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.595, z: 0.157}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1047243114865079847}
   m_Father: {fileID: 8572835845391485891}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &6357698489711108223
