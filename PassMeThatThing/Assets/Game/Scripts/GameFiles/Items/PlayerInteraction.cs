@@ -127,6 +127,12 @@ namespace Game.Scripts.GameFiles.Items
             {
                 TryOpen(target);
             }
+            else
+            {
+                target.TryGetComponent(out IInteractable interactable);
+                if (interactable == null) return;
+                interactable.Interact();
+            }
         }
 
         private void TryPickUp(Collider target)

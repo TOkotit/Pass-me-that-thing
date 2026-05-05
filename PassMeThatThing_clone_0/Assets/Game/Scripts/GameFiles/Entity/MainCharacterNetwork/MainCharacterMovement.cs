@@ -74,10 +74,8 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void Jump()
     {
-        Debug.Log($"<color=green>Trying to jump on server");
         if (!groundStateManager.IsGrounded())
             return;
-        Debug.Log($"<color=green>Well... I'm grounded");
         root.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
         
         Debug.Log(jumpHeight * -2f * gravity);
