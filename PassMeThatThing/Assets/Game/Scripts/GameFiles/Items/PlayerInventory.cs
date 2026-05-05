@@ -11,7 +11,7 @@ public class PlayerInventory : NetworkBehaviour
     private int size = 3;
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
-    private ItemPoolManager _itemPoolManager;
+    //private ItemPoolManager _itemPoolManager;
     // private MainCharacterMovement _characterMovement;
 
     [SerializeField] private Transform _interactionZone;
@@ -20,7 +20,7 @@ public class PlayerInventory : NetworkBehaviour
     [Inject]
     private void Construct(NetworkManager networkManager)
     {
-        _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
+        //_itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
     }
 
     public override void OnStartClient()
@@ -101,12 +101,12 @@ public class PlayerInventory : NetworkBehaviour
         // var spawnPos = transform.position + transform.forward;
         // var dropped = Instantiate(data.WorldPrefab, spawnPos, Quaternion.identity);
         
-        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
+        //var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
         
-        itemToDrop.transform.position = pointToSpawn;
-        itemToDrop.SetActive(true);
+        //itemToDrop.transform.position = pointToSpawn;
+        //itemToDrop.SetActive(true);
         
-        NetworkServer.Spawn(itemToDrop);
+        //NetworkServer.Spawn(itemToDrop);
         
         // if (itemToDrop.TryGetComponent<Rigidbody>(out var rb))
         // {
