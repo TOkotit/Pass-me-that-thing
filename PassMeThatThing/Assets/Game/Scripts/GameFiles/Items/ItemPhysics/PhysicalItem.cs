@@ -1,4 +1,5 @@
 using System;
+using Game.Scripts.Enums;
 using Mirror;
 using Systems;
 using UnityEngine;
@@ -6,12 +7,6 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public enum HandleType
-    {
-        OneHanded,
-        TwoHanded,
-        None
-    }
     public class PhysicalItem : NetworkBehaviour
     {
         [SerializeField] private float hardness;
@@ -34,12 +29,11 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public bool IsHeld {get => isHeld; set => isHeld = value; }
         private LMBReaction reaction;
         public LMBReaction Reaction => reaction;
-        [SerializeField] public ConfigurableJoint joint;
-        public ConfigurableJoint Joint;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
-
+        [SerializeField] private Rigidbody rigidBody;
+        public Rigidbody Rigidbody => GetComponent<Rigidbody>();
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
         {

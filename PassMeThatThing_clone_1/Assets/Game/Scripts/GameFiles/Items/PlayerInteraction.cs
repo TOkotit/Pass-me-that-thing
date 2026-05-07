@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Systems;
 using UnityEngine.InputSystem;
@@ -11,15 +12,15 @@ namespace Game.Scripts.GameFiles.Items
 
     public class PlayerInteraction : NetworkBehaviour
     {
-        public float interactionDistance = 1f;
-        public Transform interactionZone;
-        public LayerMask itemLayer;
+        
+        public InteractionZone interactionZone;
+        
     
         private PlayerInventory inventory;
         private GameInput _gameInput;
         private PlayerInventoryModel _playerInventoryModel;
         
-        private Collider[] targetsInRadius = new Collider[10];
+        private List<Collider> targetsInRadius;
         
         [Inject]
         private void Construct(GameInputManager gameInputManager,  
@@ -32,6 +33,7 @@ namespace Game.Scripts.GameFiles.Items
         public override void OnStartLocalPlayer()
         {
             inventory = GetComponent<PlayerInventory>();
+            targetsInRadius =  new List<Collider>();
             TrySubscribe();
         }
         
@@ -54,6 +56,9 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
             _gameInput.Gameplay.Item3.performed += Select3;
+
+            interactionZone.OnInteractionZoneEnter += OnColliderEnter;
+            interactionZone.OnInteractionZoneExit += OnColliderExit;
         }
 
         private void TryUnsubscribe()
@@ -68,6 +73,9 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
                 _gameInput.Gameplay.Item3.performed -= Select3;
+                
+                interactionZone.OnInteractionZoneEnter -= OnColliderEnter;
+                interactionZone.OnInteractionZoneExit -= OnColliderExit;
             }
             catch (Exception ex)
             {
@@ -78,38 +86,61 @@ namespace Game.Scripts.GameFiles.Items
         private void OnDrawGizmos()
         {
             if (!Application.isPlaying) return;
-
+            
             var identity = GetComponent<NetworkIdentity>();
             if (!identity || !identity.isLocalPlayer) return;
-
+            
             if (!interactionZone) return;
             
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(interactionZone.position, interactionDistance);
+            Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
         }
 
 
         private void OnInteract(InputAction.CallbackContext context)
         {
+            
             TryInteract();
         }
         
 
         private void OnDrop(InputAction.CallbackContext context)
         {
-            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, interactionZone.position);
+            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, interactionZone.transform.position);
         }
 
-        public void FixedUpdate()
+        // public void FixedUpdate()
+        // {
+        //     if (isLocalPlayer)
+        //     {
+        //         // var size = Physics.OverlapSphereNonAlloc(interactionZone.transform.position,
+        //         //     interactionDistance, targetsInRadius, itemLayer);
+        //     
+        //         // _playerInventoryModel.IsAbleInteract = size > 0;
+        //         
+        //         
+        //     }
+        // }
+
+        private void OnColliderEnter(Collider collider)
         {
-            if (isLocalPlayer)
-            {
-                var size = Physics.OverlapSphereNonAlloc(interactionZone.position,
-                    interactionDistance, targetsInRadius, itemLayer);
+            // Debug.Log($"{targetsInRadius.Count}");
+            if (!targetsInRadius.Contains(collider))
+                targetsInRadius.Add(collider);
             
-                _playerInventoryModel.IsAbleInteract = size > 0;
-         
-            }
+            _playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;
+            if (targetsInRadius.Contains(collider) && targetsInRadius[0].TryGetComponent(out Outline outline))
+                outline.enabled = true;
+        }
+        
+        private void OnColliderExit(Collider collider)
+        {
+            // Debug.Log($"[{gameObject.name}] OnColliderExit: {collider.name}");
+            targetsInRadius.Clear();
+            
+            _playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;
+            if (collider.TryGetComponent(out Outline outline))
+                outline.enabled = false;
         }
 
         private void TryInteract()
@@ -127,12 +158,19 @@ namespace Game.Scripts.GameFiles.Items
             {
                 TryOpen(target);
             }
+            else
+            {
+                target.TryGetComponent(out IInteractable interactable);
+                if (interactable == null) return;
+                interactable.Interact();
+            }
         }
 
         private void TryPickUp(Collider target)
         {
             if (!target.TryGetComponent(out NetworkItem item)) return;
             inventory.CmdPickUpItem(item.gameObject);
+            OnColliderExit(target);
         }
 
         private void TryOpen(Collider target)
