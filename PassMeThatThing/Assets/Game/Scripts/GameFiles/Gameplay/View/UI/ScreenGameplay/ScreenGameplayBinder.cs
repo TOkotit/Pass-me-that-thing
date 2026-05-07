@@ -10,6 +10,9 @@ namespace Game.Gameplay.View.UI
 {
     public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
     {
+        [SerializeField] private Color selectedColor = Color.cornflowerBlue;
+        [SerializeField] private Color noSelectionColor = Color.dimGray;
+        
         // [SerializeField] private Button _btnGoToMainMenu;
         
         [SerializeField] private TextMeshProUGUI _healthText;
@@ -22,7 +25,10 @@ namespace Game.Gameplay.View.UI
         
         [SerializeField] private GameObject _interactionText;
         
-        private int activeSlotIndex;
+        private Color _imageColor = new Color(1f, 1f, 1f, 1f);
+        private Color _noImageColor = new Color(1f, 1f, 1f, 0f);
+        
+        private int _activeSlotIndex;
         
         public TextMeshProUGUI HealthText
         {
@@ -46,7 +52,7 @@ namespace Game.Gameplay.View.UI
             // ViewModel.InitStaminaText(UpdateStaminaText);
             // ViewModel.RequestSubStaminaText(UpdateStaminaText);
             
-            _itemSlots[activeSlotIndex].color = Color.yellowNice;
+            _itemSlots[_activeSlotIndex].color = selectedColor;
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);
@@ -85,13 +91,17 @@ namespace Game.Gameplay.View.UI
 
         private void SetActiveItemSlot(int index)
         {
-            _itemSlots[activeSlotIndex].color = Color.dimGray;
-            activeSlotIndex = index;
-            _itemSlots[activeSlotIndex].color = Color.yellowNice;
+            _itemSlots[_activeSlotIndex].color = noSelectionColor;
+            
+            _activeSlotIndex = index;
+
+            _itemSlots[_activeSlotIndex].color = selectedColor;
         }
 
         private void SetItemImageSprite(int index, Sprite sprite)
         {
+            _itemImages[index].color = sprite != null 
+                ? _imageColor : _noImageColor;
             _itemImages[index].sprite = sprite;
         }
         

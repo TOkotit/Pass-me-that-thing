@@ -1581,7 +1581,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   interactionDistance: 1
-  interactionZone: {fileID: 1047243114865079847}
+  interactionZone: {fileID: 2558772292210885621}
   itemLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -4068,6 +4068,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1047243114865079847}
   - component: {fileID: 4425290267958934517}
+  - component: {fileID: 846044020810354653}
+  - component: {fileID: 2558772292210885621}
   m_Layer: 0
   m_Name: interactionZone
   m_TagString: Untagged
@@ -4124,6 +4126,42 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!65 &846044020810354653
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5810278021926315257}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2558772292210885621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5810278021926315257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab7698a14ecb0d54c82c3d587e0fddfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &5934022212470023921
 GameObject:
   m_ObjectHideFlags: 0
