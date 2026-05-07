@@ -99,6 +99,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnInteract(InputAction.CallbackContext context)
         {
+            
             TryInteract();
         }
         
@@ -169,6 +170,7 @@ namespace Game.Scripts.GameFiles.Items
         {
             if (!target.TryGetComponent(out NetworkItem item)) return;
             inventory.CmdPickUpItem(item.gameObject);
+            OnColliderExit(target);
         }
 
         private void TryOpen(Collider target)

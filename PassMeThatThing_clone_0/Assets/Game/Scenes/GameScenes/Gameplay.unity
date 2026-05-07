@@ -379,11 +379,16 @@ PrefabInstance:
       propertyPath: sceneId
       value: 2102156617
       objectReference: {fileID: 0}
+    - target: {fileID: 2692649458589655033, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6739817151201675917, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
       propertyPath: m_Name
       value: Door (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2692649458589655033, guid: 1c15781c42704f04f967be60f730fa01, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -581,7 +586,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   pointToSpawn: {fileID: 363807161}
-  item: {fileID: 11400000, guid: 8ee40a70553a66340a7f2cd25cbeddb7, type: 2}
+  item: {fileID: 11400000, guid: 6dcc592ff43434e4f9a4114036ed596e, type: 2}
 --- !u!114 &1477380930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1068,6 +1073,10 @@ PrefabInstance:
     - target: {fileID: 3055344126141089584, guid: 02d96989d1d18384a803525f88fbd76c, type: 3}
       propertyPath: sceneId
       value: 2610340232
+      objectReference: {fileID: 0}
+    - target: {fileID: 4166857449212583604, guid: 02d96989d1d18384a803525f88fbd76c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6100127594406478102, guid: 02d96989d1d18384a803525f88fbd76c, type: 3}
       propertyPath: m_LocalPosition.x
