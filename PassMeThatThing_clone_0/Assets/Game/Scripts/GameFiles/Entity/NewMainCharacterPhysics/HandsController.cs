@@ -4,6 +4,7 @@ using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using Systems;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -16,24 +17,19 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private GameInput _gameInput;
         private bool _subscribed;
         private Action<Vector3> OnPositionChanged;
-        private Vector3 position;
-        public Vector3 Position
-        {
-            get => position;
-            set
-            {
-                position = value;
-                OnPositionChanged?.Invoke(position);
-            }
-        }
         
         private PhysicalItem heldItem;
         private HandsMovement _handsMovement;
+        private Camera _camera;
+        private PhysicalItemRegistry _physicalItemRegistry; 
+        [SerializeField] LayerMask itemLayer;
+        [SerializeField] float interactionDistance;
 
         [Inject]
-        private void Construct(GameInputManager gameInputManager)
+        private void Construct(GameInputManager gameInputManager, PhysicalItemRegistry physicalItemRegistry)
         {
             _gameInput = gameInputManager.GameInput;
+            _physicalItemRegistry = physicalItemRegistry;
         }
         public override void OnStartLocalPlayer()
         {
@@ -42,9 +38,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             TrySubscribe();
         }
 
-        private void Awake()
+        private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
+            Debug.Log("_handsMovement" +  _handsMovement);
+            _camera = GetComponentInChildren<Camera>();
         }
         
         private void OnDisable()
@@ -101,7 +99,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (!heldItem)
             {
-                _handsMovement.Move(Hand.Right);
+                
+            }
+            else
+            {
+                _handsMovement.ChargeThrow();
             }
         }
 
@@ -111,13 +113,34 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             {
                 _handsMovement.ResetRightHand();
             }
+            else
+            {
+                if (heldItem)
+                {
+                    _handsMovement.ReleaseItem(heldItem);
+                    heldItem = null;
+                }
+            }
         }
         private void OnLeftMousePressed(InputAction.CallbackContext context)
         {
+            var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, interactionDistance, itemLayer))
+            {
+                var itemObject = hit.collider.gameObject;
+                Debug.Log(itemObject.name);
+                if (itemObject)
+                {
+                    var physicalItem = _physicalItemRegistry.TryGetItem(itemObject);
+                    Debug.Log("предмет найден: "+physicalItem);
+                    CmdGrabItem(physicalItem);
+                    heldItem = physicalItem;
+                }
+            }
             if (!heldItem)
             {
-                
-                _handsMovement.Move(Hand.Left);
+                //логика движения руки без предмета, будет на настоящей модели, без нее не целесообразно
             }
         }
 
@@ -128,6 +151,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _handsMovement.ResetLeftHand();
             }
         }
+        
+        [Command]
+        private void CmdGrabItem(PhysicalItem physicalItem)
+        {
+            if (physicalItem)
+            {
+                _handsMovement.GrabItem(physicalItem);
+            }
+        }
+        
         private void Update()
         {
             

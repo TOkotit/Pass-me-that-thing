@@ -1,6 +1,9 @@
 using System.Collections;
+using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Events;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.Valve
 {
@@ -11,6 +14,8 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Valve
         [SerializeField] private float openAngle = 360f;
         [SerializeField] private float moveSpeed = 100f;
         [SerializeField] private Transform pivot;
+        
+        [Inject] private GameEventManager gameEventManager;
         
         [SyncVar(hook = nameof(OnOpenStateChanged))]
         private bool isOpen;
@@ -45,6 +50,13 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Valve
         {
             Debug.Log("Interacting...");
             CmdToggleValve();
+            CmdStopEvent();
+        }
+
+        [Command(requiresAuthority = false)]
+        private void CmdStopEvent()
+        {
+            gameEventManager.DisableEvent(GameEventsType.FloodBoilerRoom);
         }
         
         [Command(requiresAuthority = false)]

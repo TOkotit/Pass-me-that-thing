@@ -59,11 +59,14 @@ public class MainCharacterMovement : NetworkBehaviour
     public void LockUpMovement()
     {
         isCharacterCanMove = false;
+        _moveDirection = Vector3.zero;
+        Debug.Log("MOVE LOCKED");
     }
 
     public void UnlockMovement()
     {
         isCharacterCanMove = true;
+        Debug.Log("MOVE UNLOCKED");
     }
     
     
@@ -99,12 +102,16 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void MoveInternal()
     {
+        root.AddForce(Vector3.up * gravity);
+        
+        if (!isCharacterCanMove)
+            return;
+        
         var currentSpeed = speed;
 
         if (_isSprinting)
             currentSpeed *= sprintMultiplier;
         
         root.AddForce(_moveDirection * currentSpeed, ForceMode.Acceleration);
-        root.AddForce(Vector3.up * gravity);
     }
 }
