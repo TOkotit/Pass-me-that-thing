@@ -51,13 +51,14 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void ReleaseItem(PhysicalItem item)
+        public void ReleaseItem(PhysicalItem item, float force)
         {
+            Debug.Log("Серверный метод вызывается");
             connectionToPivot.connectedBody = null;
             hardConnection.connectedBody = null;
             if (Time.time - _chargeStartTime >= minChargeTime)
             {
-                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
+                item.Rigidbody.AddForce(force * pivot.transform.forward, ForceMode.Impulse);
             }
             throwForce = 0;
             _isThrowing = false;
@@ -107,12 +108,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _isThrowing = true;
             _chargeStartTime = Time.time;
         }
-        
+
+        public float GetCurrentThrowForce()
+        {
+            return throwForce;
+        }
         private void FixedUpdate()
         {
             if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
             {
-                while (throwForce < maxThrowForce)
+                if (throwForce < maxThrowForce)
                 {
                     throwForce += Time.fixedDeltaTime * 3;
                 }

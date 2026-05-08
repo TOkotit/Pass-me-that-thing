@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Systems;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -19,20 +21,29 @@ namespace Game.Scripts.GameFiles.Items
         private PlayerInventory inventory;
         private GameInput _gameInput;
         private PlayerInventoryModel _playerInventoryModel;
+        private Camera _camera;
+        private PhysicalItemRegistry _physicalItemRegistry;
+        
+        [SerializeField] private PhysicalItemInteractionController _physicalItemInteractionController;
+        [SerializeField] LayerMask interactionLayer;
+        [SerializeField] float interactionDistance;
         
         private List<Collider> targetsInRadius;
         
         [Inject]
         private void Construct(GameInputManager gameInputManager,  
-            PlayerInventoryModel playerInventoryModel)
+            PlayerInventoryModel playerInventoryModel,
+            PhysicalItemRegistry    physicalItemRegistry)
         {
             _gameInput = gameInputManager.GameInput;
             _playerInventoryModel = playerInventoryModel;
+            _physicalItemRegistry = physicalItemRegistry;
         }
 
         public override void OnStartLocalPlayer()
         {
             inventory = GetComponent<PlayerInventory>();
+            _camera = GetComponentInChildren<Camera>();
             targetsInRadius =  new List<Collider>();
             TrySubscribe();
         }
@@ -51,7 +62,8 @@ namespace Game.Scripts.GameFiles.Items
             }
 
             _gameInput.Gameplay.Interact.performed += OnInteract;
-            _gameInput.Gameplay.Drop.performed += OnDrop;
+            _gameInput.Gameplay.RightMouse.canceled += OnDrop;
+            _gameInput.Gameplay.RightMouse.performed += OnDropCharge;
             
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
@@ -68,7 +80,8 @@ namespace Game.Scripts.GameFiles.Items
             try
             {
                 _gameInput.Gameplay.Interact.performed -= OnInteract;
-                _gameInput.Gameplay.Drop.performed -= OnDrop;
+                _gameInput.Gameplay.RightMouse.canceled -= OnDrop;
+                _gameInput.Gameplay.RightMouse.performed -= OnDropCharge;
                 
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
@@ -96,31 +109,17 @@ namespace Game.Scripts.GameFiles.Items
             Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
         }
 
-
         private void OnInteract(InputAction.CallbackContext context)
         {
-            
             TryInteract();
         }
         
-
         private void OnDrop(InputAction.CallbackContext context)
         {
-            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, interactionZone.transform.position);
+            _physicalItemInteractionController.Drop();
+            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
         }
 
-        // public void FixedUpdate()
-        // {
-        //     if (isLocalPlayer)
-        //     {
-        //         // var size = Physics.OverlapSphereNonAlloc(interactionZone.transform.position,
-        //         //     interactionDistance, targetsInRadius, itemLayer);
-        //     
-        //         // _playerInventoryModel.IsAbleInteract = size > 0;
-        //         
-        //         
-        //     }
-        // }
 
         private void OnColliderEnter(Collider collider)
         {
@@ -145,31 +144,40 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryInteract()
         {
+            var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+            {
+                if (hit.collider.gameObject.CompareTag("Item"))
+                {
+                    TryPickUp(hit.collider);
+                }
+                else if (hit.collider.gameObject.CompareTag("Door"))
+                {
+                    TryOpen(hit.collider);
+                }
+                else
+                {
+                    hit.collider.gameObject.TryGetComponent(out IInteractable interactable);
+                    if (interactable == null) return;
+                    interactable.Interact();
+                }
+            }
             if (!_playerInventoryModel.IsAbleInteract) return;
-            
-            var target = targetsInRadius[0];
-            if (target == null) return;
-            
-            if (target.CompareTag("Item"))
-            {
-                TryPickUp(target);
-            }
-            else if (target.CompareTag("Door"))
-            {
-                TryOpen(target);
-            }
-            else
-            {
-                target.TryGetComponent(out IInteractable interactable);
-                if (interactable == null) return;
-                interactable.Interact();
-            }
         }
 
+        private void OnDropCharge(InputAction.CallbackContext context)
+        {
+            _physicalItemInteractionController.ChargeDrop();
+        }
+        
         private void TryPickUp(Collider target)
         {
-            if (!target.TryGetComponent(out NetworkItem item)) return;
-            inventory.CmdPickUpItem(item.gameObject);
+            var canPickUp = false;
+            var item = _physicalItemRegistry.TryGetItem(target.gameObject);
+            Debug.Log($"Trying to pick up {item.name}");
+            inventory.CmdPickUpItem(item);
+            _physicalItemInteractionController.PhysicalPickUpItem(item);
             OnColliderExit(target);
         }
 

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
 using Mirror;
 using Mirror.Examples.RigidbodyPhysics;
@@ -12,11 +14,10 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
     private ItemPoolManager _itemPoolManager;
-    // private MainCharacterMovement _characterMovement;
 
     [SerializeField] private Transform _interactionZone;
     [SerializeField] public float throwMultiplier = 2.5f;
-
+    
     [Inject]
     private void Construct(NetworkManager networkManager)
     {
@@ -25,8 +26,6 @@ public class PlayerInventory : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        // _characterMovement = GetComponent<MainCharacterMovement>();
-
         if (!isLocalPlayer)
             return;
 
@@ -67,13 +66,13 @@ public class PlayerInventory : NetworkBehaviour
     }
 
     [Command]
-    public void CmdPickUpItem(GameObject itemObject)
+    public void CmdPickUpItem(PhysicalItem physicalItem)
     {
-        if (itemObject == null) return;
-
-        var networkItem = itemObject.GetComponent<NetworkItem>();
-        if (networkItem == null) return;
-        
+        if (!physicalItem) return;
+        var networkItem = physicalItem.Network;
+        Debug.Log("Первая проверка");
+        if (!networkItem) return;
+        Debug.Log("Вторая проверка");
         var emptyIdx = -1;
         
         for (var i = 0 ; i < size; i++)
@@ -89,17 +88,13 @@ public class PlayerInventory : NetworkBehaviour
         if (emptyIdx < 0 || emptyIdx >= size) return;
         ServerInventory[emptyIdx] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
         
-        NetworkServer.UnSpawn(itemObject);
+        //NetworkServer.UnSpawn(physicalItem);
     }
 
     [Command]
-    public void CmdDropItem(int index, Vector3 pointToSpawn)
+    public void CmdDrawItem(int index, Vector3 pointToSpawn)
     {
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        
-         // var data = itemDatabase.GetItem(value.itemId);
-         // var spawnPos = transform.position + transform.forward;
-         // var dropped = Instantiate(data.WorldPrefab, spawnPos, Quaternion.identity);
         
         var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
         
@@ -108,22 +103,11 @@ public class PlayerInventory : NetworkBehaviour
         
         NetworkServer.Spawn(itemToDrop);
         
-        // if (itemToDrop.TryGetComponent<Rigidbody>(out var rb))
-        // {
-        //     var moveDir = _characterMovement.MoveDirection;
-        //     
-        //     var currentSpeed = 5f; 
-        //     Debug.Log(_characterMovement);
-        //     var finalVelocity = moveDir * (throwMultiplier * currentSpeed);
-        //     
-        //     if (moveDir.magnitude > 0.1f)
-        //     {
-        //         finalVelocity += Vector3.up * 2f;
-        //     }
-        //     
-        //     rb.AddForce(finalVelocity, ForceMode.VelocityChange);
-        // }
-        
+    }
+
+    [Command]
+    public void CmdDropItem(int index)
+    {
         ServerInventory.Remove(index);
     }
 }
