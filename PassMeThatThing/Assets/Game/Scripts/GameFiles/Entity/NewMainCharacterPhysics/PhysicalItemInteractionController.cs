@@ -17,18 +17,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _subscribed;
         private Action<Vector3> OnPositionChanged;
         
-        private PhysicalItem heldItem;
+        [SerializeField] private PhysicalItem _heldItem;
         private HandsMovement _handsMovement;
-        private Camera _camera;
-        
-        
-        private PhysicalItemRegistry _physicalItemRegistry; 
+        public Rigidbody Pivot => _handsMovement.Pivot;
+        public PhysicalItem CurrentHeldItem => _heldItem;
 
-        [Inject]
-        private void Construct(GameInputManager gameInputManager, PhysicalItemRegistry physicalItemRegistry)
-        {
-            _physicalItemRegistry = physicalItemRegistry;
-        }
         public override void OnStartLocalPlayer()
         {
             InjectSelf();
@@ -37,7 +30,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
-            _camera = GetComponentInChildren<Camera>();
         }
        
         
@@ -57,19 +49,18 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
       
         public void ChargeDrop()
         {
-            if (heldItem)
+            if (_heldItem)
             {
                 _handsMovement.ChargeThrow();
             }
         }
         public void Drop()
         {
-            if (heldItem)
+            if (_heldItem)
             {
                 Debug.Log("Метод вызывается");
-                float force = _handsMovement.GetCurrentThrowForce(); // нужно добавить этот метод
-                CmdReleaseAndDrop(heldItem, force);
-                heldItem = null;
+                CmdReleaseAndDrop(_heldItem);
+                _heldItem = null;
             }
         }
         public void PhysicalPickUpItem(PhysicalItem item)
@@ -77,16 +68,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             //var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
             //RaycastHit hit;
             //if (Physics.Raycast(ray, out hit, interactionDistance, itemLayer))
-            if (item && !heldItem)
+            if (item && !_heldItem)
             { 
                 CmdGrabItem(item);
-                heldItem = item;
+                _heldItem = item;
             }
         }
 
         /*private void OnLeftMouseReleased(InputAction.CallbackContext context)
         {
-            if (!heldItem)
+            if (!_heldItem)
             {
                 _handsMovement.ResetLeftHand();
             }
@@ -100,16 +91,26 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _handsMovement.GrabItem(physicalItem);
             }
         }
+        
+        
         [Command]
-        private void CmdReleaseAndDrop(PhysicalItem item, float force)
+        private void CmdReleaseAndDrop(PhysicalItem item)
         {
             Debug.Log("Команда вызывается");
             if (!item) return;
-            _handsMovement.ReleaseItem(item, force); 
+            _handsMovement.ReleaseItem(item); 
         }
-        private void Update()
+
+        public void SetHeldItem(PhysicalItem heldItem)
         {
-            
+            Debug.Log("Попытка перехватить предмет" + heldItem);
+            _heldItem = heldItem;
+            CmdGrabItem(heldItem);
+        }
+
+        public void ClearHeldItem()
+        {
+            _heldItem = null;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
@@ -14,14 +15,16 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
     private ItemPoolManager _itemPoolManager;
+    private PhysicalItemRegistry _physicalItemRegistry;
 
     [SerializeField] private Transform _interactionZone;
-    [SerializeField] public float throwMultiplier = 2.5f;
+    [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
     
     [Inject]
-    private void Construct(NetworkManager networkManager)
+    private void Construct(NetworkManager networkManager, PhysicalItemRegistry physicalItemRegistry)
     {
         _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
+        _physicalItemRegistry = physicalItemRegistry;
     }
 
     public override void OnStartClient()
@@ -88,21 +91,23 @@ public class PlayerInventory : NetworkBehaviour
         if (emptyIdx < 0 || emptyIdx >= size) return;
         ServerInventory[emptyIdx] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
         
-        //NetworkServer.UnSpawn(physicalItem);
     }
 
     [Command]
     public void CmdDrawItem(int index, Vector3 pointToSpawn)
     {
+        if (_physicalСontroller.CurrentHeldItem)
+        {
+            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+        }
+        _physicalСontroller.ClearHeldItem();
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        
         var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
         
         itemToDrop.transform.position = pointToSpawn;
-        itemToDrop.SetActive(true);
-        
         NetworkServer.Spawn(itemToDrop);
-        
+        itemToDrop.SetActive(true);
+        _physicalСontroller.SetHeldItem(_physicalItemRegistry.TryGetItem(itemToDrop.gameObject));
     }
 
     [Command]

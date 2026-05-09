@@ -190,15 +190,18 @@ namespace Game.Scripts.GameFiles.Items
         private void Select1(InputAction.CallbackContext context)
         {
             _playerInventoryModel.ActiveSlotIndex = 0;
+            inventory.CmdDrawItem(0, _physicalItemInteractionController.Pivot.position);
         }
         
         private void Select2(InputAction.CallbackContext context)
         {
             _playerInventoryModel.ActiveSlotIndex = 1;
+            inventory.CmdDrawItem(1, _physicalItemInteractionController.Pivot.position);
         }
         private void Select3(InputAction.CallbackContext context)
         {
             _playerInventoryModel.ActiveSlotIndex = 2;
+            inventory.CmdDrawItem(2, _physicalItemInteractionController.Pivot.position);
         }
     }
 }

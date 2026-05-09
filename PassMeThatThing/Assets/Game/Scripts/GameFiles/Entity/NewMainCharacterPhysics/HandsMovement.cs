@@ -24,8 +24,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private Transform connectionInterface;
         [SerializeField] private Joint hardConnection;
         [SerializeField] private ConfigurableJoint connectionToPivot;
-        [SerializeField] Rigidbody pivot;
-        
+        [SerializeField] private Rigidbody pivot;
+        public Rigidbody Pivot => pivot;
 
         private void MoveHand(Rigidbody handRB, Vector3 direction, ConfigurableJoint joint)
         {
@@ -36,29 +36,30 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             //и тут
         }
-        
         [Server]
         public void GrabItem(PhysicalItem item)
         {
-            Debug.Log("Grabbing Item");
             connectionInterface.position = item.transform.position;
+            
+            Debug.Log(connectionInterface.position);
             if (item.HandleType == HandleType.OneHanded | item.HandleType == HandleType.TwoHanded)
             {
                 connectionInterface.rotation = item.transform.rotation;
             }
+
+            hardConnection.connectedBody = null;
             hardConnection.connectedBody = item.Rigidbody;
             connectionToPivot.connectedBody = pivot;
         }
-
         [Server]
-        public void ReleaseItem(PhysicalItem item, float force)
+        public void ReleaseItem(PhysicalItem item)
         {
             Debug.Log("Серверный метод вызывается");
             connectionToPivot.connectedBody = null;
             hardConnection.connectedBody = null;
             if (Time.time - _chargeStartTime >= minChargeTime)
             {
-                item.Rigidbody.AddForce(force * pivot.transform.forward, ForceMode.Impulse);
+                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
             }
             throwForce = 0;
             _isThrowing = false;
