@@ -17,13 +17,15 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private float throwForce = 0;
         [SerializeField] private float maxThrowForce = 15f;
         private bool _isThrowing = false;
-
+        private float _chargeStartTime;
+        [SerializeField] private float minChargeTime = 0.3f;
+        
         [Header("Connection interface")] 
         [SerializeField] private Transform connectionInterface;
         [SerializeField] private Joint hardConnection;
         [SerializeField] private ConfigurableJoint connectionToPivot;
-        [SerializeField] Rigidbody pivot;
-        
+        [SerializeField] private Rigidbody pivot;
+        public Rigidbody Pivot => pivot;
 
         private void MoveHand(Rigidbody handRB, Vector3 direction, ConfigurableJoint joint)
         {
@@ -34,26 +36,31 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             //и тут
         }
-        
         [Server]
         public void GrabItem(PhysicalItem item)
         {
-            Debug.Log("Grabbing Item");
             connectionInterface.position = item.transform.position;
+            
+            Debug.Log(connectionInterface.position);
             if (item.HandleType == HandleType.OneHanded | item.HandleType == HandleType.TwoHanded)
             {
                 connectionInterface.rotation = item.transform.rotation;
             }
+
+            hardConnection.connectedBody = null;
             hardConnection.connectedBody = item.Rigidbody;
             connectionToPivot.connectedBody = pivot;
         }
-
         [Server]
         public void ReleaseItem(PhysicalItem item)
         {
+            Debug.Log("Серверный метод вызывается");
             connectionToPivot.connectedBody = null;
             hardConnection.connectedBody = null;
-            item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
+            if (Time.time - _chargeStartTime >= minChargeTime)
+            {
+                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
+            }
             throwForce = 0;
             _isThrowing = false;
         }
@@ -99,14 +106,19 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public void ChargeThrow()
         {
-            _isThrowing =  true;
+            _isThrowing = true;
+            _chargeStartTime = Time.time;
         }
-        
+
+        public float GetCurrentThrowForce()
+        {
+            return throwForce;
+        }
         private void FixedUpdate()
         {
-            if (_isThrowing)
+            if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
             {
-                while (throwForce < maxThrowForce)
+                if (throwForce < maxThrowForce)
                 {
                     throwForce += Time.fixedDeltaTime * 3;
                 }

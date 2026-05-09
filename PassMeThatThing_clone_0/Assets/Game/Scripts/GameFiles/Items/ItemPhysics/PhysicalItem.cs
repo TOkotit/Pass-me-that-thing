@@ -33,11 +33,25 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
         [SerializeField] private Rigidbody rigidBody;
-        public Rigidbody Rigidbody => GetComponent<Rigidbody>();
+        public Rigidbody Rigidbody => rigidBody;
+        
+        private Outline _outline;
+        public Outline Outline => _outline;
+        
+        [SerializeField] private NetworkItem _network;
+        public NetworkItem Network => _network;
+        public bool IsThrown { get; set; }
+        
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
         {
             physicalItemRegistry.Register(this);
+            _outline = GetComponent<Outline>();
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            IsThrown = false;
         }
     }
 }

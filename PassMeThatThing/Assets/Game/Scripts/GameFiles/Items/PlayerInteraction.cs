@@ -175,7 +175,7 @@ namespace Game.Scripts.GameFiles.Items
         {
             var item = _physicalItemRegistry.TryGetItem(target.gameObject);
             if (item == _physicalItemInteractionController.CurrentHeldItem) return;
-            inventory.CmdPickUpItem(item);
+            inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex);
             OnColliderExit(target);
         }
 

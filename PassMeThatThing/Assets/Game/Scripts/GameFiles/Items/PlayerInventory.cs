@@ -79,28 +79,34 @@ public class PlayerInventory : NetworkBehaviour
     }
 
     [Command]
-    public void CmdPickUpItem(PhysicalItem physicalItem)
+    public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
     {
         if (!physicalItem) return;
         var networkItem = physicalItem.Network;
         if (!networkItem) return;
+        int targetSlot = -1;
 
-        int freeSlot = -1;
-        for (int i = 0; i < size; i++)
+        if (preferredSlot >= 0 && preferredSlot < size && !ServerInventory.ContainsKey(preferredSlot))
         {
-            if (!ServerInventory.ContainsKey(i))
+            targetSlot = preferredSlot;
+        }
+        else
+        {
+            for (int i = 0; i < size; i++)
             {
-                freeSlot = i;
-                break;
+                if (!ServerInventory.ContainsKey(i))
+                {
+                    targetSlot = i;
+                    break;
+                }
             }
         }
-        if (freeSlot == -1) return;   
 
-        ServerInventory[freeSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+        if (targetSlot == -1) return;   
 
+        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
         NetworkServer.UnSpawn(physicalItem.gameObject);
-
-        CmdDrawItem(freeSlot, _physicalСontroller.Pivot.position);
+        CmdDrawItem(targetSlot, _physicalСontroller.Pivot.position);
     }
 
     [Command]

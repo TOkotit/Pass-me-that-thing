@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
 using Mirror;
 using Mirror.Examples.RigidbodyPhysics;
@@ -12,25 +15,34 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
     private ItemPoolManager _itemPoolManager;
-    // private MainCharacterMovement _characterMovement;
+    private PhysicalItemRegistry _physicalItemRegistry;
 
     [SerializeField] private Transform _interactionZone;
-    [SerializeField] public float throwMultiplier = 2.5f;
-
+    [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
+    [SyncVar(hook = nameof(OnActiveSlotChanged))]
+    public int activeSlot;
+    
     [Inject]
-    private void Construct(NetworkManager networkManager)
+    private void Construct(NetworkManager networkManager, PhysicalItemRegistry physicalItemRegistry)
     {
         _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
+        _physicalItemRegistry = physicalItemRegistry;
     }
+    
 
+    private void OnActiveSlotChanged(int oldIndex, int newIndex)
+    {
+        if (isLocalPlayer)
+        {
+            _playerInventoryModel.ActiveSlotIndex = newIndex;
+        }
+    }
     public override void OnStartClient()
     {
-        // _characterMovement = GetComponent<MainCharacterMovement>();
-
-        if (!isLocalPlayer)
-            return;
-
+        if (!isLocalPlayer) return;
+        base.OnStartClient();
         ServerInventory.OnChange += OnInventoryChanged;
+        _playerInventoryModel.ActiveSlotIndex = activeSlot;  
         RefreshLocalModel();
     }
 
@@ -67,63 +79,62 @@ public class PlayerInventory : NetworkBehaviour
     }
 
     [Command]
-    public void CmdPickUpItem(GameObject itemObject)
+    public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
     {
-        if (itemObject == null) return;
+        if (!physicalItem) return;
+        var networkItem = physicalItem.Network;
+        if (!networkItem) return;
+        int targetSlot = -1;
 
-        var networkItem = itemObject.GetComponent<NetworkItem>();
-        if (networkItem == null) return;
-        
-        var emptyIdx = -1;
-        
-        for (var i = 0 ; i < size; i++)
+        if (preferredSlot >= 0 && preferredSlot < size && !ServerInventory.ContainsKey(preferredSlot))
         {
-            if (!ServerInventory.ContainsKey(i))
+            targetSlot = preferredSlot;
+        }
+        else
+        {
+            for (int i = 0; i < size; i++)
             {
-                emptyIdx = i; break;
+                if (!ServerInventory.ContainsKey(i))
+                {
+                    targetSlot = i;
+                    break;
+                }
             }
         }
-        
-        if (emptyIdx == -1) return;
-        
-        if (emptyIdx < 0 || emptyIdx >= size) return;
-        ServerInventory[emptyIdx] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
-        
-        NetworkServer.UnSpawn(itemObject);
+
+        if (targetSlot == -1) return;   
+
+        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+        NetworkServer.UnSpawn(physicalItem.gameObject);
+        CmdDrawItem(targetSlot, _physicalСontroller.Pivot.position);
     }
 
     [Command]
-    public void CmdDropItem(int index, Vector3 pointToSpawn)
+    public void CmdDrawItem(int index, Vector3 pointToSpawn)
     {
+        if (_physicalСontroller.CurrentHeldItem)
+        {
+            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+        }
+        _physicalСontroller.ClearHeldItem();
+
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        
-         // var data = itemDatabase.GetItem(value.itemId);
-         // var spawnPos = transform.position + transform.forward;
-         // var dropped = Instantiate(data.WorldPrefab, spawnPos, Quaternion.identity);
-        
         var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
-        
+
         itemToDrop.transform.position = pointToSpawn;
-        itemToDrop.SetActive(true);
-        
         NetworkServer.Spawn(itemToDrop);
-        
-        // if (itemToDrop.TryGetComponent<Rigidbody>(out var rb))
-        // {
-        //     var moveDir = _characterMovement.MoveDirection;
-        //     
-        //     var currentSpeed = 5f; 
-        //     Debug.Log(_characterMovement);
-        //     var finalVelocity = moveDir * (throwMultiplier * currentSpeed);
-        //     
-        //     if (moveDir.magnitude > 0.1f)
-        //     {
-        //         finalVelocity += Vector3.up * 2f;
-        //     }
-        //     
-        //     rb.AddForce(finalVelocity, ForceMode.VelocityChange);
-        // }
-        
+        itemToDrop.SetActive(true);
+        var physicalItem = _physicalItemRegistry.TryGetItem(itemToDrop.gameObject);
+        if (physicalItem)
+        {
+            _physicalСontroller.PhysicalPickUpItem(physicalItem);
+            activeSlot = index;   
+        }
+    }
+
+    [Command]
+    public void CmdDropItem(int index)
+    {
         ServerInventory.Remove(index);
     }
 }

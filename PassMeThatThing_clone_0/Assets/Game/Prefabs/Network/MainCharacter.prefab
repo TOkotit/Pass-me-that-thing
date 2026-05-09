@@ -1397,6 +1397,7 @@ MonoBehaviour:
   rightJoint: {fileID: 4570636756147039003}
   throwForce: 0
   maxThrowForce: 15
+  minChargeTime: 0.3
   connectionInterface: {fileID: 3251784266631605128}
   hardConnection: {fileID: 3299880350255630775}
   connectionToPivot: {fileID: 48503076621493625}
@@ -1418,7 +1419,6 @@ GameObject:
   - component: {fileID: 7431106309825214170}
   - component: {fileID: 681644347487620103}
   - component: {fileID: 3176778945513367317}
-  - component: {fileID: 6043502653955855161}
   m_Layer: 0
   m_Name: MainCharacter
   m_TagString: Untagged
@@ -1553,10 +1553,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  itemLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  interactionDistance: 3
+  _heldItem: {fileID: 0}
 --- !u!114 &7431106309825214170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1573,7 +1570,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _interactionZone: {fileID: 1047243114865079847}
-  throwMultiplier: 2.5
+  "_physical\u0421ontroller": {fileID: 9071510599438279358}
 --- !u!114 &681644347487620103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1590,6 +1587,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   interactionZone: {fileID: 2558772292210885621}
+  _physicalItemInteractionController: {fileID: 9071510599438279358}
+  interactionLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  interactionDistance: 4
 --- !u!114 &3176778945513367317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1602,29 +1604,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6043502653955855161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2645522413353200517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb6c0ccc4aa24a699fb5b668c42fc7b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  verticalAlign: {fileID: 7399799905044466384}
-  groundState: {fileID: 817134635841920794}
-  leftLeg: {fileID: 223720912939564511}
-  rightLeg: {fileID: 2266395818998739654}
-  rigidbody: {fileID: 3804564485564321220}
-  movement: {fileID: 3329725917548430492}
-  slipDuration: 2
-  slipCooldown: 5
 --- !u!1 &2909725294491179631
 GameObject:
   m_ObjectHideFlags: 0
