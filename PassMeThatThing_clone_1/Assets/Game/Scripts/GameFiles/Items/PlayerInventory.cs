@@ -19,6 +19,8 @@ public class PlayerInventory : NetworkBehaviour
 
     [SerializeField] private Transform _interactionZone;
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
+    [SyncVar(hook = nameof(OnActiveSlotChanged))]
+    public int activeSlot;
     
     [Inject]
     private void Construct(NetworkManager networkManager, PhysicalItemRegistry physicalItemRegistry)
@@ -26,13 +28,21 @@ public class PlayerInventory : NetworkBehaviour
         _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
         _physicalItemRegistry = physicalItemRegistry;
     }
+    
 
+    private void OnActiveSlotChanged(int oldIndex, int newIndex)
+    {
+        if (isLocalPlayer)
+        {
+            _playerInventoryModel.ActiveSlotIndex = newIndex;
+        }
+    }
     public override void OnStartClient()
     {
-        if (!isLocalPlayer)
-            return;
-
+        if (!isLocalPlayer) return;
+        base.OnStartClient();
         ServerInventory.OnChange += OnInventoryChanged;
+        _playerInventoryModel.ActiveSlotIndex = activeSlot;  
         RefreshLocalModel();
     }
 
@@ -88,14 +98,9 @@ public class PlayerInventory : NetworkBehaviour
 
         ServerInventory[freeSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
 
-        if (!_physicalСontroller.CurrentHeldItem)
-        {
-            _physicalСontroller.PhysicalPickUpItem(physicalItem);
-        }
-        else
-        {
-            NetworkServer.UnSpawn(physicalItem.gameObject);
-        }
+        NetworkServer.UnSpawn(physicalItem.gameObject);
+
+        CmdDrawItem(freeSlot, _physicalСontroller.Pivot.position);
     }
 
     [Command]
@@ -106,13 +111,19 @@ public class PlayerInventory : NetworkBehaviour
             NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
         }
         _physicalСontroller.ClearHeldItem();
+
         if (!ServerInventory.TryGetValue(index, out var value)) return;
         var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
-        
+
         itemToDrop.transform.position = pointToSpawn;
         NetworkServer.Spawn(itemToDrop);
         itemToDrop.SetActive(true);
-        _physicalСontroller.SetHeldItem(_physicalItemRegistry.TryGetItem(itemToDrop.gameObject));
+        var physicalItem = _physicalItemRegistry.TryGetItem(itemToDrop.gameObject);
+        if (physicalItem)
+        {
+            _physicalСontroller.PhysicalPickUpItem(physicalItem);
+            activeSlot = index;   
+        }
     }
 
     [Command]
