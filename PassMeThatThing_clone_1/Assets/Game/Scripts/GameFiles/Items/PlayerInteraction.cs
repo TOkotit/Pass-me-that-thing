@@ -175,6 +175,7 @@ namespace Game.Scripts.GameFiles.Items
         {
             var canPickUp = false;
             var item = _physicalItemRegistry.TryGetItem(target.gameObject);
+            if (item == _physicalItemInteractionController.CurrentHeldItem) return;
             Debug.Log($"Trying to pick up {item.name}");
             inventory.CmdPickUpItem(item);
             _physicalItemInteractionController.PhysicalPickUpItem(item);
