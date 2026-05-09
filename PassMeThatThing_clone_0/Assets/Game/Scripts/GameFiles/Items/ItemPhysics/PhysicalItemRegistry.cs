@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             
         }
 
-        public PhysicalItem TryGetCharacter(GameObject item)
+        public PhysicalItem TryGetItem(GameObject item)
         {
             if (_physicalItems.ContainsKey(item))
             {

@@ -9,15 +9,25 @@ namespace Game.Scripts.GameFiles.Items
         private void Awake()
         {
             var scope = LifetimeScope.Find<GameplayScope>();
-        
+    
             if (scope != null)
             {
-                scope.Container.InjectGameObject(gameObject);
+                if (scope.Container != null)
+                {
+                    scope.Container.InjectGameObject(gameObject);
+                }
+                else
+                {
+                    StartCoroutine(WaitAndInject(scope));
+                }
             }
-            else
-            {
-                Debug.LogError("GameplayScope not found!");
-            }
+        }
+
+        private System.Collections.IEnumerator WaitAndInject(LifetimeScope scope)
+        {
+            while (scope.Container == null) yield return null;
+            scope.Container.InjectGameObject(gameObject);
+            Debug.Log($"[DI] {gameObject.name} successfully injected after waiting.");
         }
     }
 }
