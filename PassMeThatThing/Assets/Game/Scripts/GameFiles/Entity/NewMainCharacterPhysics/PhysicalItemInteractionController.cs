@@ -63,16 +63,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem = null;
             }
         }
+        [Server] 
         public void PhysicalPickUpItem(PhysicalItem item)
         {
-            //var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-            //RaycastHit hit;
-            //if (Physics.Raycast(ray, out hit, interactionDistance, itemLayer))
-            if (item && !_heldItem)
-            { 
-                CmdGrabItem(item);
-                _heldItem = item;
-            }
+            if (!item) return;
+            _heldItem = item;
+            _handsMovement.GrabItem(item);
         }
 
         /*private void OnLeftMouseReleased(InputAction.CallbackContext context)

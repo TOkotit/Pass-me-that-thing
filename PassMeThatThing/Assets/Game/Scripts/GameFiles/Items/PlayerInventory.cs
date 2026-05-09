@@ -73,24 +73,29 @@ public class PlayerInventory : NetworkBehaviour
     {
         if (!physicalItem) return;
         var networkItem = physicalItem.Network;
-        Debug.Log("Первая проверка");
         if (!networkItem) return;
-        Debug.Log("Вторая проверка");
-        var emptyIdx = -1;
-        
-        for (var i = 0 ; i < size; i++)
+
+        int freeSlot = -1;
+        for (int i = 0; i < size; i++)
         {
             if (!ServerInventory.ContainsKey(i))
             {
-                emptyIdx = i; break;
+                freeSlot = i;
+                break;
             }
         }
-        
-        if (emptyIdx == -1) return;
-        
-        if (emptyIdx < 0 || emptyIdx >= size) return;
-        ServerInventory[emptyIdx] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
-        
+        if (freeSlot == -1) return;   
+
+        ServerInventory[freeSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+
+        if (!_physicalСontroller.CurrentHeldItem)
+        {
+            _physicalСontroller.PhysicalPickUpItem(physicalItem);
+        }
+        else
+        {
+            NetworkServer.UnSpawn(physicalItem.gameObject);
+        }
     }
 
     [Command]
