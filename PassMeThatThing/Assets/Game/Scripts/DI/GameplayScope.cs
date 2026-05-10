@@ -47,7 +47,8 @@ namespace DI
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
-            builder.Register<PhysicalItemRegistry>(Lifetime.Singleton);
+            var registry = new PhysicalItemRegistry();
+            builder.RegisterInstance(registry);
         }
     }
 }

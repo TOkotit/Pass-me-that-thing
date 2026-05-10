@@ -6,8 +6,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class PhysicalItemRegistry
     {
+        public static PhysicalItemRegistry Instance { get; private set; }
         private Dictionary<GameObject, PhysicalItem> _physicalItems = new Dictionary<GameObject, PhysicalItem>();
-        
+
+        public PhysicalItemRegistry()
+        {
+            Instance = this;
+        }
         public void Register(PhysicalItem item)
         {
             var itemObject = item.gameObject;

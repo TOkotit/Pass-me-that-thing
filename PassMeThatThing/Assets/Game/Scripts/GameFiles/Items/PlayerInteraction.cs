@@ -153,8 +153,9 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryInteract()
         {
+            Debug.LogWarning("Trying interaction");
             if (Time.time - lastInteractionTime > interactionTimeOut)
-            {
+            { 
                 lastInteractionTime = Time.time;
                 var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                 RaycastHit hit;
@@ -162,6 +163,7 @@ namespace Game.Scripts.GameFiles.Items
                 {
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
+                        Debug.Log("Trying Pick Up");
                         TryPickUp(hit.collider);
                     }
                     else if (hit.collider.gameObject.CompareTag("Door"))
@@ -188,6 +190,7 @@ namespace Game.Scripts.GameFiles.Items
         private void TryPickUp(Collider target)
         {
             var item = _physicalItemRegistry.TryGetItem(target.gameObject);
+            Debug.Log("Trying Pick Up" + target.gameObject);
             if (item == _physicalItemInteractionController.CurrentHeldItem) return;
             inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex);
             OnColliderExit(target);

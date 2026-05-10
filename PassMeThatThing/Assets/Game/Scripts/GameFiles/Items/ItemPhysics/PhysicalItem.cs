@@ -53,5 +53,21 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             IsThrown = false;
         }
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            if (!isServer)
+            {
+                PhysicalItemRegistry.Instance.Register(this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (!isServer)
+            {
+                PhysicalItemRegistry.Instance.Unregister(this);
+            }
+        }
     }
 }
