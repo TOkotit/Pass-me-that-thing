@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
@@ -23,10 +24,15 @@ namespace Game.Scripts.GameFiles.Items
         private PlayerInventoryModel _playerInventoryModel;
         private Camera _camera;
         private PhysicalItemRegistry _physicalItemRegistry;
+        private bool _inTimeOut;
+        private float lastInteractionTime;
+        private float lastDropTime;
         
         [SerializeField] private PhysicalItemInteractionController _physicalItemInteractionController;
-        [SerializeField] LayerMask interactionLayer;
-        [SerializeField] float interactionDistance;
+        [SerializeField] private LayerMask interactionLayer;
+        [SerializeField] private float interactionDistance;
+        [SerializeField] private float interactionTimeOut = 1;
+       
         
         private List<Collider> targetsInRadius;
         
@@ -116,14 +122,17 @@ namespace Game.Scripts.GameFiles.Items
         
         private void OnDrop(InputAction.CallbackContext context)
         {
-            _physicalItemInteractionController.Drop();
-            inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
+            if (Time.time - lastInteractionTime > interactionTimeOut)
+            {
+                lastInteractionTime = Time.time;
+                _physicalItemInteractionController.Drop();
+                inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
+            }
         }
 
 
         private void OnColliderEnter(Collider collider)
         {
-            // Debug.Log($"{targetsInRadius.Count}");
             if (!targetsInRadius.Contains(collider))
                 targetsInRadius.Add(collider);
             
@@ -144,26 +153,31 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryInteract()
         {
-            var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+            if (Time.time - lastInteractionTime > interactionTimeOut)
             {
-                if (hit.collider.gameObject.CompareTag("Item"))
+                lastInteractionTime = Time.time;
+                var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
                 {
-                    TryPickUp(hit.collider);
+                    if (hit.collider.gameObject.CompareTag("Item"))
+                    {
+                        TryPickUp(hit.collider);
+                    }
+                    else if (hit.collider.gameObject.CompareTag("Door"))
+                    {
+                        TryOpen(hit.collider);
+                    }
+                    else
+                    {
+                        hit.collider.gameObject.TryGetComponent(out IInteractable interactable);
+                        if (interactable == null) return;
+                        interactable.Interact();
+                    }
                 }
-                else if (hit.collider.gameObject.CompareTag("Door"))
-                {
-                    TryOpen(hit.collider);
-                }
-                else
-                {
-                    hit.collider.gameObject.TryGetComponent(out IInteractable interactable);
-                    if (interactable == null) return;
-                    interactable.Interact();
-                }
+
+                if (!_playerInventoryModel.IsAbleInteract) return;
             }
-            if (!_playerInventoryModel.IsAbleInteract) return;
         }
 
         private void OnDropCharge(InputAction.CallbackContext context)

@@ -135,6 +135,12 @@ public class PlayerInventory : NetworkBehaviour
     [Command]
     public void CmdDropItem(int index)
     {
+        if (_physicalСontroller.CurrentHeldItem &&
+            ServerInventory.TryGetValue(index, out var slot) &&
+            slot.itemId == _physicalСontroller.CurrentHeldItem.Network.itemId)
+        {
+            _physicalСontroller.ServerClearHeldItem();
+        }
         ServerInventory.Remove(index);
     }
 }

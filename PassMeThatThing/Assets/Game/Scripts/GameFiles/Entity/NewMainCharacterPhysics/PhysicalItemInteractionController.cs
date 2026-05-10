@@ -1,6 +1,7 @@
 using System;
 using DI;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using Systems;
@@ -13,14 +14,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
     public class PhysicalItemInteractionController : NetworkBehaviour
     {
-        
+        /*[SyncVar]
+        private uint heldItemNetId;*/
+        public PhysicalItem CurrentHeldItem => _heldItem;
+
         private bool _subscribed;
         private Action<Vector3> OnPositionChanged;
         
         [SerializeField] private PhysicalItem _heldItem;
         private HandsMovement _handsMovement;
+        private ItemPoolManager _itemPoolManager;
         public Rigidbody Pivot => _handsMovement.Pivot;
-        public PhysicalItem CurrentHeldItem => _heldItem;
 
         public override void OnStartLocalPlayer()
         {
@@ -63,7 +67,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem = null;
             }
         }
-        [Server] 
+        [Server]
         public void PhysicalPickUpItem(PhysicalItem item)
         {
             if (!item) return;
@@ -71,13 +75,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _handsMovement.GrabItem(item);
         }
 
-        /*private void OnLeftMouseReleased(InputAction.CallbackContext context)
-        {
-            if (!_heldItem)
-            {
-                _handsMovement.ResetLeftHand();
-            }
-        }*/
         
         [Command]
         private void CmdGrabItem(PhysicalItem physicalItem)
@@ -94,7 +91,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             Debug.Log("Команда вызывается");
             if (!item) return;
-            _handsMovement.ReleaseItem(item); 
+            _handsMovement.ReleaseItem(item);
+            ServerClearHeldItem();  
         }
 
         public void SetHeldItem(PhysicalItem heldItem)
@@ -105,6 +103,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         public void ClearHeldItem()
+        {
+            _heldItem = null;
+        }
+        [Server]
+        public void ServerClearHeldItem()
         {
             _heldItem = null;
         }

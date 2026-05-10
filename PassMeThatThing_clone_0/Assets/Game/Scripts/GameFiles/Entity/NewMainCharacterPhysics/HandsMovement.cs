@@ -110,10 +110,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _chargeStartTime = Time.time;
         }
 
-        public float GetCurrentThrowForce()
-        {
-            return throwForce;
-        }
         private void FixedUpdate()
         {
             if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
