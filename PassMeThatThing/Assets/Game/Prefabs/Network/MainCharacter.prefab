@@ -1398,8 +1398,8 @@ MonoBehaviour:
   throwForce: 0
   maxThrowForce: 15
   minChargeTime: 0.3
-  connectionInterface: {fileID: 9222894280226309340}
-  hardConnection: {fileID: 3299880350255630775}
+  connectionInterface: {fileID: 4927395285961022493}
+  hardConnection: {fileID: 712285717903167215}
   connectionToPivot: {fileID: 48503076621493625}
   pivot: {fileID: 2025009112748668658}
 --- !u!1 &2645522413353200517
@@ -2343,7 +2343,7 @@ ConfigurableJoint:
   m_YMotion: 0
   m_ZMotion: 0
   m_AngularXMotion: 2
-  m_AngularYMotion: 2
+  m_AngularYMotion: 0
   m_AngularZMotion: 2
   m_LinearLimitSpring:
     spring: 0
@@ -3693,7 +3693,7 @@ Transform:
   m_GameObject: {fileID: 4677326810371898778}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.092, z: 1.075}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3740,7 +3740,7 @@ FixedJoint:
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
 --- !u!114 &2447738185046492951
@@ -5300,8 +5300,8 @@ GameObject:
   - component: {fileID: 3251784266631605128}
   - component: {fileID: 8878355322279773323}
   - component: {fileID: 9222894280226309340}
-  - component: {fileID: 3299880350255630775}
   - component: {fileID: 48503076621493625}
+  - component: {fileID: 712285717903167215}
   m_Layer: 0
   m_Name: ConnectionInterface
   m_TagString: Untagged
@@ -5318,7 +5318,7 @@ Transform:
   m_GameObject: {fileID: 7073566114891697121}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.252, y: -0.177, z: 1.199}
+  m_LocalPosition: {x: 0.049, y: -0.177, z: 1.199}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5385,22 +5385,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!138 &3299880350255630775
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7073566114891697121}
-  serializedVersion: 1
-  m_ConnectedBody: {fileID: 0}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!153 &48503076621493625
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -5501,6 +5485,22 @@ ConfigurableJoint:
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
+--- !u!138 &712285717903167215
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7073566114891697121}
+  serializedVersion: 1
+  m_ConnectedBody: {fileID: 0}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
 --- !u!1 &7118417652258738031

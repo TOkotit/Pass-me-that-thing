@@ -58,11 +58,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _handsMovement.ChargeThrow();
             }
         }
+        [Server]
         public void Drop()
         {
             if (_heldItem)
             {
                 Debug.Log("Метод вызывается");
+                _heldItem.Network.netIdentity.RemoveClientAuthority();
                 CmdReleaseAndDrop(_heldItem);
                 _heldItem = null;
             }
@@ -83,6 +85,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             Debug.Log("Команда вызывается");
             if (!item) return;
             _handsMovement.ReleaseItem(item);
+            if (item.Network.netIdentity.connectionToClient != null)
+            {
+                item.Network.netIdentity.RemoveClientAuthority();
+            }
             ServerClearHeldItem();  
         }
 
