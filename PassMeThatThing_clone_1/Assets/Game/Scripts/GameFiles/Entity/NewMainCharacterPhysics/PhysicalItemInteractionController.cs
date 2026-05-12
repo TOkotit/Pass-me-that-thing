@@ -69,6 +69,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem = null;
             }
         }
+        
         [Server]
         public void PhysicalPickUpItem(PhysicalItem item)
         {
@@ -76,8 +77,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             item.Network.netIdentity.AssignClientAuthority(connectionToClient);
             _handsMovement.GrabItem(item);
         }
-        
-        
+
         
         [Command]
         private void CmdReleaseAndDrop(PhysicalItem item)
@@ -100,6 +100,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void ServerClearHeldItem()
         {
             _heldItem = null;
+        }
+        
+        [Server]
+        public void ReleaseCurrentItem()
+        {
+            if (_heldItem)
+            {
+                _handsMovement.ReleaseItem(_heldItem);
+                _heldItem = null;
+            }
         }
     }
 }

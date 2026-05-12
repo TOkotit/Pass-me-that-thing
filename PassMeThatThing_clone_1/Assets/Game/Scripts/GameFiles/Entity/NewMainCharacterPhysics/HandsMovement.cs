@@ -9,95 +9,38 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
     public class HandsMovement : NetworkBehaviour
     {
+        [Header("Hands")]
         [SerializeField] private Rigidbody leftHandRB;
         [SerializeField] private Rigidbody rightHandRB;
         [SerializeField] private ConfigurableJoint leftJoint;
         [SerializeField] private ConfigurableJoint rightJoint;
-        
-        [SerializeField] private float throwForce = 0;
+
+        [Header("Throwing")]
+        [SerializeField] private float throwForce = 0f;
         [SerializeField] private float maxThrowForce = 15f;
-        private bool _isThrowing = false;
-        private float _chargeStartTime;
         [SerializeField] private float minChargeTime = 0.3f;
-        
-        [Header("Connection interface")] 
-        [SerializeField] private Transform connectionInterface;
-        [SerializeField] private FixedJoint hardConnection;
-        [SerializeField] private ConfigurableJoint connectionToPivot;
+        private bool _isThrowing;
+        private float _chargeStartTime;
+
+        [Header("Grabbing")]
+        [SerializeField] private ConfigurableJoint grabJoint;   
         [SerializeField] private Rigidbody pivot;
         public Rigidbody Pivot => pivot;
 
+        private void Awake()
+        {
+            if (grabJoint)
+                grabJoint.gameObject.SetActive(false);
+        }
+
         private void MoveHand(Rigidbody handRB, Vector3 direction, ConfigurableJoint joint)
         {
-            //тут часть уже на настоящей модели
+            // реализация позже
         }
 
         public void Move(Hand hand)
         {
-            //и тут
-        }
-        [Server]
-        public void GrabItem(PhysicalItem item)
-        {
-            
-            connectionInterface.position = item.transform.position;
-            Debug.Log(connectionInterface.position);
-            if (item.HandleType == HandleType.OneHanded | item.HandleType == HandleType.TwoHanded)
-            { 
-                connectionInterface.rotation = item.transform.rotation;
-            }
-            hardConnection.connectedBody = null;
-            connectionToPivot.connectedBody = null;
-            hardConnection.connectedBody = item.Rigidbody;
-            connectionToPivot.connectedBody = pivot;
-            
-            ClientGrabItem(item);
-        }
-        [ClientRpc]
-        private void ClientGrabItem(PhysicalItem item)
-        {
-            hardConnection.connectedBody = null;
-            hardConnection.connectedBody = item.Rigidbody;
-            connectionToPivot.connectedBody = pivot;
-            
-        }
-        [Server]
-        public void ReleaseItem(PhysicalItem item)
-        {
-            StartCoroutine(ResetConnectionAfterDelay());
-            if (Time.time - _chargeStartTime >= minChargeTime)
-            { 
-                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
-            }
-
-            throwForce = 0;
-            _isThrowing = false;
-            
-            
-            ClientReleaseItem(item);
-        }
-        [ClientRpc]
-        private void ClientReleaseItem(PhysicalItem item)
-        {
-            StartCoroutine(ResetConnectionAfterDelay());
-        }
-        
-        [Server]
-        public void ResetLeftHand()
-        {
-            if (leftJoint)
-            {
-                leftJoint.connectedBody = null;
-            }
-        }
-
-        [Server]
-        public void ResetRightHand()
-        {
-            if (rightJoint)
-            {
-                rightJoint.connectedBody = null;
-            }
+            // реализация позже
         }
 
         [Server]
@@ -121,6 +64,62 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
 
+        [Server]
+        public void ResetLeftHand()
+        {
+            if (leftJoint)
+                leftJoint.connectedBody = null;
+        }
+
+        [Server]
+        public void ResetRightHand()
+        {
+            if (rightJoint)
+                rightJoint.connectedBody = null;
+        }
+
+        [Server]
+        public void GrabItem(PhysicalItem item)
+        {
+            
+            grabJoint.gameObject.SetActive(true);
+            grabJoint.connectedBody = null;
+            grabJoint.connectedBody = item.Rigidbody;
+            ClientGrabItem(item);
+        }
+
+        [ClientRpc]
+        private void ClientGrabItem(PhysicalItem item)
+        {
+            grabJoint.gameObject.SetActive(true);
+            grabJoint.connectedBody = null;
+            grabJoint.connectedBody = item.Rigidbody;
+        }
+
+        [Server]
+        public void ReleaseItem(PhysicalItem item)
+        {
+            grabJoint.connectedBody = null;
+            grabJoint.gameObject.SetActive(false);
+
+            if (Time.time - _chargeStartTime >= minChargeTime)
+            {
+                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
+            }
+
+            throwForce = 0;
+            _isThrowing = false;
+
+            ClientReleaseItem(item);
+        }
+
+        [ClientRpc]
+        private void ClientReleaseItem(PhysicalItem item)
+        {
+            grabJoint.connectedBody = null;
+            grabJoint.gameObject.SetActive(false);
+        }
+
         public void ChargeThrow()
         {
             _isThrowing = true;
@@ -133,24 +132,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             {
                 if (throwForce < maxThrowForce)
                 {
-                    throwForce += Time.fixedDeltaTime * 3;
+                    throwForce += Time.fixedDeltaTime * 3f;
                 }
             }
         }
-        
-        private IEnumerator ResetConnectionAfterDelay()
-        {
-            yield return new WaitForFixedUpdate();
-            if (connectionToPivot)
-                connectionToPivot.connectedBody = null;
-            if (hardConnection)
-                hardConnection.connectedBody = null;
-        }
-        
-        /*private void Start()
-        {
-            var ci = connectionInterface.GetComponent<NetworkTransformReliable>();
-            ci.netIdentity.AssignClientAuthority(connectionToClient);
-        }*/
     }
 }
