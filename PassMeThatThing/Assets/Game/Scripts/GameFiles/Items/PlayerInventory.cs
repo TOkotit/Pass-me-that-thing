@@ -120,7 +120,7 @@ public class PlayerInventory : NetworkBehaviour
         {
             NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
         }
-        _physicalСontroller.ClearHeldItem();
+        _physicalСontroller.ServerClearHeldItem();
 
         if (!ServerInventory.TryGetValue(index, out var value)) return;
         var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);

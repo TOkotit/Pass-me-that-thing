@@ -63,21 +63,35 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (_heldItem)
             {
-                Debug.Log("Метод вызывается");
                 _heldItem.Network.netIdentity.RemoveClientAuthority();
                 CmdReleaseAndDrop(_heldItem);
                 _heldItem = null;
+                TargetDrop();
             }
         }
+
+        [ClientRpc]
+        private void TargetDrop()
+        {
+            _heldItem = null;
+        }
+        
         
         [Server]
         public void PhysicalPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
+            TargetPickUpItem(item);
             item.Network.netIdentity.AssignClientAuthority(connectionToClient);
             _handsMovement.GrabItem(item);
         }
 
+        [TargetRpc]
+        private void TargetPickUpItem(PhysicalItem item)
+        {
+            _heldItem = item;
+        }
+        
         
         [Command]
         private void CmdReleaseAndDrop(PhysicalItem item)
@@ -91,8 +105,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
             ServerClearHeldItem();  
         }
-
-        public void ClearHeldItem()
+        [TargetRpc]
+        public void TargetClearHeldItem()
         {
             _heldItem = null;
         }
@@ -100,6 +114,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void ServerClearHeldItem()
         {
             _heldItem = null;
+            TargetClearHeldItem();
         }
         
         [Server]
