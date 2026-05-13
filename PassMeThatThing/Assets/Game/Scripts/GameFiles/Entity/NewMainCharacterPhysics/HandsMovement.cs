@@ -16,16 +16,18 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private ConfigurableJoint rightJoint;
 
         [Header("Throwing")]
-        [SerializeField] private float throwForce = 0f;
+        [SerializeField] private float throwForceGrow = 5f;
         [SerializeField] private float maxThrowForce = 15f;
         [SerializeField] private float minChargeTime = 0.3f;
         private bool _isThrowing;
         private float _chargeStartTime;
+        private float _throwForce;
 
         [Header("Grabbing")]
         [SerializeField] private ConfigurableJoint grabJoint;   
         [SerializeField] private Rigidbody pivot;
         public Rigidbody Pivot => pivot;
+        public float CurrentThrowForce => _throwForce;
 
         private void Awake()
         {
@@ -97,24 +99,31 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void ReleaseItem(PhysicalItem item)
+        public void ReleaseItem(PhysicalItem item, float throwForce)
         {
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
-
             if (Time.time - _chargeStartTime >= minChargeTime)
             {
-                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
+                Vector3 force = throwForce  * pivot.transform.forward;
+                item.Rigidbody.AddForce(force, ForceMode.Impulse);
+                TargetApplyThrowForce(connectionToClient, item, force);
             }
-
-            throwForce = 0;
+            _throwForce = 0;
             _isThrowing = false;
-
-            ClientReleaseItem(item);
+            ClientReleaseItem();
         }
 
+        [TargetRpc]
+        private void TargetApplyThrowForce(NetworkConnection target, PhysicalItem item, Vector3 force)
+        {
+            if (item)
+                item.Rigidbody.AddForce(force, ForceMode.Impulse);
+            Debug.Log(force);
+        }
+        
         [ClientRpc]
-        private void ClientReleaseItem(PhysicalItem item)
+        private void ClientReleaseItem()
         {
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
@@ -125,14 +134,15 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _isThrowing = true;
             _chargeStartTime = Time.time;
         }
+        
 
         private void FixedUpdate()
         {
             if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
             {
-                if (throwForce < maxThrowForce)
+                if (_throwForce < maxThrowForce)
                 {
-                    throwForce += Time.fixedDeltaTime * 3f;
+                    _throwForce += Time.fixedDeltaTime * throwForceGrow;
                 }
             }
         }
