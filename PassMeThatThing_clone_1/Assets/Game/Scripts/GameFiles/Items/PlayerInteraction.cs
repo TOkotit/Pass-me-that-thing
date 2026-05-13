@@ -125,7 +125,8 @@ namespace Game.Scripts.GameFiles.Items
             if (Time.time - lastInteractionTime > interactionTimeOut)
             {
                 lastInteractionTime = Time.time;
-                inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
+                float throwForce = _physicalItemInteractionController.HandsMovement.CurrentThrowForce;
+                inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, throwForce);
             }
         }
 

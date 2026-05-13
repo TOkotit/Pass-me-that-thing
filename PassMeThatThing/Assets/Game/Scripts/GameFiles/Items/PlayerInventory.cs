@@ -138,7 +138,7 @@ public class PlayerInventory : NetworkBehaviour
     }
 
     [Command]
-    public void CmdDropItem(int index)
+    public void CmdDropItem(int index, float throwForce)
     {
         var heldItem = _physicalСontroller.CurrentHeldItem;
         if (heldItem && ServerInventory.TryGetValue(index, out var slot) && slot.itemId == heldItem.Network.itemId)
@@ -146,7 +146,7 @@ public class PlayerInventory : NetworkBehaviour
             Vector3 dropPos = heldItem.transform.position;
             Quaternion dropRot = heldItem.transform.rotation;
             _physicalСontroller.TargetSyncPositionForDrop(connectionToClient, dropPos, dropRot);
-            _physicalСontroller.ReleaseCurrentItem();
+            _physicalСontroller.ReleaseCurrentItem(throwForce); 
             if (heldItem.Network.netIdentity.connectionToClient != null)
                 heldItem.Network.netIdentity.RemoveClientAuthority();
         }

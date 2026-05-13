@@ -25,6 +25,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private HandsMovement _handsMovement;
         private ItemPoolManager _itemPoolManager;
         public Rigidbody Pivot => _handsMovement.Pivot;
+        public HandsMovement HandsMovement => _handsMovement;
 
         public override void OnStartLocalPlayer()
         {
@@ -98,7 +99,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             Debug.Log("Команда вызывается");
             if (!item) return;
-            _handsMovement.ReleaseItem(item);
+            _handsMovement.ReleaseItem(item, _handsMovement.CurrentThrowForce);
             if (item.Network.netIdentity.connectionToClient != null)
             {
                 item.Network.netIdentity.RemoveClientAuthority();
@@ -118,13 +119,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
         
         [Server]
-        public void ReleaseCurrentItem()
+        public void ReleaseCurrentItem(float throwForce)
         {
             if (_heldItem)
             {
-                _handsMovement.ReleaseItem(_heldItem);
-                _heldItem = null; 
-                TargetClearHeldItem(); 
+                _handsMovement.ReleaseItem(_heldItem, throwForce); 
+                _heldItem = null;
+                TargetClearHeldItem();
             }
         }
         

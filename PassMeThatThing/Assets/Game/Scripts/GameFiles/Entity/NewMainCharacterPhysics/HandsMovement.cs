@@ -27,6 +27,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private ConfigurableJoint grabJoint;   
         [SerializeField] private Rigidbody pivot;
         public Rigidbody Pivot => pivot;
+        public float CurrentThrowForce => _throwForce;
 
         private void Awake()
         {
@@ -98,22 +99,29 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void ReleaseItem(PhysicalItem item)
+        public void ReleaseItem(PhysicalItem item, float throwForce)
         {
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
-
             if (Time.time - _chargeStartTime >= minChargeTime)
             {
-                item.Rigidbody.AddForce(_throwForce * pivot.transform.forward, ForceMode.Impulse);
+                Vector3 force = throwForce  * pivot.transform.forward;
+                item.Rigidbody.AddForce(force, ForceMode.Impulse);
+                TargetApplyThrowForce(connectionToClient, item, force);
             }
-
             _throwForce = 0;
             _isThrowing = false;
-
             ClientReleaseItem();
         }
 
+        [TargetRpc]
+        private void TargetApplyThrowForce(NetworkConnection target, PhysicalItem item, Vector3 force)
+        {
+            if (item)
+                item.Rigidbody.AddForce(force, ForceMode.Impulse);
+            Debug.Log(force);
+        }
+        
         [ClientRpc]
         private void ClientReleaseItem()
         {
@@ -126,6 +134,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _isThrowing = true;
             _chargeStartTime = Time.time;
         }
+        
 
         private void FixedUpdate()
         {
