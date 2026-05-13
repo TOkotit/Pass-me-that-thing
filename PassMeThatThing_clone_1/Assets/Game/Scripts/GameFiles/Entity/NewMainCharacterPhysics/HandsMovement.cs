@@ -16,11 +16,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private ConfigurableJoint rightJoint;
 
         [Header("Throwing")]
-        [SerializeField] private float throwForce = 0f;
+        [SerializeField] private float throwForceGrow = 5f;
         [SerializeField] private float maxThrowForce = 15f;
         [SerializeField] private float minChargeTime = 0.3f;
         private bool _isThrowing;
         private float _chargeStartTime;
+        private float _throwForce;
 
         [Header("Grabbing")]
         [SerializeField] private ConfigurableJoint grabJoint;   
@@ -104,17 +105,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
             if (Time.time - _chargeStartTime >= minChargeTime)
             {
-                item.Rigidbody.AddForce(throwForce * pivot.transform.forward, ForceMode.Impulse);
+                item.Rigidbody.AddForce(_throwForce * pivot.transform.forward, ForceMode.Impulse);
             }
 
-            throwForce = 0;
+            _throwForce = 0;
             _isThrowing = false;
 
-            ClientReleaseItem(item);
+            ClientReleaseItem();
         }
 
         [ClientRpc]
-        private void ClientReleaseItem(PhysicalItem item)
+        private void ClientReleaseItem()
         {
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
@@ -130,9 +131,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
             {
-                if (throwForce < maxThrowForce)
+                if (_throwForce < maxThrowForce)
                 {
-                    throwForce += Time.fixedDeltaTime * 3f;
+                    _throwForce += Time.fixedDeltaTime * throwForceGrow;
                 }
             }
         }

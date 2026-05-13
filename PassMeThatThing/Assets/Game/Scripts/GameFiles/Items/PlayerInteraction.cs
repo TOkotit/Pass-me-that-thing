@@ -125,7 +125,6 @@ namespace Game.Scripts.GameFiles.Items
             if (Time.time - lastInteractionTime > interactionTimeOut)
             {
                 lastInteractionTime = Time.time;
-                _physicalItemInteractionController.Drop();
                 inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex);
             }
         }

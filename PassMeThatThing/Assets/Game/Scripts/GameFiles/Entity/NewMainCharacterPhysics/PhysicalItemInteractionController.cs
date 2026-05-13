@@ -123,7 +123,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (_heldItem)
             {
                 _handsMovement.ReleaseItem(_heldItem);
-                _heldItem = null;
+                _heldItem = null; 
+                TargetClearHeldItem(); 
+            }
+        }
+        
+        [TargetRpc]
+        public void TargetSyncPositionForDrop(NetworkConnection target, Vector3 position, Quaternion rotation)
+        {
+            if (_heldItem)
+            {
+                _heldItem.transform.SetPositionAndRotation(position, rotation);
             }
         }
     }

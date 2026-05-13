@@ -140,11 +140,15 @@ public class PlayerInventory : NetworkBehaviour
     [Command]
     public void CmdDropItem(int index)
     {
-        if (_physicalСontroller.CurrentHeldItem &&
-            ServerInventory.TryGetValue(index, out var slot) &&
-            slot.itemId == _physicalСontroller.CurrentHeldItem.Network.itemId)
+        var heldItem = _physicalСontroller.CurrentHeldItem;
+        if (heldItem && ServerInventory.TryGetValue(index, out var slot) && slot.itemId == heldItem.Network.itemId)
         {
-            _physicalСontroller.ServerClearHeldItem();
+            Vector3 dropPos = heldItem.transform.position;
+            Quaternion dropRot = heldItem.transform.rotation;
+            _physicalСontroller.TargetSyncPositionForDrop(connectionToClient, dropPos, dropRot);
+            _physicalСontroller.ReleaseCurrentItem();
+            if (heldItem.Network.netIdentity.connectionToClient != null)
+                heldItem.Network.netIdentity.RemoveClientAuthority();
         }
         ServerInventory.Remove(index);
     }
