@@ -42,11 +42,19 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public NetworkItem Network => _network;
         public bool IsThrown { get; set; }
         
+        private NetworkTransformReliable _networkTransform;
+        public NetworkTransformReliable NetworkTransform => _networkTransform;
+        
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
         {
             physicalItemRegistry.Register(this);
+        }
+
+        private void Start()
+        {
             _outline = GetComponent<Outline>();
+            _networkTransform = GetComponent<NetworkTransformReliable>();
         }
 
         private void OnCollisionEnter(Collision other)
