@@ -72,7 +72,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             _heldItem = item;
             TargetPickUpItem(item);
-            item.Network.netIdentity.AssignClientAuthority(connectionToClient);
+            //item.Network.netIdentity.AssignClientAuthority(connectionToClient);
             _handsMovement.GrabItem(item);
         }
 

@@ -147,8 +147,8 @@ public class PlayerInventory : NetworkBehaviour
             Quaternion dropRot = heldItem.transform.rotation;
             _physicalСontroller.TargetSyncPositionForDrop(connectionToClient, dropPos, dropRot);
             _physicalСontroller.ReleaseCurrentItem(throwForce, canThrow); 
-            if (heldItem.Network.netIdentity.connectionToClient != null)
-                heldItem.Network.netIdentity.RemoveClientAuthority();
+            /*if (heldItem.Network.netIdentity.connectionToClient != null)
+                heldItem.Network.netIdentity.RemoveClientAuthority();*/
         }
         ServerInventory.Remove(index);
     }

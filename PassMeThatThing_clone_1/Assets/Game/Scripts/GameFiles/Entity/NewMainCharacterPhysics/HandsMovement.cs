@@ -83,7 +83,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Server]
         public void GrabItem(PhysicalItem item)
         {
-            
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
@@ -122,7 +121,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (item)
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
-            Debug.Log(force);
         }
         
         [ClientRpc]
@@ -130,6 +128,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
+            
         }
 
         public void ChargeThrow()

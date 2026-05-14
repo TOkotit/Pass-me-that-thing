@@ -53,6 +53,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void Start()
         {
+            /*if (Network.netIdentity.connectionToClient != null)
+                Network.netIdentity.AssignClientAuthority(all);*/
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
         }
