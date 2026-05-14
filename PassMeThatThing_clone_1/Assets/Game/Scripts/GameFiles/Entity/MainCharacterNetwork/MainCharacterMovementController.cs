@@ -10,6 +10,8 @@ namespace MainCharacter
 {
     public class MainCharacterMovementController : NetworkBehaviour
     {
+        
+        [SerializeField] private LocalVisionShaderApplier visionApplier;
         private MainCharacterMovement _controllable;
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
@@ -125,6 +127,20 @@ namespace MainCharacter
             if (!isLocalPlayer) return;
 
             ReadMovement();
+            
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                Debug.Log("<color=green>V</color>");
+                visionApplier.EnableVision();
+            }
+    
+            if (Input.GetKeyUp(KeyCode.V))
+            {
+                Debug.Log("<color=red>V</color>");
+                visionApplier.DisableVision();
+            }
+            
+            
         }
         
         private void ReadMovement()

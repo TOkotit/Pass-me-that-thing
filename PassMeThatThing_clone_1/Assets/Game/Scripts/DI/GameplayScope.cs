@@ -8,6 +8,7 @@ using UnityEngine;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using MainCharacter;
 using R3;
@@ -47,8 +48,12 @@ namespace DI
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
-            var registry = new PhysicalItemRegistry();
-            builder.RegisterInstance(registry);
+            /*builder.Register<PhysicalItemRegistry>(Lifetime.Singleton);*/
+            var physicalItemRegistry = new PhysicalItemRegistry();
+            builder.RegisterInstance(physicalItemRegistry);
+            
+            var outlineRegistry = new OutlineRegistry();
+            builder.RegisterInstance(outlineRegistry);
         }
     }
 }

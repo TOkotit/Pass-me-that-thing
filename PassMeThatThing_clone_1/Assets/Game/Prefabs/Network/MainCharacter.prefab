@@ -1417,6 +1417,7 @@ GameObject:
   - component: {fileID: 7431106309825214170}
   - component: {fileID: 681644347487620103}
   - component: {fileID: 3176778945513367317}
+  - component: {fileID: 5761119186266568273}
   m_Layer: 0
   m_Name: MainCharacter
   m_TagString: Untagged
@@ -1519,6 +1520,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  visionApplier: {fileID: 5761119186266568273}
 --- !u!114 &817134635841920794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1604,6 +1606,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5761119186266568273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645522413353200517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6827e743274828a0414e23f3882bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  visionMaterial: {fileID: 2100000, guid: d478167fabdb2b84a990e7b40dd0f31b, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: f3e9055aa8679cb4ab3c9b655a8e90db, type: 2}
+  radius: 10
+  outlineWidth: 0.05
+  targetTransform: {fileID: 6391566352839445736}
 --- !u!1 &2909725294491179631
 GameObject:
   m_ObjectHideFlags: 0

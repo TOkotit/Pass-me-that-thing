@@ -125,8 +125,12 @@ namespace Game.Scripts.GameFiles.Items
             if (Time.time - lastInteractionTime > interactionTimeOut)
             {
                 lastInteractionTime = Time.time;
-                float throwForce = _physicalItemInteractionController.HandsMovement.CurrentThrowForce;
-                inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, throwForce);
+                var hands = _physicalItemInteractionController.HandsMovement;
+                float throwForce = hands.CurrentThrowForce;
+                bool canThrow = hands.CanThrow;
+        
+                inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, throwForce, canThrow);
+                hands.ResetCharge(); 
             }
         }
 
@@ -153,7 +157,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryInteract()
         {
-            Debug.LogWarning("Trying interaction");
+           Debug.LogWarning("Trying interaction");
             if (Time.time - lastInteractionTime > interactionTimeOut)
             { 
                 lastInteractionTime = Time.time;

@@ -99,18 +99,21 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void ReleaseItem(PhysicalItem item, float throwForce)
+        public void ReleaseItem(PhysicalItem item, float throwForce, bool canThrow)
         {
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
-            if (Time.time - _chargeStartTime >= minChargeTime)
+    
+            if (canThrow)
             {
-                Vector3 force = throwForce  * pivot.transform.forward;
+                Vector3 force = throwForce * pivot.transform.forward;
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
                 TargetApplyThrowForce(connectionToClient, item, force);
             }
+    
             _throwForce = 0;
             _isThrowing = false;
+    
             ClientReleaseItem();
         }
 
@@ -145,6 +148,14 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                     _throwForce += Time.fixedDeltaTime * throwForceGrow;
                 }
             }
+        }
+        
+        public bool CanThrow => Time.time - _chargeStartTime >= minChargeTime;
+
+        public void ResetCharge()
+        {
+            _isThrowing = false;
+            _throwForce = 0;
         }
     }
 }

@@ -59,17 +59,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _handsMovement.ChargeThrow();
             }
         }
-        [Server]
-        public void Drop()
-        {
-            if (_heldItem)
-            {
-                _heldItem.Network.netIdentity.RemoveClientAuthority();
-                CmdReleaseAndDrop(_heldItem);
-                _heldItem = null;
-                TargetDrop();
-            }
-        }
 
         [ClientRpc]
         private void TargetDrop()
@@ -93,19 +82,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _heldItem = item;
         }
         
-        
-        [Command]
-        private void CmdReleaseAndDrop(PhysicalItem item)
-        {
-            Debug.Log("Команда вызывается");
-            if (!item) return;
-            _handsMovement.ReleaseItem(item, _handsMovement.CurrentThrowForce);
-            if (item.Network.netIdentity.connectionToClient != null)
-            {
-                item.Network.netIdentity.RemoveClientAuthority();
-            }
-            ServerClearHeldItem();  
-        }
         [TargetRpc]
         public void TargetClearHeldItem()
         {
@@ -119,11 +95,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
         
         [Server]
-        public void ReleaseCurrentItem(float throwForce)
+        public void ReleaseCurrentItem(float throwForce, bool canThrow)
         {
             if (_heldItem)
             {
-                _handsMovement.ReleaseItem(_heldItem, throwForce); 
+                _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow); 
                 _heldItem = null;
                 TargetClearHeldItem();
             }
@@ -134,7 +110,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (_heldItem)
             {
-                _heldItem.transform.SetPositionAndRotation(position, rotation);
+                _heldItem.Rigidbody.MovePosition(position);
+                _heldItem.Rigidbody.MoveRotation(rotation);
             }
         }
     }
