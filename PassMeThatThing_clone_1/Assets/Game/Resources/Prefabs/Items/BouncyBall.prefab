@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 1513859172288341958}
   - component: {fileID: -3304287474170749163}
   - component: {fileID: 2426252766943924567}
+  - component: {fileID: 3436207650286123728}
   m_Layer: 7
   m_Name: BouncyBall
   m_TagString: Item
@@ -107,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMode: 0
+  outlineMode: 1
   outlineColor: {r: 1, g: 0.8431373, b: 0, a: 1}
   outlineWidth: 3.95
   precomputeOutline: 0
@@ -253,6 +254,22 @@ MonoBehaviour:
   isHeld: 0
   rigidBody: {fileID: 2895375629803461582}
   _network: {fileID: 4807185805299827097}
+--- !u!114 &3436207650286123728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4664816843917106700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _outline: {fileID: 8013061766732872780}
 --- !u!1 &4861903026031687481
 GameObject:
   m_ObjectHideFlags: 0

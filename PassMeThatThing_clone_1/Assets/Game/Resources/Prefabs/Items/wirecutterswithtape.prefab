@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 3700039327772116068}
   - component: {fileID: 662243249347061468}
   - component: {fileID: -7772071027813919844}
+  - component: {fileID: 6013553781666142512}
   m_Layer: 7
   m_Name: wirecutterswithtape
   m_TagString: Item
@@ -436,3 +437,19 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &6013553781666142512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8955384447202622732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _outline: {fileID: -7772071027813919844}

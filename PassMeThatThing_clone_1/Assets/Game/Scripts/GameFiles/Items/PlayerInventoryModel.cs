@@ -12,7 +12,7 @@ namespace Game.Scripts.GameFiles.Items
         private int _activeSlotIndex;
         private bool _isAbleInteract;
 
-        public bool IsAbleInteract
+        /*public bool IsAbleInteract
         {
             get => _isAbleInteract;
             set
@@ -21,7 +21,7 @@ namespace Game.Scripts.GameFiles.Items
                     OnAbleInteract?.Invoke(value);
                 _isAbleInteract = value;
             } 
-        }
+        }*/
         
         public event Action<bool> OnAbleInteract;
         

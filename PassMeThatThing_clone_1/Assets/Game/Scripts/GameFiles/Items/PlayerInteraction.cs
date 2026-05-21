@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
+using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Systems;
 using UnityEngine.InputSystem;
@@ -24,6 +25,7 @@ namespace Game.Scripts.GameFiles.Items
         private PlayerInventoryModel _playerInventoryModel;
         private Camera _camera;
         private PhysicalItemRegistry _physicalItemRegistry;
+        private OutlineRegistry _outlineRegistry;
         private bool _inTimeOut;
         private float lastInteractionTime;
         private float lastDropTime;
@@ -35,15 +37,17 @@ namespace Game.Scripts.GameFiles.Items
        
         
         private List<Collider> targetsInRadius;
-        
+        public float InteractionDistance => interactionDistance;
         [Inject]
         private void Construct(GameInputManager gameInputManager,  
             PlayerInventoryModel playerInventoryModel,
-            PhysicalItemRegistry    physicalItemRegistry)
+            PhysicalItemRegistry    physicalItemRegistry,
+            OutlineRegistry outlineRegistry)
         {
             _gameInput = gameInputManager.GameInput;
             _playerInventoryModel = playerInventoryModel;
             _physicalItemRegistry = physicalItemRegistry;
+            _outlineRegistry = outlineRegistry;
         }
 
         public override void OnStartLocalPlayer()
@@ -140,18 +144,17 @@ namespace Game.Scripts.GameFiles.Items
             if (!targetsInRadius.Contains(collider))
                 targetsInRadius.Add(collider);
             
-            _playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;
-            if (targetsInRadius.Contains(collider) && targetsInRadius[0].TryGetComponent(out Outline outline))
+            /*_playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;*/
+            if (targetsInRadius.Contains(collider) && _outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
                 outline.enabled = true;
         }
         
         private void OnColliderExit(Collider collider)
         {
-            // Debug.Log($"[{gameObject.name}] OnColliderExit: {collider.name}");
             targetsInRadius.Clear();
             
-            _playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;
-            if (collider.TryGetComponent(out Outline outline))
+            /*_playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;*/
+            if (_outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
                 outline.enabled = false;
         }
 
@@ -163,7 +166,7 @@ namespace Game.Scripts.GameFiles.Items
                 lastInteractionTime = Time.time;
                 var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+                if (Physics.Raycast(ray, out hit, interactionDistance)) //, interactionLayer
                 {
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
@@ -182,7 +185,7 @@ namespace Game.Scripts.GameFiles.Items
                     }
                 }
 
-                if (!_playerInventoryModel.IsAbleInteract) return;
+                /*if (!_playerInventoryModel.IsAbleInteract) return;*/
             }
         }
 

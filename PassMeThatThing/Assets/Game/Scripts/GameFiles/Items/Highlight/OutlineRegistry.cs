@@ -27,12 +27,14 @@ namespace Game.Scripts.GameFiles.Items.Highlight
                 _outlines.Remove(outlineObject);
         }
 
-        public Outline TryGetOutline(GameObject outline)
+        public Outline TryGetOutline(GameObject outline, out Outline outlineComponent)
         {
             if (_outlines.ContainsKey(outline))
             {
+                outlineComponent = _outlines[outline];
                 return _outlines[outline];
             }
+            outlineComponent = null;
             return null;
         }
     }
