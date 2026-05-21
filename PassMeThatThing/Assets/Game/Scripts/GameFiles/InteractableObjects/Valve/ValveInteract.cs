@@ -12,6 +12,8 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Valve
 {
     public class ValveInteract : NetworkBehaviour, IInteractable
     {
+        [SerializeField] private ParticleSystem impactParticles;
+        
         [SerializeField] private Vector3 rotationAxis = Vector3.forward;
         [SerializeField] private float closedAngle = 0f;
         [SerializeField] private float openAngle = 360f;
@@ -54,6 +56,8 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Valve
             Debug.Log("Interacting...");
             CmdToggleValve();
             CmdStopEvent();
+            
+            impactParticles.Play();
         }
 
         [Command(requiresAuthority = false)]
