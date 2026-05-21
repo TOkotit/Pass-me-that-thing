@@ -16,7 +16,7 @@ namespace MainCharacter
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
         
-        private bool _subscribed;
+        private bool _subscribed; 
         private Vector3 _lastSentDirection;
         
         

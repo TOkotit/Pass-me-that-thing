@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -20,8 +22,18 @@ namespace Game.Scripts.GameFiles.Items.Highlight
         {
             if (_outline)
             {
-                _outlineRegistry.Register(_outline);
+                if (OutlineRegistry.Instance != null)
+                    OutlineRegistry.Instance.Register(_outline);
+                else
+                    StartCoroutine(RegisterWhenReady());
             }
+        }
+
+        private IEnumerator RegisterWhenReady()
+        {
+            while (OutlineRegistry.Instance == null)
+                yield return null;
+            OutlineRegistry.Instance.Register(_outline);
         }
     }
 }

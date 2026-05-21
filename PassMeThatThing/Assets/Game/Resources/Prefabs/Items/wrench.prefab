@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 2742765135364868261}
   - component: {fileID: 7776855572588576369}
   - component: {fileID: 4913154011383626854}
-  - component: {fileID: -3324727747722596945}
+  - component: {fileID: 6213635256034360291}
   m_Layer: 7
   m_Name: wrench
   m_TagString: Item
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMode: 0
+  outlineMode: 1
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
   outlineWidth: 5
   precomputeOutline: 0
@@ -290,7 +290,7 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
---- !u!114 &-3324727747722596945
+--- !u!114 &6213635256034360291
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -299,12 +299,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6289893463516360249}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11aa7f1fbe574a3192d2270c73704997, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _outline: {fileID: 2742765135364868261}
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0
