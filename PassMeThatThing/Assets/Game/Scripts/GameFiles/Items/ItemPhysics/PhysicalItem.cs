@@ -24,9 +24,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Rigidbody RightHandPoint => rightHandPoint;
         [SerializeField] private Vector3 defaultPosition;
         public Vector3 DefaultPosition => defaultPosition;
-        [SyncVar]
-        [SerializeField] private bool isHeld;
-        public bool IsHeld {get => isHeld; set => isHeld = value; }
+        
+        [SerializeField] private bool canBeOwned;
+        public bool CanBeOwned => canBeOwned;
+        
         private LMBReaction reaction;
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 

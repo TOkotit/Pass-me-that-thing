@@ -130,8 +130,8 @@ namespace Game.Scripts.GameFiles.Items
             {
                 lastInteractionTime = Time.time;
                 var hands = _physicalItemInteractionController.HandsMovement;
-                float throwForce = hands.CurrentThrowForce;
-                bool canThrow = hands.CanThrow;
+                var throwForce = hands.CurrentThrowForce;
+                var canThrow = hands.CanThrow;
         
                 inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, throwForce, canThrow);
                 hands.ResetCharge(); 
@@ -211,19 +211,24 @@ namespace Game.Scripts.GameFiles.Items
 
         private void Select1(InputAction.CallbackContext context)
         {
-            _playerInventoryModel.ActiveSlotIndex = 0;
-            inventory.CmdDrawItem(0, _physicalItemInteractionController.Pivot.position);
+            SelectSlot(0);
         }
         
         private void Select2(InputAction.CallbackContext context)
         {
-            _playerInventoryModel.ActiveSlotIndex = 1;
-            inventory.CmdDrawItem(1, _physicalItemInteractionController.Pivot.position);
+            SelectSlot(1);
         }
         private void Select3(InputAction.CallbackContext context)
         {
-            _playerInventoryModel.ActiveSlotIndex = 2;
-            inventory.CmdDrawItem(2, _physicalItemInteractionController.Pivot.position);
+            SelectSlot(2);
+        }
+
+        private void SelectSlot(int index)
+        {
+            if (_physicalItemInteractionController.CurrentHeldItem && !_physicalItemInteractionController.CurrentHeldItem.CanBeOwned)
+            { inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, 0, true); }
+            _playerInventoryModel.ActiveSlotIndex = index;
+            inventory.CmdDrawItem(index, _physicalItemInteractionController.Pivot.position);
         }
     }
 }
