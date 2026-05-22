@@ -2,7 +2,7 @@ using System;
 using Game.Scripts.GameFiles.Items;
 using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     public class InteractionZoneAlign : MonoBehaviour
     {

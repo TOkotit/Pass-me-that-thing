@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
-    [CreateAssetMenu(fileName = "CombatStats", menuName = "MainCharacter/CombatStatsSO")]
+    [CreateAssetMenu(fileName = "CombatStats", menuName = "MainCharacter_old/CombatStatsSO")]
     public class CombatStatsSO : ScriptableObject
     {
         [SerializeField] private float parryReloadDelay;

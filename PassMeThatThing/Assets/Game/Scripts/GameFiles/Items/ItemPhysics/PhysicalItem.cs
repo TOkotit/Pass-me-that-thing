@@ -1,7 +1,7 @@
-using System;
+
+using Game.Entity;
 using Game.Scripts.Enums;
 using Mirror;
-using Systems;
 using UnityEngine;
 using VContainer;
 
@@ -27,6 +27,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         
         [SerializeField] private bool canBeOwned;
         public bool CanBeOwned => canBeOwned;
+        
+        private MainCharacter owner;
+        public MainCharacter Owner {get => owner; set => owner = value;}
+        
         
         private LMBReaction reaction;
         public LMBReaction Reaction => reaction;

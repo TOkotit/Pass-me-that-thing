@@ -6,14 +6,14 @@ using Systems;
 using UnityEngine;
 using VContainer;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
-    public class MainCharacter : Damagable
+    public class MainCharacter_old : Damagable
     {
-        private MainCharacterModel _mainCharacterModel;
+        private MainCharacterModel_old _mainCharacterModel;
         [Inject] private CharacterController _characterController;
         [Inject]
-        private void SetupModel(Stamina stamina, Health health, MovementStatsSO stats, [CanBeNull] MainCharacterModel mainCharacterModel, CombatStatsSO  combatStats)
+        private void SetupModel(Stamina stamina, Health health, MovementStatsSO stats, [CanBeNull] MainCharacterModel_old mainCharacterModel, CombatStatsSO  combatStats)
         {
             _mainCharacterModel = mainCharacterModel;
             mainCharacterModel.Stamina = stamina;
@@ -31,7 +31,7 @@ namespace MainCharacter
             _mainCharacterModel.ParryDuration = combatStats.ParryDuration;
         }
         public override DamagableModel DamagableModel => _mainCharacterModel;
-        public MainCharacterModel MainCharacterModel => _mainCharacterModel;
+        public MainCharacterModel_old MainCharacterModel => _mainCharacterModel;
         [SerializeField] private GameObject arms;
         public GameObject Arms => arms;
         

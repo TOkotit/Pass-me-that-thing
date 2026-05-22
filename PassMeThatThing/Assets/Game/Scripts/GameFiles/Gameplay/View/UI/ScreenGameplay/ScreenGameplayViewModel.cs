@@ -1,7 +1,7 @@
 ﻿using System;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;
-using MainCharacter;
+using MainCharacter_old;
 using ObservableCollections;
 using R3;
 using Systems;

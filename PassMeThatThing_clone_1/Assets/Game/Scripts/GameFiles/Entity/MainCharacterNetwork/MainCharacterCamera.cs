@@ -5,7 +5,7 @@ using Systems;
 using UnityEngine;
 using VContainer;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     [RequireComponent(typeof(Camera))]
     public class MainCharacterCamera : MonoBehaviour

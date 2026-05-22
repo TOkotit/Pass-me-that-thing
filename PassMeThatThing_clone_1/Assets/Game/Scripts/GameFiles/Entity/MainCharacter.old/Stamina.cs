@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     public class Stamina
     {

@@ -1,5 +1,7 @@
 using System;
 using DI;
+using Entity;
+using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -22,8 +24,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private Action<Vector3> OnPositionChanged;
         
         [SerializeField] private PhysicalItem _heldItem;
+        [SerializeField] private MainCharacter mainCharacter;
         private HandsMovement _handsMovement;
         private ItemPoolManager _itemPoolManager;
+        private DamagableRegistry _damagableRegistry;
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
 
@@ -31,7 +35,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             InjectSelf();
         }
-
+        [Inject]
+        private void Construct(DamagableRegistry damagableRegistry)
+        {
+            _damagableRegistry = damagableRegistry;
+        }
         private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
@@ -63,7 +71,15 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [ClientRpc]
         private void TargetDrop()
         {
-            _heldItem = null;
+            if (_heldItem)
+            {
+                if (_heldItem.CanBeOwned)
+                {
+                    _heldItem.Owner = null;
+                }
+
+                _heldItem = null;
+            }
         }
         
         
@@ -71,8 +87,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void PhysicalPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
+            if (_heldItem.CanBeOwned) {
+                var damagable = mainCharacter;
+                _heldItem.Owner = damagable;
+            }
             TargetPickUpItem(item);
-            //item.Network.netIdentity.AssignClientAuthority(connectionToClient);
             _handsMovement.GrabItem(item);
         }
 
@@ -80,17 +99,30 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void TargetPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
+            if (_heldItem && _heldItem.CanBeOwned) {
+                var damagable = mainCharacter;
+                _heldItem.Owner = damagable;
+            }
         }
         
         [TargetRpc]
         public void TargetClearHeldItem()
         {
-            _heldItem = null;
+            if (_heldItem)
+            {
+                _heldItem.Owner = null;
+                _heldItem = null;
+            }
         }
         [Server]
         public void ServerClearHeldItem()
         {
-            _heldItem = null;
+            if (_heldItem)
+            {
+                _heldItem.Owner = null;
+                _heldItem = null;
+            }
+
             TargetClearHeldItem();
         }
         
@@ -100,6 +132,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (_heldItem)
             {
                 _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow); 
+                _heldItem.Owner = null;
                 _heldItem = null;
                 TargetClearHeldItem();
             }

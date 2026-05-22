@@ -3,7 +3,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     public class MainCharacterInitializer : IStartable
     {

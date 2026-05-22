@@ -1,7 +1,7 @@
 ﻿using System;
 using Enums;
 using Game.Scripts.GameFiles.Entity;
-using MainCharacter;
+using MainCharacter_old;
 using UnityEngine;
 
 namespace Entity

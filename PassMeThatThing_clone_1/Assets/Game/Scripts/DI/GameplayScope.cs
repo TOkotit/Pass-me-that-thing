@@ -1,21 +1,14 @@
 using Entity;
-using Game;
-using Game.Gameplay;
+using Game.Entity;
 using Game.Gameplay.Root;
 using VContainer;
 using VContainer.Unity;
-using Systems;
 using UnityEngine;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using MainCharacter;
-using R3;
-using Unity.VisualScripting;
-using Utils;
-using UIRoot;
 
 namespace DI
 {
@@ -57,6 +50,8 @@ namespace DI
             
             var damagableRegistry = new DamagableRegistry();
             builder.RegisterInstance(damagableRegistry);
+            
+            builder.Register<MainCharacterModel>(Lifetime.Transient);
         }
     }
 }

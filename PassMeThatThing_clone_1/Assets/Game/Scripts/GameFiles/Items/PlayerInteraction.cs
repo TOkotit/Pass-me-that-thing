@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.Highlight;
@@ -31,6 +32,7 @@ namespace Game.Scripts.GameFiles.Items
         private float lastDropTime;
         
         [SerializeField] private PhysicalItemInteractionController _physicalItemInteractionController;
+        [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private LayerMask interactionLayer;
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1;
@@ -38,6 +40,8 @@ namespace Game.Scripts.GameFiles.Items
         
         private List<Collider> targetsInRadius;
         public float InteractionDistance => interactionDistance;
+        public PhysicalItemInteractionController  PhysicalItemInteractionController => _physicalItemInteractionController;
+        
         [Inject]
         private void Construct(GameInputManager gameInputManager,  
             PlayerInventoryModel playerInventoryModel,
@@ -126,6 +130,11 @@ namespace Game.Scripts.GameFiles.Items
         
         private void OnDrop(InputAction.CallbackContext context)
         {
+            Drop();
+        }
+
+        public void Drop()
+        {
             if (Time.time - lastInteractionTime > interactionTimeOut)
             {
                 lastInteractionTime = Time.time;
@@ -144,7 +153,6 @@ namespace Game.Scripts.GameFiles.Items
             if (!targetsInRadius.Contains(collider))
                 targetsInRadius.Add(collider);
             
-            /*_playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;*/
             if (targetsInRadius.Contains(collider) && _outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
                 outline.enabled = true;
         }
@@ -152,8 +160,6 @@ namespace Game.Scripts.GameFiles.Items
         private void OnColliderExit(Collider collider)
         {
             targetsInRadius.Clear();
-            
-            /*_playerInventoryModel.IsAbleInteract = targetsInRadius.Count > 0;*/
             if (_outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
                 outline.enabled = false;
         }

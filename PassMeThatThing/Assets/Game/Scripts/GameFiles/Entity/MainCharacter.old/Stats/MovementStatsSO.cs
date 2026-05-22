@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     
     // Пока просто создал заранее чтобы было. Конкретно этот файл брать не надо
@@ -11,7 +11,7 @@ namespace MainCharacter
     
     // RE: Bruh
     
-    [CreateAssetMenu(fileName = "MovementStats", menuName = "MainCharacter/MovementStatsSO")]
+    [CreateAssetMenu(fileName = "MovementStats", menuName = "MainCharacter_old/MovementStatsSO")]
     public class MovementStatsSO : ScriptableObject
     {
         [SerializeField] private float _speed = 10;

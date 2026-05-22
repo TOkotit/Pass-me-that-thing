@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     public class LocalVisionShaderApplier : NetworkBehaviour
     {

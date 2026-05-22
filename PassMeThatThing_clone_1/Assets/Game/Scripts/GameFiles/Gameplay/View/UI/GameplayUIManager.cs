@@ -2,7 +2,7 @@
 using Enums;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
 using Game.UI;
-using MainCharacter;
+using MainCharacter_old;
 using R3;
 using Systems;
 using VContainer;

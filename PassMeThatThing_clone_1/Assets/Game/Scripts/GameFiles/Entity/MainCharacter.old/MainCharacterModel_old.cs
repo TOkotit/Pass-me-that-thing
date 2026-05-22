@@ -5,9 +5,9 @@ using NUnit.Framework;
 using R3;
 using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
-    public class MainCharacterModel : DamagableModel
+    public class MainCharacterModel_old : DamagableModel
     {
         private Stamina _stamina;
         public Stamina  Stamina { get => _stamina; set => _stamina = value; }
@@ -35,7 +35,7 @@ namespace MainCharacter
         public float ParryDuration { get => _parryDuration; set => _parryDuration = value; }
         
         
-        public MainCharacterModel(Stamina stamina, Health health) : base()
+        public MainCharacterModel_old(Stamina stamina, Health health) : base()
         {
             _stamina = stamina;
             //_health = health;

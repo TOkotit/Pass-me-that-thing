@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     public interface IControllable
     {

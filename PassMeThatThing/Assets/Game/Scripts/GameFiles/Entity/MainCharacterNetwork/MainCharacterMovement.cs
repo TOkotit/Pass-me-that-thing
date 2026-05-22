@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using DI;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
-using MainCharacter;
+using MainCharacter_old;
 using Mirror;
 using UnityEngine;
 using VContainer;

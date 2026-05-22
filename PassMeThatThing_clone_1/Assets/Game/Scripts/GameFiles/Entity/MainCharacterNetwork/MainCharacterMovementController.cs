@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
 
-namespace MainCharacter
+namespace MainCharacter_old
 {
     public class MainCharacterMovementController : NetworkBehaviour
     {

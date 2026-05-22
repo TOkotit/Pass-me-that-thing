@@ -84,8 +84,37 @@ public class PlayerInventory : NetworkBehaviour
         if (!physicalItem) return;
         var networkItem = physicalItem.Network;
         if (!networkItem) return;
-        int targetSlot = -1;
 
+        if (physicalItem.CanBeOwned && physicalItem.Owner)
+        {
+            var oldOwner = physicalItem.Owner;
+            var oldInventory = oldOwner.MainCharacterModel.PlayerInventory;
+            var oldController = oldOwner.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController;
+
+            if (oldInventory)
+            {
+                int slotToRemove = -1;
+                foreach (var kvp in oldInventory.ServerInventory)
+                {
+                    if (kvp.Value.itemId == networkItem.itemId)
+                    {
+                        slotToRemove = kvp.Key;
+                        break;
+                    }
+                }
+                if (slotToRemove != -1)
+                {
+                    oldInventory.ServerInventory.Remove(slotToRemove);
+                }
+            }
+
+            if (oldController)
+            {
+                oldController.ReleaseCurrentItem(0f, false);
+            }
+        }
+
+        int targetSlot = -1;
         if (preferredSlot >= 0 && preferredSlot < size && !ServerInventory.ContainsKey(preferredSlot))
         {
             targetSlot = preferredSlot;
@@ -102,7 +131,7 @@ public class PlayerInventory : NetworkBehaviour
             }
         }
 
-        if (targetSlot == -1) return;   
+        if (targetSlot == -1) return;
 
         ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
         if (_physicalСontroller.CurrentHeldItem)
