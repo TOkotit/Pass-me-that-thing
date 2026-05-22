@@ -79,5 +79,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 PhysicalItemRegistry.Instance.Unregister(this);
             }
         }
+
+        private void OnEnable()
+        {
+            if (!isServer && PhysicalItemRegistry.Instance.TryGetItem(gameObject) == null)
+            {
+                PhysicalItemRegistry.Instance.Register(this);
+            }
+        }
     }
 }

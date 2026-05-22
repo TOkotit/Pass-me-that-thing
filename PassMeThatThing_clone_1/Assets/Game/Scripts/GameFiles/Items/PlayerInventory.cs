@@ -130,6 +130,7 @@ public class PlayerInventory : NetworkBehaviour
         
         itemToDrop.SetActive(true);
         var physicalItem = _physicalItemRegistry.TryGetItem(itemToDrop.gameObject);
+        if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
         if (physicalItem)
         {
             _physicalСontroller.PhysicalPickUpItem(physicalItem);
