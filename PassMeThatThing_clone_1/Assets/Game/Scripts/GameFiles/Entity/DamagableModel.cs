@@ -1,5 +1,6 @@
 ﻿using System;
 using Enums;
+using Game.Scripts.GameFiles.Entity;
 using MainCharacter;
 using UnityEngine;
 
@@ -7,8 +8,8 @@ namespace Entity
 {
     public abstract class DamagableModel
     {
-        protected Health _health;  
-        public Health Health
+        protected GlobalHealthPool _health;  
+        public GlobalHealthPool Health
         {
             get
             {
@@ -17,12 +18,8 @@ namespace Entity
             set
             {
                 _health = value;
-                Debug.Log(_health);
             }
         }
-
-        protected TeamsType teamType;
-        public TeamsType TeamType => teamType;
         
         public event Action OnTakeHit;
         public void TakeHit()

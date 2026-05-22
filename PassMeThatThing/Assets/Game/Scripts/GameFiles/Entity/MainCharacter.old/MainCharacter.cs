@@ -8,7 +8,7 @@ using VContainer;
 
 namespace MainCharacter
 {
-    public class MainCharacter : Character
+    public class MainCharacter : Damagable
     {
         private MainCharacterModel _mainCharacterModel;
         [Inject] private CharacterController _characterController;
@@ -17,7 +17,7 @@ namespace MainCharacter
         {
             _mainCharacterModel = mainCharacterModel;
             mainCharacterModel.Stamina = stamina;
-            mainCharacterModel.Health = health;
+            //mainCharacterModel.Health = health;
             
             _mainCharacterModel.DashCooldown = stats.DashCooldown;
             _mainCharacterModel.DashSpeed = stats.DashSpeed;
@@ -30,7 +30,7 @@ namespace MainCharacter
             _mainCharacterModel.ParryReloadDelay = combatStats.ParryReloadDelay;
             _mainCharacterModel.ParryDuration = combatStats.ParryDuration;
         }
-        public override DamagableModel Damagable => _mainCharacterModel;
+        public override DamagableModel DamagableModel => _mainCharacterModel;
         public MainCharacterModel MainCharacterModel => _mainCharacterModel;
         [SerializeField] private GameObject arms;
         public GameObject Arms => arms;

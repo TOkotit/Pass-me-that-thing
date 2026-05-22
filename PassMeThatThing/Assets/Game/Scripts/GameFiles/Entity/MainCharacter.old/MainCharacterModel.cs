@@ -33,16 +33,12 @@ namespace MainCharacter
         public int WallJumpCount { get => _wallJumpCount; set => _wallJumpCount = value; }
         public float ParryReloadDelay { get => _parryReloadDelay; set => _parryReloadDelay = value; }
         public float ParryDuration { get => _parryDuration; set => _parryDuration = value; }
-
-        public MainCharacterModel()
-        {
-            teamType = TeamsType.Player;
-        }
+        
         
         public MainCharacterModel(Stamina stamina, Health health) : base()
         {
             _stamina = stamina;
-            _health = health;
+            //_health = health;
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 using VContainer;
 
 namespace Entity
 {
-    public abstract class Character : MonoBehaviour
+    public abstract class Damagable : NetworkBehaviour
     {
         [Inject] protected DamagableRegistry Registry { get; private set; }
-        public abstract DamagableModel Damagable { get; }
+        public abstract DamagableModel DamagableModel { get; }
 
         protected virtual void Start()
         {

@@ -5,30 +5,35 @@ namespace Entity
 {
     public class DamagableRegistry
     {
-        private Dictionary<GameObject, DamagableModel> _damagableObjects = new Dictionary<GameObject, DamagableModel>();
-        
-        public void Register(Character character)
+        public static DamagableRegistry Instance { get; private set; }
+        private Dictionary<GameObject, Damagable> _damagableObjects = new Dictionary<GameObject, Damagable>();
+        public DamagableRegistry()
         {
-            var damagable = character.gameObject;
-            if (!_damagableObjects.ContainsKey(damagable))
-                _damagableObjects.Add(damagable, character.Damagable); 
-            Debug.Log($"{character.gameObject.name} has been registered");
+            Instance = this;
+        }
+        
+        public void Register(Damagable damagable)
+        {
+            var damagableObject = damagable.gameObject;
+            if (!_damagableObjects.ContainsKey(damagableObject))
+                _damagableObjects.Add(damagableObject, damagable); 
+            Debug.Log($"{damagable.gameObject.name} has been registered");
         }
         
         
-        public void Unregister(Character character)
+        public void Unregister(Damagable damagable)
         {
-            var damagable = character.gameObject;
-            if (_damagableObjects.ContainsKey(damagable))
-                _damagableObjects.Remove(damagable);
+            var damagableObject = damagable.gameObject;
+            if (_damagableObjects.ContainsKey(damagableObject))
+                _damagableObjects.Remove(damagableObject);
             
         }
 
-        public DamagableModel TryGetCharacter(GameObject character)
+        public Damagable TryGetCharacter(GameObject damagable)
         {
-            if (_damagableObjects.ContainsKey(character))
+            if (_damagableObjects.ContainsKey(damagable))
             {
-                return _damagableObjects[character];
+                return _damagableObjects[damagable];
             }
             return null;
         }

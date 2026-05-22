@@ -1,3 +1,4 @@
+using Entity;
 using Game;
 using Game.Gameplay;
 using Game.Gameplay.Root;
@@ -48,12 +49,14 @@ namespace DI
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
-            /*builder.Register<PhysicalItemRegistry>(Lifetime.Singleton);*/
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);
             
             var outlineRegistry = new OutlineRegistry();
             builder.RegisterInstance(outlineRegistry);
+            
+            var damagableRegistry = new DamagableRegistry();
+            builder.RegisterInstance(damagableRegistry);
         }
     }
 }

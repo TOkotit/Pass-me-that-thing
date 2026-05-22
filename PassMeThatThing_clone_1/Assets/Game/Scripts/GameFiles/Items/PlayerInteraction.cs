@@ -194,7 +194,7 @@ namespace Game.Scripts.GameFiles.Items
             _physicalItemInteractionController.ChargeDrop();
         }
         
-        private void TryPickUp(Collider target)
+        public void TryPickUp(Collider target)
         {
             var item = _physicalItemRegistry.TryGetItem(target.gameObject);
             Debug.Log("Trying Pick Up" + target.gameObject);
