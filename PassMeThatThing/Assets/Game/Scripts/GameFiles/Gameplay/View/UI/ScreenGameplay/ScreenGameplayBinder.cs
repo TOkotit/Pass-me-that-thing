@@ -19,6 +19,8 @@ namespace Game.Gameplay.View.UI
         
         [SerializeField] private TextMeshProUGUI _staminaText;
         
+        [SerializeField] private TextMeshProUGUI _throwChargeText;
+        
         [SerializeField] private Image[] _itemSlots;
         
         [SerializeField] private Image[] _itemImages;
@@ -42,6 +44,12 @@ namespace Game.Gameplay.View.UI
             set => _staminaText = value;
         }
 
+        public TextMeshProUGUI ThrowChargeText
+        {
+            get => _throwChargeText;
+            set => _throwChargeText = value;
+        }
+
         private void Start()
         {
             // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
@@ -58,6 +66,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.InitImage(SetItemImageSprite);
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
+            
+            ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
         }
 
         private void OnDestroy()
@@ -71,6 +81,8 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
             ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
+            ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
+            
             ViewModel.RequestUnsub();
         }
 
@@ -84,6 +96,11 @@ namespace Game.Gameplay.View.UI
             StaminaText.text = newValue.ToString(CultureInfo.InvariantCulture);
         }
 
+        private void UpdateThrowChargeText(int newValue)
+        {
+            ThrowChargeText.text = newValue == 0 ? "" : $"{newValue.ToString()}%";
+        }
+        
         private void ChangeInteractionTextVisibility(bool isVisible)
         {
             _interactionText.SetActive(isVisible);
