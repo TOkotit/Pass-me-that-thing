@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using DG.Tweening;
 using Game.UI;
 using TMPro;
 using UnityEngine;
@@ -59,8 +60,9 @@ namespace Game.Gameplay.View.UI
             //
             // ViewModel.InitStaminaText(UpdateStaminaText);
             // ViewModel.RequestSubStaminaText(UpdateStaminaText);
+
+            SetActiveItemSlot(_activeSlotIndex);
             
-            _itemSlots[_activeSlotIndex].color = selectedColor;
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);
@@ -109,10 +111,12 @@ namespace Game.Gameplay.View.UI
         private void SetActiveItemSlot(int index)
         {
             _itemSlots[_activeSlotIndex].color = noSelectionColor;
+            _itemSlots[_activeSlotIndex].transform.DOScale(1f, 0.3f);
             
             _activeSlotIndex = index;
 
             _itemSlots[_activeSlotIndex].color = selectedColor;
+            _itemSlots[_activeSlotIndex].transform.DOScale(1.2f, 0.3f);
         }
 
         private void SetItemImageSprite(int index, Sprite sprite)
