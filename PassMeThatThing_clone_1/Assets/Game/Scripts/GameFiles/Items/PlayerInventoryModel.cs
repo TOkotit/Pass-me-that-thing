@@ -12,6 +12,8 @@ namespace Game.Scripts.GameFiles.Items
         private int _activeSlotIndex;
         private bool _isAbleInteract;
 
+        private int _throwCharge;
+        
         /*public bool IsAbleInteract
         {
             get => _isAbleInteract;
@@ -37,8 +39,20 @@ namespace Game.Scripts.GameFiles.Items
                 _activeSlotIndex = value;
             } 
         }
+
+        public int ThrowCharge
+        {
+            get => _throwCharge;
+            set
+            {
+                if (value != _throwCharge) 
+                    OnThrowChargeChanged?.Invoke(value);
+                _throwCharge = value;
+            }
+        }
+
         public event Action<int> OnActiveSlotChanged;
         
-        
+        public event Action<int> OnThrowChargeChanged;
     }
 }

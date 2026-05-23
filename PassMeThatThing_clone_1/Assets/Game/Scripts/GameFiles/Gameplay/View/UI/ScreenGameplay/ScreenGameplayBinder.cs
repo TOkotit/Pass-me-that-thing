@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using DG.Tweening;
 using Game.UI;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,8 @@ namespace Game.Gameplay.View.UI
         [SerializeField] private TextMeshProUGUI _healthText;
         
         [SerializeField] private TextMeshProUGUI _staminaText;
+        
+        [SerializeField] private TextMeshProUGUI _throwChargeText;
         
         [SerializeField] private Image[] _itemSlots;
         
@@ -42,6 +45,12 @@ namespace Game.Gameplay.View.UI
             set => _staminaText = value;
         }
 
+        public TextMeshProUGUI ThrowChargeText
+        {
+            get => _throwChargeText;
+            set => _throwChargeText = value;
+        }
+
         private void Start()
         {
             // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
@@ -51,13 +60,16 @@ namespace Game.Gameplay.View.UI
             //
             // ViewModel.InitStaminaText(UpdateStaminaText);
             // ViewModel.RequestSubStaminaText(UpdateStaminaText);
+
+            SetActiveItemSlot(_activeSlotIndex);
             
-            _itemSlots[_activeSlotIndex].color = selectedColor;
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
+            
+            ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
         }
 
         private void OnDestroy()
@@ -71,6 +83,8 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
             ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
+            ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
+            
             ViewModel.RequestUnsub();
         }
 
@@ -84,6 +98,11 @@ namespace Game.Gameplay.View.UI
             StaminaText.text = newValue.ToString(CultureInfo.InvariantCulture);
         }
 
+        private void UpdateThrowChargeText(int newValue)
+        {
+            ThrowChargeText.text = newValue == 0 ? "" : $"{newValue.ToString()}%";
+        }
+        
         private void ChangeInteractionTextVisibility(bool isVisible)
         {
             _interactionText.SetActive(isVisible);
@@ -92,10 +111,12 @@ namespace Game.Gameplay.View.UI
         private void SetActiveItemSlot(int index)
         {
             _itemSlots[_activeSlotIndex].color = noSelectionColor;
+            _itemSlots[_activeSlotIndex].transform.DOScale(1f, 0.3f);
             
             _activeSlotIndex = index;
 
             _itemSlots[_activeSlotIndex].color = selectedColor;
+            _itemSlots[_activeSlotIndex].transform.DOScale(1.2f, 0.3f);
         }
 
         private void SetItemImageSprite(int index, Sprite sprite)

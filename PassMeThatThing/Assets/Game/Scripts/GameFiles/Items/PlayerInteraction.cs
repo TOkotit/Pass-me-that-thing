@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
@@ -27,6 +28,7 @@ namespace Game.Scripts.GameFiles.Items
         private Camera _camera;
         private PhysicalItemRegistry _physicalItemRegistry;
         private OutlineRegistry _outlineRegistry;
+        private DamagableRegistry _damagableRegistry;
         private bool _inTimeOut;
         private float lastInteractionTime;
         private float lastDropTime;
@@ -46,12 +48,14 @@ namespace Game.Scripts.GameFiles.Items
         private void Construct(GameInputManager gameInputManager,  
             PlayerInventoryModel playerInventoryModel,
             PhysicalItemRegistry    physicalItemRegistry,
-            OutlineRegistry outlineRegistry)
+            OutlineRegistry outlineRegistry,
+            DamagableRegistry damagableRegistry)
         {
             _gameInput = gameInputManager.GameInput;
             _playerInventoryModel = playerInventoryModel;
             _physicalItemRegistry = physicalItemRegistry;
             _outlineRegistry = outlineRegistry;
+            _damagableRegistry =  damagableRegistry;
         }
 
         public override void OnStartLocalPlayer()
@@ -172,12 +176,26 @@ namespace Game.Scripts.GameFiles.Items
                 lastInteractionTime = Time.time;
                 var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, interactionDistance)) //, interactionLayer
+                if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer)) //, interactionLayer
                 {
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
                         Debug.Log("Trying Pick Up");
                         TryPickUp(hit.collider);
+                    }
+                    else if (hit.collider.gameObject.CompareTag("Player"))
+                    {
+                        Debug.Log("Попытка передачи другому игроку");
+                        var damagable = _damagableRegistry.TryGetDamagable(hit.collider.gameObject); 
+                        Debug.Log(damagable);
+                        if (damagable && damagable != mainCharacter) 
+                        {
+                            if (_physicalItemInteractionController.CurrentHeldItem && damagable is MainCharacter player)
+                            {
+                                inventory.CmdGiveItemToPlayer(player);
+                            }
+                        }
+                        
                     }
                     else if (hit.collider.gameObject.CompareTag("Door"))
                     {
@@ -186,12 +204,11 @@ namespace Game.Scripts.GameFiles.Items
                     else
                     {
                         hit.collider.gameObject.TryGetComponent(out IInteractable interactable);
+                        //Переделать через события или регистр
                         if (interactable == null) return;
                         interactable.Interact();
                     }
                 }
-
-                /*if (!_playerInventoryModel.IsAbleInteract) return;*/
             }
         }
 
@@ -211,7 +228,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryOpen(Collider target)
         {
-            var interactable = target.GetComponentInParent<IInteractable>();
+            var interactable = target.GetComponentInParent<IInteractable>();//Переделать 
             interactable?.Interact();
         }
 

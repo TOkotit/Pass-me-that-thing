@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
@@ -26,6 +28,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Header("Grabbing")]
         [SerializeField] private ConfigurableJoint grabJoint;   
         [SerializeField] private Rigidbody pivot;
+
+        [Inject] private PlayerInventoryModel _playerInventoryModel;
+        
         public Rigidbody Pivot => pivot;
         public float CurrentThrowForce => _throwForce;
 
@@ -145,6 +150,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 if (_throwForce < maxThrowForce)
                 {
                     _throwForce += Time.fixedDeltaTime * throwForceGrow;
+                    UpdateModel();
                 }
             }
         }
@@ -155,6 +161,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             _isThrowing = false;
             _throwForce = 0;
+            UpdateModel();
+        }
+
+        private void UpdateModel()
+        {
+            _playerInventoryModel.ThrowCharge = (int)(_throwForce / maxThrowForce * 100);
         }
     }
 }
