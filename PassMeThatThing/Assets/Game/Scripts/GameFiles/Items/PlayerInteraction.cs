@@ -176,7 +176,7 @@ namespace Game.Scripts.GameFiles.Items
                 lastInteractionTime = Time.time;
                 var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, interactionDistance)) //, interactionLayer
+                if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer)) //, interactionLayer
                 {
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {

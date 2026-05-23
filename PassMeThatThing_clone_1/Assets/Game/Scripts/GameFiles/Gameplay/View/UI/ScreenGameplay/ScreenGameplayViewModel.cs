@@ -83,6 +83,16 @@ namespace Game.Gameplay.View.UI
             _playerInventoryModel.OnActiveSlotChanged -= f;
         }
         
+        public void RequestSubThrowCharge(Action<int> f)
+        {
+            _playerInventoryModel.OnThrowChargeChanged += f;
+        }
+        
+        public void RequestUnsubThrowCharge(Action<int> f)
+        {
+            _playerInventoryModel.OnThrowChargeChanged -= f;
+        }
+        
         public void RequestSubInteractionText(Action<bool> f)
         {
             _playerInventoryModel.OnAbleInteract += f;
