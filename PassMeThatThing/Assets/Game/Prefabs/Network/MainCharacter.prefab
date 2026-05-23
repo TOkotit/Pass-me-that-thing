@@ -1418,7 +1418,7 @@ MonoBehaviour:
   maxThrowForce: 50
   minChargeTime: 0.3
   grabJoint: {fileID: 8093723739365716607}
-  pivot: {fileID: 2025009112748668658}
+  pivot: {fileID: 1221596706237876440}
 --- !u!1 &2645522413353200517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3732,8 +3732,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4927395285961022493}
-  - component: {fileID: 2025009112748668658}
-  - component: {fileID: 4912773935991518358}
   - component: {fileID: 2447738185046492951}
   m_Layer: 8
   m_Name: HandlingPivot
@@ -3758,49 +3756,6 @@ Transform:
   - {fileID: 4925432040484134864}
   m_Father: {fileID: 845892500949389548}
   m_LocalEulerAnglesHint: {x: -12.85, y: 0, z: 0}
---- !u!54 &2025009112748668658
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4677326810371898778}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!138 &4912773935991518358
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4677326810371898778}
-  serializedVersion: 1
-  m_ConnectedBody: {fileID: 1527932578361883255}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 0
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!114 &2447738185046492951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5877,6 +5832,7 @@ GameObject:
   - component: {fileID: 4874145427392134729}
   - component: {fileID: 1221596706237876440}
   - component: {fileID: 8093723739365716607}
+  - component: {fileID: 2354457179108116716}
   m_Layer: 8
   m_Name: Grab
   m_TagString: Untagged
@@ -5893,7 +5849,7 @@ Transform:
   m_GameObject: {fileID: 7679785167110516565}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.223}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5922,7 +5878,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -5948,7 +5904,7 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 0
+    spring: 600
     damper: 0
   m_LinearLimit:
     limit: 0
@@ -6026,8 +5982,24 @@ ConfigurableJoint:
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
-  m_MassScale: 2
-  m_ConnectedMassScale: 0.5
+  m_MassScale: 0.5
+  m_ConnectedMassScale: 2
+--- !u!138 &2354457179108116716
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7679785167110516565}
+  serializedVersion: 1
+  m_ConnectedBody: {fileID: 1527932578361883255}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1 &8285682312484365845
 GameObject:
   m_ObjectHideFlags: 0
