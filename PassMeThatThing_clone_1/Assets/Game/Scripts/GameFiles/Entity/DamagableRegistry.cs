@@ -19,7 +19,12 @@ namespace Entity
                 _damagableObjects.Add(damagableObject, damagable); 
             Debug.Log($"Damagable: {damagable.gameObject.name} has been registered");
         }
-        
+        public void Register(GameObject gameObject,Damagable damagable)
+        {
+            if (!_damagableObjects.ContainsKey(gameObject))
+                _damagableObjects.Add(gameObject, damagable); 
+            Debug.Log($"Damagable: {damagable.gameObject.name} has been registered");
+        }
         
         public void Unregister(Damagable damagable)
         {

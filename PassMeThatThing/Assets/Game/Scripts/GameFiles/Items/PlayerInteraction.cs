@@ -174,10 +174,26 @@ namespace Game.Scripts.GameFiles.Items
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, interactionDistance)) //, interactionLayer
                 {
+                    Debug.Log($"Raycast hit: {hit.collider.gameObject.name}, tag: {hit.collider.tag}");
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
                         Debug.Log("Trying Pick Up");
                         TryPickUp(hit.collider);
+                    }
+                    else if (hit.collider.gameObject.CompareTag("Player"))
+                    {
+                        Debug.Log("Попытка передачи другому игроку");
+                        var player = hit.collider.gameObject.GetComponentInParent<MainCharacter>();
+                        //Можно будет убрать GetComponent когда у нас коллайдер будет на том же объекте
+                        //что и главный скрипт персонажа
+                        if (player && player != mainCharacter) 
+                        {
+                            if (_physicalItemInteractionController.CurrentHeldItem)
+                            {
+                                inventory.CmdGiveItemToPlayer(_physicalItemInteractionController.CurrentHeldItem, player);
+                            }
+                        }
+                        
                     }
                     else if (hit.collider.gameObject.CompareTag("Door"))
                     {
@@ -186,12 +202,11 @@ namespace Game.Scripts.GameFiles.Items
                     else
                     {
                         hit.collider.gameObject.TryGetComponent(out IInteractable interactable);
+                        //Переделать через события или регистр
                         if (interactable == null) return;
                         interactable.Interact();
                     }
                 }
-
-                /*if (!_playerInventoryModel.IsAbleInteract) return;*/
             }
         }
 
@@ -211,7 +226,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryOpen(Collider target)
         {
-            var interactable = target.GetComponentInParent<IInteractable>();
+            var interactable = target.GetComponentInParent<IInteractable>();//Переделать 
             interactable?.Interact();
         }
 
