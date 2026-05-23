@@ -21,7 +21,7 @@ namespace Game.NewMainCharacterPhysics
             var fixedJoint = col.GetComponent<FixedJoint>();
             fixedJoint.connectedBody = bodyPart;
             
-            _damagableRegistry.Register(gameObject, player);
+            _damagableRegistry.Register(col.gameObject, player);
         }
     }
 }

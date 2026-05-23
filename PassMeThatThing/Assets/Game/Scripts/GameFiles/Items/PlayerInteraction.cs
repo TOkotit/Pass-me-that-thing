@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
@@ -27,6 +28,7 @@ namespace Game.Scripts.GameFiles.Items
         private Camera _camera;
         private PhysicalItemRegistry _physicalItemRegistry;
         private OutlineRegistry _outlineRegistry;
+        private DamagableRegistry _damagableRegistry;
         private bool _inTimeOut;
         private float lastInteractionTime;
         private float lastDropTime;
@@ -46,12 +48,14 @@ namespace Game.Scripts.GameFiles.Items
         private void Construct(GameInputManager gameInputManager,  
             PlayerInventoryModel playerInventoryModel,
             PhysicalItemRegistry    physicalItemRegistry,
-            OutlineRegistry outlineRegistry)
+            OutlineRegistry outlineRegistry,
+            DamagableRegistry damagableRegistry)
         {
             _gameInput = gameInputManager.GameInput;
             _playerInventoryModel = playerInventoryModel;
             _physicalItemRegistry = physicalItemRegistry;
             _outlineRegistry = outlineRegistry;
+            _damagableRegistry =  damagableRegistry;
         }
 
         public override void OnStartLocalPlayer()
@@ -174,7 +178,6 @@ namespace Game.Scripts.GameFiles.Items
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, interactionDistance)) //, interactionLayer
                 {
-                    Debug.Log($"Raycast hit: {hit.collider.gameObject.name}, tag: {hit.collider.tag}");
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
                         Debug.Log("Trying Pick Up");
@@ -183,14 +186,13 @@ namespace Game.Scripts.GameFiles.Items
                     else if (hit.collider.gameObject.CompareTag("Player"))
                     {
                         Debug.Log("Попытка передачи другому игроку");
-                        var player = hit.collider.gameObject.GetComponentInParent<MainCharacter>();
-                        //Можно будет убрать GetComponent когда у нас коллайдер будет на том же объекте
-                        //что и главный скрипт персонажа
-                        if (player && player != mainCharacter) 
+                        var damagable = _damagableRegistry.TryGetDamagable(hit.collider.gameObject); 
+                        Debug.Log(damagable);
+                        if (damagable && damagable != mainCharacter) 
                         {
-                            if (_physicalItemInteractionController.CurrentHeldItem)
+                            if (_physicalItemInteractionController.CurrentHeldItem && damagable is MainCharacter player)
                             {
-                                inventory.CmdGiveItemToPlayer(_physicalItemInteractionController.CurrentHeldItem, player);
+                                inventory.CmdGiveItemToPlayer(player);
                             }
                         }
                         

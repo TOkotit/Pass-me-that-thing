@@ -178,16 +178,16 @@ public class PlayerInventory : NetworkBehaviour
             Quaternion dropRot = heldItem.transform.rotation;
             _physicalСontroller.TargetSyncPositionForDrop(connectionToClient, dropPos, dropRot);
             _physicalСontroller.ReleaseCurrentItem(throwForce, canThrow); 
-            /*if (heldItem.Network.netIdentity.connectionToClient != null)
-                heldItem.Network.netIdentity.RemoveClientAuthority();*/
         }
         ServerInventory.Remove(index);
     }
     [Command]
-    public void CmdGiveItemToPlayer(PhysicalItem item, MainCharacter target)
+    public void CmdGiveItemToPlayer(MainCharacter target)
     {
-        if (!item || !target) return;
-        if (_physicalСontroller.CurrentHeldItem != item) return;
+        if (!target) return;
+
+        var item = _physicalСontroller.CurrentHeldItem;
+        if (!item) return;
 
         var targetController = target.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController;
         if (!targetController || targetController.CurrentHeldItem)
@@ -210,7 +210,7 @@ public class PlayerInventory : NetworkBehaviour
         if (!targetInventory) return;
 
         int targetSlot = -1;
-        for (int i = 0; i < 3; i++) 
+        for (int i = 0; i < 3; i++)
         {
             if (!targetInventory.ServerInventory.ContainsKey(i))
             {
@@ -218,10 +218,10 @@ public class PlayerInventory : NetworkBehaviour
                 break;
             }
         }
-        if (targetSlot == -1) return; 
+        if (targetSlot == -1) return;
 
         ServerInventory.Remove(mySlot);
-        _physicalСontroller.ServerClearHeldItem();
+        _physicalСontroller.ReleaseCurrentItem(0f, false);   
 
         targetInventory.ServerInventory[targetSlot] = new ItemSlot
         {
