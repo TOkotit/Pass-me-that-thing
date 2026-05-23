@@ -2,32 +2,25 @@ using System;
 using DI;
 using Entity;
 using Game.Entity;
-using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using Systems;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
     public class PhysicalItemInteractionController : NetworkBehaviour
     {
-        /*[SyncVar]
-        private uint heldItemNetId;*/
         public PhysicalItem CurrentHeldItem => _heldItem;
 
-        private bool _subscribed;
-        private Action<Vector3> OnPositionChanged;
-        
         [SerializeField] private PhysicalItem _heldItem;
         [SerializeField] private MainCharacter mainCharacter;
         private HandsMovement _handsMovement;
-        private ItemPoolManager _itemPoolManager;
-        private DamagableRegistry _damagableRegistry;
+        private DamagableRegistry _damagableRegistry; 
+        //private int _originalHeldItemLayer;   
+
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
 
@@ -35,62 +28,56 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             InjectSelf();
         }
+
         [Inject]
         private void Construct(DamagableRegistry damagableRegistry)
         {
             _damagableRegistry = damagableRegistry;
         }
+
         private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
         }
-       
-        
+
         private void InjectSelf()
         {
             var scope = FindObjectOfType<GameplayScope>();
-        
             if (scope)
-            {
                 scope.Container.Inject(this);
-            }
             else
-            {
                 Debug.LogError("GameplayScope not found!");
+        }
+
+        private void SetOwnerAndLayer(PhysicalItem item)
+        {
+            if (item.CanBeOwned)
+            {
+                item.Owner = mainCharacter;
+                item.gameObject.layer = LayerMask.NameToLayer("HeldItem");
             }
         }
-      
+        
+        private void RestoreLayerAndClear(PhysicalItem item)
+        {
+            if (item)
+            {
+                item.gameObject.layer = LayerMask.NameToLayer("Interactable");
+                item.Owner = null;
+            }
+        }
+
         public void ChargeDrop()
         {
             if (_heldItem)
-            {
                 _handsMovement.ChargeThrow();
-            }
         }
 
-        [ClientRpc]
-        private void TargetDrop()
-        {
-            if (_heldItem)
-            {
-                if (_heldItem.CanBeOwned)
-                {
-                    _heldItem.Owner = null;
-                }
-
-                _heldItem = null;
-            }
-        }
-        
-        
         [Server]
         public void PhysicalPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
-            if (_heldItem.CanBeOwned) {
-                var damagable = mainCharacter;
-                _heldItem.Owner = damagable;
-            }
+            SetOwnerAndLayer(item);
             TargetPickUpItem(item);
             _handsMovement.GrabItem(item);
         }
@@ -99,45 +86,45 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void TargetPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
-            if (_heldItem && _heldItem.CanBeOwned) {
-                var damagable = mainCharacter;
-                _heldItem.Owner = damagable;
-            }
-        }
-        
-        [TargetRpc]
-        public void TargetClearHeldItem()
-        {
+            SetOwnerAndLayer(item);
             if (_heldItem)
-            {
-                _heldItem.Owner = null;
-                _heldItem = null;
-            }
+                _handsMovement.GrabItem(_heldItem);
         }
-        [Server]
-        public void ServerClearHeldItem()
-        {
-            if (_heldItem)
-            {
-                _heldItem.Owner = null;
-                _heldItem = null;
-            }
 
-            TargetClearHeldItem();
-        }
-        
         [Server]
         public void ReleaseCurrentItem(float throwForce, bool canThrow)
         {
             if (_heldItem)
             {
-                _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow); 
-                _heldItem.Owner = null;
+                RestoreLayerAndClear(_heldItem);
+                _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow);
                 _heldItem = null;
                 TargetClearHeldItem();
             }
         }
-        
+
+        [Server]
+        public void ServerClearHeldItem()
+        {
+            if (_heldItem)
+            {
+                RestoreLayerAndClear(_heldItem);
+                _heldItem = null;
+            }
+            TargetClearHeldItem();
+        }
+
+        [TargetRpc]
+        public void TargetClearHeldItem()
+        {
+            if (_heldItem)
+            {
+                RestoreLayerAndClear(_heldItem);
+                _handsMovement.ReleaseItem(_heldItem, 0f, false);
+                _heldItem = null;
+            }
+        }
+
         [TargetRpc]
         public void TargetSyncPositionForDrop(NetworkConnection target, Vector3 position, Quaternion rotation)
         {
