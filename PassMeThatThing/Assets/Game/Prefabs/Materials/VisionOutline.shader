@@ -9,13 +9,21 @@ Shader "Custom/VisionOutlineFixed"
 
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent+1" }
+        Tags
+        {
+            "RenderType"="Opaque"
+            "Queue"="Transparent+1"
+            "IgnoreProjector"="True"
+        }
 
         Pass
         {
+            Name "OUTLINE"
+
             Cull Front
             ZWrite Off
             ZTest LEqual
+            Offset 1, 1
             Blend SrcAlpha OneMinusSrcAlpha
 
             HLSLPROGRAM
@@ -29,37 +37,40 @@ Shader "Custom/VisionOutlineFixed"
                 float3 normal : NORMAL;
             };
 
-            struct v2f {
+            struct v2f
+            {
                 float4 pos : SV_POSITION;
-                float3 originalWorldPos : TEXCOORD0; 
+                float3 worldPos : TEXCOORD0;
             };
 
-            float _OutlineWidth;
             float4 _OutlineColor;
+            float _OutlineWidth;
             float _Enabled;
-            
+
             float3 _GlobalVisionPos;
             float _Radius;
 
             v2f vert(appdata v)
             {
                 v2f o;
+
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-                o.originalWorldPos = worldPos; 
+                float3 worldNormal = normalize(UnityObjectToWorldNormal(v.normal));
                 
-                float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-                worldPos += worldNormal * _OutlineWidth;
-                o.pos = mul(UNITY_MATRIX_VP, float4(worldPos, 1.0));
+                worldPos += worldNormal * (_OutlineWidth * 0.5);
+
+                o.pos = UnityWorldToClipPos(worldPos);
+                o.worldPos = worldPos;
                 return o;
             }
 
             fixed4 frag(v2f i) : SV_Target
             {
-                if (_Enabled < 0.5) discard;
+                if (_Enabled < 0.5)
+                    discard;
 
-                float d = distance(i.originalWorldPos, _GlobalVisionPos); 
-                
-                if (d < _Radius) discard;
+                if (distance(i.worldPos, _GlobalVisionPos) < _Radius)
+                    discard;
 
                 return _OutlineColor;
             }

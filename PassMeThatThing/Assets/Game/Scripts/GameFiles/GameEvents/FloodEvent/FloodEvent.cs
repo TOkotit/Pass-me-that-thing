@@ -1,54 +1,37 @@
 using Game.Scripts.Utils;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game.Scripts.GameFiles.Events.FloodEvent
 {
     
-    public class FloodEvent : ComplexNetworkEvent
+    public class FloodEvent : BaseGameEvent
     {
 
         public GameObject waterMesh;
-        private GameObject waterMeshInstance;
-
-        public float MaxWaterwidth;
+        private GameObject _waterMeshInstance;
+        [SerializeField] Transform _waterMeshTransform;
         
-        private NetworkTimer _preparationTimer;
+        [SerializeField] private float maxWaterWidth;
         
         [SyncVar]
         private bool _isFloodingActive = false;
         
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            
-            
-            _preparationTimer = new NetworkTimer(this, (time) => timeLeft = time);
-            
-            _preparationTimer.Set(2f);
-            
-            _preparationTimer.TimeIsOver += StartFlooding;
-            
-            
-            
-        }
-        
-        public override void OnTimerChanged(float oldTime, float newTime)
-        {
-            Debug.Log($"Осталось: {Mathf.CeilToInt(newTime)} сек.");
-        }
-        
-        [Server]
-        private void StartFlooding()
+        protected override void OnStartEvent()
         {
             _isFloodingActive = true;
             
-            timeLeft = 0;
+            _waterMeshInstance = Instantiate(waterMesh);
+            _waterMeshInstance.transform.position = transform.position;
+            _waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
+            
+            NetworkServer.Spawn(_waterMeshInstance);
         }
         
         private void FixedUpdate()
         {
-            if (isServer && _isFloodingActive && waterMeshInstance)
+            if (isServer && _isFloodingActive && _waterMeshInstance != null)
             {
                 ExecuteFloodLogic();
             }
@@ -57,44 +40,26 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         [Server]
         private void ExecuteFloodLogic()
         {
-            
-            if (!waterMeshInstance) return;
-            
-            if (waterMeshInstance.transform.localScale.x < MaxWaterwidth)
-                waterMeshInstance.transform.localScale += new Vector3(1f, 0f, 1f) * Time.fixedDeltaTime;
+            if (_waterMeshInstance.transform.localScale.x < maxWaterWidth)
+            {
+                _waterMeshInstance.transform.localScale += new Vector3(1f, 0f, 1f) * Time.fixedDeltaTime;
+            }
         }
         
         [Server]
         public void PlayerFinishedAction()
         {
-            _preparationTimer?.Stop();
             StopEvent();
         }
 
         [Server]
-        public override void StartEvent()
-        {
-            _preparationTimer.Start();
-            isEventActive = true; 
-            _isFloodingActive = false;
-            
-            waterMeshInstance = Instantiate(waterMesh);
-            waterMeshInstance.transform.position = transform.position;
-            waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
-            
-            NetworkServer.Spawn(waterMeshInstance);
-        }
-        
-        [Server]
         protected override void OnStopEvent()
         {
-            
             _isFloodingActive = false;
             
-            
-            if (waterMeshInstance != null)
+            if (_waterMeshInstance != null)
             {
-                NetworkServer.Destroy(waterMeshInstance);
+                NetworkServer.Destroy(_waterMeshInstance);
             }
         }
     }

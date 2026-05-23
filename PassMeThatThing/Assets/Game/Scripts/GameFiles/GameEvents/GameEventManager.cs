@@ -8,60 +8,64 @@ namespace Game.Scripts.GameFiles.Events
 {
     public class GameEventManager : NetworkBehaviour
     {
-        [SerializeField] private GameEventsDatabase _database;
+        private int _idGenerator = 1;
+        private readonly Dictionary<int, BaseGameEvent> _activeEvents = new();
         
-        private readonly Dictionary<GameEventsType, ComplexNetworkEvent> _sceneEvents = new();
-        
-        public GameEventData GetGameEventData(GameEventsType type) => _database.GetEventByType(type);
-        
-        public void RegisterSceneEvent(ComplexNetworkEvent ev)
+        [Server]
+        public int RegisterSceneEvent(BaseGameEvent gameEvent)
         {
-            if (!_sceneEvents.ContainsKey(ev.eventType))
-                _sceneEvents.Add(ev.eventType, ev);
+            var assignedId = _idGenerator;
+            
+            _idGenerator++; 
+            
+            _activeEvents.Add(assignedId, gameEvent);
+            
+            return assignedId;
         }
         
         [Server]
-        public void ActivateEvent(GameEventsType type)
+        public BaseGameEvent GetEventById(int id)
         {
-            
-            Debug.Log($"ActivateEvent: type={type}");
-            
-            if (_sceneEvents.TryGetValue(type, out var sceneEvent))
+            if (_activeEvents.TryGetValue(id, out var foundEvent))
             {
-                Debug.Log($"Find event on scene, starting...");
-                sceneEvent.StartEvent();
-                return;
+                return foundEvent;
             }
             
-            Debug.Log($"Didn't find event on scene, starting...");
-
-            var data = _database.GetEventByType(type);
-            if (data != null && data.eventPrefab != null)
-            {
-                var go = Instantiate(data.eventPrefab);
-                NetworkServer.Spawn(go);
-            
-                if (go.TryGetComponent(out ComplexNetworkEvent ev))
-                    ev.StartEvent();
-            }
+            Debug.LogWarning($"[GameEventManager] Ивент с ID {id} не найден!");
+            return null;
         }
-
+        
         [Server]
-        public void DisableEvent(GameEventsType gameEventType)
+        public void ActivateEvent(int eventId)
         {
-            if (_sceneEvents.TryGetValue(gameEventType, out var sceneEvent))
+            if (_activeEvents.TryGetValue(eventId, out var gameEvent))
             {
-                Debug.Log($"Stopping scene event: {gameEventType}");
-                sceneEvent.StopEvent();
+                gameEvent.StartEvent();
             }
             else
             {
-              
-                var activeEvent = FindObjectOfType<ComplexNetworkEvent>();
-                if (activeEvent != null && activeEvent.eventType == gameEventType)
-                {
-                    activeEvent.StopEvent();
-                }
+                Debug.LogWarning($"[GameEventManager] Невозможно запустить: ивент с ID:{eventId} не найден на карте.");
+            }
+        }
+        [Server]
+        public void UnregisterEvent(int id)
+        {
+            if (_activeEvents.ContainsKey(id))
+            {
+                _activeEvents.Remove(id);
+            }
+        }
+
+        [Server]
+        public void DisableEvent(int eventId)
+        {
+            if (_activeEvents.TryGetValue(eventId, out var gameEvent))
+            {
+                gameEvent.StopEvent();
+            }
+            else
+            {
+                Debug.LogWarning($"[GameEventManager] Невозможно остановить: ивент с ID:{eventId} не найден на карте.");
             }
         }
     }

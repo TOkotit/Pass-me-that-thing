@@ -1149,6 +1149,10 @@ PrefabInstance:
       propertyPath: isPersistentSceneObject
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5780964106884149161, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
+      propertyPath: sceneId
+      value: 2549699994
+      objectReference: {fileID: 0}
     - target: {fileID: 6010042733686473568, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
       propertyPath: sceneId
       value: 1505447830
@@ -1166,11 +1170,22 @@ PrefabInstance:
       value: 3288437294
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 1200818875399688921, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
+--- !u!114 &2024633953 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7083679951217329145, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
+  m_PrefabInstance: {fileID: 1972511036}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b54a935b404959963851207b567315, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2117189205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1344,6 +1359,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 491856959
       objectReference: {fileID: 0}
+    - target: {fileID: 8606068317348487322, guid: 1a3a9f281517c3d4b94e317707ea13af, type: 3}
+      propertyPath: floodEvent
+      value: 
+      objectReference: {fileID: 2024633953}
     - target: {fileID: 9000737013907714295, guid: 1a3a9f281517c3d4b94e317707ea13af, type: 3}
       propertyPath: m_Name
       value: FloodEventStart
