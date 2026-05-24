@@ -134,7 +134,7 @@ namespace Game.Gameplay.View.UI
             Action<int, int> update, 
             Action<int> remove)
         {
-            _gameEventManager.ActiveEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
+            _gameEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
                 switch (op)
@@ -159,7 +159,7 @@ namespace Game.Gameplay.View.UI
             Action<int, int> update, 
             Action<int> remove)
         {
-            _gameEventManager.ActiveEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
+            _gameEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
                 switch (op)
