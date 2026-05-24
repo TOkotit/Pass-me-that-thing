@@ -1417,6 +1417,8 @@ MonoBehaviour:
   throwForceGrow: 10
   maxThrowForce: 50
   minChargeTime: 0.3
+  collarbone: {fileID: 4262172158442673699}
+  torso: {fileID: 1527932578361883255}
   grabJoint: {fileID: 8093723739365716607}
   pivot: {fileID: 1221596706237876440}
 --- !u!1 &2645522413353200517
@@ -5832,7 +5834,7 @@ GameObject:
   - component: {fileID: 4874145427392134729}
   - component: {fileID: 1221596706237876440}
   - component: {fileID: 8093723739365716607}
-  - component: {fileID: 2354457179108116716}
+  - component: {fileID: 4262172158442673699}
   m_Layer: 8
   m_Name: Grab
   m_TagString: Untagged
@@ -5984,7 +5986,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 0.5
   m_ConnectedMassScale: 2
---- !u!138 &2354457179108116716
+--- !u!138 &4262172158442673699
 FixedJoint:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

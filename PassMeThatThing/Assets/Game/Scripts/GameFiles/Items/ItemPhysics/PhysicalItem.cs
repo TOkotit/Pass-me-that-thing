@@ -49,6 +49,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         
         private NetworkTransformReliable _networkTransform;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
+        private Collider[] _colliders;
+        public Collider[] Colliders => _colliders;
         
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
@@ -62,6 +64,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 Network.netIdentity.AssignClientAuthority(all);*/
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
+            _colliders = GetComponentsInChildren<Collider>();
         }
 
         private void OnCollisionEnter(Collision other)

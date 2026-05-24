@@ -9,7 +9,7 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
     public class TestEventStartInteracting : NetworkBehaviour, IInteractable
     {
         
-        [Inject] private GameEventManager gameEventManager;
+        [SerializeField] private FloodEvent floodEvent;
 
         public void Interact()
         {
@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         private void CmdTest()
         {
             Debug.Log("CmdTest");
-            gameEventManager.ActivateEvent(GameEventsType.FloodBoilerRoom);
+            floodEvent.StartEvent();
         }
     }
 }

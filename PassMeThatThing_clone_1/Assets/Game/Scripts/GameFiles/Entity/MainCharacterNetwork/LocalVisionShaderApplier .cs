@@ -32,26 +32,23 @@ namespace MainCharacter_old
             public Material[] originalMaterials;
             public Material[] instantiatedMaterials;
         }
-
+        
         public override void OnStartLocalPlayer()
         {
             PrepareVisionData();
-            Shader.SetGlobalFloat(RadiusId, 0f);
+            EnableVision();
         }
-
-        public override void OnStopLocalPlayer()
-        {
-            RestoreOriginalState();
-            CleanupMaterials();
-        }
-
+        
         private void Update()
         {
             if (!_isActive || !isLocalPlayer) return;
 
-            Vector3 pos = targetTransform ? targetTransform.position : transform.position;
-            Shader.SetGlobalVector(PlayerPosId, pos);
-            Shader.SetGlobalFloat(RadiusId, radius);
+            var pos = targetTransform ? targetTransform.position : transform.position;
+    
+            if (GlobalVisionManager.Instance != null)
+            {
+                GlobalVisionManager.Instance.AddZone(pos, radius);
+            }
         }
 
         public void EnableVision()
@@ -88,18 +85,17 @@ namespace MainCharacter_old
                 }
             }
         }
-
         private void PrepareVisionData()
         {
             CleanupMaterials();
+            
             var allRenderers = FindObjectsByType<Renderer>(FindObjectsSortMode.None);
             
             foreach (var r in allRenderers)
             {
-                // Оставляем только базовые проверки на вшивость
                 if (!r.enabled || !r.gameObject.activeInHierarchy) continue;
-                if (r.transform.IsChildOf(transform)) continue; // Чтобы не обводить самого себя
-                if (r is CanvasRenderer) continue; // Игнорим UI
+                if (r.transform.IsChildOf(transform)) continue;
+                if (r is CanvasRenderer) continue;
 
                 _trackedRenderers.Add(new VisionData
                 {
@@ -108,15 +104,14 @@ namespace MainCharacter_old
                     instantiatedMaterials = CreateEffectMaterialArray(r)
                 });
             }
-            Debug.Log($"[Vision] Подготовка завершена. Объектов в списке: {_trackedRenderers.Count}");
         }
-
+        
         private Material[] CreateEffectMaterialArray(Renderer r)
         {
             var originals = r.sharedMaterials;
             var newMats = new Material[originals.Length + 1];
 
-            for (int i = 0; i < originals.Length; i++)
+            for (var i = 0; i < originals.Length; i++)
             {
                 if (originals[i] == null) continue;
 
@@ -133,18 +128,13 @@ namespace MainCharacter_old
 
             var outMat = new Material(outlineMaterial);
             outMat.SetFloat(OutlineWidthId, outlineWidth);
-            outMat.SetFloat(EnabledId, 0f);
-            newMats[newMats.Length - 1] = outMat;
+            outMat.SetFloat(EnabledId, 1f);
+            newMats[^1] = outMat;
 
             return newMats;
         }
-
-        private void RestoreOriginalState()
-        {
-            foreach (var data in _trackedRenderers)
-                if (data.renderer != null) data.renderer.sharedMaterials = data.originalMaterials;
-        }
-
+        
+        
         private void CleanupMaterials()
         {
             foreach (var data in _trackedRenderers)

@@ -24,8 +24,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
+        private Vector3 _pivotDefaultLocalPos;
 
-        [Header("Grabbing")]
+        [Header("Grabbing")] 
+        [SerializeField] private FixedJoint collarbone;
+        [SerializeField] private Rigidbody torso;
         [SerializeField] private ConfigurableJoint grabJoint;   
         [SerializeField] private Rigidbody pivot;
 
@@ -38,6 +41,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (grabJoint)
                 grabJoint.gameObject.SetActive(false);
+            if (pivot)
+                _pivotDefaultLocalPos = pivot.transform.localPosition;
         }
 
         private void MoveHand(Rigidbody handRB, Vector3 direction, ConfigurableJoint joint)
@@ -91,6 +96,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
+            AlignPivotForItem(item);
             ClientGrabItem(item);
         }
 
@@ -100,6 +106,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
+            AlignPivotForItem(item);
         }
 
         [Server]
@@ -167,6 +174,27 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void UpdateModel()
         {
             _playerInventoryModel.ThrowCharge = (int)(_throwForce / maxThrowForce * 100);
+        }
+        
+        public void ResetPivot()
+        {
+            collarbone.connectedBody = null;
+            pivot.transform.localPosition = _pivotDefaultLocalPos;
+            collarbone.connectedBody = torso;
+        }
+        
+        private void AlignPivotForItem(PhysicalItem item)
+        {
+            ResetPivot();
+            collarbone.connectedBody = null;
+            pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
+            collarbone.connectedBody = torso;
+        }
+        
+        [Server]
+        private void Update()
+        {
+            
         }
     }
 }
