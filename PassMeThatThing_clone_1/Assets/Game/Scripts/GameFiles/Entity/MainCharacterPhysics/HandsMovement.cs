@@ -183,18 +183,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             collarbone.connectedBody = torso;
         }
         
-        private void AlignPivotForItem(PhysicalItem item)
+        public void AlignPivotForItem(PhysicalItem item)
         {
             ResetPivot();
             collarbone.connectedBody = null;
             pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
             collarbone.connectedBody = torso;
-        }
-        
-        [Server]
-        private void Update()
-        {
-            
         }
     }
 }
