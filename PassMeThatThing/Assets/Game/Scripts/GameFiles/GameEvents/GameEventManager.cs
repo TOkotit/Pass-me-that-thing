@@ -3,13 +3,17 @@ using Game.Scripts.Enums;
 using Mirror;
 using UnityEditor;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Events
 {
     public class GameEventManager : NetworkBehaviour
     {
         private int _idGenerator = 1;
-        private readonly Dictionary<int, BaseGameEvent> _activeEvents = new();
+        private readonly SyncDictionary<int, BaseGameEvent> _activeEvents = new();
+        
+        public SyncDictionary<int, BaseGameEvent> ActiveEvents => _activeEvents;
+        
         
         [Server]
         public int RegisterSceneEvent(BaseGameEvent gameEvent)

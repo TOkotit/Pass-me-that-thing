@@ -225,6 +225,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5412857771416286706, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
   m_PrefabInstance: {fileID: 1972511036}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &294606328 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3600752652129642896, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
+  m_PrefabInstance: {fileID: 1972511036}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &294606330 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7083679951217329145, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
+  m_PrefabInstance: {fileID: 1972511036}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294606328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b54a935b404959963851207b567315, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &363807160
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,7 +503,7 @@ PrefabInstance:
       objectReference: {fileID: 6437164731870134195, guid: 6b42a1cb35e28da418137bb4f8ec4d39, type: 3}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: autoInjectGameObjects.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: 'autoInjectGameObjects.Array.data[0]'
@@ -505,6 +521,10 @@ PrefabInstance:
       propertyPath: 'autoInjectGameObjects.Array.data[3]'
       value: 
       objectReference: {fileID: 1639876759}
+    - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
+      propertyPath: 'autoInjectGameObjects.Array.data[4]'
+      value: 
+      objectReference: {fileID: 294606328}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1348,6 +1368,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 491856959
       objectReference: {fileID: 0}
+    - target: {fileID: 8606068317348487322, guid: 1a3a9f281517c3d4b94e317707ea13af, type: 3}
+      propertyPath: floodEvent
+      value: 
+      objectReference: {fileID: 294606330}
     - target: {fileID: 9000737013907714295, guid: 1a3a9f281517c3d4b94e317707ea13af, type: 3}
       propertyPath: m_Name
       value: FloodEventStart

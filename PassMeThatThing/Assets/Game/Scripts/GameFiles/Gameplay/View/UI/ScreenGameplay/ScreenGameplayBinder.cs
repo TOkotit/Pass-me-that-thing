@@ -4,6 +4,7 @@ using System.Globalization;
 using DG.Tweening;
 using Game.UI;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,12 +27,17 @@ namespace Game.Gameplay.View.UI
         
         [SerializeField] private Image[] _itemImages;
         
+        [SerializeField] private GameObject _gameEventsConatainer;
+        
+        [SerializeField] private GameEventUIElement _gameEventPrefab;
+        
         [SerializeField] private GameObject _interactionText;
         
         private Color _imageColor = new Color(1f, 1f, 1f, 1f);
         private Color _noImageColor = new Color(1f, 1f, 1f, 0f);
         
         private int _activeSlotIndex;
+        private Dictionary<int, GameEventUIElement> _gameEvents = new ();
         
         public TextMeshProUGUI HealthText
         {
@@ -69,6 +75,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
             
+            ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
         }
 
@@ -84,6 +92,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
             ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
+            
+            ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestUnsub();
         }
@@ -125,7 +135,27 @@ namespace Game.Gameplay.View.UI
                 ? _imageColor : _noImageColor;
             _itemImages[index].sprite = sprite;
         }
+
+        private void AddGameEvent(int index, Sprite icon, int timerSeconds)
+        {
+            var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform);
+            
+            gameEvent.Icon.sprite = icon;
+            gameEvent.Text.text = $"{timerSeconds / 60}: {timerSeconds % 60}";
+            
+            _gameEvents[index] = gameEvent;
+        }
         
+        private void UpdateGameEvent(int index, int timerSeconds)
+        {
+            _gameEvents[index].Text.text = $"{timerSeconds / 60}: {timerSeconds % 60}";
+        }
+
+        private void RemoveGameEvent(int index)
+        {
+            _gameEvents.Remove(index);
+            Destroy(_gameEvents[index]);
+        }
         
         // private void OnGoToMainMenuButtonClicked()
         // {

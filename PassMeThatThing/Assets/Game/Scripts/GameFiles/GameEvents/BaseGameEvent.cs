@@ -13,6 +13,10 @@ namespace Game.Scripts.GameFiles.Events
         
         [SyncVar] private bool _isEventActive;
         public bool IsEventActive => _isEventActive;
+
+        //Подвяжи сюда таймер для каждого ивента
+        [SyncVar] private int _timeLeft;
+        public int TimeLeft => _timeLeft;
         
         [Inject] GameEventManager  gameEventManager;
         
