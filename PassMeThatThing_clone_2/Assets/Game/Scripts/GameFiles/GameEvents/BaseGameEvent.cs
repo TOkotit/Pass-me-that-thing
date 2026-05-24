@@ -14,9 +14,9 @@ namespace Game.Scripts.GameFiles.Events
         [SyncVar] private bool _isEventActive;
         public bool IsEventActive => _isEventActive;
 
-        //Подвяжи сюда таймер для каждого ивента
-        [SyncVar] private int _timeLeft;
-        public int TimeLeft => _timeLeft;
+        //Номер комнаты в которой случился прикол
+        [SyncVar] private int _roomNumber;
+        public int RoomNumber => _roomNumber;
         
         [Inject] private GameEventManager  gameEventManager;
         

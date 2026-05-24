@@ -131,21 +131,22 @@ namespace Game.Gameplay.View.UI
         }
 
         public void RequestSubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, int> update, 
+            Action<int, Sprite, int> update, 
             Action<int> remove)
         {
             _gameEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
+                var e = _gameEventsDatabase.GetEvent(newItem.eventType);
                 switch (op)
                 {
+                    
                     case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
-                        var e = _gameEventsDatabase.GetEvent(newItem.eventType);
-                        add(index, e.EventImage, newItem.TimeLeft);
+                        add(index, e.EventImage, newItem.RoomNumber);
                         break;
                     
                     case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
-                        update(index, newItem.TimeLeft);
+                        update(index, e.EventImage, newItem.RoomNumber);
                         break;
         
                     case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
@@ -156,21 +157,22 @@ namespace Game.Gameplay.View.UI
         }
         
         public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, int> update, 
+            Action<int, Sprite, int> update, 
             Action<int> remove)
         {
             _gameEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
+                var e = _gameEventsDatabase.GetEvent(newItem.eventType);
                 switch (op)
                 {
+                    
                     case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
-                        var e = _gameEventsDatabase.GetEvent(newItem.eventType);
-                        add(index, e.EventImage, newItem.TimeLeft);
+                        add(index, e.EventImage, newItem.RoomNumber);
                         break;
                     
                     case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
-                        update(index, newItem.TimeLeft);
+                        update(index, e.EventImage, newItem.RoomNumber);
                         break;
         
                     case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:

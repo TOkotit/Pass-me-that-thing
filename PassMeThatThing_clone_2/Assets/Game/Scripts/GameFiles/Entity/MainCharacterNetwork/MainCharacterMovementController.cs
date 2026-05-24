@@ -4,6 +4,7 @@ using Mirror;
 using Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using VContainer;
 
 namespace MainCharacter_old
@@ -11,10 +12,13 @@ namespace MainCharacter_old
     public class MainCharacterMovementController : NetworkBehaviour
     {
         //TODO удалить это, как только доделаем шейдеры окончательно
-        [SerializeField] private LocalVisionShaderApplier visionApplier;
+        [SerializeField] private UniversalRendererData rendererData;
+        private ScriptableRendererFeature _visionFeature;
+        private ScriptableRendererFeature _outlineFeature;
+        private bool _isVisionEnabled = false;
         
         
-        private bool _isVisionEnabled;
+        
         private MainCharacterMovement _controllable;
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
@@ -34,6 +38,19 @@ namespace MainCharacter_old
 
             if (!_mainCamera)
                 Debug.LogWarning("MainCharacterCamera not found in children");
+        }
+        
+        
+        //TODO удалить как только закончим делать шейдеры
+        private void Start()
+        {
+            
+            // Ищем фичи по имени, которое мы задали в Inspector
+            _visionFeature = rendererData.rendererFeatures.Find(f => f.name == "VisionEffect");
+            _outlineFeature = rendererData.rendererFeatures.Find(f => f.name == "GlobalOutlines");
+        
+            // При старте выключаем, чтобы не мешало
+            SetVisionState(false);
         }
         
         [Inject]
@@ -135,20 +152,17 @@ namespace MainCharacter_old
             if (Input.GetKeyDown(KeyCode.V))
             {
                 _isVisionEnabled = !_isVisionEnabled;
-
-                if (_isVisionEnabled)
-                {
-                    Debug.Log("<color=green>Режим зрения: ВКЛ</color>");
-                    visionApplier.EnableVision();
-                }
-                else
-                {
-                    Debug.Log("<color=red>Режим зрения: ВЫКЛ</color>");
-                    visionApplier.DisableVision();
-                }
+                SetVisionState(_isVisionEnabled);
             }
             
-            
+        }
+        
+        
+        //TODO удалить это, как только доделаем шейдеры окончательно
+        private void SetVisionState(bool state)
+        {
+            if (_visionFeature != null) _visionFeature.SetActive(state);
+            if (_outlineFeature != null) _outlineFeature.SetActive(state);
         }
         
         private void ReadMovement()

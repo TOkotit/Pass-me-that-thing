@@ -136,19 +136,20 @@ namespace Game.Gameplay.View.UI
             _itemImages[index].sprite = sprite;
         }
 
-        private void AddGameEvent(int index, Sprite icon, int timerSeconds)
+        private void AddGameEvent(int index, Sprite icon, int roomNumber)
         {
             var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform);
             
             gameEvent.Icon.sprite = icon;
-            gameEvent.Text.text = $"{timerSeconds / 60}: {timerSeconds % 60}";
+            _gameEvents[index].Text.text = $"{roomNumber}";
             
             _gameEvents[index] = gameEvent;
         }
         
-        private void UpdateGameEvent(int index, int timerSeconds)
+        private void UpdateGameEvent(int index, Sprite icon, int roomNumber)
         {
-            _gameEvents[index].Text.text = $"{timerSeconds / 60}: {timerSeconds % 60}";
+            _gameEvents[index].Icon.sprite = icon;
+            _gameEvents[index].Text.text = $"{roomNumber}";
         }
 
         private void RemoveGameEvent(int index)

@@ -20,10 +20,8 @@ public class GlobalVisionManager : MonoBehaviour
     
     public void AddZone(Vector3 position, float radius)
     {
-        if (_activeZones.Count < 64)
-        {
-            _activeZones.Add(new Vector4(position.x, position.y, position.z, radius));
-        }
+        if (_activeZones.Count >= 64) return;
+        _activeZones.Add(new Vector4(position.x, position.y, position.z, radius));
     }
 
     private void LateUpdate()
