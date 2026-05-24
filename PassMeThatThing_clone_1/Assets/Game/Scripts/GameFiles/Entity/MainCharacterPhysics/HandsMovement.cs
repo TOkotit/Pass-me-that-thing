@@ -117,9 +117,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     
             if (canThrow)
             {
+                item.IsThrown = true;
                 Vector3 force = throwForce * pivot.transform.forward;
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
-                TargetApplyThrowForce(connectionToClient, item, force);
+                ClientApplyThrowForce(item, force);
             }
     
             _throwForce = 0;
@@ -128,11 +129,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             ClientReleaseItem();
         }
 
-        [TargetRpc]
-        private void TargetApplyThrowForce(NetworkConnection target, PhysicalItem item, Vector3 force)
+        [ClientRpc]
+        private void ClientApplyThrowForce(PhysicalItem item, Vector3 force)
         {
             if (item)
+            {
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
+            }
         }
         
         [ClientRpc]

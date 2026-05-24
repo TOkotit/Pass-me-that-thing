@@ -13,8 +13,14 @@ namespace Game.Scripts.GameFiles.Events
         
         [SyncVar] private bool _isEventActive;
         public bool IsEventActive => _isEventActive;
+
+        //Номер комнаты в которой случился прикол
+        [SyncVar] private int _roomNumber;
+        public int RoomNumber => _roomNumber;
         
-        [Inject] GameEventManager  gameEventManager;
+        [Inject] private GameEventManager  gameEventManager;
+        
+        public GameEventManager GameEventManager => gameEventManager;
         
         [Server]
         public override void OnStartServer()

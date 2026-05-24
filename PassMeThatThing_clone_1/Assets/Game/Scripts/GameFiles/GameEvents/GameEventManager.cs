@@ -3,22 +3,29 @@ using Game.Scripts.Enums;
 using Mirror;
 using UnityEditor;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Events
 {
     public class GameEventManager : NetworkBehaviour
     {
         private int _idGenerator = 1;
-        private readonly Dictionary<int, BaseGameEvent> _activeEvents = new();
+        private readonly SyncDictionary<int, BaseGameEvent> _sceneEvents = new();
         
+        //ивенты которые запущены
+        private readonly SyncDictionary<int, BaseGameEvent> _startedEvents = new();
+
+        public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
+
+
         [Server]
         public int RegisterSceneEvent(BaseGameEvent gameEvent)
         {
             var assignedId = _idGenerator;
             
             _idGenerator++; 
-            
-            _activeEvents.Add(assignedId, gameEvent);
+            Debug.Log($"<color=green>RegisterSceneEvent, id: {assignedId}</color>");
+            _sceneEvents.Add(assignedId, gameEvent);
             
             return assignedId;
         }
@@ -26,7 +33,7 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public BaseGameEvent GetEventById(int id)
         {
-            if (_activeEvents.TryGetValue(id, out var foundEvent))
+            if (_sceneEvents.TryGetValue(id, out var foundEvent))
             {
                 return foundEvent;
             }
@@ -38,9 +45,10 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public void ActivateEvent(int eventId)
         {
-            if (_activeEvents.TryGetValue(eventId, out var gameEvent))
+            if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
                 gameEvent.StartEvent();
+                StartedEvents.Add(eventId, gameEvent);
             }
             else
             {
@@ -50,18 +58,21 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public void UnregisterEvent(int id)
         {
-            if (_activeEvents.ContainsKey(id))
+            if (_sceneEvents.ContainsKey(id))
             {
-                _activeEvents.Remove(id);
+                _sceneEvents.Remove(id);
             }
         }
 
         [Server]
         public void DisableEvent(int eventId)
         {
-            if (_activeEvents.TryGetValue(eventId, out var gameEvent))
+
+            if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
+
                 gameEvent.StopEvent();
+                StartedEvents.Remove(eventId);
             }
             else
             {

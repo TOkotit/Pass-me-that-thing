@@ -1,3 +1,4 @@
+using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using Game.Scripts.Utils;
 using Mirror;
 using UnityEngine;
@@ -14,14 +15,16 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         [SerializeField] Transform _waterMeshTransform;
         
         [SerializeField] private float maxWaterWidth;
+        [SerializeField] private ValveInteract valve;
         
         [SyncVar]
         private bool _isFloodingActive = false;
+        public bool IsFloodingActive => _isFloodingActive;
         
         protected override void OnStartEvent()
         {
             _isFloodingActive = true;
-            
+            valve.Open();
             _waterMeshInstance = Instantiate(waterMesh);
             _waterMeshInstance.transform.position = transform.position;
             _waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
@@ -56,11 +59,11 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         protected override void OnStopEvent()
         {
             _isFloodingActive = false;
-            
             if (_waterMeshInstance != null)
             {
                 NetworkServer.Destroy(_waterMeshInstance);
             }
+            GameEventManager.DisableEvent(EventId);
         }
     }
 }

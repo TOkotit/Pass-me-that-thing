@@ -78,69 +78,10 @@ public class PlayerInventory : NetworkBehaviour
             _playerInventoryModel.Inventory.Add(item);
         }
     }
-
     [Command]
     public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
     {
-        if (!physicalItem) return;
-        var networkItem = physicalItem.Network;
-        if (!networkItem) return;
-
-        if (physicalItem.CanBeOwned && physicalItem.Owner)
-        {
-            var oldOwner = physicalItem.Owner;
-            var oldInventory = oldOwner.MainCharacterModel.PlayerInventory;
-            var oldController = oldOwner.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController;
-
-            if (oldInventory)
-            {
-                int slotToRemove = -1;
-                foreach (var kvp in oldInventory.ServerInventory)
-                {
-                    if (kvp.Value.itemId == networkItem.itemId)
-                    {
-                        slotToRemove = kvp.Key;
-                        break;
-                    }
-                }
-                if (slotToRemove != -1)
-                {
-                    oldInventory.ServerInventory.Remove(slotToRemove);
-                }
-            }
-
-            if (oldController)
-            {
-                oldController.ReleaseCurrentItem(0f, false);
-            }
-        }
-
-        int targetSlot = -1;
-        if (preferredSlot >= 0 && preferredSlot < size && !ServerInventory.ContainsKey(preferredSlot))
-        {
-            targetSlot = preferredSlot;
-        }
-        else
-        {
-            for (int i = 0; i < size; i++)
-            {
-                if (!ServerInventory.ContainsKey(i))
-                {
-                    targetSlot = i;
-                    break;
-                }
-            }
-        }
-
-        if (targetSlot == -1) return;
-
-        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
-        if (_physicalСontroller.CurrentHeldItem)
-        {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
-        }
-        _physicalСontroller.PhysicalPickUpItem(physicalItem);
-        activeSlot = targetSlot;
+        TryPickUpItemInternal(physicalItem, preferredSlot);
     }
 
     [Command]
@@ -159,7 +100,7 @@ public class PlayerInventory : NetworkBehaviour
         NetworkServer.Spawn(itemToDrop, connectionToClient);
         
         itemToDrop.SetActive(true);
-        var physicalItem = _physicalItemRegistry.TryGetItem(itemToDrop.gameObject);
+        var physicalItem = _physicalItemRegistry.GetItem(itemToDrop.gameObject);
         if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
         if (physicalItem)
         {
@@ -230,5 +171,73 @@ public class PlayerInventory : NetworkBehaviour
         };
 
         targetController.PhysicalPickUpItem(item);
+    }
+    
+    [Server]
+    public void ServerPickUpItem(PhysicalItem physicalItem, int preferredSlot)
+    {
+        TryPickUpItemInternal(physicalItem, preferredSlot);
+    }
+    
+    private void TryPickUpItemInternal(PhysicalItem physicalItem, int preferredSlot)
+    {
+        if (!physicalItem) return;
+        var networkItem = physicalItem.Network;
+        if (!networkItem) return;
+
+        if (physicalItem.CanBeOwned && physicalItem.Owner)
+        {
+            var oldOwner = physicalItem.Owner;
+            var oldInventory = oldOwner.MainCharacterModel.PlayerInventory;
+            var oldController = oldOwner.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController;
+
+            if (oldInventory)
+            {
+                int slotToRemove = -1;
+                foreach (var kvp in oldInventory.ServerInventory)
+                {
+                    if (kvp.Value.itemId == networkItem.itemId)
+                    {
+                        slotToRemove = kvp.Key;
+                        break;
+                    }
+                }
+                if (slotToRemove != -1)
+                    oldInventory.ServerInventory.Remove(slotToRemove);
+            }
+
+            if (oldController)
+            {
+                oldController.ReleaseCurrentItem(0f, false);
+            }
+        }
+
+        int targetSlot = -1;
+        if (preferredSlot >= 0 && preferredSlot < size && !ServerInventory.ContainsKey(preferredSlot))
+            targetSlot = preferredSlot;
+        else
+        {
+            for (int i = 0; i < size; i++)
+            {
+                if (!ServerInventory.ContainsKey(i))
+                {
+                    targetSlot = i;
+                    break;
+                }
+            }
+        }
+
+        if (targetSlot == -1) return; 
+
+        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+
+        if (_physicalСontroller.CurrentHeldItem)
+        {
+            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            _physicalСontroller.ReleaseCurrentItem(0f, false);
+        }
+
+        _physicalСontroller.PhysicalPickUpItem(physicalItem);
+        activeSlot = targetSlot;
     }
 }

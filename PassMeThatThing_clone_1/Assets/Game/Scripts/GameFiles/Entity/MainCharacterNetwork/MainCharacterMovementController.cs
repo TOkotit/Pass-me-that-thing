@@ -4,14 +4,21 @@ using Mirror;
 using Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using VContainer;
 
 namespace MainCharacter_old
 {
     public class MainCharacterMovementController : NetworkBehaviour
     {
+        //TODO удалить это, как только доделаем шейдеры окончательно
+        [SerializeField] private UniversalRendererData rendererData;
+        private ScriptableRendererFeature _visionFeature;
+        private ScriptableRendererFeature _outlineFeature;
+        private bool _isVisionEnabled = false;
         
-        [SerializeField] private LocalVisionShaderApplier visionApplier;
+        
+        
         private MainCharacterMovement _controllable;
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
@@ -31,6 +38,19 @@ namespace MainCharacter_old
 
             if (!_mainCamera)
                 Debug.LogWarning("MainCharacterCamera not found in children");
+        }
+        
+        
+        //TODO удалить как только закончим делать шейдеры
+        private void Start()
+        {
+            
+            // Ищем фичи по имени, которое мы задали в Inspector
+            _visionFeature = rendererData.rendererFeatures.Find(f => f.name == "VisionEffect");
+            _outlineFeature = rendererData.rendererFeatures.Find(f => f.name == "GlobalOutlines");
+        
+            // При старте выключаем, чтобы не мешало
+            SetVisionState(false);
         }
         
         [Inject]
@@ -128,19 +148,21 @@ namespace MainCharacter_old
 
             ReadMovement();
             
+            //TODO удалить это, как только доделаем шейдеры окончательно
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Debug.Log("<color=green>V</color>");
-                visionApplier.EnableVision();
-            }
-    
-            if (Input.GetKeyUp(KeyCode.V))
-            {
-                Debug.Log("<color=red>V</color>");
-                visionApplier.DisableVision();
+                _isVisionEnabled = !_isVisionEnabled;
+                SetVisionState(_isVisionEnabled);
             }
             
-            
+        }
+        
+        
+        //TODO удалить это, как только доделаем шейдеры окончательно
+        private void SetVisionState(bool state)
+        {
+            if (_visionFeature != null) _visionFeature.SetActive(state);
+            if (_outlineFeature != null) _outlineFeature.SetActive(state);
         }
         
         private void ReadMovement()

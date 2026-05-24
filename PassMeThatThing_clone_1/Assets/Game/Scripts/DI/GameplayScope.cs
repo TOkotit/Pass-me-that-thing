@@ -15,6 +15,7 @@ namespace DI
     public class GameplayScope: LifetimeScope
     {
         [SerializeField] ItemDatabase itemDatabase;
+        [SerializeField] GameEventsDatabase gameEventsDatabase;
         [SerializeField] private GameObject eventManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
@@ -22,8 +23,10 @@ namespace DI
             Debug.Log("GameplayScope.Configure called");
             
             builder.RegisterInstance(itemDatabase);
+            builder.RegisterInstance(gameEventsDatabase);
 
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
+            
             
             var gameEventManagerGo = Instantiate(eventManagerPrefab);
             DontDestroyOnLoad(gameEventManagerGo);
@@ -38,10 +41,9 @@ namespace DI
                 builder.RegisterComponent(gameEventManagerComponent);
             }
             
-            builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
-            builder.Register<GameplayUIManager>(Lifetime.Singleton);
             
-            builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
+            
+            
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);
             
@@ -52,6 +54,11 @@ namespace DI
             builder.RegisterInstance(damagableRegistry);
             
             builder.Register<MainCharacterModel>(Lifetime.Transient);
+            
+            builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
+            builder.Register<GameplayUIManager>(Lifetime.Singleton);
+            
+            builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
         }
     }
 }

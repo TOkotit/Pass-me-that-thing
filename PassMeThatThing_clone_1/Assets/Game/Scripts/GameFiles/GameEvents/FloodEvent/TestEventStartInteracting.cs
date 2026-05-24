@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         private void CmdTest()
         {
             Debug.Log("CmdTest");
-            floodEvent.StartEvent();
+            floodEvent.GameEventManager.ActivateEvent(floodEvent.EventId);
         }
     }
 }

@@ -53,7 +53,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         [SerializeField] private Transform direction;
         public Transform Direction => direction;
-        public bool IsThrown { get; set; }
+        [SyncVar]
+        [SerializeField] private bool _isThrown;
+        public bool IsThrown
+        {
+            get => _isThrown;
+            set => _isThrown = value;
+        }
         
         private NetworkTransformReliable _networkTransform;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
@@ -73,7 +79,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void OnCollisionEnter(Collision other)
         {
-            IsThrown = false;
+            if (isServer)
+                IsThrown = false;
         }
         public override void OnStartClient()
         {
@@ -94,7 +101,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void OnEnable()
         {
-            if (!isServer && PhysicalItemRegistry.Instance.TryGetItem(gameObject) == null)
+            if (!isServer && PhysicalItemRegistry.Instance.GetItem(gameObject) == null)
             {
                 PhysicalItemRegistry.Instance.Register(this);
             }

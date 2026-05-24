@@ -30,7 +30,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             
         }
 
-        public PhysicalItem TryGetItem(GameObject item)
+        public PhysicalItem GetItem(GameObject item)
         {
             if (_physicalItems.ContainsKey(item))
             {
@@ -38,5 +38,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             }
             return null;
         }
+        public void TryGetItem(GameObject itemObject, out PhysicalItem item)
+        {
+            if (_physicalItems.ContainsKey(itemObject))
+            {
+                item = _physicalItems[itemObject];
+                return;
+            }
+            item = null;
+        }
+        
     }
 }
