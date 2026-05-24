@@ -10,6 +10,7 @@ using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Systems;
 using UnityEngine.InputSystem;
 using VContainer;
+using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Items
 {
@@ -60,12 +61,14 @@ namespace Game.Scripts.GameFiles.Items
 
         public override void OnStartLocalPlayer()
         {
-            inventory = GetComponent<PlayerInventory>();
             _camera = GetComponentInChildren<Camera>();
             targetsInRadius =  new List<Collider>();
             TrySubscribe();
         }
-        
+        private void Awake()
+        {
+            inventory = GetComponent<PlayerInventory>();
+        }
         public override void OnStopLocalPlayer()
         {
             TryUnsubscribe();
@@ -184,14 +187,13 @@ namespace Game.Scripts.GameFiles.Items
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer)) //, interactionLayer
                 {
+                    Debug.Log(hit.collider);
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
-                        Debug.Log("Trying Pick Up");
                         TryPickUp(hit.collider);
                     }
                     else if (hit.collider.gameObject.CompareTag("Player"))
                     {
-                        Debug.Log("Попытка передачи другому игроку");
                         var damagable = _damagableRegistry.TryGetDamagable(hit.collider.gameObject); 
                         Debug.Log(damagable);
                         if (damagable && damagable != mainCharacter) 
@@ -225,13 +227,23 @@ namespace Game.Scripts.GameFiles.Items
         
         public void TryPickUp(Collider target)
         {
-            var item = _physicalItemRegistry.TryGetItem(target.gameObject);
+            var item = _physicalItemRegistry.GetItem(target.gameObject);
             Debug.Log("Trying Pick Up" + target.gameObject);
             if (item == _physicalItemInteractionController.CurrentHeldItem) return;
             inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex);
             OnColliderExit(target);
         }
-
+        [Server]
+        public void TryPickUp(PhysicalItem target)
+        {
+            Debug.Log("Trying Pick Up" + target.gameObject);
+            if (target == _physicalItemInteractionController.CurrentHeldItem) return;
+            Debug.Log(inventory);
+            inventory.ServerPickUpItem(target, _playerInventoryModel.ActiveSlotIndex);
+            if (_outlineRegistry.TryGetOutline(target.gameObject,  out var outline))
+                outline.enabled = false;
+        }
+        
         private void TryOpen(Collider target)
         {
             var interactable = target.GetComponentInParent<IInteractable>();//Переделать 
@@ -240,6 +252,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void onActPerformed(InputAction.CallbackContext context)
         {
+            if (!PhysicalItemInteractionController.CurrentHeldItem) return;
             if (PhysicalItemInteractionController.CurrentHeldItem.Reaction != null)
             {
                 PhysicalItemInteractionController.CurrentHeldItem.Reaction.Act();
@@ -251,6 +264,7 @@ namespace Game.Scripts.GameFiles.Items
         }
         private void onActCanceled(InputAction.CallbackContext context)
         {
+            if (!PhysicalItemInteractionController.CurrentHeldItem) return;
             if (PhysicalItemInteractionController.CurrentHeldItem.Reaction == null &&
                 PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
             {

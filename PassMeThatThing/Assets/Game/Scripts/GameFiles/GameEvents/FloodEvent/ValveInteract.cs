@@ -9,7 +9,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
 {
-    public class ValveInteract : NetworkBehaviour, IInteractable
+    public class ValveInteract : NetworkBehaviour
     {
         [SerializeField] private ParticleSystem impactParticles;
         [SerializeField] private Transform pivot;
@@ -21,7 +21,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [SerializeField] private Events.FloodEvent.FloodEvent floodEvent;
         
         [SyncVar(hook = nameof(OnClosedStateChanged))]
-        public bool _isClosed;
+        public bool _isClosed = true;
 
         private float _currentAngle;
         private float _targetAngle;
@@ -36,7 +36,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             _targetAngle = openAngle;
             
         }
-        public void Interact()
+        public void ValveWasInteracted()
         {
             if (_isClosed) return;
 
@@ -79,20 +79,18 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
 
         private void OnTriggerEnter(Collider other)
         {
+            Debug.Log($"<color=red> isClosed: {_isClosed}</color>");
             if (_isClosed) return;
-
+            
             if (other.CompareTag("Item") && other.TryGetComponent(out NetworkItem item))
             {
                 if (item.itemId == "wrench")
                 {
-                    Interact();
+                    ValveWasInteracted();
                 }
             }
         }
-
-
-        [ServerCallback]
-        public void SrbToggle() => _isClosed = !_isClosed;
+        
         
         [Server]
         public void Open()

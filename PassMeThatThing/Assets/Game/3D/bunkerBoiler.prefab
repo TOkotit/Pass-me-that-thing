@@ -700,7 +700,6 @@ GameObject:
   - component: {fileID: 6852503797877734523}
   - component: {fileID: 5594920560472654092}
   - component: {fileID: 4126178822815003743}
-  - component: {fileID: 3590715754449782721}
   m_Layer: 7
   m_Name: Valve
   m_TagString: Untagged
@@ -798,7 +797,7 @@ MonoBehaviour:
   closedAngle: 0
   moveSpeed: 130
   floodEvent: {fileID: 7083679951217329145}
-  _isClosed: 0
+  _isClosed: 1
 --- !u!65 &4126178822815003743
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -820,24 +819,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.009989848, y: 0.0041474537, z: 0.0093918}
   m_Center: {x: -0.000058723894, y: 0.0010483651, z: -0.0006358358}
---- !u!114 &3590715754449782721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5412857771416286706}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1 &6121903222793173054
 GameObject:
   m_ObjectHideFlags: 0
