@@ -57,7 +57,8 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             
             if (_floodEvent != null)
             {
-                _floodEvent.StopEvent();
+                _floodEvent.GameEventManager.DisableEvent(_floodEvent.EventId);
+                
             }
             else
             {

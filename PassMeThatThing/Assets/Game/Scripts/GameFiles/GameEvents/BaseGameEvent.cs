@@ -18,7 +18,9 @@ namespace Game.Scripts.GameFiles.Events
         [SyncVar] private int _timeLeft;
         public int TimeLeft => _timeLeft;
         
-        [Inject] GameEventManager  gameEventManager;
+        [Inject] private GameEventManager  gameEventManager;
+        
+        public GameEventManager GameEventManager => gameEventManager;
         
         [Server]
         public override void OnStartServer()

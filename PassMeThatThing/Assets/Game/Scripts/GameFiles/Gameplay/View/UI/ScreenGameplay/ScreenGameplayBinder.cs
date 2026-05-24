@@ -153,8 +153,8 @@ namespace Game.Gameplay.View.UI
 
         private void RemoveGameEvent(int index)
         {
+            Destroy(_gameEvents[index].gameObject);
             _gameEvents.Remove(index);
-            Destroy(_gameEvents[index]);
         }
         
         // private void OnGoToMainMenuButtonClicked()
