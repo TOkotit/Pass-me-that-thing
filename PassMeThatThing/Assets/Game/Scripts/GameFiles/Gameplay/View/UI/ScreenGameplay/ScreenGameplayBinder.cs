@@ -141,9 +141,9 @@ namespace Game.Gameplay.View.UI
             var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform);
             
             gameEvent.Icon.sprite = icon;
-            _gameEvents[index].Text.text = $"{roomNumber}";
+            gameEvent.Text.text = $"{roomNumber}";
             
-            _gameEvents[index] = gameEvent;
+            _gameEvents.Add(index, gameEvent);
         }
         
         private void UpdateGameEvent(int index, Sprite icon, int roomNumber)
