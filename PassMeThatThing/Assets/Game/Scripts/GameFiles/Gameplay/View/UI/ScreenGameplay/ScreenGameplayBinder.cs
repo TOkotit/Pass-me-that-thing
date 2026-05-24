@@ -141,21 +141,28 @@ namespace Game.Gameplay.View.UI
             var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform);
             
             gameEvent.Icon.sprite = icon;
-            gameEvent.Text.text = $"{roomNumber}";
+            gameEvent.Text.text = $"R-{roomNumber}";
             
             _gameEvents.Add(index, gameEvent);
+            
+            gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
         }
         
         private void UpdateGameEvent(int index, Sprite icon, int roomNumber)
         {
             _gameEvents[index].Icon.sprite = icon;
-            _gameEvents[index].Text.text = $"{roomNumber}";
+            _gameEvents[index].Text.text = $"R-{roomNumber}";
         }
 
         private void RemoveGameEvent(int index)
         {
-            Destroy(_gameEvents[index].gameObject);
-            _gameEvents.Remove(index);
+            _gameEvents[index].transform.DOScale(0f, 0.2f)
+                .From(1f).SetEase(Ease.InOutBack)
+                .OnComplete(() =>
+                {
+                    Destroy(_gameEvents[index].gameObject);
+                    _gameEvents.Remove(index);
+                });
         }
         
         // private void OnGoToMainMenuButtonClicked()
