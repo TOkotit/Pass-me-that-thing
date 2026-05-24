@@ -37,6 +37,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
+        
         [SerializeField] private Rigidbody rigidBody;
         public Rigidbody Rigidbody => rigidBody;
         
@@ -45,10 +46,18 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         
         [SerializeField] private NetworkItem _network;
         public NetworkItem Network => _network;
+
+
+        [SerializeField] private bool hasToBeAligned;
+        public bool HasToBeAligned => hasToBeAligned;
+
+        [SerializeField] private Transform direction;
+        public Transform Direction => direction;
         public bool IsThrown { get; set; }
         
         private NetworkTransformReliable _networkTransform;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
+        
         
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
@@ -58,8 +67,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void Start()
         {
-            /*if (Network.netIdentity.connectionToClient != null)
-                Network.netIdentity.AssignClientAuthority(all);*/
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
         }

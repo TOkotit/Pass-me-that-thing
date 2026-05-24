@@ -1,7 +1,7 @@
 using Game.Scripts.Enums;
-using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using Mirror;
 using Mirror.SimpleWeb;
 using UnityEngine;
@@ -18,11 +18,10 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [SerializeField] private float openAngle = 0f;
         [SerializeField] private float closedAngle = 360f;
         [SerializeField] private float moveSpeed = 100f;
-        
-        [SerializeField] private BaseGameEvent _floodEvent;
+        [SerializeField] private Events.FloodEvent.FloodEvent floodEvent;
         
         [SyncVar(hook = nameof(OnClosedStateChanged))]
-        private bool _isClosed;
+        public bool _isClosed;
 
         private float _currentAngle;
         private float _targetAngle;
@@ -35,15 +34,14 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             
             _currentAngle = openAngle;
             _targetAngle = openAngle;
+            
         }
-        
         public void Interact()
         {
             if (_isClosed) return;
 
             
             if (impactParticles) impactParticles.Play();
-            
             CmdCloseValve();
         }
 
@@ -52,18 +50,9 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         {
             if (_isClosed) return;
             
-            _isClosed = true;
-            _targetAngle = closedAngle;
+            Close();
             
-            if (_floodEvent != null)
-            {
-                _floodEvent.GameEventManager.DisableEvent(_floodEvent.EventId);
-                
-            }
-            else
-            {
-                Debug.LogError("event not scheduled");
-            }
+            floodEvent.PlayerFinishedAction();
         }
         
         
@@ -71,6 +60,11 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         {
             _isClosed = newValue;
             _targetAngle = newValue ? closedAngle : openAngle;
+            
+            if (oldValue == newValue) 
+            {
+                _currentAngle = _targetAngle;
+            }
         }
         
         
@@ -101,9 +95,17 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         public void SrbToggle() => _isClosed = !_isClosed;
         
         [Server]
-        public void Open() => _isClosed = false;
+        public void Open()
+        { 
+            _isClosed = false;
+            _targetAngle = openAngle;
+        }
 
         [Server]
-        public void Close() => _isClosed = true;
+        public void Close()
+        {
+            _isClosed = true;
+            _targetAngle = closedAngle;
+        }
     }
 }

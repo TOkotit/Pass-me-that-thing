@@ -134,5 +134,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem.Rigidbody.MoveRotation(rotation);
             }
         }
+        
+        /*private void FixedUpdate()
+        {
+            if (_heldItem && _heldItem.HasToBeAligned && _heldItem.Direction)
+            {
+                Rigidbody rb = _heldItem.Rigidbody;
+                Transform targetDir = _heldItem.Direction;
+
+                Quaternion targetRotation = Quaternion.LookRotation(targetDir.forward, Vector3.up);
+                rb.rotation = targetRotation;
+            }
+        }*/
     }
 }

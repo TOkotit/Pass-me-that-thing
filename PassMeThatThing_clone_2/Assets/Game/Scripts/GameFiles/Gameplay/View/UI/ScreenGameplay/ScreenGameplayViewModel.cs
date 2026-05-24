@@ -1,7 +1,10 @@
 ﻿using System;
+using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;
 using MainCharacter_old;
+using Microsoft.Unity.VisualStudio.Editor;
+using Mirror;
 using ObservableCollections;
 using R3;
 using Systems;
@@ -14,15 +17,11 @@ namespace Game.Gameplay.View.UI
     public class ScreenGameplayViewModel : WindowViewModel
     {
         private readonly GameplayUIManager _uiManager;
-        // private readonly GameManager _gameManager;
-        // private readonly ICoroutineRunner _coroutines;
-        // private readonly GameInputManager _gameInputManager;
-        //
-        // private readonly MainCharacterModel  _mainCharacter;
         
         private readonly PlayerInventoryModel  _playerInventoryModel;
-        
         private readonly ItemDatabase _itemDatabase;
+        private readonly GameEventManager _gameEventManager;
+        private readonly GameEventsDatabase _gameEventsDatabase;
         
         private readonly CompositeDisposable _subscriptions = new();
         
@@ -31,13 +30,12 @@ namespace Game.Gameplay.View.UI
         public ScreenGameplayViewModel(GameplayUIManager uiManager, IObjectResolver container)
         {
             _uiManager = uiManager;
-            // _gameManager =  container.Resolve<GameManager>();
-            // _coroutines = container.Resolve<ICoroutineRunner>();
-            // _mainCharacter = container.Resolve<MainCharacterModel>();
-            // _gameInputManager = container.Resolve<GameInputManager>();
             
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
             _itemDatabase =  container.Resolve<ItemDatabase>();
+            _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
+            
+            _gameEventManager =  container.Resolve<GameEventManager>();
         }
 
         // public void InitHealthText(Action<int> f)
@@ -131,6 +129,58 @@ namespace Game.Gameplay.View.UI
         {
             _subscriptions.Dispose();
         }
+
+        public void RequestSubGameEvent(Action<int, Sprite, int> add, 
+            Action<int, int> update, 
+            Action<int> remove)
+        {
+            _gameEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
+                int index, BaseGameEvent newItem) =>
+            {
+                switch (op)
+                {
+                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
+                        var e = _gameEventsDatabase.GetEvent(newItem.eventType);
+                        add(index, e.EventImage, newItem.TimeLeft);
+                        break;
+                    
+                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
+                        update(index, newItem.TimeLeft);
+                        break;
+        
+                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
+                        remove(index);
+                        break;
+                }
+            };
+        }
+        
+        public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
+            Action<int, int> update, 
+            Action<int> remove)
+        {
+            _gameEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
+                int index, BaseGameEvent newItem) =>
+            {
+                switch (op)
+                {
+                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
+                        var e = _gameEventsDatabase.GetEvent(newItem.eventType);
+                        add(index, e.EventImage, newItem.TimeLeft);
+                        break;
+                    
+                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
+                        update(index, newItem.TimeLeft);
+                        break;
+        
+                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
+                        remove(index);
+                        break;
+                }
+            };
+        }
+        
+        
         
         // public void RequestGoToMainMenu()
         // {

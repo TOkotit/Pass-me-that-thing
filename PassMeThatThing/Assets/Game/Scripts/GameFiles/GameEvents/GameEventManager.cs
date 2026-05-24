@@ -24,7 +24,7 @@ namespace Game.Scripts.GameFiles.Events
             var assignedId = _idGenerator;
             
             _idGenerator++; 
-            
+            Debug.Log($"<color=green>RegisterSceneEvent, id: {assignedId}</color>");
             _sceneEvents.Add(assignedId, gameEvent);
             
             return assignedId;
@@ -67,8 +67,10 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public void DisableEvent(int eventId)
         {
+
             if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
+
                 gameEvent.StopEvent();
                 StartedEvents.Remove(eventId);
             }

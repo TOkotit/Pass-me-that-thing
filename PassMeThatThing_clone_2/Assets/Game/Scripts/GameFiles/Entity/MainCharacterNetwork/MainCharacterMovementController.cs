@@ -10,8 +10,11 @@ namespace MainCharacter_old
 {
     public class MainCharacterMovementController : NetworkBehaviour
     {
-        
+        //TODO удалить это, как только доделаем шейдеры окончательно
         [SerializeField] private LocalVisionShaderApplier visionApplier;
+        
+        
+        private bool _isVisionEnabled;
         private MainCharacterMovement _controllable;
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
@@ -128,16 +131,21 @@ namespace MainCharacter_old
 
             ReadMovement();
             
+            //TODO удалить это, как только доделаем шейдеры окончательно
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Debug.Log("<color=green>V</color>");
-                visionApplier.EnableVision();
-            }
-    
-            if (Input.GetKeyUp(KeyCode.V))
-            {
-                Debug.Log("<color=red>V</color>");
-                visionApplier.DisableVision();
+                _isVisionEnabled = !_isVisionEnabled;
+
+                if (_isVisionEnabled)
+                {
+                    Debug.Log("<color=green>Режим зрения: ВКЛ</color>");
+                    visionApplier.EnableVision();
+                }
+                else
+                {
+                    Debug.Log("<color=red>Режим зрения: ВЫКЛ</color>");
+                    visionApplier.DisableVision();
+                }
             }
             
             
