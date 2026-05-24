@@ -82,6 +82,9 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput.Gameplay.Interact.performed += OnInteract;
             _gameInput.Gameplay.RightMouse.canceled += OnDrop;
             _gameInput.Gameplay.RightMouse.performed += OnDropCharge;
+
+            _gameInput.Gameplay.LeftMouse.performed += onActPerformed;
+            _gameInput.Gameplay.LeftMouse.canceled += onActCanceled;
             
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
@@ -100,6 +103,9 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.Interact.performed -= OnInteract;
                 _gameInput.Gameplay.RightMouse.canceled -= OnDrop;
                 _gameInput.Gameplay.RightMouse.performed -= OnDropCharge;
+                
+                _gameInput.Gameplay.LeftMouse.performed -= onActPerformed;
+                _gameInput.Gameplay.LeftMouse.canceled -= onActCanceled;
                 
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
@@ -230,6 +236,26 @@ namespace Game.Scripts.GameFiles.Items
         {
             var interactable = target.GetComponentInParent<IInteractable>();//Переделать 
             interactable?.Interact();
+        }
+
+        private void onActPerformed(InputAction.CallbackContext context)
+        {
+            if (PhysicalItemInteractionController.CurrentHeldItem.Reaction != null)
+            {
+                PhysicalItemInteractionController.CurrentHeldItem.Reaction.Act();
+            }
+            else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
+            {
+                PhysicalItemInteractionController.CurrentHeldItem.transform.localPosition += Vector3.forward/2f;
+            }
+        }
+        private void onActCanceled(InputAction.CallbackContext context)
+        {
+            if (PhysicalItemInteractionController.CurrentHeldItem.Reaction == null &&
+                PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
+            {
+                PhysicalItemInteractionController.HandsMovement.AlignPivotForItem(PhysicalItemInteractionController.CurrentHeldItem);
+            }
         }
 
         private void Select1(InputAction.CallbackContext context)
