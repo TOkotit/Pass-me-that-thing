@@ -20,10 +20,10 @@ public class NetworkOutlineTarget : NetworkBehaviour
     
     private void Update()
     {
-        if (_isActive && GlobalVisionManager.Instance != null)
-        {
-            GlobalVisionManager.Instance.AddZone(transform.position, radius);
-        }
+        if (!_isActive) return;
+        if (!GlobalVisionManager.Instance) return;
+
+        GlobalVisionManager.Instance.AddZone(transform.position, radius);
     }
 
     private void OnDrawGizmosSelected()
