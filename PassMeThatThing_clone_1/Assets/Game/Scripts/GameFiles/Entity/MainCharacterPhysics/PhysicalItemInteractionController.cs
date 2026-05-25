@@ -18,7 +18,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private PhysicalItem _heldItem;
         [SerializeField] private MainCharacter mainCharacter;
         private HandsMovement _handsMovement;
-        private DamagableRegistry _damagableRegistry; 
 
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
@@ -26,12 +25,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public override void OnStartLocalPlayer()
         {
             InjectSelf();
-        }
-
-        [Inject]
-        private void Construct(DamagableRegistry damagableRegistry)
-        {
-            _damagableRegistry = damagableRegistry;
         }
 
         private void Start()
@@ -137,16 +130,20 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
         
-        /*private void FixedUpdate()
+        private void FixedUpdate()
         {
-            if (_heldItem && _heldItem.HasToBeAligned && _heldItem.Direction)
+            if (_heldItem && _heldItem.HasToBeAligned)
             {
                 Rigidbody rb = _heldItem.Rigidbody;
-                Transform targetDir = _heldItem.Direction;
 
-                Quaternion targetRotation = Quaternion.LookRotation(targetDir.forward, Vector3.up);
-                rb.rotation = targetRotation;
+                Quaternion targetRotation = Pivot.rotation;
+                Quaternion visualOffset = Quaternion.Euler(_heldItem.DefaultRotation);
+                Quaternion desiredRotation = targetRotation * visualOffset;
+                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
+                
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
-        }*/
+        }
     }
 }

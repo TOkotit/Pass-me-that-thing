@@ -50,9 +50,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         [SerializeField] private bool hasToBeAligned;
         public bool HasToBeAligned => hasToBeAligned;
-
-        [SerializeField] private Transform direction;
-        public Transform Direction => direction;
         [SyncVar]
         [SerializeField] private bool _isThrown;
         public bool IsThrown
@@ -64,6 +61,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private NetworkTransformReliable _networkTransform;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         
+        [SerializeField] private Vector3 defaultRotation;
+        public Vector3 DefaultRotation => defaultRotation;
         
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
