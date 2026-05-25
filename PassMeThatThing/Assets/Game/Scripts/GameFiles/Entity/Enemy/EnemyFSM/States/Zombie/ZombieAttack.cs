@@ -1,14 +1,20 @@
 using Game.Scripts.Enums;
+using Mirror.BouncyCastle.Asn1.X509;
+using UnityEngine;
+using Time = UnityEngine.Time;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
-    public class AttackState : EnemyState
+    public class ZombieAttack : EnemyState
     {
+        protected override EnemyStates EnemyStateType => EnemyStates.Attack;
+
+        private EnemyZombie _zombie;
+        
         private EnemyAttackController _attackController;
         private TargetDetector _targetDetector;
-        protected override EnemyStates EnemyStateType => EnemyStates.Attack;
         
-        public AttackState(Enemy enemy, 
+        public ZombieAttack(EnemyZombie enemy, 
             EnemyStateMachine stateMachine, 
             EnemyAttackController attackController,
             TargetDetector targetDetector) 
@@ -16,12 +22,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             _attackController = attackController;
             _targetDetector = targetDetector;
+            _zombie = enemy;
         }
 
         public override void Enter()
         {
             base.Enter();
-            var a=0;
+            
         }
 
         public override void LogicUpdate()
@@ -31,7 +38,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-
+            if (!_targetDetector.IsTargetVisible)
+            {
+                StateMachine.ChangeState(_zombie.ZombieWalk);
+                return;
+            }
+            
+            _zombie.elapsedAttack += Time.fixedDeltaTime;
+            if (_zombie.elapsedAttack >= _zombie.attackCooldown)
+            {
+                _attackController.Attack(_targetDetector.DetectedTarget);
+                _zombie.elapsedAttack = 0f;
+            }
         }
         
         public override void Exit()

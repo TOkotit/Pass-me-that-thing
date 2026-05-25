@@ -6,29 +6,37 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemyZombie : Enemy
     {
-        public WalkState PatrolState { get; private set; }
-        public ChaseState ChaseState { get; private set; }
-        public AttackState AttackState { get; private set; }
-        public DeathState DeathState { get; private set; }
+        
+        public float attackCooldown = 3f;
+        public float elapsedAttack;
+        
+        public float chaseDistance = 3f;
+
+        public float attackDistance = 1f;
+        
+        public ZombieWalk ZombieWalk { get; private set; }
+        public ZombieChase ZombieChase { get; private set; }
+        public ZombieAttack ZombieAttack { get; private set; }
+        public ZombieDeath ZombieDeath { get; private set; }
 
         private new void Awake()
         {
             base.Awake();
             
-            PatrolState = new WalkState(this, stateMachine, targetDetector);
-            ChaseState = new ChaseState(this, stateMachine, targetDetector);
-            AttackState = new AttackState(this, 
+            ZombieWalk = new ZombieWalk(this, stateMachine, targetDetector);
+            ZombieChase = new ZombieChase(this, stateMachine, targetDetector);
+            ZombieAttack = new ZombieAttack(this, 
                 stateMachine, 
                 attackController,
                 targetDetector);
-            DeathState = new DeathState(this, stateMachine);
+            ZombieDeath = new ZombieDeath(this, stateMachine);
         }
         
         private new void Start()
         {
             base.Start();
             
-            stateMachine.Initialize(PatrolState);
+            stateMachine.Initialize(ZombieWalk);
             
             
         }
@@ -41,6 +49,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private new void FixedUpdate()
         {
             base.FixedUpdate();
+        }
+
+        public void SelfDestroy()
+        {
+            Destroy(gameObject);
         }
     }
 }

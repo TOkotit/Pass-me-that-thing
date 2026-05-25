@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -5,7 +6,9 @@ using UnityEngine.Serialization;
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class TargetDetector : NetworkBehaviour
-    { 
+    {
+        [SerializeField] private float detectionInterval = 0.5f;
+        
         [Header("Proximity settings")]
         [SerializeField] private Transform proximityAreaCenter;
         [SerializeField] private float proximityAreaRadius;
@@ -16,41 +19,58 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] private LayerMask targetLayer;   
         [SerializeField] private LayerMask enemyLayer;  
         [SerializeField] private LayerMask obstacleLayer; 
-        
-        [Header("Sharing signal settings")]
-        private Transform SharingAreaCenter => transform;
-        [SerializeField] private float sharingAreaRadius;
-        
-        
-        private Transform _detectedTarget;
-        private float _distanceToTarget = -1f;
-        private bool _isTargetVisible;
-        private bool _isTargetVisibleByGroup;
+
+        // [Header("Sharing signal settings")]
+        // private Transform SharingAreaCenter => transform;
+        // [SerializeField] private float sharingAreaRadius;
         
         public Transform DetectedTarget => _detectedTarget;
         public float DistanceToTarget => _distanceToTarget;
         public bool IsTargetVisible => _isTargetVisible;
-        public bool IsTargetVisibleByGroup => _isTargetVisibleByGroup;
         
-        public void SetTargetFromOther(Transform detectedTarget, float distanceToTarget, bool isTargetVisible)
+        // public bool IsTargetVisibleByGroup => _isTargetVisibleByGroup;
+        
+        private float _timer;
+        
+        private Transform _detectedTarget;
+        private float _distanceToTarget = -1f;
+        private bool _isTargetVisible;
+        // private bool _isTargetVisibleByGroup;
+        
+        
+        
+        // public void SetTargetFromOther(Transform detectedTarget, float distanceToTarget, bool isTargetVisible)
+        // {
+        //     // Debug.Log("SetTargetFromOther");
+        //     _detectedTarget = detectedTarget;
+        //     _distanceToTarget = distanceToTarget;
+        //     // _isTargetVisibleByGroup = isTargetVisible;
+        //     _isTargetVisible = isTargetVisible;
+        // }
+
+        // public float UpdateDistanceToTarget()
+        // {
+        //     return Vector3.Distance(transform.position, DetectedTarget.position);
+        // }
+
+        private void FixedUpdate()
         {
-            // Debug.Log("SetTargetFromOther");
-            _detectedTarget = detectedTarget;
-            _distanceToTarget = distanceToTarget;
-            _isTargetVisibleByGroup = isTargetVisible;
-            _isTargetVisible = isTargetVisible;
+            _timer += Time.fixedDeltaTime;
+
+            if (_timer >= detectionInterval)
+            {
+                DetectPlayer();
+                _timer = 0f;
+            }
         }
 
-        public float UpdateDistanceToTarget()
-        {
-            return Vector3.Distance(transform.position, DetectedTarget.position);
-        }
-        
+
         public void DetectPlayer()
         {
             var maxRange = Mathf.Max(proximityAreaRadius, sightDistance);
             var targetsInRadius = new Collider[10];
-            var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, targetsInRadius, targetLayer);
+            var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, 
+                targetsInRadius, targetLayer);
             
             if (size > 0)
             {
@@ -79,24 +99,24 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                     _distanceToTarget = distance;
                     _isTargetVisible = true;
                     
-                    if (!IsTargetVisibleByGroup)
-                    {
-                        var enemiesInRadius = new Collider[10];
-                        var enemiesSize = Physics.OverlapSphereNonAlloc(transform.position, 
-                            sharingAreaRadius, 
-                            enemiesInRadius, 
-                            enemyLayer);
-                        
-                        if (enemiesSize > 0)
-                        {
-                            // Debug.Log("FOR ENEMIES: TARGET DETECTED IN AREA");
-                            foreach (var enemy in enemiesInRadius)
-                            {
-                                enemy?.GetComponent<TargetDetector>()?.SetTargetFromOther(DetectedTarget,
-                                    DistanceToTarget, IsTargetVisible);
-                            }
-                        }
-                    }
+                    // if (!IsTargetVisibleByGroup)
+                    // {
+                    //     var enemiesInRadius = new Collider[10];
+                    //     var enemiesSize = Physics.OverlapSphereNonAlloc(transform.position, 
+                    //         sharingAreaRadius, 
+                    //         enemiesInRadius, 
+                    //         enemyLayer);
+                    //     
+                    //     if (enemiesSize > 0)
+                    //     {
+                    //         // Debug.Log("FOR ENEMIES: TARGET DETECTED IN AREA");
+                    //         foreach (var enemy in enemiesInRadius)
+                    //         {
+                    //             enemy?.GetComponent<TargetDetector>()?.SetTargetFromOther(DetectedTarget,
+                    //                 DistanceToTarget, IsTargetVisible);
+                    //         }
+                    //     }
+                    // }
                     return;
                 }
             }
@@ -104,7 +124,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             _detectedTarget = null;
             _distanceToTarget = -1f;
             _isTargetVisible = false;
-            _isTargetVisibleByGroup = false;
+            // _isTargetVisibleByGroup = false;
         }
         
         
@@ -115,8 +135,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(proximityAreaCenter ? proximityAreaCenter.position : transform.position, proximityAreaRadius);
             
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(SharingAreaCenter ? SharingAreaCenter.position : transform.position, sharingAreaRadius);
+            // Gizmos.color = Color.green;
+            // Gizmos.DrawWireSphere(SharingAreaCenter ? SharingAreaCenter.position : transform.position, sharingAreaRadius);
             
             Gizmos.color = Color.red;
             var leftRayRotation = Quaternion.AngleAxis(-sightAngle / 2, Vector3.up);
