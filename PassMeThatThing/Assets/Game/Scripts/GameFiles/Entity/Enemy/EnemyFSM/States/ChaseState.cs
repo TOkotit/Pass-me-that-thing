@@ -4,10 +4,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class ChaseState : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Walk;
+        protected override EnemyStates EnemyStateType => EnemyStates.Chase;
         
-        public ChaseState(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+        private TargetDetector _targetDetector;
+        
+        public ChaseState(Enemy enemy, EnemyStateMachine stateMachine, TargetDetector targetDetector) 
+            : base(enemy, stateMachine)
         {
+            _targetDetector = targetDetector;
         }
 
 

@@ -1,3 +1,4 @@
+using System;
 using Game.Scripts.Enums;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
@@ -8,15 +9,25 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         protected EnemyStateMachine StateMachine;
         protected Enemy Enemy;
         
+        public event Action<EnemyStates> OnEnter;
+        public event Action<EnemyStates> OnExit;
+        
         public EnemyState(Enemy enemy, EnemyStateMachine stateMachine)
         {
             Enemy = enemy;
             StateMachine = stateMachine;
         }
 
-        public virtual void Enter() { }
+        public virtual void Enter()
+        {
+            OnEnter?.Invoke(EnemyStateType);
+        }
         public virtual void LogicUpdate() { }
         public virtual void PhysicsUpdate() { }
-        public virtual void Exit() { }
+
+        public virtual void Exit()
+        {
+            OnExit?.Invoke(EnemyStateType);
+        }
     }
 }

@@ -6,11 +6,33 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
     {
         protected override EnemyStates EnemyStateType => EnemyStates.Walk;
         
-        public WalkState(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+        private TargetDetector _targetDetector;
+        
+        public WalkState(Enemy enemy, EnemyStateMachine stateMachine, TargetDetector targetDetector) 
+            : base(enemy, stateMachine)
         {
+            _targetDetector = targetDetector;
         }
 
+        public override void Enter()
+        {
+            
+        }
 
+        public override void LogicUpdate()
+        {
+            
+        }
+
+        public override void PhysicsUpdate()
+        {
+
+        }
+        
+        public override void Exit()
+        {
+            
+        }
         
     }
 }
