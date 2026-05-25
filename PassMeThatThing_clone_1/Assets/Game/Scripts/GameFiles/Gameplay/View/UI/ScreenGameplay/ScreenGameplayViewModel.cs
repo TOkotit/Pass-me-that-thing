@@ -58,17 +58,17 @@ namespace Game.Gameplay.View.UI
         //
         // public void InitStaminaText(Action<float> f)
         // {
-        //     f(_mainCharacter.Stamina.CurrentStamina);
+        //     f(_mainCharacter.Stamina_old.CurrentStamina);
         // }
         //
         // public void RequestSubStaminaText(Action<float> f)
         // {
-        //     _mainCharacter.Stamina.OnStaminaChanged += f;
+        //     _mainCharacter.Stamina_old.OnStaminaChanged += f;
         // }
         //
         // public void RequestUnsubStaminaText(Action<float> f)
         // {
-        //     _mainCharacter.Stamina.OnStaminaChanged -= f;
+        //     _mainCharacter.Stamina_old.OnStaminaChanged -= f;
         // }
 
         public void RequestSubActiveSlot(Action<int> f)

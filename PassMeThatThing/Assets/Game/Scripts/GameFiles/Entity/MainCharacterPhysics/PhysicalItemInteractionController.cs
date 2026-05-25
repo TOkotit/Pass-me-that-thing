@@ -19,7 +19,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private MainCharacter mainCharacter;
         private HandsMovement _handsMovement;
         private DamagableRegistry _damagableRegistry; 
-        //private int _originalHeldItemLayer;   
 
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
@@ -54,7 +53,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (item.CanBeOwned)
             {
                 item.Owner = mainCharacter;
-                item.gameObject.layer = LayerMask.NameToLayer("HeldItem");
+                if (isLocalPlayer)
+                {
+                    item.gameObject.layer = LayerMask.NameToLayer("HeldItem");
+                }
             }
         }
         

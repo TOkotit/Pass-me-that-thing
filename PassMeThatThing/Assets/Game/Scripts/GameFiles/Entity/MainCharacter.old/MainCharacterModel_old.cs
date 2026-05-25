@@ -9,8 +9,8 @@ namespace MainCharacter_old
 {
     public class MainCharacterModel_old : DamagableModel
     {
-        private Stamina _stamina;
-        public Stamina  Stamina { get => _stamina; set => _stamina = value; }
+        private Stamina_old _stamina;
+        public Stamina_old  Stamina { get => _stamina; set => _stamina = value; }
         
         private float _speed = 10;
         private float _jumpHeight = 7;
@@ -35,7 +35,7 @@ namespace MainCharacter_old
         public float ParryDuration { get => _parryDuration; set => _parryDuration = value; }
         
         
-        public MainCharacterModel_old(Stamina stamina, Health health) : base()
+        public MainCharacterModel_old(Stamina_old stamina, Health health) : base()
         {
             _stamina = stamina;
             //_health = health;

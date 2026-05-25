@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MainCharacter_old
 {
-    public class Stamina
+    public class Stamina_old
     {
         private float _maxStamina = 100;
         private float _currentStamina;
