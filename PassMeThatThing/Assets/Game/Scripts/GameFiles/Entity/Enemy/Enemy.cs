@@ -29,35 +29,25 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
         
-        public override void OnStartClient()
+        public override void OnStartServer()
         {
             LifetimeScope.Find<GameplayScope>().Container.Inject(this);
 
+            stateMachine = new EnemyStateMachine();
             EnemyModel = new EnemyModel();
             
             _damagableRegistry.Register(this);
         }
-        
-        protected void Awake()
-        {
-            stateMachine = new EnemyStateMachine();
-            
-        }
-
-        
-
-        protected void Start()
-        {
-            
-        }
 
         protected void Update()
         {
+            if(!isServer) return;
             stateMachine.CurrentState.LogicUpdate();
         }
 
         protected void FixedUpdate()
         {
+            if(!isServer) return;
             stateMachine.CurrentState.PhysicsUpdate();
         }
     }

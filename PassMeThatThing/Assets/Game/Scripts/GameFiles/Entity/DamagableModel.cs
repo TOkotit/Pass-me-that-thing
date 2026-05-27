@@ -24,6 +24,7 @@ namespace Entity
         public event Action OnTakeHit;
         public void TakeHit()
         {
+            
             OnTakeHit?.Invoke();
         }
     }

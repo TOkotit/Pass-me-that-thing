@@ -17,8 +17,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] private float sightDistance;
         [SerializeField] private float sightAngle; 
         [SerializeField] private LayerMask targetLayer;   
-        [SerializeField] private LayerMask enemyLayer;  
-        [SerializeField] private LayerMask obstacleLayer; 
+        // [SerializeField] private LayerMask enemyLayer;  
+        [SerializeField] private LayerMask obstacleLayer;
 
         // [Header("Sharing signal settings")]
         // private Transform SharingAreaCenter => transform;
@@ -55,6 +55,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         private void FixedUpdate()
         {
+            if (!isServer) return;
+            
             _timer += Time.fixedDeltaTime;
 
             if (_timer >= detectionInterval)

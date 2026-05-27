@@ -6,7 +6,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemyZombie : Enemy
     {
-        
         public float attackCooldown = 3f;
         public float elapsedAttack;
         
@@ -18,10 +17,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
         public ZombieDeath ZombieDeath { get; private set; }
-
-        private new void Awake()
+        
+        public override void OnStartServer()
         {
-            base.Awake();
+            base.OnStartServer();
             
             ZombieWalk = new ZombieWalk(this, stateMachine, targetDetector);
             ZombieChase = new ZombieChase(this, stateMachine, targetDetector);
@@ -30,15 +29,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 attackController,
                 targetDetector);
             ZombieDeath = new ZombieDeath(this, stateMachine);
-        }
-        
-        private new void Start()
-        {
-            base.Start();
             
             stateMachine.Initialize(ZombieWalk);
-            
-            
         }
         
         private new void Update()
