@@ -12,17 +12,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class Enemy : Damagable
     {
-        [Inject]
-        private DamagableRegistry _damagableRegistry;
-        
+        [Inject] private DamagableRegistry _damagableRegistry;
         
         public override DamagableModel DamagableModel
         {
             get => EnemyModel;
         }
 
-        public EnemyModel EnemyModel;
-        
+        protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
         
         [SerializeField] protected TargetDetector targetDetector;

@@ -37,7 +37,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private bool _isTargetVisible;
         // private bool _isTargetVisibleByGroup;
         
-        
+        public event Action<Transform> OnDetectedTarget;
         
         // public void SetTargetFromOther(Transform detectedTarget, float distanceToTarget, bool isTargetVisible)
         // {
@@ -66,7 +66,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             }
         }
 
-
+        [Server]
         public void DetectPlayer()
         {
             var maxRange = Mathf.Max(proximityAreaRadius, sightDistance);
@@ -97,6 +97,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
                 if (inProximity || inSight)
                 {
+                    OnDetectedTarget?.Invoke(target);
                     _detectedTarget = target;
                     _distanceToTarget = distance;
                     _isTargetVisible = true;

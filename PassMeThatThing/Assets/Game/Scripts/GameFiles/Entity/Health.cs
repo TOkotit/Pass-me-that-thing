@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Entity
 {
+    //OLD
     public class Health
     { 
         private int _maxHealth = 100 * BC.Health;
