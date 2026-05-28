@@ -41,10 +41,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 StateMachine.ChangeState(_zombie.ZombieWalk);
                 return;
             }
-
+            
+            _movementController.SetSpeed(_zombie.Speed);
             _movementController.NavigateTo(_targetDetector.DetectedTarget);
             
-            // Debug.Log($"{_targetDetector.DistanceToTarget}");
             if (_targetDetector.DistanceToTarget < _zombie.AttackDistance)
             {
                 

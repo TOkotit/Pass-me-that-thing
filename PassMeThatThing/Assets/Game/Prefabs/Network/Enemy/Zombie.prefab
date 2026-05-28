@@ -136,10 +136,7 @@ MonoBehaviour:
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
-  attackCooldown: 3
   elapsedAttack: 0
-  chaseDistance: 3
-  attackDistance: 3
 --- !u!114 &1118780070767854037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +212,7 @@ MonoBehaviour:
   target: {fileID: 227837763217859650}
   syncPosition: 1
   syncRotation: 1
-  syncScale: 0
+  syncScale: 1
   onlySyncOnChange: 1
   compressRotation: 1
   interpolatePosition: 1

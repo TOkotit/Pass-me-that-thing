@@ -31,6 +31,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
+            
+            
+            
             if (_targetDetector.IsTargetVisible)
             {
                 if (_targetDetector.DistanceToTarget < _zombie.ChaseDistance)

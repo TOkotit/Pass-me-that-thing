@@ -14,6 +14,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public float ChaseDistance => _zombieData.ChaseDistance;
         public float AttackDistance => _zombieData.AttackDistance;
         
+        public float Speed => _zombieData.Speed;
+        
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }

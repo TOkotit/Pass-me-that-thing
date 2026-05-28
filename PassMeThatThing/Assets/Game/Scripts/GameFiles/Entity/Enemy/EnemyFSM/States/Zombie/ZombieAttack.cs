@@ -43,6 +43,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 StateMachine.ChangeState(_zombie.ZombieWalk);
                 return;
             }
+
+            if (_targetDetector.DistanceToTarget > _zombie.AttackDistance)
+            {
+                StateMachine.ChangeState(_zombie.ZombieChase);
+                return;
+            }
             
             _zombie.elapsedAttack += Time.fixedDeltaTime;
             if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
