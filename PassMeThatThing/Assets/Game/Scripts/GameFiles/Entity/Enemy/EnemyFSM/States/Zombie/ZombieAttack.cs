@@ -45,7 +45,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             }
             
             _zombie.elapsedAttack += Time.fixedDeltaTime;
-            if (_zombie.elapsedAttack >= _zombie.attackCooldown)
+            if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
             {
                 _attackController.Attack(_targetDetector.DetectedTarget);
                 _zombie.elapsedAttack = 0f;

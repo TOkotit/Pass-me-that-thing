@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Scriptable Objects/EnemyData")]
 public class EnemyData : ScriptableObject
 {
+    [Header("General")]
     [SerializeField] private string id; 
     [SerializeField] private string enemyName;
     [SerializeField] private GameObject worldPrefab; 
@@ -16,29 +17,17 @@ public class EnemyData : ScriptableObject
     [SerializeField] private int attackCooldown;
     [SerializeField] private int chaseDistance;
     [SerializeField] private int attackDistance;
-    
 
-    public string Id
-    {
-        get => id;
-        set => id = value;
-    }
 
-    public string ItemName
-    {
-        get => enemyName;
-        set => enemyName = value;
-    }
+    public string Id => id;
+    public string EnemyName => enemyName;
+    public GameObject WorldPrefab => worldPrefab;
+    public Sprite EnemyImage => enemyImage;
 
-    public GameObject WorldPrefab
-    {
-        get => worldPrefab;
-        set => worldPrefab = value;
-    }
-
-    public Sprite ItemImage
-    {
-        get => enemyImage;
-        set => enemyImage = value;
-    }
+    public int MaxHealth => maxHealth;
+    public int Speed => speed;
+    public int Damage => damage;
+    public int AttackCooldown => attackCooldown;
+    public int ChaseDistance => chaseDistance;
+    public int AttackDistance => attackDistance;
 }

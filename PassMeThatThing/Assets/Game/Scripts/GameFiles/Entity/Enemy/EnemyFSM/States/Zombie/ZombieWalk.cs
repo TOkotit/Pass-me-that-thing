@@ -33,7 +33,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             if (_targetDetector.IsTargetVisible)
             {
-                if (_targetDetector.DistanceToTarget < _zombie.chaseDistance)
+                if (_targetDetector.DistanceToTarget < _zombie.ChaseDistance)
                 {
                     StateMachine.ChangeState(_zombie.ZombieChase);
                     return;

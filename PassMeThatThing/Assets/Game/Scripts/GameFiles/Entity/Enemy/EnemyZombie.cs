@@ -1,22 +1,29 @@
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Unity.VisualScripting;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemyZombie : Enemy
     {
-        public float attackCooldown = 3f;
-        public float elapsedAttack;
+        private EnemyData _zombieData;
         
-        public float chaseDistance = 3f;
-
-        public float attackDistance = 3f;
+        public float elapsedAttack;
+        public float AttackCooldown => _zombieData.AttackCooldown;
+        public float ChaseDistance => _zombieData.ChaseDistance;
+        public float AttackDistance => _zombieData.AttackDistance;
         
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
         public ZombieDeath ZombieDeath { get; private set; }
+
+        [Inject]
+        private void Construct(EnemyDatabase enemyDatabase)
+        {
+            _zombieData = enemyDatabase.GetEnemy("Zombie");
+        }
         
         public override void OnStartServer()
         {

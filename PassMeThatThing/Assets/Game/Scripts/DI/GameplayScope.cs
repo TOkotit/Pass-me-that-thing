@@ -16,6 +16,7 @@ namespace DI
     {
         [SerializeField] ItemDatabase itemDatabase;
         [SerializeField] GameEventsDatabase gameEventsDatabase;
+        [SerializeField] private EnemyDatabase enemyDatabase;
         [SerializeField] private GameObject eventManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
@@ -24,6 +25,7 @@ namespace DI
             
             builder.RegisterInstance(itemDatabase);
             builder.RegisterInstance(gameEventsDatabase);
+            builder.RegisterInstance(enemyDatabase);
 
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
