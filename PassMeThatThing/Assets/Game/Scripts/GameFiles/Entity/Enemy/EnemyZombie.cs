@@ -11,7 +11,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         public float chaseDistance = 3f;
 
-        public float attackDistance = 1f;
+        public float attackDistance = 3f;
         
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
@@ -23,7 +23,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.OnStartServer();
             
             ZombieWalk = new ZombieWalk(this, stateMachine, targetDetector);
-            ZombieChase = new ZombieChase(this, stateMachine, targetDetector);
+            ZombieChase = new ZombieChase(this, 
+                stateMachine, 
+                targetDetector, 
+                movementController);
             ZombieAttack = new ZombieAttack(this, 
                 stateMachine, 
                 attackController,

@@ -20,11 +20,11 @@ namespace Game.Scripts.GameFiles.Items
         {
             foreach (var item in database.allItems)
             {
-                _poolDict[item.ID] = new Stack<GameObject>();
+                _poolDict[item.Id] = new Stack<GameObject>();
 
                 // Регистрируем префаб в Mirror
                 NetworkClient.RegisterPrefab(item.WorldPrefab, 
-                    (msg) => SpawnHandler(msg, item.ID), 
+                    (msg) => SpawnHandler(msg, item.Id), 
                     UnspawnHandler);
             }
         }

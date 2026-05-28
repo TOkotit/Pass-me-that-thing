@@ -1,4 +1,5 @@
 using Game.Scripts.Enums;
+using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
@@ -9,16 +10,22 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private EnemyZombie _zombie;
         
         private TargetDetector _targetDetector;
+        private EnemyMovementController  _movementController;
         
-        public ZombieChase(Enemy enemy, EnemyStateMachine stateMachine, TargetDetector targetDetector) 
+        public ZombieChase(EnemyZombie enemy, EnemyStateMachine stateMachine, 
+            TargetDetector targetDetector,
+            EnemyMovementController  movementController) 
             : base(enemy, stateMachine)
         {
+            _zombie = enemy;
             _targetDetector = targetDetector;
+            _movementController = movementController;
         }
 
         public override void Enter()
         {
             base.Enter();
+            
             
         }
 
@@ -35,8 +42,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 return;
             }
 
+            _movementController.NavigateTo(_targetDetector.DetectedTarget);
+            
+            // Debug.Log($"{_targetDetector.DistanceToTarget}");
             if (_targetDetector.DistanceToTarget < _zombie.attackDistance)
             {
+                
                 StateMachine.ChangeState(_zombie.ZombieAttack);
                 return;
             }

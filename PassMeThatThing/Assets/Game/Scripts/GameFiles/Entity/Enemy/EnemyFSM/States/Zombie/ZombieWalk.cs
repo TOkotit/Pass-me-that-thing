@@ -21,12 +21,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void Enter()
         {
-            
+            base.Enter();
         }
 
         public override void LogicUpdate()
         {
-            
+            base.LogicUpdate();
         }
 
         public override void PhysicsUpdate()
@@ -39,13 +39,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     return;
                 }
             }
-            
-            
         }
         
         public override void Exit()
         {
-            
+            base.Exit();
         }
         
     }

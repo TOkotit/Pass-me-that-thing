@@ -139,7 +139,7 @@ MonoBehaviour:
   attackCooldown: 3
   elapsedAttack: 0
   chaseDistance: 3
-  attackDistance: 1
+  attackDistance: 3
 --- !u!114 &1118780070767854037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,10 +156,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   detectionInterval: 0.5
-  proximityAreaCenter: {fileID: 0}
-  proximityAreaRadius: 0
-  sightDistance: 0
-  sightAngle: 0
+  proximityAreaCenter: {fileID: 227837763217859650}
+  proximityAreaRadius: 10
+  sightDistance: 10
+  sightAngle: 60
   targetLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -196,7 +196,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  navMeshAgent: {fileID: 0}
+  navMeshAgent: {fileID: 8780573388070845451}
 --- !u!114 &7370826059491095980
 MonoBehaviour:
   m_ObjectHideFlags: 0

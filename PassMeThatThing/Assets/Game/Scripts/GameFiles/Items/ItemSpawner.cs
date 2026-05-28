@@ -23,7 +23,7 @@ namespace Game.Scripts.GameFiles.Items
         [Command(requiresAuthority = false)] 
         private void CmdInteractWithObject()
         {
-            var itemToDrop = _itemPoolManager.GetFromPool(item.ID);
+            var itemToDrop = _itemPoolManager.GetFromPool(item.Id);
             itemToDrop.transform.position = pointToSpawn.position;
             itemToDrop.SetActive(true);
             _physicalItemRegistry.Register(itemToDrop.GetComponent<PhysicalItem>());

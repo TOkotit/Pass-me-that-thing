@@ -9,7 +9,7 @@ public class ItemData : ScriptableObject
     [SerializeField] private Sprite itemImage;
     [SerializeField] private bool isStackable;
 
-    public string ID
+    public string Id
     {
         get => id;
         set => id = value;

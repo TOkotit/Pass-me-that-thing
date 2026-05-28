@@ -10,7 +10,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void Attack(Transform target)
         {
             // заглушка
-            gameObject.transform.DOScale(1.5f, 0.5f).From(1f).SetLoops(1, LoopType.Yoyo);
+            gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);
         }
     }
 }

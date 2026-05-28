@@ -11,6 +11,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void NavigateTo(Transform target)
         {
+            // Debug.Log("Navigating to " + target.position);
             navMeshAgent.SetDestination(target.position);
         }
 
