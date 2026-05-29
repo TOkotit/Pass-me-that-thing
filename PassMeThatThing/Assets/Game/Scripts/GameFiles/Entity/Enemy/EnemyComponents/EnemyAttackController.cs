@@ -51,7 +51,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             if (hitPlayer)
             {
-                // playerModel.Health.TakeDamage(closeAttackData.Damage, closeAttackData.DamageType);
+                // playerModel.Health_old.TakeDamage(closeAttackData.Damage, closeAttackData.DamageType);
             }
         }
     }

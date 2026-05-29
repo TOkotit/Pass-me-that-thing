@@ -35,10 +35,10 @@ namespace MainCharacter_old
         public float ParryDuration { get => _parryDuration; set => _parryDuration = value; }
         
         
-        public MainCharacterModel_old(Stamina_old stamina, Health health) : base()
+        public MainCharacterModel_old(Stamina_old stamina, Health_old healthOld) : base()
         {
             _stamina = stamina;
-            //_health = health;
+            //_health = healthOld;
         }
     }
 }

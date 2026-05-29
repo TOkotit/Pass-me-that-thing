@@ -41,19 +41,19 @@ namespace Game.Gameplay.View.UI
         // public void InitHealthText(Action<int> f)
         // {
         //     Debug.Log("inithealthText");
-        //     f(_mainCharacter.Health.CurrentHealth);
+        //     f(_mainCharacter.Health_old.CurrentHealth);
         // }
         //
         // public void RequestSubHealthText(Action<int> f)
         // {
-        //     Debug.Log($"RequestSubText {_mainCharacter.Health == null}");
-        //     _mainCharacter.Health.OnHealthChanged += f;
+        //     Debug.Log($"RequestSubText {_mainCharacter.Health_old == null}");
+        //     _mainCharacter.Health_old.OnHealthChanged += f;
         // }
         //
         // public void RequestUnsubHealthText(Action<int> f)
         // {
-        //     Debug.Log($"RequestUnsubText {_mainCharacter.Health == null}");
-        //     _mainCharacter.Health.OnHealthChanged -= f;
+        //     Debug.Log($"RequestUnsubText {_mainCharacter.Health_old == null}");
+        //     _mainCharacter.Health_old.OnHealthChanged -= f;
         // }
         //
         // public void InitStaminaText(Action<float> f)

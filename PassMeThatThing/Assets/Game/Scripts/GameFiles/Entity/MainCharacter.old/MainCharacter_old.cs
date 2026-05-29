@@ -13,11 +13,11 @@ namespace MainCharacter_old
         private MainCharacterModel_old _mainCharacterModel;
         [Inject] private CharacterController _characterController;
         [Inject]
-        private void SetupModel(Stamina_old stamina, Health health, MovementStatsSO stats, [CanBeNull] MainCharacterModel_old mainCharacterModel, CombatStatsSO  combatStats)
+        private void SetupModel(Stamina_old stamina, Health_old healthOld, MovementStatsSO stats, [CanBeNull] MainCharacterModel_old mainCharacterModel, CombatStatsSO  combatStats)
         {
             _mainCharacterModel = mainCharacterModel;
             mainCharacterModel.Stamina = stamina;
-            //mainCharacterModel.Health = health;
+            //mainCharacterModel.Health_old = healthOld;
             
             _mainCharacterModel.DashCooldown = stats.DashCooldown;
             _mainCharacterModel.DashSpeed = stats.DashSpeed;

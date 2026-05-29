@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Entity
 {
     //OLD
-    public class Health
+    public class Health_old
     { 
         private int _maxHealth = 100 * BC.Health;
         private int _currentHealth;
@@ -61,7 +61,7 @@ namespace Entity
             //анналогично
             return heal;
         }
-        public Health()
+        public Health_old()
         {
             _currentHealth = _maxHealth;
         }

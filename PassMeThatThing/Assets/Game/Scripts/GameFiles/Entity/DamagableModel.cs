@@ -8,24 +8,14 @@ namespace Entity
 {
     public abstract class DamagableModel
     {
-        protected GlobalHealthPool _health;  
-        public GlobalHealthPool Health
+        protected HealthPool _healthPool;
+        public HealthPool HealthPool
         {
-            get
-            {
-                return _health;
-            }
-            set
-            {
-                _health = value;
-            }
+            get => _healthPool;
+            set => _healthPool = value;
         }
-        
+
         public event Action OnTakeHit;
-        public void TakeHit()
-        {
-            
-            OnTakeHit?.Invoke();
-        }
+        public void TakeHit() => OnTakeHit?.Invoke();
     }
 }
