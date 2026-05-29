@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 7392575227960214304}
   - component: {fileID: 2742765135364868261}
   - component: {fileID: 7776855572588576369}
+  - component: {fileID: 4913154011383626854}
+  - component: {fileID: 6213635256034360291}
   m_Layer: 7
   m_Name: wrench
   m_TagString: Item
@@ -33,14 +35,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6289893463516360249}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: -0.00000013767875, z: 0.7071067, w: 0.00000013767878}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
+  m_LocalPosition: {x: -0.034847334, y: 0.018644607, z: 0}
   m_LocalScale: {x: 9.841752, y: 9.841752, z: 9.841752}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7705681103071039162}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 90}
 --- !u!33 &7759205171242924838
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -189,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 6629826876720411779}
@@ -209,7 +211,7 @@ MonoBehaviour:
   onlySyncOnChangeCorrectionMultiplier: 2
   useFixedUpdate: 0
   rotationSensitivity: 0.01
-  positionPrecision: 0.01
+  positionPrecision: 0.0001
   scalePrecision: 0.01
 --- !u!114 &2742765135364868261
 MonoBehaviour:
@@ -223,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMode: 0
+  outlineMode: 1
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
   outlineWidth: 5
   precomputeOutline: 0
@@ -251,9 +253,62 @@ MonoBehaviour:
   leftHandPoint: {fileID: 0}
   rightHandPoint: {fileID: 0}
   defaultPosition: {x: 0, y: 0, z: 0}
-  isHeld: 0
+  canBeOwned: 1
   rigidBody: {fileID: -5545228456256839850}
   _network: {fileID: 1686371426209873383}
+  hasToBeAligned: 1
+  _isThrown: 0
+  defaultRotation: {x: 0, y: 180, z: 90}
+--- !u!114 &4913154011383626854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 6629826876720411779}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
+--- !u!114 &6213635256034360291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _outline: {fileID: 2742765135364868261}
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0
