@@ -691,13 +691,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 400
+    positionSpring: 600
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 400
+    positionSpring: 600
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -1295,18 +1295,18 @@ ConfigurableJoint:
   m_AngularXDrive:
     serializedVersion: 4
     positionSpring: 1000
-    positionDamper: 50
+    positionDamper: 100
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
     positionSpring: 1000
-    positionDamper: 50
+    positionDamper: 100
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_SlerpDrive:
     serializedVersion: 4
-    positionSpring: 0
+    positionSpring: 1000
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -1527,17 +1527,18 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  joints:
+  spineAlignJoints:
   - joint: {fileID: 173344307844624988}
-    spring: 600
-    damper: 0.5
+    spring: 1000
+    damper: 0
   - joint: {fileID: 1695402308512339797}
-    spring: 600
-    damper: 0.5
+    spring: 1000
+    damper: 0
   - joint: {fileID: 2181451318277074280}
-    spring: 600
-    damper: 0.5
-  globalSpringMultiplier: 1
+    spring: 1000
+    damper: 0
+  otherJoints: []
+  currentConsciousness: 1
 --- !u!114 &9057745976237410458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2456,13 +2457,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 400
+    positionSpring: 600
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 400
+    positionSpring: 600
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -6290,10 +6291,10 @@ ConfigurableJoint:
   m_ConnectedBody: {fileID: 693245307775307819}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
-  m_Axis: {x: 1, y: 0, z: 0}
+  m_Axis: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_SecondaryAxis: {x: 0, y: 1, z: 0}
+  m_SecondaryAxis: {x: 0, y: 0, z: 0}
   m_XMotion: 0
   m_YMotion: 0
   m_ZMotion: 0
@@ -6354,14 +6355,14 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 0
-    positionDamper: 0
+    positionSpring: 1000
+    positionDamper: 20
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 0
-    positionDamper: 0
+    positionSpring: 1000
+    positionDamper: 20
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_SlerpDrive:

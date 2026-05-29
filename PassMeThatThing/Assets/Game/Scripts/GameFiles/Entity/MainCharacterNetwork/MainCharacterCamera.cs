@@ -16,6 +16,7 @@ namespace MainCharacter_old
         [SerializeField] private bool lockCursor = true;
         [SerializeField] private float tiltMultiplier = 0.2f;
         [SerializeField] BodyVerticalAlign bodyVerticalAlign;
+        [SerializeField] private Transform head;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -76,8 +77,11 @@ namespace MainCharacter_old
 
             if (!_isCameraRotating)
                 return;
-
+            
             ReadRotation();
+            head.transform.rotation = Quaternion.Euler(head.transform.rotation.eulerAngles.x,
+                transform.eulerAngles.y,
+                head.transform.rotation.eulerAngles.z);
         }
 
         private void ReadRotation()
@@ -95,10 +99,8 @@ namespace MainCharacter_old
             transform.localRotation = Quaternion.Euler(_rotation.x, _rotation.y, 0f);
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
-            
-            
             _movementController.ControllerRotate(characterRotation);
-            bodyVerticalAlign.CmdSetTilt(new Vector3(Math.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f));
+            bodyVerticalAlign.SetTilt(new Vector3(Math.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f));
         }
         
         public void SetupInput(GameInput input)

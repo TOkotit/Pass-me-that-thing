@@ -46,8 +46,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             
             if (verticalAlign)
             {
-                verticalAlign.EmergencyRelax(); 
-                verticalAlign.enabled = false;  
+                //verticalAlign.EmergencyRelax(); 
+                //verticalAlign.enabled = false;  
             }
 
             if (rigidbody)
