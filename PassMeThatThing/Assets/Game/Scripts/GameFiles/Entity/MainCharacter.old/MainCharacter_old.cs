@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Entity;
+using Entity.Entity;
 using JetBrains.Annotations;
 using Systems;
 using UnityEngine;
