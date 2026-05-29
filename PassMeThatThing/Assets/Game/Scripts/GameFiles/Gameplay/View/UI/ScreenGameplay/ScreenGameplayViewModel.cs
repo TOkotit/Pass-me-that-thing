@@ -20,7 +20,7 @@ namespace Game.Gameplay.View.UI
         
         private readonly PlayerInventoryModel  _playerInventoryModel;
         private readonly ItemDatabase _itemDatabase;
-        private readonly GameEventManager _gameEventManager;
+        private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
         
         private readonly CompositeDisposable _subscriptions = new();
@@ -35,25 +35,25 @@ namespace Game.Gameplay.View.UI
             _itemDatabase =  container.Resolve<ItemDatabase>();
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             
-            _gameEventManager =  container.Resolve<GameEventManager>();
+            _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
         }
 
         // public void InitHealthText(Action<int> f)
         // {
         //     Debug.Log("inithealthText");
-        //     f(_mainCharacter.Health_old.CurrentHealth);
+        //     f(_mainCharacter.Health.CurrentHealth);
         // }
         //
         // public void RequestSubHealthText(Action<int> f)
         // {
-        //     Debug.Log($"RequestSubText {_mainCharacter.Health_old == null}");
-        //     _mainCharacter.Health_old.OnHealthChanged += f;
+        //     Debug.Log($"RequestSubText {_mainCharacter.Health == null}");
+        //     _mainCharacter.Health.OnHealthChanged += f;
         // }
         //
         // public void RequestUnsubHealthText(Action<int> f)
         // {
-        //     Debug.Log($"RequestUnsubText {_mainCharacter.Health_old == null}");
-        //     _mainCharacter.Health_old.OnHealthChanged -= f;
+        //     Debug.Log($"RequestUnsubText {_mainCharacter.Health == null}");
+        //     _mainCharacter.Health.OnHealthChanged -= f;
         // }
         //
         // public void InitStaminaText(Action<float> f)
@@ -77,16 +77,6 @@ namespace Game.Gameplay.View.UI
         }
         
         public void RequestUnsubGlobalState(Action<string> f)
-        {
-            //
-        }
-        
-        public void RequestSubGlobalStateTimer(Action<int> f)
-        {
-            //
-        }
-        
-        public void RequestUnsubGlobalStateTimer(Action<int> f)
         {
             //
         }
@@ -154,7 +144,7 @@ namespace Game.Gameplay.View.UI
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
+            _gameRandomEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
                 var e = _gameEventsDatabase.GetEvent(newItem.eventType);
@@ -180,7 +170,7 @@ namespace Game.Gameplay.View.UI
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
+            _gameRandomEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
                 var e = _gameEventsDatabase.GetEvent(newItem.eventType);

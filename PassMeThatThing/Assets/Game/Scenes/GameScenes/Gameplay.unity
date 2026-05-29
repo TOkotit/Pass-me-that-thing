@@ -220,11 +220,6 @@ RectTransform:
   m_AnchoredPosition: {x: 351.5, y: 311}
   m_SizeDelta: {x: 703, y: 622}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &108818063 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5412857771416286706, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
-  m_PrefabInstance: {fileID: 1972511036}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &294606328 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3600752652129642896, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
@@ -680,8 +675,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6437164731870134195, guid: 6b42a1cb35e28da418137bb4f8ec4d39, type: 3}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
+      propertyPath: globalStageManagerPrefab
+      value: 
+      objectReference: {fileID: 6823797918808819171, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
+    - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: autoInjectGameObjects.Array.size
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: 'autoInjectGameObjects.Array.data[0]'
@@ -690,11 +689,11 @@ PrefabInstance:
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: 'autoInjectGameObjects.Array.data[1]'
       value: 
-      objectReference: {fileID: 108818063}
+      objectReference: {fileID: 1491296745}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: 'autoInjectGameObjects.Array.data[2]'
       value: 
-      objectReference: {fileID: 1491296745}
+      objectReference: {fileID: 1639876759}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: 'autoInjectGameObjects.Array.data[3]'
       value: 

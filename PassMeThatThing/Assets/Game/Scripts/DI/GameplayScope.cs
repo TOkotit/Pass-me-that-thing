@@ -6,6 +6,7 @@ using VContainer.Unity;
 using UnityEngine;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -18,6 +19,7 @@ namespace DI
         [SerializeField] GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
         [SerializeField] private GameObject eventManagerPrefab;
+        [SerializeField] private GameObject globalStageManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -33,7 +35,7 @@ namespace DI
             var gameEventManagerGo = Instantiate(eventManagerPrefab);
             DontDestroyOnLoad(gameEventManagerGo);
             
-            var gameEventManagerComponent = gameEventManagerGo.GetComponent<GameEventManager>();
+            var gameEventManagerComponent = gameEventManagerGo.GetComponent<GameRandomEventManager>();
             if (!gameEventManagerComponent)
             {
                 Debug.LogError("NetworkManager component not found on networkManager prefab.");
@@ -44,7 +46,18 @@ namespace DI
             }
             
             
+            var globalStageManagerGo = Instantiate(globalStageManagerPrefab);
+            DontDestroyOnLoad(globalStageManagerGo);
             
+            var globalStageManagerComponent = globalStageManagerGo.GetComponent<GlobalStageManager>();
+            if (!globalStageManagerComponent)
+            {
+                Debug.LogError("NetworkManager component not found on networkManager prefab.");
+            }
+            else
+            {
+                builder.RegisterComponent(globalStageManagerComponent);
+            }
             
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);
