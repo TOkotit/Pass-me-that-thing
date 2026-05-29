@@ -22,10 +22,10 @@ namespace MainCharacter_old
         private void Update()
         {
             if (!_isActive || !isLocalPlayer) return;
-            if (GlobalVisionManager.Instance == null) return;
+            if (GlobalVisionShaderManager.Instance == null) return;
 
             var pos = targetTransform ? targetTransform.position : transform.position;
-            GlobalVisionManager.Instance.AddZone(pos, radius);
+            GlobalVisionShaderManager.Instance.AddZone(pos, radius);
         }
 
         public void EnableVision()

@@ -20,7 +20,7 @@ namespace Game.Gameplay.View.UI
         
         private readonly PlayerInventoryModel  _playerInventoryModel;
         private readonly ItemDatabase _itemDatabase;
-        private readonly GameEventManager _gameEventManager;
+        private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
         
         private readonly CompositeDisposable _subscriptions = new();
@@ -35,7 +35,7 @@ namespace Game.Gameplay.View.UI
             _itemDatabase =  container.Resolve<ItemDatabase>();
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             
-            _gameEventManager =  container.Resolve<GameEventManager>();
+            _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
         }
 
         // public void InitHealthText(Action<int> f)
@@ -144,7 +144,7 @@ namespace Game.Gameplay.View.UI
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
+            _gameRandomEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
                 var e = _gameEventsDatabase.GetEvent(newItem.eventType);
@@ -170,7 +170,7 @@ namespace Game.Gameplay.View.UI
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
+            _gameRandomEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
                 int index, BaseGameEvent newItem) =>
             {
                 var e = _gameEventsDatabase.GetEvent(newItem.eventType);
