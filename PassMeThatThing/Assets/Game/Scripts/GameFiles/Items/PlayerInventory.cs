@@ -81,6 +81,7 @@ public class PlayerInventory : NetworkBehaviour
     [Command]
     public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
     {
+        physicalItem.ConnectionToClient = connectionToClient;
         TryPickUpItemInternal(physicalItem, preferredSlot);
     }
 

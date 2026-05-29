@@ -21,10 +21,11 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override void CollisionEnter(Collision other)
         {
             var otherCollider = other.collider;
-            Debug.Log($"Физическое столкновение с коллайдером: {otherCollider.name}");
+            // Debug.Log($"Физическое столкновение с коллайдером: {otherCollider.name}");
             
             if (otherCollider.TryGetComponent(out ValveInteract valveInteract))
             {
+                Debug.Log($"conn {Item.ConnectionToClient.connectionId}");
                 valveInteract.ValveWasInteracted();
             }
         }

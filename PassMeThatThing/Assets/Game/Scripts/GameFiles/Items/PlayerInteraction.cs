@@ -261,6 +261,7 @@ namespace Game.Scripts.GameFiles.Items
             inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex);
             // OnColliderExit(target);
         }
+        
         [Server]
         public void TryPickUp(PhysicalItem target)
         {

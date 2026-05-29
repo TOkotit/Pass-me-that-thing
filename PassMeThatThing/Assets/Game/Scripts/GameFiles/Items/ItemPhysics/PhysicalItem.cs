@@ -32,6 +32,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private MainCharacter owner;
         public MainCharacter Owner {get => owner; set => owner = value;}
         
+        private NetworkConnectionToClient connectionToClient;
+        
         private LMBReaction reaction;
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
@@ -72,8 +74,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             get => _isActing;
             set => _isActing = value;
         }
-        
-        
+
+        public NetworkConnectionToClient ConnectionToClient
+        {
+            get => connectionToClient;
+            set => connectionToClient = value;
+        }
+
+
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
         {
