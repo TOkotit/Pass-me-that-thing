@@ -1,7 +1,6 @@
 // Game/Entity/MainCharacter.cs
 using DI;
 using Entity;
-using Entity.Entity;
 using Game.Scripts.GameFiles.Entity;
 using Game.Scripts.GameFiles.Items;
 using UnityEngine;

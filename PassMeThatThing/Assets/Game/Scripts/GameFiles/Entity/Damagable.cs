@@ -2,30 +2,23 @@
 using UnityEngine;
 using VContainer;
 
+
 namespace Entity
 {
-    // Entity/Damagable.cs
-    using Mirror;
-    using UnityEngine;
-    using VContainer;
-
-    namespace Entity
+    public abstract class Damagable : NetworkBehaviour
     {
-        public abstract class Damagable : NetworkBehaviour
+        [Inject] protected DamagableRegistry Registry { get; private set; }
+        public abstract DamagableModel DamagableModel { get; }
+        [SerializeField] protected int health;
+
+        protected virtual void Start()
         {
-            [Inject] protected DamagableRegistry Registry { get; private set; }
-            public abstract DamagableModel DamagableModel { get; }
-            [SerializeField] protected int health;
-
-            protected virtual void Start()
-            {
-                Registry?.Register(this);
-            }
-
-            protected virtual void OnDestroy()
-            {
-                Registry?.Unregister(this);
-            }
+            Registry?.Register(this);
         }
+
+        protected virtual void OnDestroy()
+        {
+                Registry?.Unregister(this); 
+        } 
     }
 }

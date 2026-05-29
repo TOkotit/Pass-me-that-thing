@@ -1,6 +1,5 @@
 using DI;
 using Entity;
-using Entity.Entity;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Items;
 using Mirror;

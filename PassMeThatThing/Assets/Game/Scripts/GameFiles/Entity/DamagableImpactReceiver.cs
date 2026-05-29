@@ -1,4 +1,4 @@
-using Entity.Entity;
+using Entity;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
 
