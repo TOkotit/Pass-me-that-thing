@@ -167,8 +167,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e1e3af5fbad4b58b2afab8322494807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treshold: 2
+  treshold: 5
   damageMultiplier: 1
+  baseMass: 5
+  nonPhysicalMultiplier: 0.3
+  nonPhysicalTresholdMultiplier: 3
 --- !u!1 &3842919055754744358
 GameObject:
   m_ObjectHideFlags: 0
