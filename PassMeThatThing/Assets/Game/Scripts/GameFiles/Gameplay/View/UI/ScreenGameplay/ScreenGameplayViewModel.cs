@@ -81,6 +81,16 @@ namespace Game.Gameplay.View.UI
             //
         }
         
+        public void RequestSubGlobalStateTimer(Action<int> f)
+        {
+            //
+        }
+        
+        public void RequestUnsubGlobalStateTimer(Action<int> f)
+        {
+            //
+        }
+        
         public void RequestSubActiveSlot(Action<int> f)
         {
             _playerInventoryModel.OnActiveSlotChanged += f;

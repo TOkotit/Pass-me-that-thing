@@ -18,13 +18,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             get => EnemyModel;
         }
-
+        
+        
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
         
         [SerializeField] protected TargetDetector targetDetector;
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
+
+        
         
         public override void OnStartServer()
         {
@@ -32,6 +35,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             stateMachine = new EnemyStateMachine();
             EnemyModel = new EnemyModel();
+            
+            
             
             _damagableRegistry.Register(this);
         }

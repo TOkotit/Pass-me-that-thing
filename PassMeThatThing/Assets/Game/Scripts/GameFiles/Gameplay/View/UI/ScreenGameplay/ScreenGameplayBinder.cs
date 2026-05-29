@@ -28,6 +28,7 @@ namespace Game.Gameplay.View.UI
         [SerializeField] private GameObject _gameEventsConatainer;
         [SerializeField] private GameEventUIElement _gameEventPrefab;
         [SerializeField] private TextMeshProUGUI gameGlobalState;
+        [SerializeField] private TextMeshProUGUI gameGlobalStateTimer;
         [SerializeField] private GameObject _interactionText;
         
         private Color _imageColor = new Color(1f, 1f, 1f, 1f);
@@ -114,6 +115,11 @@ namespace Game.Gameplay.View.UI
         private void UpdateGameGlobalState(string newValue)
         {
             gameGlobalState.text = newValue;
+        }
+        
+        private void UpdateGameGlobalStateTimer(int remainingSeconds)
+        {
+            gameGlobalStateTimer.text = $"{remainingSeconds / 60}:{remainingSeconds % 60}";
         }
 
         private void SetActiveItemSlot(int index)
