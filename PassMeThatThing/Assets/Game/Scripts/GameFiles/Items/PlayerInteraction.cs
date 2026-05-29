@@ -194,7 +194,7 @@ namespace Game.Scripts.GameFiles.Items
                     }
                     else if (hit.collider.gameObject.CompareTag("Player"))
                     {
-                        var damagable = _damagableRegistry.TryGetDamagable(hit.collider.gameObject); 
+                        _damagableRegistry.TryGetDamagable(hit.collider.gameObject, out var damagable); 
                         Debug.Log(damagable);
                         if (damagable && damagable != mainCharacter) 
                         {

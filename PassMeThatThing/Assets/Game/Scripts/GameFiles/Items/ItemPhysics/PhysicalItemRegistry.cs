@@ -38,14 +38,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             }
             return null;
         }
-        public void TryGetItem(GameObject itemObject, out PhysicalItem item)
+        public PhysicalItem TryGetItem(GameObject itemObject, out PhysicalItem item)
         {
             if (_physicalItems.ContainsKey(itemObject))
             {
                 item = _physicalItems[itemObject];
-                return;
+                return item;
             }
             item = null;
+            return item;
         }
         
     }

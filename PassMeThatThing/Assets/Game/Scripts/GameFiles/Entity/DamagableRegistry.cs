@@ -35,13 +35,15 @@ namespace Entity
             
         }
 
-        public Damagable TryGetDamagable(GameObject damagable)
+        public Damagable TryGetDamagable(GameObject damagable, out Damagable item)
         {
             if (_damagableObjects.ContainsKey(damagable))
             {
-                return _damagableObjects[damagable];
+                item = _damagableObjects[damagable];
+                return item;
             }
-            return null;
+            item = null;
+            return item;
         }
     }
 }
