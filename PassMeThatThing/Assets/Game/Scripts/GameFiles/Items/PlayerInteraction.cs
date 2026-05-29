@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
@@ -286,6 +287,7 @@ namespace Game.Scripts.GameFiles.Items
             if (!PhysicalItemInteractionController.CurrentHeldItem) return;
             if (PhysicalItemInteractionController.CurrentHeldItem.Reaction != null)
             {
+                // PhysicalItemInteractionController.CurrentHeldItem.transform.DOMove(Vector3.forward, 0.5f);
                 PhysicalItemInteractionController.CurrentHeldItem.Reaction.Act();
             }
             else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)

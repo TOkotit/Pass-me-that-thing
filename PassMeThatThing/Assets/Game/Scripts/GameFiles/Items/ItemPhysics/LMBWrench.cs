@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using UnityEditor;
 using UnityEngine;
@@ -12,19 +13,19 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         public override void Act()
         {
-            Item.IsActing = true;
+            Debug.Log($"Act {nameof(LMBWrench)}");
+            Item.EnableActingMode(0.5f);
+            
         }
 
         public override void CollisionEnter(Collision other)
         {
             var otherCollider = other.collider;
-        
-            // Debug.Log($"Физическое столкновение с коллайдером: {otherCollider.name}");
+            Debug.Log($"Физическое столкновение с коллайдером: {otherCollider.name}");
             
             if (otherCollider.TryGetComponent(out ValveInteract valveInteract))
             {
                 valveInteract.ValveWasInteracted();
-                Item.IsActing = false;
             }
         }
     }

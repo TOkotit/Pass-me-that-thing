@@ -1,4 +1,5 @@
 
+using System.Collections;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Mirror;
@@ -63,6 +64,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Vector3 defaultRotation;
         public Vector3 DefaultRotation => defaultRotation;
         
+        private Coroutine _actingCoroutine;
+        [SyncVar]
         private bool _isActing;
         public bool IsActing
         {
@@ -88,11 +91,32 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private void OnCollisionEnter(Collision other)
         {
             if (isServer)
+            {
                 IsThrown = false;
             
-            if (_isActing)
-                reaction.CollisionEnter(other);
+                if (_isActing)
+                    reaction.CollisionEnter(other);
+            }
         }
+
+        [Command(requiresAuthority = false)]
+        public void EnableActingMode(float duration)
+        {
+            _isActing = true;
+            if (_actingCoroutine != null)
+            {
+                StopCoroutine(_actingCoroutine);
+            }
+            _actingCoroutine = StartCoroutine(ActingRoutine(duration));
+        }
+        
+        private IEnumerator ActingRoutine(float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            _isActing = false;
+            _actingCoroutine = null;
+        }
+        
         public override void OnStartClient()
         {
             base.OnStartClient();

@@ -39,7 +39,6 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         public void ValveWasInteracted()
         {
             if (_isClosed) return;
-            if (impactParticles) impactParticles.Play();
             CmdCloseValve();
         }
 
@@ -49,10 +48,18 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             if (_isClosed) return;
             
             Close();
-            
+            RpcPlayImpactParticles();
             floodEvent.PlayerFinishedAction();
         }
         
+        [ClientRpc]
+        private void RpcPlayImpactParticles()
+        {
+            if (impactParticles && !impactParticles.isPlaying) 
+            {
+                impactParticles.Play();
+            }
+        }
         
         private void OnClosedStateChanged(bool oldValue, bool newValue)
         {
