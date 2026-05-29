@@ -28,10 +28,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public Transform DetectedTarget => _detectedTarget;
         public float DistanceToTarget => _distanceToTarget;
         public bool IsTargetVisible => _isTargetVisible;
-        
+
+        public Transform Door => _door;
+
         // public bool IsTargetVisibleByGroup => _isTargetVisibleByGroup;
 
         private LayerMask _targetLayer;
+        private LayerMask _onlyDoorLayer;
         
         private float _timer;
         
@@ -39,6 +42,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private float _distanceToTarget = -1f;
         private bool _isTargetVisible;
         // private bool _isTargetVisibleByGroup;
+        
+        private Transform _door;
         
         public event Action<Transform> OnDetectedTarget;
         
@@ -61,6 +66,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.OnStartServer();
 
             _targetLayer = LayerMask.GetMask("Player", "BunkerDoor");
+            _onlyDoorLayer =  LayerMask.GetMask("BunkerDoor");
         }
 
         private void FixedUpdate()
@@ -71,13 +77,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             if (_timer >= detectionInterval)
             {
-                DetectPlayer();
+                DetectBunkerDoor();
+                DetectTarget();
                 _timer = 0f;
             }
         }
 
         [Server]
-        public void DetectPlayer()
+        public void DetectTarget()
         {
             var maxRange = Mathf.Max(proximityAreaRadius, sightDistance);
             var targetsInRadius = new Collider[10];
@@ -139,7 +146,23 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             _isTargetVisible = false;
             // _isTargetVisibleByGroup = false;
         }
-        
+
+        [Server]
+        private void DetectBunkerDoor()
+        {
+            var maxRange = proximityAreaRadius * 20;
+            var targetsInRadius = new Collider[10];
+            var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, 
+                targetsInRadius, _onlyDoorLayer);
+            
+            if (size > 0)
+            {
+                _door = targetsInRadius[0].transform;
+                return;
+            }
+            
+            _door = null;
+        }
         
         
         // Отрисовка зон в редакторе

@@ -9,14 +9,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private EnemyZombie _zombie;
         
         private TargetDetector _targetDetector;
+        private EnemyMovementController  _movementController;
         
         public ZombieWalk(EnemyZombie enemy, 
             EnemyStateMachine stateMachine, 
-            TargetDetector targetDetector) 
+            TargetDetector targetDetector,
+            EnemyMovementController  movementController) 
             : base(enemy, stateMachine)
         {
             _zombie = enemy;
             _targetDetector = targetDetector;
+            _movementController = movementController;
         }
 
         public override void Enter()
@@ -31,13 +34,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-            
-            
+            if (_targetDetector.Door != null)
+            {
+                _movementController.SetSpeed(_zombie.Speed / 2);
+                _movementController.NavigateTo(_targetDetector.Door);
+            }
             
             if (_targetDetector.IsTargetVisible)
             {
                 if (_targetDetector.DistanceToTarget < _zombie.ChaseDistance)
                 {
+                    _movementController.StopNavigating();
                     StateMachine.ChangeState(_zombie.ZombieChase);
                     return;
                 }

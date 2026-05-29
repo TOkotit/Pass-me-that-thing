@@ -12,7 +12,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void NavigateTo(Transform target)
         {
             // Debug.Log("Navigating to " + target.position);
+            navMeshAgent.isStopped = false;
             navMeshAgent.SetDestination(target.position);
+        }
+
+        [Server]
+        public void StopNavigating()
+        {
+            navMeshAgent.isStopped = true;
         }
 
         [Server]

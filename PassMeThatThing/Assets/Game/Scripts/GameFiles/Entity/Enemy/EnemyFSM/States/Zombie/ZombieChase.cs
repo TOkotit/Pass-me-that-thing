@@ -47,7 +47,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             
             if (_targetDetector.DistanceToTarget < _zombie.AttackDistance)
             {
-                
+                _movementController.StopNavigating();
                 StateMachine.ChangeState(_zombie.ZombieAttack);
                 return;
             }
