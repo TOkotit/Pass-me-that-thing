@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Entity.Entity;
+using Entity;
 using UnityEngine;
 
 namespace Entity
