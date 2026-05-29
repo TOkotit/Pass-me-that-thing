@@ -1,10 +1,9 @@
-using System;
+// Game/NewMainCharacterPhysics/ServerCollider.cs
 using Entity;
 using Game.Entity;
-using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Entity.Game.Entity;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
-using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 
@@ -13,20 +12,26 @@ namespace Game.NewMainCharacterPhysics
     public class ServerCollider : NetworkBehaviour
     {
         [SerializeField] private Rigidbody bodyPart;
-        [SerializeField] private GameObject collider;
+        [SerializeField] private GameObject colliderPrefab;
         [SerializeField] private MainCharacter player;
+
         [Inject] private DamagableRegistry _damagableRegistry;
-        [Inject] private PhysicalItemRegistry _physicalItemRegistry; 
+        [Inject] private PhysicalItemRegistry _physicalItemRegistry;
 
         private void Start()
         {
-            var col = Instantiate(collider, transform.position, transform.rotation);
+            if (!isServer) return;   
+
+            var col = Instantiate(colliderPrefab, transform.position, transform.rotation);
             var fixedJoint = col.GetComponent<FixedJoint>();
             var itemCatcher = col.GetComponentInChildren<ItemCatcher>();
+            var impactReceiver = col.GetComponent<DamagableImpactReceiver>();
+
             fixedJoint.connectedBody = bodyPart;
             itemCatcher.SetPlayerInteraction(player.MainCharacterModel.PlayerInteraction);
-            itemCatcher.SetRegistry(_physicalItemRegistry); 
-            
+            itemCatcher.SetRegistry(_physicalItemRegistry);
+            impactReceiver?.SetDamagable(player);
+
             _damagableRegistry.Register(col.gameObject, player);
         }
     }
