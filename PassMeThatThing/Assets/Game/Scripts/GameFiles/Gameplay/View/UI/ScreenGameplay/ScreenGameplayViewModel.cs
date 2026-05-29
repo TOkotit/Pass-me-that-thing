@@ -71,6 +71,16 @@ namespace Game.Gameplay.View.UI
         //     _mainCharacter.Stamina_old.OnStaminaChanged -= f;
         // }
 
+        public void RequestSubGlobalState(Action<string> f)
+        {
+            //
+        }
+        
+        public void RequestUnsubGlobalState(Action<string> f)
+        {
+            //
+        }
+        
         public void RequestSubActiveSlot(Action<int> f)
         {
             _playerInventoryModel.OnActiveSlotChanged += f;

@@ -16,7 +16,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Header("Sight settings")]
         [SerializeField] private float sightDistance;
         [SerializeField] private float sightAngle; 
-        [SerializeField] private LayerMask targetLayer;   
+        // [SerializeField] private LayerMask playerLayer; 
+        // [SerializeField] private LayerMask doorLayer; 
         // [SerializeField] private LayerMask enemyLayer;  
         [SerializeField] private LayerMask obstacleLayer;
 
@@ -29,6 +30,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public bool IsTargetVisible => _isTargetVisible;
         
         // public bool IsTargetVisibleByGroup => _isTargetVisibleByGroup;
+
+        private LayerMask _targetLayer;
         
         private float _timer;
         
@@ -53,6 +56,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         //     return Vector3.Distance(transform.position, DetectedTarget.position);
         // }
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+
+            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor");
+        }
+
         private void FixedUpdate()
         {
             if (!isServer) return;
@@ -72,7 +82,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             var maxRange = Mathf.Max(proximityAreaRadius, sightDistance);
             var targetsInRadius = new Collider[10];
             var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, 
-                targetsInRadius, targetLayer);
+                targetsInRadius, _targetLayer);
             
             if (size > 0)
             {

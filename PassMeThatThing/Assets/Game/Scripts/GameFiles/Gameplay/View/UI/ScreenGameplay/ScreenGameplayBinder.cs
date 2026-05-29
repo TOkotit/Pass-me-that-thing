@@ -24,13 +24,10 @@ namespace Game.Gameplay.View.UI
         [SerializeField] private TextMeshProUGUI _throwChargeText;
         
         [SerializeField] private Image[] _itemSlots;
-        
         [SerializeField] private Image[] _itemImages;
-        
         [SerializeField] private GameObject _gameEventsConatainer;
-        
         [SerializeField] private GameEventUIElement _gameEventPrefab;
-        
+        [SerializeField] private TextMeshProUGUI gameGlobalState;
         [SerializeField] private GameObject _interactionText;
         
         private Color _imageColor = new Color(1f, 1f, 1f, 1f);
@@ -60,10 +57,8 @@ namespace Game.Gameplay.View.UI
         private void Start()
         {
             // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
-            
             // ViewModel.InitHealthText(UpdateHealthText);
             // ViewModel.RequestSubHealthText(UpdateHealthText);
-            //
             // ViewModel.InitStaminaText(UpdateStaminaText);
             // ViewModel.RequestSubStaminaText(UpdateStaminaText);
 
@@ -78,21 +73,19 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
+            ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
         }
 
         private void OnDestroy()
         {
             // _btnGoToMainMenu?.onClick.RemoveListener(OnGoToMainMenuButtonClicked);
-
-            
             // ViewModel.RequestUnsubHealthText(UpdateHealthText);
-            //
             // ViewModel.RequestUnsubStaminaText(UpdateStaminaText);
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
             ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
-            
+            ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestUnsub();
@@ -116,6 +109,11 @@ namespace Game.Gameplay.View.UI
         private void ChangeInteractionTextVisibility(bool isVisible)
         {
             _interactionText.SetActive(isVisible);
+        }
+
+        private void UpdateGameGlobalState(string newValue)
+        {
+            gameGlobalState.text = newValue;
         }
 
         private void SetActiveItemSlot(int index)
