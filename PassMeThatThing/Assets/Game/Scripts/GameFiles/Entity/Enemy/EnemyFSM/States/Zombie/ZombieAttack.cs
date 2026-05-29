@@ -53,7 +53,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _zombie.elapsedAttack += Time.fixedDeltaTime;
             if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
             {
-                _attackController.AttackMelee(new Vector3(3f, 3f, 3f));
+                _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _zombie.Damage);
                 _zombie.elapsedAttack = 0f;
             }
         }

@@ -22,7 +22,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         }
 
         [Server]
-        public void AttackMelee(Vector3 halfExtents)
+        public void AttackMelee(Vector3 halfExtents, float damage)
         {
             // заглушка
             gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);

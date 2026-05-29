@@ -93,7 +93,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             if (size > 0)
             {
+                var mindist =  float.MaxValue;
+                float tempDistance;
                 var target = targetsInRadius[0].transform;
+                for (var i = 0; i < size; i++)
+                {
+                    tempDistance = Vector3.Distance(transform.position, 
+                        targetsInRadius[i].transform.position);
+                    if (tempDistance <= mindist)
+                    {
+                        target = targetsInRadius[i].transform;
+                        mindist = tempDistance;
+                    }
+                }
+                
                 var directionToTarget = (target.position - transform.position).normalized;
                 var distance = Vector3.Distance(transform.position, target.position);
                 
