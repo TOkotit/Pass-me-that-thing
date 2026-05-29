@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 6059272469753625803}
   - component: {fileID: 1118780070767854037}
   - component: {fileID: 1833560880880073641}
+  - component: {fileID: 2458723502414440972}
   - component: {fileID: 2949989233195922033}
   - component: {fileID: 7370826059491095980}
   - component: {fileID: 1931763817442211047}
@@ -165,6 +166,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  health: 0
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
@@ -208,6 +210,25 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackCubeCenter: {fileID: 387873943417241419}
+--- !u!114 &2458723502414440972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0c206e7c36465691727e5bce1c7c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  damage: 10
+  useVelocityDamage: 0
+  velocityDamageMultiplier: 1
+  cooldown: 0.5
 --- !u!114 &2949989233195922033
 MonoBehaviour:
   m_ObjectHideFlags: 0

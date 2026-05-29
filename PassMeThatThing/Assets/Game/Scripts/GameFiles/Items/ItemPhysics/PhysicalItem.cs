@@ -31,9 +31,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private MainCharacter owner;
         public MainCharacter Owner {get => owner; set => owner = value;}
         
-        
-        
-        
         private LMBReaction reaction;
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
@@ -66,6 +63,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Vector3 defaultRotation;
         public Vector3 DefaultRotation => defaultRotation;
         
+        private bool _isActing;
+        public bool IsActing
+        {
+            get => _isActing;
+            set => _isActing = value;
+        }
+        
+        
         [Inject]
         private void Construct(PhysicalItemRegistry physicalItemRegistry)
         {
@@ -76,12 +81,17 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
+
+            reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
         }
 
         private void OnCollisionEnter(Collision other)
         {
             if (isServer)
                 IsThrown = false;
+            
+            if (_isActing)
+                reaction.CollisionEnter(other);
         }
         public override void OnStartClient()
         {

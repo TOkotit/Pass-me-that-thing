@@ -75,18 +75,20 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             pivot.localRotation = _initialRotation * Quaternion.Euler(rotationAxis * _currentAngle);
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if (_isClosed) return;
-            
-            if (other.CompareTag("Item") && other.TryGetComponent(out NetworkItem item))
-            {
-                if (item.itemId == "wrench")
-                {
-                    ValveWasInteracted();
-                }
-            }
-        }
+        // private void OnTriggerEnter(Collider other)
+        // {
+        //     if (_isClosed) return;
+        //     
+        //     if (other.CompareTag("Item") && other.TryGetComponent(out NetworkItem item))
+        //     {
+        //         if (item.itemId == "wrench")
+        //         {
+        //             ValveWasInteracted();
+        //         }
+        //     }
+        // }
+        
+        
         
         
         [Server]

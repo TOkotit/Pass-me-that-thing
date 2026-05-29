@@ -6,6 +6,7 @@ namespace Game.Scripts.GameFiles.Events
     [Serializable]
     public struct MinigameParameters
     {
+        public int eventId;
         public GameEventsType eventType;
         public string description;
         public int difficulty;

@@ -5,9 +5,9 @@ namespace Game.Scripts.GameFiles.Events
 {
     public class PlayerMinigameHandler : NetworkBehaviour
     {
-        // 2. СЕРВЕР получает запрос от конкретного клиента
-        [Command]
-        private void CmdRequestMinigame(BaseGameEvent activator)
+        
+        [Command(requiresAuthority = false)]
+        private void CmdWriteConnToItem(BaseGameEvent activator)
         {
             if (activator == null) return;
 

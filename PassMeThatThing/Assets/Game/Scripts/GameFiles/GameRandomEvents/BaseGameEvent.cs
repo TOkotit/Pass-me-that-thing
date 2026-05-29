@@ -100,9 +100,9 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public void ServerActivateMinigame(NetworkConnectionToClient senderConnection)
         {
-            // 1. Формируем параметры
             var parameters = new MinigameParameters
             {
+                eventId = _eventId,
                 eventType = eventType,
                 description = description,
                 difficulty = difficulty,
