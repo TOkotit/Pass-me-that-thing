@@ -734,7 +734,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   bodyPart: {fileID: 7294071976170680824}
-  collider: {fileID: 3452684027595015642, guid: 5c7438c5fe272ac4998cf12cc14be36e, type: 3}
+  colliderPrefab: {fileID: 3452684027595015642, guid: 5c7438c5fe272ac4998cf12cc14be36e, type: 3}
   player: {fileID: 7770340711354438675}
 --- !u!1 &1280641770212858635
 GameObject:
@@ -1661,6 +1661,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  health: 100
 --- !u!1 &2909725294491179631
 GameObject:
   m_ObjectHideFlags: 0
