@@ -1,4 +1,7 @@
 ﻿using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GlobalStageManager;
+using Mirror;
 using R3;
 using Systems;
 using UIRoot;
@@ -27,7 +30,15 @@ namespace Game.Gameplay.Root
         {
             Debug.Log("GameplayEntryPoint.Start");
             
+            
+            
+            
             InitUI();
+            
+            if (NetworkServer.active)
+            {
+                SpawnNetworkManagers();
+            }
             _gameManager.SetState(GameState.Gameplay);
             
             
@@ -50,6 +61,25 @@ namespace Game.Gameplay.Root
             uiManager.OpenScreenGameplay();
         }
 
-        
+        private void SpawnNetworkManagers()
+        {
+            Debug.Log("[Server] Начало спавна глобальных сетевых менеджеров...");
+
+            var eventManagerPrefab = resolver.Resolve<GameRandomEventManager>();
+            var globalStageManagerPrefab = resolver.Resolve<GlobalStageManager>();
+
+            var eventManagerInstance = Object.Instantiate(eventManagerPrefab);
+            Object.DontDestroyOnLoad(eventManagerInstance.gameObject);
+            
+            resolver.Inject(eventManagerInstance); 
+            NetworkServer.Spawn(eventManagerInstance.gameObject); 
+
+            var stageManagerInstance = Object.Instantiate(globalStageManagerPrefab);
+            Object.DontDestroyOnLoad(stageManagerInstance.gameObject);
+            
+            resolver.Inject(stageManagerInstance); 
+            NetworkServer.Spawn(stageManagerInstance.gameObject);
+            
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.Utils;
@@ -23,6 +24,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime;
+        
+        public event Action<float> OnTimerChangedUI;
 
         private void Awake()
         {
@@ -79,12 +82,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             _timer.Set(duration);
             _timer.Start();
-            Debug.Log("Таймер запущен на сервере.");
         }
 
         private void OnTimerTick(float remainingTime)
         {
             _syncRemainingTime = remainingTime;
+            Debug.Log($"[Timer] OnTimerTick received: {remainingTime}");
         }
 
         private void OnTimerFinished()
@@ -109,12 +112,13 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             var secondsVisual = Mathf.CeilToInt(newTime);
             
-            //TODO UI отображение для таймера
-        
-            if (isClientOnly)
+            if (OnTimerChangedUI == null)
             {
-                Debug.Log($"Клиент получил обновление времени: {secondsVisual} сек.");
+                Debug.LogWarning("[GlobalStageManager] OnTimerChangedUI is null");
+                return;
             }
+
+            OnTimerChangedUI.Invoke(secondsVisual);
         }
     }
 }

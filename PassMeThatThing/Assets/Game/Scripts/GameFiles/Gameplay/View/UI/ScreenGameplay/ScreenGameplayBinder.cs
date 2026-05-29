@@ -75,6 +75,7 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
+            ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
         }
 
         private void OnDestroy()
@@ -88,7 +89,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
-            
+            ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
             ViewModel.RequestUnsub();
         }
 
@@ -117,9 +118,18 @@ namespace Game.Gameplay.View.UI
             gameGlobalState.text = newValue;
         }
         
-        private void UpdateGameGlobalStateTimer(int remainingSeconds)
+        private void UpdateGameGlobalStateTimer(float remainingSeconds)
         {
-            gameGlobalStateTimer.text = $"{remainingSeconds / 60}:{remainingSeconds % 60}";
+            if (gameGlobalStateTimer == null)
+            {
+                Debug.LogError($"[ScreenGameplayBinder] Поле 'gameGlobalStateTimer' (TextMeshProUGUI) НЕ НАЗНАЧЕНО в инспекторе на объекте {gameObject.name}!", this);
+                return;
+            }
+            
+            var minutes = Mathf.FloorToInt(remainingSeconds / 60f);
+            var seconds = Mathf.FloorToInt(remainingSeconds % 60f);
+            
+            gameGlobalStateTimer.text = $"{minutes:00}:{seconds:00}";
         }
 
         private void SetActiveItemSlot(int index)

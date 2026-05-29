@@ -1,5 +1,6 @@
 ﻿using System;
 using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;
 using MainCharacter_old;
@@ -22,6 +23,7 @@ namespace Game.Gameplay.View.UI
         private readonly ItemDatabase _itemDatabase;
         private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
+        private readonly GlobalStageManager _globalStageManager;
         
         private readonly CompositeDisposable _subscriptions = new();
         
@@ -36,6 +38,7 @@ namespace Game.Gameplay.View.UI
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             
             _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
+            _globalStageManager = container.Resolve<GlobalStageManager>();
         }
 
         // public void InitHealthText(Action<int> f)
@@ -80,6 +83,17 @@ namespace Game.Gameplay.View.UI
         {
             //
         }
+        
+        public void RequestSubGlobalStateTimer(Action<float> f)
+        {
+            _globalStageManager.OnTimerChangedUI += f;
+        }
+        
+        public void RequestUnsubGlobalStateTimer(Action<float> f)
+        {
+            _globalStageManager.OnTimerChangedUI -= f;
+        }
+        
         
         public void RequestSubActiveSlot(Action<int> f)
         {

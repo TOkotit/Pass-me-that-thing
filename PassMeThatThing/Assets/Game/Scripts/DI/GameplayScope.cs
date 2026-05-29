@@ -18,8 +18,8 @@ namespace DI
         [SerializeField] ItemDatabase itemDatabase;
         [SerializeField] GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
-        [SerializeField] private GameObject eventManagerPrefab;
-        [SerializeField] private GameObject globalStageManagerPrefab;
+        [SerializeField] private GameRandomEventManager eventManagerPrefab;
+        [SerializeField] private GlobalStageManager globalStageManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -32,32 +32,8 @@ namespace DI
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
             
-            var gameEventManagerGo = Instantiate(eventManagerPrefab);
-            DontDestroyOnLoad(gameEventManagerGo);
-            
-            var gameEventManagerComponent = gameEventManagerGo.GetComponent<GameRandomEventManager>();
-            if (!gameEventManagerComponent)
-            {
-                Debug.LogError("NetworkManager component not found on networkManager prefab.");
-            }
-            else
-            {
-                builder.RegisterComponent(gameEventManagerComponent);
-            }
-            
-            
-            var globalStageManagerGo = Instantiate(globalStageManagerPrefab);
-            DontDestroyOnLoad(globalStageManagerGo);
-            
-            var globalStageManagerComponent = globalStageManagerGo.GetComponent<GlobalStageManager>();
-            if (!globalStageManagerComponent)
-            {
-                Debug.LogError("NetworkManager component not found on networkManager prefab.");
-            }
-            else
-            {
-                builder.RegisterComponent(globalStageManagerComponent);
-            }
+            builder.RegisterComponent(eventManagerPrefab);
+            builder.RegisterComponent(globalStageManagerPrefab);
             
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);

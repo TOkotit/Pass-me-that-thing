@@ -10,9 +10,9 @@ namespace Game.Scripts.Utils
     {
         private float _time;
         private float _remainingTime;
-        private IEnumerator _countdown;
+        private Coroutine _countdownCoroutine;
         private NetworkBehaviour _context;
-        private Action<float> _onTick;
+        private event Action<float> _onTick;
         
         public event Action TimeIsOver;
 
@@ -30,16 +30,21 @@ namespace Game.Scripts.Utils
 
         public void Start()
         {
-            if (!_context.isServer) return;
+            if (!_context.isServer)
+            {
+                return;
+            }
             
             Stop();
-            _countdown = Countdown();
-            _context.StartCoroutine(_countdown);
+            _countdownCoroutine = _context.StartCoroutine(Countdown());
         }
         public void Stop()
         {
-            if (_countdown != null)
-                _context.StopCoroutine(_countdown);
+            if (_countdownCoroutine != null)
+            {
+                _context.StopCoroutine(_countdownCoroutine);
+                _countdownCoroutine = null;
+            }
         }
 
         private IEnumerator Countdown()
@@ -50,7 +55,6 @@ namespace Game.Scripts.Utils
                 _onTick?.Invoke(_remainingTime);
                 yield return null;
             }
-            
             _remainingTime = 0;
             _onTick?.Invoke(0);
             TimeIsOver?.Invoke();
