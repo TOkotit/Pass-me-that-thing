@@ -44,6 +44,7 @@ namespace Game.Scripts.GameFiles.Entity
             if (damage <= 0) return 0;
             CurrentHealth -= damage;
             OnHealthChanged?.Invoke(CurrentHealth);
+            Debug.Log("Здоровье после получения урона: " + CurrentHealth);
             return _currentHealth;
         }
     }

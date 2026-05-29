@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3361742855514214433}
   - component: {fileID: 9144696630835448476}
   - component: {fileID: 5040098848590109450}
+  - component: {fileID: 1946118442554766779}
   m_Layer: 9
   m_Name: ServerCollider
   m_TagString: Player
@@ -154,6 +155,20 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &1946118442554766779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452684027595015642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e1e3af5fbad4b58b2afab8322494807, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treshold: 2
+  damageMultiplier: 1
 --- !u!1 &3842919055754744358
 GameObject:
   m_ObjectHideFlags: 0
