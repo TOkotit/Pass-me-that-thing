@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
@@ -74,14 +75,16 @@ namespace Game.Gameplay.View.UI
         //     _mainCharacter.Stamina_old.OnStaminaChanged -= f;
         // }
 
-        public void RequestSubGlobalState(Action<string> f)
+        public void RequestSubGlobalState(Action<GlobalStagesType> f)
         {
-            //
+            f(_globalStageManager.CurrentGameStage);
+    
+            _globalStageManager.OnStageChangedUI += f;
         }
         
-        public void RequestUnsubGlobalState(Action<string> f)
+        public void RequestUnsubGlobalState(Action<GlobalStagesType> f)
         {
-            //
+            _globalStageManager.OnStageChangedUI -= f;
         }
         
         public void RequestSubGlobalStateTimer(Action<float> f)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using DG.Tweening;
+using Game.Scripts.Enums;
 using Game.UI;
 using TMPro;
 using Unity.VisualScripting;
@@ -113,9 +114,14 @@ namespace Game.Gameplay.View.UI
             _interactionText.SetActive(isVisible);
         }
 
-        private void UpdateGameGlobalState(string newValue)
+        private void UpdateGameGlobalState(GlobalStagesType newValue)
         {
-            gameGlobalState.text = newValue;
+            gameGlobalState.text = newValue switch
+            {
+                GlobalStagesType.Fight => "Фаза обороны",
+                GlobalStagesType.Preparation => "Фаза подготовки",
+                _ => "Неизвестная фаза"
+            };
         }
         
         private void UpdateGameGlobalStateTimer(float remainingSeconds)

@@ -12,7 +12,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
     
     public class GlobalStageManager : NetworkBehaviour
     {
-        [SyncVar]
+        [SyncVar(hook = nameof(OnStageChanged))]
         private GlobalStagesType _currentGameStage;
         public GlobalStagesType CurrentGameStage => _currentGameStage;
 
@@ -26,6 +26,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private float _syncRemainingTime;
         
         public event Action<float> OnTimerChangedUI;
+        public event Action<GlobalStagesType> OnStageChangedUI;
 
         private void Awake()
         {
@@ -61,7 +62,6 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             {
                 // логика для случайных ивентов
             }
-
             StartTimer(duration);
         }
         
@@ -87,7 +87,6 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private void OnTimerTick(float remainingTime)
         {
             _syncRemainingTime = remainingTime;
-            Debug.Log($"[Timer] OnTimerTick received: {remainingTime}");
         }
 
         private void OnTimerFinished()
@@ -119,6 +118,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
 
             OnTimerChangedUI.Invoke(secondsVisual);
+        }
+
+        private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage)
+        {
+            OnStageChangedUI?.Invoke(_currentGameStage);
         }
     }
 }
