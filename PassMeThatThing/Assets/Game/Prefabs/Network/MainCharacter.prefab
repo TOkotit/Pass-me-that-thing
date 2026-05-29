@@ -1528,16 +1528,25 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   spineAlignJoints:
-  - joint: {fileID: 173344307844624988}
-    spring: 1000
-    damper: 0
   - joint: {fileID: 1695402308512339797}
     spring: 1000
     damper: 0
   - joint: {fileID: 2181451318277074280}
     spring: 1000
     damper: 0
-  otherJoints: []
+  - joint: {fileID: 173344307844624988}
+    spring: 1000
+    damper: 0
+  otherJoints:
+  - joint: {fileID: 1016172811850124004}
+    spring: 1000
+    damper: 100
+  - joint: {fileID: 585440455747784379}
+    spring: 600
+    damper: 0
+  - joint: {fileID: 8376204716976098499}
+    spring: 600
+    damper: 0
   currentConsciousness: 1
 --- !u!114 &9057745976237410458
 MonoBehaviour:
@@ -6253,6 +6262,7 @@ MonoBehaviour:
   lockCursor: 1
   tiltMultiplier: 0.2
   bodyVerticalAlign: {fileID: 7399799905044466384}
+  head: {fileID: 0}
 --- !u!54 &864170193374181119
 Rigidbody:
   m_ObjectHideFlags: 0
