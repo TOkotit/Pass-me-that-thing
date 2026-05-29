@@ -65,7 +65,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnStartServer();
 
-            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor");
+            _targetLayer = LayerMask.GetMask("ServerCollider");
             _onlyDoorLayer =  LayerMask.GetMask("BunkerDoor");
         }
 
@@ -77,8 +77,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             if (_timer >= detectionInterval)
             {
-                DetectBunkerDoor();
                 DetectTarget();
+                
+                DetectBunkerDoor();
+                
                 _timer = 0f;
             }
         }
@@ -87,77 +89,58 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void DetectTarget()
         {
             var maxRange = Mathf.Max(proximityAreaRadius, sightDistance);
-            var targetsInRadius = new Collider[10];
+            var targetsInRadius = new Collider[100];
             var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, 
                 targetsInRadius, _targetLayer);
-            
+
             if (size > 0)
             {
-                var mindist =  float.MaxValue;
-                float tempDistance;
-                var target = targetsInRadius[0].transform;
+                Transform bestTarget = null;
+                float minDistance = float.MaxValue;
+
                 for (var i = 0; i < size; i++)
                 {
-                    tempDistance = Vector3.Distance(transform.position, 
-                        targetsInRadius[i].transform.position);
-                    if (tempDistance <= mindist)
+                    var potentialTarget = targetsInRadius[i].transform;
+                    if (potentialTarget == transform) continue;
+
+                    var directionToTarget = (potentialTarget.position - transform.position).normalized;
+                    var distance = Vector3.Distance(transform.position, potentialTarget.position);
+
+                    var inProximity = distance <= proximityAreaRadius;
+                    var inSight = false;
+
+                    if (distance <= sightDistance)
                     {
-                        target = targetsInRadius[i].transform;
-                        mindist = tempDistance;
-                    }
-                }
-                
-                var directionToTarget = (target.position - transform.position).normalized;
-                var distance = Vector3.Distance(transform.position, target.position);
-                
-                var inProximity = distance <= proximityAreaRadius;
-                
-                var inSight = false;
-                if (distance <= sightDistance)
-                {
-                    var angle = Vector3.Angle(transform.forward, directionToTarget);
-                    if (angle < sightAngle / 2f)
-                    {
-                        if (!Physics.Raycast(transform.position, directionToTarget, distance, obstacleLayer))
+                        var angle = Vector3.Angle(transform.forward, directionToTarget);
+                        if (angle < sightAngle / 2f)
                         {
-                            inSight = true;
+                            if (!Physics.Raycast(transform.position, directionToTarget, distance, obstacleLayer))
+                            {
+                                inSight = true;
+                            }
                         }
                     }
+                    
+                    if ((inProximity || inSight) && distance < minDistance)
+                        bestTarget = potentialTarget;
+                    minDistance = distance;
                 }
 
-                if (inProximity || inSight)
+
+                if (bestTarget != null)
                 {
-                    OnDetectedTarget?.Invoke(target);
-                    _detectedTarget = target;
-                    _distanceToTarget = distance;
+                    Debug.Log($"{size} targets detected");
+                    OnDetectedTarget?.Invoke(bestTarget);
+                    _detectedTarget = bestTarget;
+                    _distanceToTarget = minDistance;
                     _isTargetVisible = true;
-                    
-                    // if (!IsTargetVisibleByGroup)
-                    // {
-                    //     var enemiesInRadius = new Collider[10];
-                    //     var enemiesSize = Physics.OverlapSphereNonAlloc(transform.position, 
-                    //         sharingAreaRadius, 
-                    //         enemiesInRadius, 
-                    //         enemyLayer);
-                    //     
-                    //     if (enemiesSize > 0)
-                    //     {
-                    //         // Debug.Log("FOR ENEMIES: TARGET DETECTED IN AREA");
-                    //         foreach (var enemy in enemiesInRadius)
-                    //         {
-                    //             enemy?.GetComponent<TargetDetector>()?.SetTargetFromOther(DetectedTarget,
-                    //                 DistanceToTarget, IsTargetVisible);
-                    //         }
-                    //     }
-                    // }
                     return;
                 }
             }
-            
+
             _detectedTarget = null;
             _distanceToTarget = -1f;
             _isTargetVisible = false;
-            // _isTargetVisibleByGroup = false;
         }
 
         [Server]
@@ -171,6 +154,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if (size > 0)
             {
                 _door = targetsInRadius[0].transform;
+                if (!_isTargetVisible)
+                {
+                    OnDetectedTarget?.Invoke(_door);
+                    _detectedTarget = _door;
+                    _distanceToTarget = Vector3.Distance(transform.position, _door.position);;
+                    _isTargetVisible = true;
+                }
                 return;
             }
             
@@ -182,7 +172,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(proximityAreaCenter ? proximityAreaCenter.position : transform.position, proximityAreaRadius);
+            Gizmos.DrawWireSphere(proximityAreaCenter.position, proximityAreaRadius);
             
             // Gizmos.color = Color.green;
             // Gizmos.DrawWireSphere(SharingAreaCenter ? SharingAreaCenter.position : transform.position, sharingAreaRadius);

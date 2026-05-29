@@ -15,7 +15,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnStartServer();
             
-            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor");
+            _targetLayer = LayerMask.GetMask("ServerCollider", "BunkerDoor");
             
             if (attackCubeCenter == null) 
                 attackCubeCenter = transform;
@@ -27,7 +27,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             // заглушка
             gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);
             
-            var colliders = new Collider[15];
+            var colliders = new Collider[100];
             var size = Physics.OverlapBoxNonAlloc(
                 attackCubeCenter.position,
                 halfExtents,
@@ -36,23 +36,23 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 _targetLayer
             );
     
-            DamagableModel playerModel = null;
-            bool hitPlayer = false;
-            for (var i = 0; i < size; i++)
-            {
-                if (!colliders[i].CompareTag("Player")) continue;
-                // playerModel = _registry.TryGetCharacter(col.gameObject);
-                // if (playerModel != null && playerModel.Team != Teams.Enemy)
-                // {
-                //     hitPlayer = true;
-                //     break;
-                // }
-            }
-
-            if (hitPlayer)
-            {
-                // playerModel.Health_old.TakeDamage(closeAttackData.Damage, closeAttackData.DamageType);
-            }
+            // DamagableModel playerModel = null;
+            // bool hitPlayer = false;
+            // for (var i = 0; i < size; i++)
+            // {
+            //     if (!colliders[i].CompareTag("Player")) continue;
+            //     // playerModel = _registry.TryGetCharacter(col.gameObject);
+            //     // if (playerModel != null && playerModel.Team != Teams.Enemy)
+            //     // {
+            //     //     hitPlayer = true;
+            //     //     break;
+            //     // }
+            // }
+            //
+            // if (hitPlayer)
+            // {
+            //     // playerModel.Health_old.TakeDamage(closeAttackData.Damage, closeAttackData.DamageType);
+            // }
         }
         
         private void OnDrawGizmosSelected()

@@ -43,7 +43,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ZombieAttack = new ZombieAttack(this, 
                 stateMachine, 
                 attackController,
-                targetDetector);
+                targetDetector,
+                movementController);
             ZombieDeath = new ZombieDeath(this, stateMachine);
             
             stateMachine.Initialize(ZombieWalk);

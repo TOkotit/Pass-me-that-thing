@@ -13,15 +13,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private EnemyAttackController _attackController;
         private TargetDetector _targetDetector;
+        private EnemyMovementController _movementController;
         
         public ZombieAttack(EnemyZombie enemy, 
             EnemyStateMachine stateMachine, 
             EnemyAttackController attackController,
-            TargetDetector targetDetector) 
+            TargetDetector targetDetector,
+            EnemyMovementController  movementController) 
                 : base(enemy, stateMachine)
         {
             _attackController = attackController;
             _targetDetector = targetDetector;
+            _movementController = movementController;
             _zombie = enemy;
         }
 
@@ -53,6 +56,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _zombie.elapsedAttack += Time.fixedDeltaTime;
             if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
             {
+                _movementController.RotateTo(_targetDetector.DetectedTarget.position);
                 _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _zombie.Damage);
                 _zombie.elapsedAttack = 0f;
             }
