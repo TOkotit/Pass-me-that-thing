@@ -41,7 +41,7 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private float interactionTimeOut = 1;
        
         
-        private List<Collider> targetsInRadius;
+        // private List<Collider> targetsInRadius;
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController  PhysicalItemInteractionController => _physicalItemInteractionController;
         
@@ -62,7 +62,7 @@ namespace Game.Scripts.GameFiles.Items
         public override void OnStartLocalPlayer()
         {
             _camera = GetComponentInChildren<Camera>();
-            targetsInRadius =  new List<Collider>();
+            // targetsInRadius =  new List<Collider>();
             TrySubscribe();
         }
         private void Awake()
@@ -93,8 +93,8 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput.Gameplay.Item2.performed += Select2;
             _gameInput.Gameplay.Item3.performed += Select3;
 
-            interactionZone.OnInteractionZoneEnter += OnColliderEnter;
-            interactionZone.OnInteractionZoneExit += OnColliderExit;
+            // interactionZone.OnInteractionZoneEnter += OnColliderEnter;
+            // interactionZone.OnInteractionZoneExit += OnColliderExit;
         }
 
         private void TryUnsubscribe()
@@ -114,8 +114,8 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.Item2.performed -= Select2;
                 _gameInput.Gameplay.Item3.performed -= Select3;
                 
-                interactionZone.OnInteractionZoneEnter -= OnColliderEnter;
-                interactionZone.OnInteractionZoneExit -= OnColliderExit;
+                // interactionZone.OnInteractionZoneEnter -= OnColliderEnter;
+                // interactionZone.OnInteractionZoneExit -= OnColliderExit;
             }
             catch (Exception ex)
             {
@@ -160,22 +160,49 @@ namespace Game.Scripts.GameFiles.Items
             }
         }
 
+        private void FixedUpdate()
+        {
+            if (!isLocalPlayer) return;
 
-        private void OnColliderEnter(Collider collider)
-        {
-            if (!targetsInRadius.Contains(collider))
-                targetsInRadius.Add(collider);
+            if (_outlineRegistry.EnabledOutlines.Count > 1)
+            {
+                for (var i = _outlineRegistry.EnabledOutlines.Count - 1 - 1; i >= 0 ; i--)
+                {
+                    _outlineRegistry.DisableOutline(_outlineRegistry.EnabledOutlines[i]);
+                }
+            }
             
-            if (targetsInRadius.Contains(collider) && _outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
-                outline.enabled = true;
+            var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+            {
+                if (_outlineRegistry.TryGetOutline(hit.collider.gameObject, out var outline))
+                {
+                    _outlineRegistry.EnableOutline(outline);
+                }
+            }
+            
+            
+            
+            
         }
-        
-        private void OnColliderExit(Collider collider)
-        {
-            targetsInRadius.Clear();
-            if (_outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
-                outline.enabled = false;
-        }
+
+
+        // private void OnColliderEnter(Collider collider)
+        // {
+        //     // if (!targetsInRadius.Contains(collider))
+        //     //     targetsInRadius.Add(collider);
+        //     //targetsInRadius.Contains(collider) && 
+        //     if (_outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
+        //         outline.enabled = true;
+        // }
+        //
+        // private void OnColliderExit(Collider collider)
+        // {
+        //     // targetsInRadius.Clear();
+        //     if (_outlineRegistry.TryGetOutline(collider.gameObject,  out var outline))
+        //         outline.enabled = false;
+        // }
 
         private void TryInteract()
         {
@@ -231,7 +258,7 @@ namespace Game.Scripts.GameFiles.Items
             Debug.Log("Trying Pick Up" + target.gameObject);
             if (item == _physicalItemInteractionController.CurrentHeldItem) return;
             inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex);
-            OnColliderExit(target);
+            // OnColliderExit(target);
         }
         [Server]
         public void TryPickUp(PhysicalItem target)
@@ -240,8 +267,12 @@ namespace Game.Scripts.GameFiles.Items
             if (target == _physicalItemInteractionController.CurrentHeldItem) return;
             Debug.Log(inventory);
             inventory.ServerPickUpItem(target, _playerInventoryModel.ActiveSlotIndex);
-            if (_outlineRegistry.TryGetOutline(target.gameObject,  out var outline))
-                outline.enabled = false;
+            if (_outlineRegistry.TryGetOutline(target.gameObject, out var outline))
+            {
+                _outlineRegistry.DisableOutline(outline);
+                // outline.enabled = false;
+            }
+                
         }
         
         private void TryOpen(Collider target)

@@ -7,11 +7,15 @@ namespace Game.Scripts.GameFiles.Items.Highlight
     {
         public static OutlineRegistry Instance { get; private set; }
         private Dictionary<GameObject, Outline> _outlines = new Dictionary<GameObject, Outline>();
+        private List<Outline> _enabledOutlines = new List<Outline>();
+        
         public OutlineRegistry()
         {
             Instance = this;
         }
-        
+
+        public List<Outline> EnabledOutlines => _enabledOutlines;
+
         public void Register(Outline outline)
         {
             var outlineObject = outline.gameObject;
@@ -36,6 +40,18 @@ namespace Game.Scripts.GameFiles.Items.Highlight
             }
             outlineComponent = null;
             return null;
+        }
+
+        public void EnableOutline(Outline outline)
+        {
+            outline.enabled = true;
+            EnabledOutlines.Add(outline);
+        }
+        
+        public void DisableOutline(Outline outline)
+        {
+            outline.enabled = false;
+            EnabledOutlines.Remove(outline);
         }
     }
 }

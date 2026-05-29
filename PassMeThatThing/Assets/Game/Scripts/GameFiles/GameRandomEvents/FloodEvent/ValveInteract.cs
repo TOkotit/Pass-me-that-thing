@@ -39,8 +39,6 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         public void ValveWasInteracted()
         {
             if (_isClosed) return;
-
-            
             if (impactParticles) impactParticles.Play();
             CmdCloseValve();
         }

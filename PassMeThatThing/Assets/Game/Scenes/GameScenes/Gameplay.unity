@@ -874,6 +874,7 @@ GameObject:
   - component: {fileID: 1477380929}
   - component: {fileID: 1477380930}
   - component: {fileID: 1477380931}
+  - component: {fileID: 1477380932}
   m_Layer: 7
   m_Name: ItemSpawner
   m_TagString: Door
@@ -1023,6 +1024,22 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &1477380932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477380924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _outline: {fileID: 1477380931}
 --- !u!1 &1491296745 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9000737013907714295, guid: 1a3a9f281517c3d4b94e317707ea13af, type: 3}
@@ -1185,6 +1202,7 @@ GameObject:
   - component: {fileID: 1639876762}
   - component: {fileID: 1639876761}
   - component: {fileID: 1639876760}
+  - component: {fileID: 1639876767}
   m_Layer: 7
   m_Name: ItemSpawner (1)
   m_TagString: Door
@@ -1334,6 +1352,22 @@ Transform:
   - {fileID: 697219245}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1639876767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639876759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _outline: {fileID: 1639876760}
 --- !u!1001 &1812839059
 PrefabInstance:
   m_ObjectHideFlags: 0

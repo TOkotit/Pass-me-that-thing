@@ -129,7 +129,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
                 if (bestTarget != null)
                 {
-                    Debug.Log($"{size} targets detected");
+                    // Debug.Log($"{size} targets detected");
                     OnDetectedTarget?.Invoke(bestTarget);
                     _detectedTarget = bestTarget;
                     _distanceToTarget = minDistance;

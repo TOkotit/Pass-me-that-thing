@@ -13,6 +13,10 @@ namespace Game.Scripts.GameFiles.Events
         public int EventId => _eventId;
         
         [SyncVar] public GameEventsType eventType;
+
+        public virtual int timeLimit { get; }
+        public virtual int difficulty { get; }
+        public virtual string description { get; }
         
         [SyncVar]
         private bool _isEventActive;
@@ -91,6 +95,25 @@ namespace Game.Scripts.GameFiles.Events
         
         [Server] protected virtual void OnStartEvent() { }
         [Server] protected virtual void OnStopEvent() { }
+        
+        
+        [Server]
+        public void ServerActivateMinigame(NetworkConnectionToClient senderConnection)
+        {
+            // 1. Формируем параметры
+            var parameters = new MinigameParameters
+            {
+                eventType = eventType,
+                description = description,
+                difficulty = difficulty,
+                timeLimit = timeLimit
+            };
+            
+            if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
+            {
+                playerHandler.TargetOpenMinigame(parameters);
+            }
+        }
         
     }
 }

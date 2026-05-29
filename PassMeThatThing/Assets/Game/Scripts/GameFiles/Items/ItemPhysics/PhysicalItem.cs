@@ -32,6 +32,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public MainCharacter Owner {get => owner; set => owner = value;}
         
         
+        
+        
         private LMBReaction reaction;
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
