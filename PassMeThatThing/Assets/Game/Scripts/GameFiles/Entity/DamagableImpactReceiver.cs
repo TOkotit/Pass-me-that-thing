@@ -1,32 +1,49 @@
 using Entity.Entity;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
+using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Entity
+namespace Game.Entity
 {
-    // Game/Entity/DamagableImpactReceiver.cs
-    using Entity;
-    using UnityEngine;
-
-    namespace Game.Entity
+    public class DamagableImpactReceiver : MonoBehaviour
     {
-        public class DamagableImpactReceiver : MonoBehaviour
+        [SerializeField] private float treshold = 2f;                 // базовый порог для объектов с массой = baseMass
+        [SerializeField] private float damageMultiplier = 1f;
+        [SerializeField] private float baseMass = 5f;                 // эталонная масса для нормализации
+        [SerializeField] private float nonPhysicalMultiplier = 0.3f;  // множитель урона для стен/нефизических объектов
+        [SerializeField] private float nonPhysicalTresholdMultiplier = 1f; // множитель порога для стен 
+
+        private Damagable _damagable;
+
+        public void SetDamagable(Damagable damagable) => _damagable = damagable;
+
+        private void OnCollisionEnter(Collision collision)
         {
-            [SerializeField] private float treshold = 2f;
-            [SerializeField] private float damageMultiplier = 1f;
-            private Damagable _damagable;
+            if (!_damagable || _damagable.DamagableModel?.HealthPool == null)
+                return;
 
-            public void SetDamagable(Damagable damagable) => _damagable = damagable;
+            float velocity = collision.relativeVelocity.magnitude;
 
-            private void OnCollisionEnter(Collision collision)
+            float massMultiplier;       
+            float thresholdMultiplier;  
+
+            if (PhysicalItemRegistry.Instance != null &&
+                PhysicalItemRegistry.Instance.TryGetItem(collision.gameObject, out var physicalItem))
             {
-                if (_damagable == null || _damagable.DamagableModel?.HealthPool == null)
-                    return;
-
-                float velocity = collision.relativeVelocity.magnitude;
-                if (velocity < treshold) return;
-
-                int damage = (int)(damageMultiplier * velocity);
-                _damagable.DamagableModel.HealthPool.TakeDamage(damage);
+                float mass = physicalItem.Rigidbody ? physicalItem.Rigidbody.mass : 1f;
+                massMultiplier = mass / baseMass;           
+                thresholdMultiplier = baseMass / mass;      
             }
+            else
+            {
+                massMultiplier = nonPhysicalMultiplier;
+                thresholdMultiplier = nonPhysicalTresholdMultiplier;
+            }
+
+            if (velocity < treshold * thresholdMultiplier)
+                return;
+
+            int damage = (int)(velocity * damageMultiplier * massMultiplier);
+            _damagable.DamagableModel.HealthPool.TakeDamage(damage);
         }
     }
 }

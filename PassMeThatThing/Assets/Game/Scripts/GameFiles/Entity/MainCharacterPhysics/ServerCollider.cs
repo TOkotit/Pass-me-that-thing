@@ -1,7 +1,6 @@
 // Game/NewMainCharacterPhysics/ServerCollider.cs
 using Entity;
 using Game.Entity;
-using Game.Scripts.GameFiles.Entity.Game.Entity;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
