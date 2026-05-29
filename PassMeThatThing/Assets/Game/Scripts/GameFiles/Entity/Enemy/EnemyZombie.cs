@@ -31,7 +31,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnStartServer();
             
-            ZombieWalk = new ZombieWalk(this, stateMachine, targetDetector);
+            ZombieWalk = new ZombieWalk(this, 
+                stateMachine, 
+                targetDetector, 
+                movementController);
             ZombieChase = new ZombieChase(this, 
                 stateMachine, 
                 targetDetector, 

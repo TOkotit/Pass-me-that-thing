@@ -22,7 +22,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         }
 
         [Server]
-        public void AttackMelee(Transform target, Vector3 halfExtents)
+        public void AttackMelee(Vector3 halfExtents)
         {
             // заглушка
             gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);
@@ -38,9 +38,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
     
             DamagableModel playerModel = null;
             bool hitPlayer = false;
-            foreach (var col in colliders)
+            for (var i = 0; i < size; i++)
             {
-                if (!col.CompareTag("Player")) continue;
+                if (!colliders[i].CompareTag("Player")) continue;
                 // playerModel = _registry.TryGetCharacter(col.gameObject);
                 // if (playerModel != null && playerModel.Team != Teams.Enemy)
                 // {
@@ -53,6 +53,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             {
                 // playerModel.Health.TakeDamage(closeAttackData.Damage, closeAttackData.DamageType);
             }
+        }
+        
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.softRed;
+            Gizmos.DrawCube(attackCubeCenter.position, new Vector3(1f, 1f, 1f));
         }
     }
 }
