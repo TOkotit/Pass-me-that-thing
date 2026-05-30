@@ -20,15 +20,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _isSlipping;
         
         
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
+        public override void OnStartLocalPlayer()        {
+            base.OnStartLocalPlayer();
             
             if (leftLeg) leftLeg.OnWaterTouched += TrySlip;
             if (rightLeg) rightLeg.OnWaterTouched += TrySlip;
         }
 
-        [Server]
         private void TrySlip()
         {
             if (_isSlipping || Time.time < _nextSlipTime) return;
@@ -41,47 +39,37 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _isSlipping = true;
             _nextSlipTime = Time.time + slipCooldown;
 
-            SetMovementLocked(true);
+            if (movement) movement.LockUpMovement();
             
             if (verticalAlign)
             {
-                verticalAlign.SetConsciousness(0f);
+                verticalAlign.Consciousness = 0f;
+                CmdSetConsciousness(0f);
             }
 
             yield return new WaitForSeconds(slipDuration);
             
             if (verticalAlign) 
             {
-                verticalAlign.SetConsciousness(1f);
+                verticalAlign.Consciousness = 1f;
+                CmdSetConsciousness(1f);
             }
             
-            SetMovementLocked(false);
+            if (movement) movement.UnlockMovement();
             
             _isSlipping = false;
         }
         
-        
-        [Server]
-        private void SetMovementLocked(bool locked)
+        [Command]
+        private void CmdSetConsciousness(float value)
         {
-            if (connectionToClient != null)
-                TargetSetMovementLocked(connectionToClient, locked);
-        }
-
-        [TargetRpc]
-        private void TargetSetMovementLocked(NetworkConnection target, bool locked)
-        {
-            if (!movement) return;
-
-            if (locked)
-                movement.LockUpMovement();
-            else
-                movement.UnlockMovement();
+            if (verticalAlign) 
+                verticalAlign.Consciousness = value;
         }
         
         private void OnDestroy()
         {
-            if (isServer)
+            if (isLocalPlayer)
             {
                 if (leftLeg) leftLeg.OnWaterTouched -= TrySlip;
                 if (rightLeg) rightLeg.OnWaterTouched -= TrySlip;
