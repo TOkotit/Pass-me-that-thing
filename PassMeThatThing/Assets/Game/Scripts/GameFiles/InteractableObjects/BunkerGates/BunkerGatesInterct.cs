@@ -1,10 +1,11 @@
+using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 {
-    public class BunkerGates : NetworkBehaviour, IInteractable
+    public class BunkerGates : Interactable
     {
         [Header("Movement")]
         [SerializeField] private Transform gateVisual;
@@ -48,7 +49,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             gateVisual.localPosition = position;
         }
 
-        public void Interact()
+        public override void Interact()
         {
             CmdToggleGate();
         }
@@ -57,7 +58,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         private void CmdToggleGate() => isOpen = !isOpen;
         
         [ServerCallback]
-        public void SrbToggle() => isOpen = !isOpen;
+        public override void SrbToggle() => isOpen = !isOpen;
 
         
         [Server]
@@ -83,5 +84,6 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         //         Debug.Log($"[SERVER] Gate state: {isOpen}");
         //     }
         // }
+        
     }
 }

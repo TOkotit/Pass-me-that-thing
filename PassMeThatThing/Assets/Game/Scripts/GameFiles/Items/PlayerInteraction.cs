@@ -187,7 +187,17 @@ namespace Game.Scripts.GameFiles.Items
             
             
         }
-
+        private Interactable FindInteractable(GameObject obj)
+        {
+            Transform t = obj.transform;
+            while (t)
+            {
+                if (InteractableRegistry.Instance.TryGetInteractable(t.gameObject, out var interactable))
+                    return interactable;
+                t = t.parent;
+            }
+            return null;
+        }
 
         // private void OnColliderEnter(Collider collider)
         // {
@@ -239,9 +249,7 @@ namespace Game.Scripts.GameFiles.Items
                     }
                     else
                     {
-                        hit.collider.gameObject.TryGetComponent(out IInteractable interactable);
-                        //Переделать через события или регистр
-                        if (interactable == null) return;
+                        if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject, out var interactable))
                         interactable.Interact();
                     }
                 }
@@ -272,15 +280,15 @@ namespace Game.Scripts.GameFiles.Items
             if (_outlineRegistry.TryGetOutline(target.gameObject, out var outline))
             {
                 _outlineRegistry.DisableOutline(outline);
-                // outline.enabled = false;
             }
                 
         }
         
         private void TryOpen(Collider target)
         {
-            var interactable = target.GetComponentInParent<IInteractable>();//Переделать 
-            interactable?.Interact();
+            var interactable =  FindInteractable(target.gameObject);
+            if (!interactable) return;
+            interactable.Interact();
         }
 
         private void onActPerformed(InputAction.CallbackContext context)
@@ -288,7 +296,6 @@ namespace Game.Scripts.GameFiles.Items
             if (!PhysicalItemInteractionController.CurrentHeldItem) return;
             if (PhysicalItemInteractionController.CurrentHeldItem.Reaction != null)
             {
-                // PhysicalItemInteractionController.CurrentHeldItem.transform.DOMove(Vector3.forward, 0.5f);
                 PhysicalItemInteractionController.CurrentHeldItem.Reaction.Act();
             }
             else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)

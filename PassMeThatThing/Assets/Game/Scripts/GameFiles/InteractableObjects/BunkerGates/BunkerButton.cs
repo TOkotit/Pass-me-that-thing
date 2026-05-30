@@ -2,13 +2,13 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 {
-    public class BunkerButton : MonoBehaviour, IInteractable
+    public class BunkerButton : Interactable
     {
         [SerializeField] private BunkerGates linkedGate;
 
-        public void Interact()
+        public override void Interact()
         {
-            if (linkedGate != null)
+            if (linkedGate)
             {
                 linkedGate.Interact();
             }
@@ -16,17 +16,17 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 
         public void Open()
         {
-            if (linkedGate != null) linkedGate.Open();
+            if (linkedGate) linkedGate.Open();
         }
 
         public void Close()
         {
-            if (linkedGate != null) linkedGate.Close();
+            if (linkedGate) linkedGate.Close();
         }
 
-        public void SrbToggle()
+        public override void SrbToggle()
         {
-            if (linkedGate != null) linkedGate.SrbToggle();
+            if (linkedGate) linkedGate.SrbToggle();
         }
     }
 }

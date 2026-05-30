@@ -6,7 +6,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    public class ItemSpawner : NetworkBehaviour, IInteractable
+    public class ItemSpawner : Interactable
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
@@ -30,12 +30,12 @@ namespace Game.Scripts.GameFiles.Items
             NetworkServer.Spawn(itemToDrop);
         }
         
-        public void Interact()
+        public override void Interact()
         {
             CmdInteractWithObject();
         }
 
-        public void SrbToggle()
+        public override void SrbToggle()
         {
             
         }

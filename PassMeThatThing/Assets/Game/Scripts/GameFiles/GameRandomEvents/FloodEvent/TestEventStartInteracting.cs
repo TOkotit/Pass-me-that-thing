@@ -6,18 +6,18 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Events.FloodEvent
 {
-    public class TestEventStartInteracting : NetworkBehaviour, IInteractable
+    public class TestEventStartInteracting : Interactable
     {
         
         [SerializeField] private FloodEvent floodEvent;
 
-        public void Interact()
+        public override void Interact()
         {
             CmdTest();
             CmdTest2();
         }
 
-        public void SrbToggle()
+        public override void SrbToggle()
         {
             throw new System.NotImplementedException();
         }

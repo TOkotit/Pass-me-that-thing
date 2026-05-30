@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.Doors
 {
-    public class DoorInteract : NetworkBehaviour, IInteractable
+    public class DoorInteract : Interactable
     {
         [Header("Movement")]
         [SerializeField] private float closedYRotation = 0f;
@@ -49,8 +49,9 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
             transform.localEulerAngles = rotation;
         }
 
-        public void Interact()
+        public override void Interact()
         {
+            Debug.Log("Interact with door");
             CmdToggleDoor();
         }
 
@@ -68,7 +69,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         }
         
         [ServerCallback]
-        public void SrbToggle() => isOpen = !isOpen;
+        public override void SrbToggle() => isOpen = !isOpen;
 
         [Server]
         public void Open() => isOpen = true;

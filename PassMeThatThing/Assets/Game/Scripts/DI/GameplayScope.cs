@@ -44,6 +44,9 @@ namespace DI
             var damagableRegistry = new DamagableRegistry();
             builder.RegisterInstance(damagableRegistry);
             
+            var interactableRegistry = new InteractableRegistry();
+            builder.RegisterInstance(interactableRegistry);
+            
             builder.Register<MainCharacterModel>(Lifetime.Transient);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);

@@ -1,9 +1,18 @@
+using Game.Scripts.GameFiles.Items;
+using Mirror;
+
 namespace Game.Scripts.GameFiles.InteractableObjects
 {
-    public interface IInteractable
+    public abstract class Interactable : NetworkBehaviour
     {
-        void Interact();
+        public abstract void Interact();
 
-        void SrbToggle();
+        public abstract void SrbToggle();
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            InteractableRegistry.Instance.Register(gameObject, this);
+        }
     }
 }
