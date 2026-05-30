@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using UnityEditor;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class LMBWrench : LMBReaction
     {
+        
         public LMBWrench(PhysicalItem item) : base(item)
         {
         }
@@ -14,7 +16,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override void Act()
         {
             Debug.Log($"Act {nameof(LMBWrench)}");
-            Item.EnableActingMode(0.5f);
+            
             
         }
 
@@ -23,10 +25,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             var otherCollider = other.collider;
             // Debug.Log($"Физическое столкновение с коллайдером: {otherCollider.name}");
             
-            if (otherCollider.TryGetComponent(out ValveInteract valveInteract))
+            if (EventTerminalsRegistry.Instance.TryGetItem(otherCollider.gameObject, out var terminal))
             {
                 Debug.Log($"conn {Item.ConnectionToClient.connectionId}");
-                valveInteract.ValveWasInteracted();
+                terminal.TerminalAct();
             }
         }
     }

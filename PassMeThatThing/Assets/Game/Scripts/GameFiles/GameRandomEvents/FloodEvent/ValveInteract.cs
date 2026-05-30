@@ -1,4 +1,5 @@
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
@@ -9,7 +10,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
 {
-    public class ValveInteract : NetworkBehaviour
+    public class ValveInteract : EventTerminal
     {
         [SerializeField] private ParticleSystem impactParticles;
         [SerializeField] private Transform pivot;
@@ -36,8 +37,11 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             _targetAngle = openAngle;
             
         }
-        public void ValveWasInteracted()
+
+        public override void TerminalAct()
         {
+            base.TerminalAct();
+            
             if (_isClosed) return;
             CmdCloseValve();
         }
@@ -81,22 +85,6 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             _currentAngle = Mathf.MoveTowards(_currentAngle, _targetAngle, moveSpeed * Time.deltaTime);
             pivot.localRotation = _initialRotation * Quaternion.Euler(rotationAxis * _currentAngle);
         }
-
-        // private void OnTriggerEnter(Collider other)
-        // {
-        //     if (_isClosed) return;
-        //     
-        //     if (other.CompareTag("Item") && other.TryGetComponent(out NetworkItem item))
-        //     {
-        //         if (item.itemId == "wrench")
-        //         {
-        //             ValveWasInteracted();
-        //         }
-        //     }
-        // }
-        
-        
-        
         
         [Server]
         public void Open()

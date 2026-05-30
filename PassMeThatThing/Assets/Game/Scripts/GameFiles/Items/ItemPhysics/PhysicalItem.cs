@@ -66,14 +66,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Vector3 defaultRotation;
         public Vector3 DefaultRotation => defaultRotation;
         
-        private Coroutine _actingCoroutine;
-        [SyncVar]
-        private bool _isActing;
-        public bool IsActing
-        {
-            get => _isActing;
-            set => _isActing = value;
-        }
+        // private Coroutine _actingCoroutine;
+        // [SyncVar]
+        // private bool _isActing;
+        // public bool IsActing
+        // {
+        //     get => _isActing;
+        //     set => _isActing = value;
+        // }
 
         public NetworkConnectionToClient ConnectionToClient
         {
@@ -101,29 +101,28 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             if (isServer)
             {
                 IsThrown = false;
-            
-                if (_isActing)
-                    reaction.CollisionEnter(other);
+
+                reaction?.CollisionEnter(other);
             }
         }
 
-        [Command(requiresAuthority = false)]
-        public void EnableActingMode(float duration)
-        {
-            _isActing = true;
-            if (_actingCoroutine != null)
-            {
-                StopCoroutine(_actingCoroutine);
-            }
-            _actingCoroutine = StartCoroutine(ActingRoutine(duration));
-        }
-        
-        private IEnumerator ActingRoutine(float duration)
-        {
-            yield return new WaitForSeconds(duration);
-            _isActing = false;
-            _actingCoroutine = null;
-        }
+        // [Command(requiresAuthority = false)]
+        // public void EnableActingMode(float duration)
+        // {
+        //     _isActing = true;
+        //     if (_actingCoroutine != null)
+        //     {
+        //         StopCoroutine(_actingCoroutine);
+        //     }
+        //     _actingCoroutine = StartCoroutine(ActingRoutine(duration));
+        // }
+        //
+        // private IEnumerator ActingRoutine(float duration)
+        // {
+        //     yield return new WaitForSeconds(duration);
+        //     _isActing = false;
+        //     _actingCoroutine = null;
+        // }
         
         public override void OnStartClient()
         {

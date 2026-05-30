@@ -46,6 +46,9 @@ namespace DI
             
             var interactableRegistry = new InteractableRegistry();
             builder.RegisterInstance(interactableRegistry);
+
+            var eventTerminalRegistry = new EventTerminalsRegistry();
+            builder.RegisterInstance(eventTerminalRegistry);
             
             builder.Register<MainCharacterModel>(Lifetime.Transient);
             

@@ -22,7 +22,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public virtual void Enter()
         {
             OnEnter?.Invoke(EnemyStateType);
-            Debug.Log($"Enter {EnemyStateType}");
+            // Debug.Log($"Enter {EnemyStateType}");
         }
         public virtual void LogicUpdate() { }
         public virtual void PhysicsUpdate() { }
