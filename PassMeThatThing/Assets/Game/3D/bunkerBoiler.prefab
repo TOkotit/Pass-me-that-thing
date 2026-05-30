@@ -399,6 +399,7 @@ GameObject:
   - component: {fileID: 4229902429359698730}
   - component: {fileID: 6171071710141576432}
   - component: {fileID: 7083679951217329145}
+  - component: {fileID: 936848206209627289}
   - component: {fileID: 5780964106884149161}
   m_Layer: 0
   m_Name: bunkerBoiler
@@ -459,10 +460,31 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   eventType: 1
+  _baseTriggerChance: 0.2
   waterMesh: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
   _waterMeshTransform: {fileID: 3656942223452113292}
   maxWaterWidth: 10
   valve: {fileID: 5594920560472654092}
+--- !u!114 &936848206209627289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3600752652129642896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c86b2f2109b4caaabedb16722b7ddfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  eventType: 0
+  _baseTriggerChance: 0.2
+  _chanceBoost: 0.5
+  _siblingFloodEvent: {fileID: 7083679951217329145}
+  pumpInteractTerminal: {fileID: 8478146997884831424}
 --- !u!114 &5780964106884149161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,8 +622,9 @@ GameObject:
   - component: {fileID: 1513016632477678353}
   - component: {fileID: 5452790394376188684}
   - component: {fileID: 7596056865138643028}
-  m_Layer: 0
-  m_Name: Installation
+  - component: {fileID: 8478146997884831424}
+  m_Layer: 7
+  m_Name: WaterPump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -700,6 +723,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.01045114, y: 0.00792, z: 0.016056292}
   m_Center: {x: -0.0012655735, y: -0.00020950477, z: -0.006128441}
+--- !u!114 &8478146997884831424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5329309119451256100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a2be085317946ef983e7a90bf6313e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _isFixed: 1
+  _pipeBreakEvent: {fileID: 936848206209627289}
 --- !u!1 &5412857771416286706
 GameObject:
   m_ObjectHideFlags: 0

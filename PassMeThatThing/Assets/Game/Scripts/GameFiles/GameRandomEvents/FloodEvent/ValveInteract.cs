@@ -43,9 +43,9 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         {
             base.TerminalAct(conn);
             
-            // if (_isClosed) return;
-            // CmdCloseValve();
-            ActivateMinigame(conn, floodEvent);
+            if (_isClosed) return;
+            CmdCloseValve();
+            // ActivateMinigame(conn, floodEvent);
         }
         
         
