@@ -29,6 +29,11 @@ namespace Game.Gameplay.View.UI
         private readonly CompositeDisposable _subscriptions = new();
         
         public override string Id => "ScreenGameplay";
+        
+        
+        private Action<int, Sprite, int> addEvent;
+        private Action<int, Sprite, int> updateEvent;
+        private Action<int> removeEvent;
 
         public ScreenGameplayViewModel(GameplayUIManager uiManager, IObjectResolver container)
         {
@@ -157,65 +162,49 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Dispose();
         }
 
-        public void InitGameEvent(Action<int, Sprite, int> add)
+        public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
         {
+            clear();
             foreach (var i in _gameRandomEventManager.StartedEvents)
             {
                 var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
-                add(i.Key, e.EventImage, i.Value.RoomNumber);
+                add(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
+        
+        private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
+        {
+            var e = _gameEventsDatabase.GetEvent(newItem.eventType);
+            switch (op)
+            {
+                case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
+                    addEvent(newItem.EventId, e.EventImage, newItem.EventId);
+                    break;
+                case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
+                    updateEvent(newItem.EventId, e.EventImage, newItem.EventId);
+                    break;
+                case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
+                    removeEvent(newItem.EventId);
+                    break;
+            }
+        }
+
 
         public void RequestSubGameEvent(Action<int, Sprite, int> add, 
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameRandomEventManager.StartedEvents.OnChange += (SyncDictionary<int, BaseGameEvent>.Operation op, 
-                int index, BaseGameEvent newItem) =>
-            {
-                var e = _gameEventsDatabase.GetEvent(newItem.eventType);
-                switch (op)
-                {
-                    
-                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
-                        add(index, e.EventImage, newItem.RoomNumber);
-                        break;
-                    
-                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
-                        update(index, e.EventImage, newItem.RoomNumber);
-                        break;
-        
-                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
-                        remove(index);
-                        break;
-                }
-            };
+            addEvent = add;
+            updateEvent = update;
+            removeEvent = remove;
+            _gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
         }
         
         public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameRandomEventManager.StartedEvents.OnChange -= (SyncDictionary<int, BaseGameEvent>.Operation op, 
-                int index, BaseGameEvent newItem) =>
-            {
-                var e = _gameEventsDatabase.GetEvent(newItem.eventType);
-                switch (op)
-                {
-                    
-                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
-                        add(index, e.EventImage, newItem.RoomNumber);
-                        break;
-                    
-                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
-                        update(index, e.EventImage, newItem.RoomNumber);
-                        break;
-        
-                    case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
-                        remove(index);
-                        break;
-                }
-            };
+            _gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
         }
         
         

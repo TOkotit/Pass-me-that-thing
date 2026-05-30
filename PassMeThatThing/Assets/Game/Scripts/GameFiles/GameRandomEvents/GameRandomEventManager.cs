@@ -82,11 +82,11 @@ namespace Game.Scripts.GameFiles.Events
         }
 
 
-        [Command]
+        [Command(requiresAuthority = false)]
         public void CmdStopEventById(int id)
         {
-            Debug.Log($"{GetEventById(id) is null} id {id}");
-            // GetEventById(id).StopEvent();
+            Debug.Log($"<color=yellow> CmdStopEventById {id}");
+            GetEventById(id).StopEvent();
         }
         
         [Server]

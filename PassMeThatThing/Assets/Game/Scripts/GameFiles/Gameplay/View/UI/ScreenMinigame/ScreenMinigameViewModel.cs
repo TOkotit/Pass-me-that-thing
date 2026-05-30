@@ -41,8 +41,6 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         public void RequestCompleteMinigame()
         {
-            Debug.Log($"CmdStopEventById {Parameters.eventId}");
-            Debug.Log($"_gameRandomEventManager {_gameRandomEventManager == null}");
             _gameRandomEventManager.CmdStopEventById(Parameters.eventId);
             
             _uiManager.OpenScreenGameplay();

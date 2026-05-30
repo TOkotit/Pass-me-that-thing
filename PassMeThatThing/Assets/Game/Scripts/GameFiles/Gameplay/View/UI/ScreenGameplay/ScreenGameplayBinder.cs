@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using DG.Tweening;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Events;
 using Game.UI;
+using Mirror;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -72,7 +74,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
 
-            ViewModel.InitGameEvent(AddGameEvent);
+            ViewModel.InitGameEvent(Clear, AddGameEvent);
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
@@ -157,38 +159,48 @@ namespace Game.Gameplay.View.UI
             _itemImages[index].sprite = sprite;
         }
 
-        private void AddGameEvent(int index, Sprite icon, int roomNumber)
+        private void Clear()
+        {
+            _gameEvents.Clear();
+        }
+        
+
+        private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
         {
             var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform, false);
             
             gameEvent.Icon.sprite = icon;
             gameEvent.Text.text = $"R-{roomNumber}";
             
-            _gameEvents.Add(index, gameEvent);
+            _gameEvents.Add(eventId, gameEvent);
             
             if (_gameEventsConatainer.TryGetComponent<RectTransform>(out var containerRect))
             {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
             }
             
-            // gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
+            gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
         }
         
-        private void UpdateGameEvent(int index, Sprite icon, int roomNumber)
+        private void UpdateGameEvent(int eventId, Sprite icon, int roomNumber)
         {
-            _gameEvents[index].Icon.sprite = icon;
-            _gameEvents[index].Text.text = $"R-{roomNumber}";
+            if (_gameEvents.TryGetValue(eventId, out var gameEvent) && gameEvent != null)
+            {
+                gameEvent.Icon.sprite = icon;
+                gameEvent.Text.text = $"R-{roomNumber}";
+            }
         }
 
-        private void RemoveGameEvent(int index)
+        private void RemoveGameEvent(int eventId)
         {
-            _gameEvents[index].transform.DOScale(0f, 0.2f)
-                .From(1f).SetEase(Ease.InOutBack)
-                .OnComplete(() =>
-                {
-                    Destroy(_gameEvents[index].gameObject);
-                    _gameEvents.Remove(index);
-                });
+            if (_gameEvents.TryGetValue(eventId, out var gameEvent) && gameEvent != null)
+                gameEvent.transform.DOScale(0f, 0.2f)
+                    .From(1f).SetEase(Ease.InOutBack)
+                    .OnComplete(() =>
+                    {
+                        Destroy(gameEvent.gameObject);
+                        _gameEvents.Remove(eventId);
+                    });
         }
         
         // private void OnGoToMainMenuButtonClicked()
