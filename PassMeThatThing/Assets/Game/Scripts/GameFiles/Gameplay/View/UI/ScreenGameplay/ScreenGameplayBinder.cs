@@ -71,7 +71,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.InitImage(SetItemImageSprite);
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
-            
+
+            ViewModel.InitGameEvent(AddGameEvent);
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);

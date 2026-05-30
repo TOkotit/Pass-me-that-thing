@@ -79,5 +79,13 @@ namespace Game.Scripts.GameFiles.Events
                 Debug.LogWarning($"[GameEventManager] Невозможно остановить: ивент с ID:{eventId} не найден на карте.");
             }
         }
+
+
+        [Command]
+        public void CmdStopEventById(int id)
+        {
+            Debug.Log($"{GetEventById(id) is null} id {id}");
+            // GetEventById(id).StopEvent();
+        }
     }
 }

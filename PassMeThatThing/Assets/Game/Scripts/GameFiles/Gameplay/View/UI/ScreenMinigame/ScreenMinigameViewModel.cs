@@ -4,6 +4,7 @@ using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;
 using R3;
+using UnityEngine;
 using VContainer;
 
 namespace Game.Gameplay.View.UI.ScreenMinigame
@@ -12,28 +13,40 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
     {
         private readonly GameplayUIManager _uiManager;
         
-        private readonly PlayerInventoryModel  _playerInventoryModel;
-        private readonly ItemDatabase _itemDatabase;
         private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         
         private readonly CompositeDisposable _subscriptions = new();
         
-        public override string Id => "ScreenMinigame";
+        private MinigameParameters _minigameParameters;
+        // public event Action<MinigameParameters, MinigameParameters> OnMinigameParametersChanged;
         
-        public ScreenMinigameViewModel(GameplayUIManager uiManager, IObjectResolver container)
+        public override string Id => "ScreenMinigame";
+
+        public MinigameParameters Parameters => _minigameParameters;
+
+
+        public ScreenMinigameViewModel(GameplayUIManager uiManager, 
+            IObjectResolver container, MinigameParameters parameters)
         {
             _uiManager = uiManager;
             
-            _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
-            _itemDatabase =  container.Resolve<ItemDatabase>();
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
-            
             _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
             _globalStageManager = container.Resolve<GlobalStageManager>();
+            
+            _minigameParameters = parameters;
         }
         
+        public void RequestCompleteMinigame()
+        {
+            Debug.Log($"CmdStopEventById {Parameters.eventId}");
+            Debug.Log($"_gameRandomEventManager {_gameRandomEventManager == null}");
+            _gameRandomEventManager.CmdStopEventById(Parameters.eventId);
+            
+            _uiManager.OpenScreenGameplay();
+        }
         
     }
 }

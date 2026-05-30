@@ -1,6 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using Enums;
+using Game.Gameplay.View.UI.ScreenMinigame;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
+using Game.Scripts.GameFiles.Events;
 using Game.UI;
 using MainCharacter_old;
 using R3;
@@ -46,6 +48,19 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
         
+        public ScreenMinigameViewModel OpenScreenMinigame(MinigameParameters  parameters)
+        {
+            var viewModel = new ScreenMinigameViewModel(this, Container, parameters);
+            // _mainCharacterMovement.UnlockMovement();
+            UnlockCursor();
+            // UnlockCamera();
+            rootUI.OpenScreen(viewModel);
+            
+            _gameInputManager.ToggleMap(InputMapType.UI);
+            
+            return viewModel;
+        }
+        
         private void OnTogglePause(InputAction.CallbackContext c)
         {
             if (rootUI.OpenedScreen.CurrentValue is not ScreenPauseMenuViewModel)
@@ -66,7 +81,7 @@ namespace Game.Gameplay.View.UI
             
             
             // _mainCharacterMovement.LockUpMovement();
-            // UnlockCursor();
+            UnlockCursor();
             // LockUpCamera();
             rootUI.OpenScreen(viewModel);
             _gameInputManager.ToggleMap(InputMapType.UI);
@@ -84,8 +99,8 @@ namespace Game.Gameplay.View.UI
         // {
         //     _mainCharacterCamera.IsCameraRotating = true;
         // }
-        // Блокировать или разблокировать курсор
         
+        // Блокировать или разблокировать курсор
         public void LockUpCursor()
         {
             Cursor.lockState = CursorLockMode.Locked;

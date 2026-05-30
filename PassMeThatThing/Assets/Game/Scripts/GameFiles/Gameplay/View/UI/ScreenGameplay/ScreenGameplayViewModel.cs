@@ -157,6 +157,15 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Dispose();
         }
 
+        public void InitGameEvent(Action<int, Sprite, int> add)
+        {
+            foreach (var i in _gameRandomEventManager.StartedEvents)
+            {
+                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                add(i.Key, e.EventImage, i.Value.RoomNumber);
+            }
+        }
+
         public void RequestSubGameEvent(Action<int, Sprite, int> add, 
             Action<int, Sprite, int> update, 
             Action<int> remove)
