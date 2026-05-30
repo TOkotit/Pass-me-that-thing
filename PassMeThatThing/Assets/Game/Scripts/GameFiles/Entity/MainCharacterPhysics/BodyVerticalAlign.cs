@@ -26,7 +26,7 @@ public class BodyVerticalAlign : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!isServer) return;
+        if (!authority && !isServer) return;
         foreach (var pair in otherJoints)
         {
             if (!pair.joint) continue;   
@@ -59,10 +59,14 @@ public class BodyVerticalAlign : NetworkBehaviour
             };
             pair.joint.angularXDrive = drive;
             pair.joint.angularYZDrive = drive;
-            pair.joint.rotationDriveMode = RotationDriveMode.XYAndZ;  
+            pair.joint.rotationDriveMode = RotationDriveMode.XYAndZ;
 
             if (currentConsciousness <= 0f)
+            {
+                pair.joint.angularXDrive = new JointDrive { positionSpring = 0, positionDamper = 0 };
+                pair.joint.angularYZDrive = new JointDrive { positionSpring = 0, positionDamper = 0 };
                 continue;
+            }
 
             var jointTransform = pair.joint.transform;
             var projectedForward = Vector3.ProjectOnPlane(jointTransform.forward, Vector3.up);
@@ -79,7 +83,6 @@ public class BodyVerticalAlign : NetworkBehaviour
         }
     }
 
-    [Server]
     public void SetConsciousness(float multiplier)
     {
         currentConsciousness = Mathf.Clamp01(multiplier);

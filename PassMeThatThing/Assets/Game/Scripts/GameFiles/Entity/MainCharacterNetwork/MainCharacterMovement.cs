@@ -22,12 +22,13 @@ public class MainCharacterMovement : NetworkBehaviour
 
     [SerializeField] private Rigidbody root;
     
+    [SyncVar]
     private bool isCharacterCanMove = true;
     private bool _isSprinting = false;
     private Vector3 _moveDirection;
     private Vector3 _velocity;
     
-
+    
     public Vector3 Velocity
     {
         get => _velocity;
@@ -72,6 +73,8 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void Rotate(Quaternion rotation)
     {
+        if (!isCharacterCanMove)
+            return;
         transform.rotation = rotation;
     }
     
