@@ -8,10 +8,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     {
         
         [SerializeField] private BodyVerticalAlign verticalAlign;
-        [SerializeField] private GroundStateManager groundState;
         [SerializeField] private GroundCheck leftLeg;
         [SerializeField] private GroundCheck rightLeg;
-        [SerializeField] private Rigidbody rigidbody;
         [SerializeField] private MainCharacterMovement movement;
 
         [Header("Настройки")]
@@ -25,9 +23,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public override void OnStartServer()
         {
             base.OnStartServer();
-            // Подписываемся на события ног
-            leftLeg.OnWaterTouched += TrySlip;
-            rightLeg.OnWaterTouched += TrySlip;
+            
+            if (leftLeg) leftLeg.OnWaterTouched += TrySlip;
+            if (rightLeg) rightLeg.OnWaterTouched += TrySlip;
         }
 
         [Server]
@@ -40,38 +38,25 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private IEnumerator SlipRoutine()
         {
+            _isSlipping = true;
             _nextSlipTime = Time.time + slipCooldown;
 
             SetMovementLocked(true);
             
             if (verticalAlign)
             {
-                //verticalAlign.EmergencyRelax(); 
-                //verticalAlign.enabled = false;  
+                verticalAlign.SetConsciousness(0f);
             }
 
-            if (rigidbody)
-            {
-                var direction = Random.value > 0.5f ? 1f : -1f;
-        
-                rigidbody.AddForce(transform.forward * (10f * direction) + Vector3.up * 2f, ForceMode.Impulse);
-
-
-                var torqueForce = 50f * direction; 
-                rigidbody.AddTorque(transform.right * torqueForce, ForceMode.Impulse);
-        
-                rigidbody.AddTorque(transform.up * Random.Range(-10f, 10f), ForceMode.Impulse);
-            }
-            
             yield return new WaitForSeconds(slipDuration);
-
             
             if (verticalAlign) 
             {
-                verticalAlign.enabled = true; 
+                verticalAlign.SetConsciousness(1f);
             }
             
             SetMovementLocked(false);
+            
             _isSlipping = false;
         }
         
@@ -96,8 +81,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private void OnDestroy()
         {
-            if (leftLeg) leftLeg.OnWaterTouched -= TrySlip;
-            if (rightLeg) rightLeg.OnWaterTouched -= TrySlip;
+            if (isServer)
+            {
+                if (leftLeg) leftLeg.OnWaterTouched -= TrySlip;
+                if (rightLeg) rightLeg.OnWaterTouched -= TrySlip;
+            }
         }
     }
 }
