@@ -8,9 +8,21 @@ namespace Game.Scripts.GameFiles.Events
     public class EventTerminal : NetworkBehaviour
     {
         protected EventTerminalsRegistry Registry { get; private set; }
-        
+
+        public bool IsTerminalBusy
+        {
+            get => _isTerminalBusy;
+            set => _isTerminalBusy = value;
+        }
+
+        private bool _isTerminalBusy;
+
+
         [Server]
-        public virtual void TerminalAct(NetworkConnectionToClient conn) {}
+        public virtual void TerminalAct(NetworkConnectionToClient conn)
+        {
+
+        }
 
 
         public override void OnStartClient()
@@ -35,7 +47,9 @@ namespace Game.Scripts.GameFiles.Events
                 eventType = gameEvent.eventType,
                 description = gameEvent.description,
                 difficulty = gameEvent.difficulty,
-                timeLimit = gameEvent.timeLimit
+                timeLimit = gameEvent.timeLimit,
+                
+                eventTerminal = this
             };
             
             if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))

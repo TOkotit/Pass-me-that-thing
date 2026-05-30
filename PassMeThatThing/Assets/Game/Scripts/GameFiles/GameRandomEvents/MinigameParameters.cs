@@ -11,5 +11,6 @@ namespace Game.Scripts.GameFiles.Events
         public string description;
         public int difficulty;
         public float timeLimit;
+        public EventTerminal eventTerminal;
     }
 }

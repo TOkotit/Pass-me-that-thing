@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.UI;
@@ -24,31 +25,49 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         [SerializeField] private List<EventTypeToMinigameUI> minigames;
 
-
-        public Action OnCompleteMinigame;
+        private MinigameUI currentMinigame;
+        
+        // public Action OnCompleteMinigame;
         
         private void Start()
         {
             EnableMinigameByType(ViewModel.Parameters);
+            
+            closeBtn.onClick.AddListener(CloseMinigame);
         }
 
         private void OnDestroy()
         {
-            // ViewModel.RequestUnsubMinigameParameters(ToggleMinigameByType);
+            closeBtn.onClick.RemoveListener(CloseMinigame);
         }
         
         public void EnableMinigameByType(MinigameParameters parameters)
         {
             foreach (var m in minigames)
             {
-                m.miniGameUI.gameObject.SetActive(m.eventType == parameters.eventType);
+                m.miniGameUI.gameObject.SetActive(false);
             }
+            
+            currentMinigame = minigames.Find(x => x.eventType == parameters.eventType)
+                .miniGameUI;
+            currentMinigame.gameObject.SetActive(true);
+            
+            currentMinigame.gameObject.transform.DOScale(1f, 0.5f).From(0f).SetEase(Ease.OutBounce);
         }
 
         public void CompleteMinigame()
         {
             // Debug.Log("OnCompleteMinigame");
-            ViewModel.RequestCompleteMinigame();
+            currentMinigame.gameObject.transform.DOScale(0f, 0.5f).From(1f).SetEase(Ease.OutBounce)
+                .OnComplete(() =>
+                {
+                    ViewModel.RequestCompleteMinigame();
+                });
+        }
+
+        public void CloseMinigame()
+        {
+            ViewModel.RequestCloseMinigame();
         }
     }
 }

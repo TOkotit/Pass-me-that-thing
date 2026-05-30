@@ -80,6 +80,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
+            
+            // _gameEventsConatainer.transform.DOScale(1f, 0.5f).From(0f).SetEase(Ease.OutBounce);
         }
 
         private void OnDestroy()
@@ -167,6 +169,8 @@ namespace Game.Gameplay.View.UI
 
         private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
         {
+            if (_gameEvents.ContainsKey(eventId)) return;
+            
             var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform, false);
             
             gameEvent.Icon.sprite = icon;

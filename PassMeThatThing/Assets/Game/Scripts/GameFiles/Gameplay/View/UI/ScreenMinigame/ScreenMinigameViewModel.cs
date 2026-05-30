@@ -41,8 +41,14 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         public void RequestCompleteMinigame()
         {
-            _gameRandomEventManager.CmdStopEventById(Parameters.eventId);
-            
+            _gameRandomEventManager.CmdStopEventById(_minigameParameters.eventId);
+
+            RequestCloseMinigame();
+        }
+
+        public void RequestCloseMinigame()
+        {
+            _minigameParameters.eventTerminal.IsTerminalBusy = false;
             _uiManager.OpenScreenGameplay();
         }
         

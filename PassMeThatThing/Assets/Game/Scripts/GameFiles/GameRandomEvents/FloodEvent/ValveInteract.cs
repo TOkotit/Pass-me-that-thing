@@ -43,9 +43,13 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         {
             base.TerminalAct(conn);
             
+            if (IsTerminalBusy) return;
+            
             if (_isClosed) return;
-            // CmdCloseValve();
+            
+            RpcPlayImpactParticles();
             ActivateMinigame(conn, floodEvent);
+            IsTerminalBusy = true;
         }
         
         
