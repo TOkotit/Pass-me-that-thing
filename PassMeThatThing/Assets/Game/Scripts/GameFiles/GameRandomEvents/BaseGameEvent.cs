@@ -95,25 +95,6 @@ namespace Game.Scripts.GameFiles.Events
         
         [Server] protected virtual void OnStartEvent() { }
         [Server] protected virtual void OnStopEvent() { }
-        
-        
-        [Server]
-        public void ServerActivateMinigame(NetworkConnectionToClient senderConnection)
-        {
-            var parameters = new MinigameParameters
-            {
-                eventId = _eventId,
-                eventType = eventType,
-                description = description,
-                difficulty = difficulty,
-                timeLimit = timeLimit
-            };
-            
-            if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
-            {
-                playerHandler.TargetOpenMinigame(parameters);
-            }
-        }
-        
+
     }
 }

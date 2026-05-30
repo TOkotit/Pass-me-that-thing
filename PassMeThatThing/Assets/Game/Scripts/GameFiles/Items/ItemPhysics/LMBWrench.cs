@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
+using Mirror;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,6 +21,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             
         }
 
+        [Server]
         public override void CollisionEnter(Collision other)
         {
             var otherCollider = other.collider;
@@ -27,8 +29,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             
             if (EventTerminalsRegistry.Instance.TryGetItem(otherCollider.gameObject, out var terminal))
             {
-                Debug.Log($"conn {Item.ConnectionToClient.connectionId}");
-                terminal.TerminalAct();
+                // Debug.Log($"conn {Item.ConnectionToClient.connectionId}");
+                terminal.TerminalAct(Item.ConnectionToClient);
             }
         }
     }

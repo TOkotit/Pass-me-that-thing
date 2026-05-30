@@ -38,13 +38,17 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             
         }
 
-        public override void TerminalAct()
+        [Server]
+        public override void TerminalAct(NetworkConnectionToClient conn)
         {
-            base.TerminalAct();
+            base.TerminalAct(conn);
             
-            if (_isClosed) return;
-            CmdCloseValve();
+            // if (_isClosed) return;
+            // CmdCloseValve();
+            ActivateMinigame(conn, floodEvent);
         }
+        
+        
 
         [Command(requiresAuthority = false)]
         private void CmdCloseValve()

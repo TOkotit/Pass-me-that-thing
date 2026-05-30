@@ -1,14 +1,16 @@
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
+using UnityEngine;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Events
 {
     public class EventTerminal : NetworkBehaviour
     {
-        [Inject] protected EventTerminalsRegistry Registry { get; private set; }
+        protected EventTerminalsRegistry Registry { get; private set; }
         
-        public virtual void TerminalAct() {}
+        [Server]
+        public virtual void TerminalAct(NetworkConnectionToClient conn) {}
 
 
         public override void OnStartClient()
@@ -22,5 +24,25 @@ namespace Game.Scripts.GameFiles.Events
         {
             Registry.Unregister(this); 
         } 
+        
+        [Server]
+        public void ActivateMinigame(NetworkConnectionToClient senderConnection, BaseGameEvent gameEvent)
+        {
+            
+            var parameters = new MinigameParameters
+            {
+                eventId = gameEvent.EventId,
+                eventType = gameEvent.eventType,
+                description = gameEvent.description,
+                difficulty = gameEvent.difficulty,
+                timeLimit = gameEvent.timeLimit
+            };
+            
+            if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
+            {
+                Debug.Log($"[SERVER] send to {senderConnection.connectionId}");
+                playerHandler.TargetOpenMinigame(parameters);
+            }
+        }
     }
 }

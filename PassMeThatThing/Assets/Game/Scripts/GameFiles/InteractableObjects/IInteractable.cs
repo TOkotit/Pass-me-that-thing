@@ -14,5 +14,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects
             base.OnStartClient();
             InteractableRegistry.Instance.Register(gameObject, this);
         }
+        
+        
     }
 }
