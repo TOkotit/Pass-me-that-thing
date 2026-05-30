@@ -9,9 +9,9 @@ namespace Game.Scripts.GameFiles.InteractableObjects
 
         public abstract void SrbToggle();
 
-        public override void OnStartServer()
+        public override void OnStartClient()
         {
-            base.OnStartServer();
+            base.OnStartClient();
             InteractableRegistry.Instance.Register(gameObject, this);
         }
     }

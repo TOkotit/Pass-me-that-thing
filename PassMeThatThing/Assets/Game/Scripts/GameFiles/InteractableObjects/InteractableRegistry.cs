@@ -23,7 +23,7 @@ namespace Game.Scripts.GameFiles.Items
             if (!_interactables.ContainsKey(obj))
             {
                 _interactables.Add(obj, interactable);
-                Debug.Log($"{obj.name} registered as interactable.");
+                Debug.Log($"[Int-s] {obj.name} registered as interactable.");
             }
         }
 
