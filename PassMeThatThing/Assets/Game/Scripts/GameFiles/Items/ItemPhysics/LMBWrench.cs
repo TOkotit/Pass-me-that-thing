@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
+using Game.Scripts.GameFiles.GameRandomEvents.FloodEvent;
 using Mirror;
 using UnityEditor;
 using UnityEngine;
@@ -25,12 +26,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override void CollisionEnter(Collision other)
         {
             var otherCollider = other.collider;
-            // Debug.Log($"Физическое столкновение с коллайдером: {otherCollider.name}");
             
             if (EventTerminalsRegistry.Instance.TryGetItem(otherCollider.gameObject, out var terminal))
             {
-                // Debug.Log($"conn {Item.ConnectionToClient.connectionId}");
-                terminal.TerminalAct(Item.ConnectionToClient);
+                if (terminal is PumpInteractTerminal or ValveInteract)
+                {
+                    terminal.TerminalAct(Item.ConnectionToClient);
+                }
             }
         }
     }
