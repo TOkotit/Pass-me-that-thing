@@ -100,7 +100,16 @@ namespace MainCharacter_old
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
             _movementController.ControllerRotate(characterRotation);
-            bodyVerticalAlign.SetTilt(new Vector3(Math.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f));
+            
+            var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
+            if (_ownerIdentity.isServer)
+            {
+                bodyVerticalAlign.SetTilt(targetTilt);
+            }
+            else
+            {
+                bodyVerticalAlign.CmdSetTilt(targetTilt);
+            }
         }
         
         public void SetupInput(GameInput input)
