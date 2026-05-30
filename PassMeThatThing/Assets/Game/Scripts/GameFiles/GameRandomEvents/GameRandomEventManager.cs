@@ -16,7 +16,8 @@ namespace Game.Scripts.GameFiles.Events
         private readonly SyncDictionary<int, BaseGameEvent> _startedEvents = new();
 
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
-
+        public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
+        
 
         [Server]
         public int RegisterSceneEvent(BaseGameEvent gameEvent)
@@ -77,6 +78,22 @@ namespace Game.Scripts.GameFiles.Events
             else
             {
                 Debug.LogWarning($"[GameEventManager] Невозможно остановить: ивент с ID:{eventId} не найден на карте.");
+            }
+        }
+        
+        [Server]
+        public void TryTriggerRandomEvents()
+        {
+            foreach (var kvp in _sceneEvents)
+            {
+                var gameEvent = kvp.Value;
+                
+                if (gameEvent.IsEventActive) continue;
+
+                if (Random.value <= gameEvent.CurrentTriggerChance)
+                {
+                    ActivateEvent(gameEvent.EventId);
+                }
             }
         }
     }

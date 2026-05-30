@@ -158,14 +158,19 @@ namespace Game.Gameplay.View.UI
 
         private void AddGameEvent(int index, Sprite icon, int roomNumber)
         {
-            var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform);
+            var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform, false);
             
             gameEvent.Icon.sprite = icon;
             gameEvent.Text.text = $"R-{roomNumber}";
             
             _gameEvents.Add(index, gameEvent);
             
-            gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
+            if (_gameEventsConatainer.TryGetComponent<RectTransform>(out var containerRect))
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
+            }
+            
+            // gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
         }
         
         private void UpdateGameEvent(int index, Sprite icon, int roomNumber)

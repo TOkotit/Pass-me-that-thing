@@ -56,11 +56,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
             if (_currentGameStage == GlobalStagesType.Fight)
             {
-                // логика для случайных ивентов
+                gameRandomEventManager.TryTriggerRandomEvents();
             }
             else if (_currentGameStage == GlobalStagesType.Preparation)
             {
-                // логика для случайных ивентов
+                gameRandomEventManager.TryTriggerRandomEvents();
             }
             StartTimer(duration);
         }

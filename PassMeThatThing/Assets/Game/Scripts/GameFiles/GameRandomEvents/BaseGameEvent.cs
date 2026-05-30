@@ -27,6 +27,15 @@ namespace Game.Scripts.GameFiles.Events
         
         [Inject] private GameRandomEventManager  _gameRandomEventManager;
         
+        [SerializeField, Range(0f, 1f)] 
+        private float _baseTriggerChance = 0.2f;
+        private float _currentTriggerChance;
+        public float CurrentTriggerChance
+        {
+            get => _currentTriggerChance;
+            set => _currentTriggerChance = Mathf.Clamp01(value);
+        }
+        
         public GameRandomEventManager GameRandomEventManager => _gameRandomEventManager;
         private bool _isInjected;
         
@@ -47,7 +56,7 @@ namespace Game.Scripts.GameFiles.Events
         {
             base.OnStartServer();
             EnsureInjected();
-
+            _currentTriggerChance = _baseTriggerChance;
             if (_gameRandomEventManager)
             {
                 _eventId = _gameRandomEventManager.RegisterSceneEvent(this);
