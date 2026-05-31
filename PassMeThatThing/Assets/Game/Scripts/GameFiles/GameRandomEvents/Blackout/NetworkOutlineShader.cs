@@ -12,7 +12,6 @@ public class NetworkOutlineShader : NetworkBehaviour
     
     public bool IsActive => _isActive;
 
-    [Server]
 
     
     private void OnEnable()
@@ -31,6 +30,8 @@ public class NetworkOutlineShader : NetworkBehaviour
         }
     }
     
+    
+    [Server]
     public void SetVisionState(bool state)
     {
         _isActive = state;
