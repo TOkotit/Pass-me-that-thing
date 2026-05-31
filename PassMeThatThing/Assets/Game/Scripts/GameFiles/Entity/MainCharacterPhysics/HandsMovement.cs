@@ -12,8 +12,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     public class HandsMovement : NetworkBehaviour
     {
         [Header("Hands")]
-        [SerializeField] private Rigidbody leftHandRB;
-        [SerializeField] private Rigidbody rightHandRB;
         [SerializeField] private ConfigurableJoint leftJoint;
         [SerializeField] private ConfigurableJoint rightJoint;
 
@@ -24,6 +22,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
+        private JointDrive _originalXDrive;
+        private JointDrive _originalZDrive;
+        private JointDrive _originalYDrive;
         private Vector3 _pivotDefaultLocalPos;
 
         [Header("Grabbing")] 
@@ -33,80 +34,131 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private Rigidbody pivot;
 
         [Inject] private PlayerInventoryModel _playerInventoryModel;
-        
         public Rigidbody Pivot => pivot;
         public float CurrentThrowForce => _throwForce;
 
         private void Awake()
         {
+            _originalXDrive = grabJoint.xDrive;
+            _originalZDrive = grabJoint.zDrive;
+            _originalYDrive = grabJoint.yDrive;
             if (grabJoint)
                 grabJoint.gameObject.SetActive(false);
             if (pivot)
                 _pivotDefaultLocalPos = pivot.transform.localPosition;
         }
 
-        private void MoveHand(Rigidbody handRB, Vector3 direction, ConfigurableJoint joint)
-        {
-            // реализация позже
-        }
 
-        public void Move(Hand hand)
+        public void MoveHands( PhysicalItem item)
         {
-            // реализация позже
-        }
-
-        [Server]
-        public void Move(Hand hand, PhysicalItem item)
-        {
-            if (hand == Hand.Left)
+            if (item.HandleType == HandleType.OneHanded)
             {
-                if (leftJoint)
+                rightJoint.gameObject.SetActive(true);
+                if (item.UniversalPoint)
                 {
-                    leftJoint.connectedBody = item.HandleType == HandleType.OneHanded ? item.UniversalPoint : item.LeftHandlPoint;
-                    leftJoint.targetPosition = Vector3.zero;
+                    
+                    rightJoint.connectedBody = item.UniversalPoint;
+                }
+                else
+                {
+                    rightJoint.connectedBody = item.RightHandPoint;
                 }
             }
-            else
+            else if (item.HandleType == HandleType.TwoHanded)
             {
-                if (rightJoint)
+                if (item.RightHandPoint && item.LeftHandPoint)
                 {
-                    rightJoint.connectedBody = item.HandleType == HandleType.OneHanded ? item.UniversalPoint : item.RightHandPoint;
-                    rightJoint.targetPosition = Vector3.zero;
+                    
+                    rightJoint.gameObject.SetActive(true);
+                    rightJoint.connectedBody = item.RightHandPoint;
+                    
+                    leftJoint.gameObject.SetActive(true);
+                    leftJoint.connectedBody = item.LeftHandPoint;
                 }
+            }
+
+            if (item.HandleType == HandleType.Free)
+            {
+                rightJoint.gameObject.SetActive(true);
+                rightJoint.connectedBody = item.Rigidbody;
+                leftJoint.gameObject.SetActive(true);
+                leftJoint.connectedBody = item.Rigidbody;
             }
         }
 
-        [Server]
+        public void ResetHands()
+        {
+            ResetLeftHand();
+            ResetRightHand();
+        }
         public void ResetLeftHand()
         {
             if (leftJoint)
                 leftJoint.connectedBody = null;
+            leftJoint.gameObject.SetActive(false);
         }
 
-        [Server]
         public void ResetRightHand()
         {
             if (rightJoint)
                 rightJoint.connectedBody = null;
+            rightJoint.gameObject.SetActive(false);
+        }
+        public void EnableHorizontalWeakDrive()
+        {
+            JointDrive weakXDrive = _originalXDrive;
+            weakXDrive.positionSpring = _originalXDrive.positionSpring/4;
+            JointDrive weakZDrive = _originalZDrive;
+            weakZDrive.positionSpring = _originalZDrive.positionSpring/4;
+            JointDrive weakYDrive = _originalYDrive;
+            weakZDrive.positionSpring = _originalZDrive.positionSpring/1;
+            grabJoint.xDrive = weakXDrive;
+            grabJoint.zDrive = weakZDrive;
+            grabJoint.yDrive = weakYDrive;
+        }
+        
+        public void DisableHorizontalWeakDrive()
+        {
+            grabJoint.xDrive = _originalXDrive;
+            grabJoint.zDrive = _originalZDrive;
+            grabJoint.yDrive = _originalYDrive;
         }
 
         [Server]
         public void GrabItem(PhysicalItem item)
         {
+            if (item.UniversalPoint)
+            {
+                grabJoint.connectedAnchor = item.UniversalPoint.transform.localPosition;
+            }
+            else
+            {
+                grabJoint.connectedAnchor = Vector3.zero; 
+            }
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
             AlignPivotForItem(item);
             ClientGrabItem(item);
+            MoveHands(item);
         }
 
         [ClientRpc]
         private void ClientGrabItem(PhysicalItem item)
         {
+            if (item.UniversalPoint)
+            {
+                grabJoint.connectedAnchor = item.UniversalPoint.transform.localPosition;
+            }
+            else
+            {
+                grabJoint.connectedAnchor = Vector3.zero; 
+            }
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
             AlignPivotForItem(item);
+            MoveHands(item);
         }
 
         [Server]
@@ -125,7 +177,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     
             _throwForce = 0;
             _isThrowing = false;
-    
+            ResetHands();
             ClientReleaseItem();
         }
 
@@ -141,9 +193,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [ClientRpc]
         private void ClientReleaseItem()
         {
+            ResetHands();
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
-            
         }
 
         public void ChargeThrow()
@@ -152,7 +204,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _chargeStartTime = Time.time;
         }
         
-
         private void FixedUpdate()
         {
             if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
@@ -192,6 +243,15 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             collarbone.connectedBody = null;
             pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
             collarbone.connectedBody = torso;
+        }
+        
+        public void ApplySwingForce(float strength)
+        {
+            if (!grabJoint || !grabJoint.connectedBody) return;
+
+            Rigidbody itemRb = grabJoint.connectedBody;
+            Vector3 anchorVelocity = pivot.GetPointVelocity(grabJoint.connectedAnchor);
+            itemRb.AddForce(anchorVelocity * strength, ForceMode.Force);
         }
     }
 }
