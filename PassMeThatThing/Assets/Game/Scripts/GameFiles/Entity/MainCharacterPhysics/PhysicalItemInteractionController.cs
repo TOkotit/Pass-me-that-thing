@@ -93,7 +93,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (_heldItem)
                 _handsMovement.GrabItem(_heldItem);
         }
-
+        
         [Server]
         public void ReleaseCurrentItem(float throwForce, bool canThrow)
         {

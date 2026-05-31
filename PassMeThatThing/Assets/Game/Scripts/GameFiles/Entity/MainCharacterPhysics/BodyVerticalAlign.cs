@@ -22,14 +22,22 @@ public class BodyVerticalAlign : NetworkBehaviour
     [SerializeField] private float currentConsciousness = 1f;
     public float Consciousness { get => currentConsciousness; set => currentConsciousness = value; }
 
+    [SyncVar(hook = nameof(OnTiltChanged))]
+    private Quaternion _syncTiltOffset = Quaternion.identity;
+
     private Quaternion tiltOffset = Quaternion.identity;
+
+    private void OnTiltChanged(Quaternion oldValue, Quaternion newValue)
+    {
+        tiltOffset = newValue;
+    }
 
     private void FixedUpdate()
     {
-        if (!authority && !isServer) return;
+        // Убираем проверку – обновляем суставы всегда
         foreach (var pair in otherJoints)
         {
-            if (!pair.joint) continue;   
+            if (!pair.joint) continue;
 
             var drive = new JointDrive
             {
@@ -39,7 +47,7 @@ public class BodyVerticalAlign : NetworkBehaviour
             };
             pair.joint.angularXDrive = drive;
             pair.joint.angularYZDrive = drive;
-            pair.joint.rotationDriveMode = RotationDriveMode.XYAndZ;  
+            pair.joint.rotationDriveMode = RotationDriveMode.XYAndZ;
         }
 
         foreach (var pair in spineAlignJoints)
@@ -76,7 +84,7 @@ public class BodyVerticalAlign : NetworkBehaviour
                 projectedForward = Vector3.forward;
 
             var worldTarget = Quaternion.LookRotation(projectedForward, Vector3.up);
-            worldTarget = worldTarget * tiltOffset;
+            worldTarget = worldTarget * tiltOffset;          
             var localTarget = Quaternion.Inverse(parent.transform.rotation) * worldTarget;
 
             pair.joint.targetRotation = localTarget;
@@ -91,7 +99,7 @@ public class BodyVerticalAlign : NetworkBehaviour
     [Server]
     public void SetTilt(Vector3 eulerAngles)
     {
-        tiltOffset = Quaternion.Euler(eulerAngles);
+        _syncTiltOffset = Quaternion.Euler(eulerAngles);
     }
 
     [Command]
