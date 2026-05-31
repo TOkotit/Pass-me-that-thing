@@ -246,7 +246,7 @@ MonoBehaviour:
   syncInterval: 0
   hardness: 1
   durability: 1
-  handleType: 1
+  handleType: 2
   universalPoint: {fileID: 0}
   leftHandPoint: {fileID: 4148584938486581542}
   rightHandPoint: {fileID: 2246748457532824167}
@@ -254,6 +254,9 @@ MonoBehaviour:
   canBeOwned: 0
   rigidBody: {fileID: 2895375629803461582}
   _network: {fileID: 4807185805299827097}
+  hasToBeAligned: 0
+  _isThrown: 0
+  defaultRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &3436207650286123728
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Rigidbody universalPoint;
         public Rigidbody UniversalPoint => universalPoint;
         [SerializeField] private Rigidbody leftHandPoint;
-        public Rigidbody LeftHandlPoint => leftHandPoint;
+        public Rigidbody LeftHandPoint => leftHandPoint;
         [SerializeField] private Rigidbody rightHandPoint;
         public Rigidbody RightHandPoint => rightHandPoint;
         [SerializeField] private Vector3 defaultPosition;

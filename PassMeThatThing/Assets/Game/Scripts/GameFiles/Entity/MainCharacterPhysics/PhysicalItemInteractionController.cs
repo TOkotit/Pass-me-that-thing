@@ -17,10 +17,18 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         [SerializeField] private PhysicalItem _heldItem;
         [SerializeField] private MainCharacter mainCharacter;
+        [SerializeField] private float strength;
         private HandsMovement _handsMovement;
 
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
+        
+        private bool _alignment;
+        public void DisableAlignment() => _alignment = false;
+        public void EnableAlignment() => _alignment = true;
+        private bool _swinging;
+        public void StartSwinging() => _swinging = true;
+        public void StopSwinging() => _swinging = false;
 
         public override void OnStartLocalPlayer()
         {
@@ -132,17 +140,21 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private void FixedUpdate()
         {
-            if (_heldItem && _heldItem.HasToBeAligned)
+            if (_heldItem && _heldItem.HasToBeAligned && _alignment)
             {
                 Rigidbody rb = _heldItem.Rigidbody;
 
                 Quaternion targetRotation = Pivot.rotation;
                 Quaternion visualOffset = Quaternion.Euler(_heldItem.DefaultRotation);
                 Quaternion desiredRotation = targetRotation * visualOffset;
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
+                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 420f * Time.fixedDeltaTime));
                 
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
+            }
+            if (_swinging)
+            {
+                _handsMovement.ApplySwingForce(strength); 
             }
         }
     }

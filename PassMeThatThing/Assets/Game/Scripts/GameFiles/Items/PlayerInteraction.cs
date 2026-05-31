@@ -300,17 +300,16 @@ namespace Game.Scripts.GameFiles.Items
             }
             else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
             {
-                PhysicalItemInteractionController.CurrentHeldItem.transform.localPosition += Vector3.forward/2f;
+                PhysicalItemInteractionController.StartSwinging();
+                PhysicalItemInteractionController.HandsMovement.EnableHorizontalWeakDrive();
+                PhysicalItemInteractionController.DisableAlignment();
             }
         }
         private void onActCanceled(InputAction.CallbackContext context)
         {
-            if (!PhysicalItemInteractionController.CurrentHeldItem) return;
-            if (PhysicalItemInteractionController.CurrentHeldItem.Reaction == null &&
-                PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
-            {
-                PhysicalItemInteractionController.HandsMovement.AlignPivotForItem(PhysicalItemInteractionController.CurrentHeldItem);
-            }
+            PhysicalItemInteractionController.StopSwinging();
+            PhysicalItemInteractionController.HandsMovement.DisableHorizontalWeakDrive();
+            PhysicalItemInteractionController.EnableAlignment();
         }
 
         private void Select1(InputAction.CallbackContext context)
