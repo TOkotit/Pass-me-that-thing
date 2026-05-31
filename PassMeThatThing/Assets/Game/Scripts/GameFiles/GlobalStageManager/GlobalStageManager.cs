@@ -111,13 +111,13 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             var secondsVisual = Mathf.CeilToInt(newTime);
             
-            if (OnTimerChangedUI == null)
-            {
-                Debug.LogWarning("[GlobalStageManager] OnTimerChangedUI is null");
-                return;
-            }
+            // if (OnTimerChangedUI == null)
+            // {
+            //     Debug.LogWarning("[GlobalStageManager] OnTimerChangedUI is null");
+            //     return;
+            // }
 
-            OnTimerChangedUI.Invoke(secondsVisual);
+            OnTimerChangedUI?.Invoke(secondsVisual);
         }
 
         private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage)

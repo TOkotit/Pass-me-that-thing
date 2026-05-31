@@ -7,27 +7,22 @@ namespace Game.Scripts.GameFiles.Events
 {
     public class EventTerminal : NetworkBehaviour
     {
-        protected EventTerminalsRegistry Registry { get; private set; }
-
+        protected NetworkConnectionToClient currentClient;
+        
+        [SyncVar] private bool _isTerminalBusy;
+        private EventTerminalsRegistry _registry;
+        
         public bool IsTerminalBusy
         {
             get => _isTerminalBusy;
             set => _isTerminalBusy = value;
         }
         
-        [SyncVar]
-        private bool _isTerminalBusy;
-        
-        protected NetworkConnectionToClient currentClient;
-
-        [Command]
-        public virtual void CmdMinigameClose() { }
-        
-        [Command]
-        public virtual void CmdMinigameComplete() { }
-        
-        [Server]
-        public virtual void TerminalAct(NetworkConnectionToClient conn) { }
+        protected EventTerminalsRegistry Registry
+        {
+            get => _registry;
+            private set => _registry = value;
+        }
         
         public override void OnStartClient()
         {
@@ -40,6 +35,17 @@ namespace Game.Scripts.GameFiles.Events
         {
             Registry.Unregister(this); 
         } 
+        
+        [Command]
+        public virtual void CmdMinigameClose() { }
+        
+        [Command]
+        public virtual void CmdMinigameComplete() { }
+        
+        [Server]
+        public virtual void TerminalAct(NetworkConnectionToClient conn) { }
+        
+        
         
         [Server]
         public bool ActivateMinigame(NetworkConnectionToClient senderConnection, BaseGameEvent gameEvent)
