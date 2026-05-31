@@ -23,9 +23,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
         
+        /*
         private bool _alignment = true; 
         public void DisableAlignment() => _alignment = false;
-        public void EnableAlignment() => _alignment = true;
+        public void EnableAlignment() => _alignment = true;*/
 
         public override void OnStartLocalPlayer()
         {
@@ -135,7 +136,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
         
-        private void FixedUpdate()
+        /*private void FixedUpdate()
         {
             if (_heldItem && _heldItem.HasToBeAligned && _alignment)
             {
@@ -149,7 +150,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
             }
-        }
+        }*/
         public void ApplySwingImpulse(Vector3 force, Vector3 torque)
         {
             if (_heldItem)

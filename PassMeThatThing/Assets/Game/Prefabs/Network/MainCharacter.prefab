@@ -1640,6 +1640,10 @@ MonoBehaviour:
     m_Bits: 960
   interactionDistance: 4
   interactionTimeOut: 0.1
+  swingForce: 5
+  swingTorque: 40
+  swingDuration: 0.2
+  swingCooldown: 0.8
 --- !u!114 &5761119186266568273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2759,7 +2763,7 @@ ConfigurableJoint:
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
   m_MassScale: 1
-  m_ConnectedMassScale: 0.2
+  m_ConnectedMassScale: 1
 --- !u!114 &6861131110220141386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5775,19 +5779,19 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 0
+    positionSpring: 100
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 0
+    positionSpring: 100
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_SlerpDrive:
     serializedVersion: 4
-    positionSpring: 0
+    positionSpring: 100
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -6642,7 +6646,7 @@ ConfigurableJoint:
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
   m_MassScale: 1
-  m_ConnectedMassScale: 0.2
+  m_ConnectedMassScale: 1
 --- !u!114 &2524956700000786530
 MonoBehaviour:
   m_ObjectHideFlags: 0

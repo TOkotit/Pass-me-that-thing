@@ -25,6 +25,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private JointDrive _originalXDrive;
         private JointDrive _originalZDrive;
         private JointDrive _originalYDrive;
+        private JointDrive _originalAngularXDrive;
+        private JointDrive _originalAngularYZDrive;
         private Vector3 _pivotDefaultLocalPos;
 
         [Header("Grabbing")] 
@@ -42,6 +44,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _originalXDrive = grabJoint.xDrive;
             _originalZDrive = grabJoint.zDrive;
             _originalYDrive = grabJoint.yDrive;
+            _originalAngularXDrive = grabJoint.angularXDrive;
+            _originalAngularYZDrive = grabJoint.angularYZDrive;
             if (grabJoint)
                 grabJoint.gameObject.SetActive(false);
             if (pivot)
@@ -127,6 +131,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Server]
         public void GrabItem(PhysicalItem item)
         {
+            if (item.CanBeOwned)
+            {
+                grabJoint.angularXDrive = _originalAngularXDrive;
+                grabJoint.angularYZDrive = _originalAngularYZDrive;
+            }
+            else
+            {
+                var zeroDrive = new JointDrive { positionSpring = 0f, positionDamper = 0f, maximumForce = float.MaxValue };
+                grabJoint.angularXDrive = zeroDrive;
+                grabJoint.angularYZDrive = zeroDrive;
+            }
             if (item.UniversalPoint)
             {
                 grabJoint.connectedAnchor = item.UniversalPoint.transform.localPosition;
@@ -138,6 +153,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
+            
+            var relativeRotation = Quaternion.Inverse(Pivot.rotation) * item.transform.rotation;
+            var defaultRot = Quaternion.Euler(item.DefaultRotation);
+            grabJoint.targetRotation = relativeRotation * defaultRot;
+            
             AlignPivotForItem(item);
             ClientGrabItem(item);
             MoveHands(item);
@@ -157,6 +177,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
+            var relativeRotation = Quaternion.Inverse(Pivot.rotation) * item.transform.rotation;
+            var defaultRot = Quaternion.Euler(item.DefaultRotation);
+            grabJoint.targetRotation = relativeRotation * defaultRot;
             AlignPivotForItem(item);
             MoveHands(item);
         }
