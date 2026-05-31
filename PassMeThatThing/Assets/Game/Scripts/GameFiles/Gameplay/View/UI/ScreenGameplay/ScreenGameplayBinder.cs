@@ -66,7 +66,7 @@ namespace Game.Gameplay.View.UI
             // ViewModel.InitStaminaText(UpdateStaminaText);
             // ViewModel.RequestSubStaminaText(UpdateStaminaText);
 
-            SetActiveItemSlot(0);
+            ViewModel.InitActiveSlot(SetActiveItemSlot);
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);

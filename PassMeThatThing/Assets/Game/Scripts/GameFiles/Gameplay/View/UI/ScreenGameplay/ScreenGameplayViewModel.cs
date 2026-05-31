@@ -101,8 +101,11 @@ namespace Game.Gameplay.View.UI
         {
             _globalStageManager.OnTimerChangedUI -= f;
         }
-        
-        
+
+        public void InitActiveSlot(Action<int> f)
+        {
+            f(_playerInventoryModel.ActiveSlotIndex);
+        }
         public void RequestSubActiveSlot(Action<int> f)
         {
             _playerInventoryModel.OnActiveSlotChanged += f;
@@ -160,6 +163,7 @@ namespace Game.Gameplay.View.UI
         public void RequestUnsub()
         {
             _subscriptions.Dispose();
+            _subscriptions.Clear();
         }
 
         public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
