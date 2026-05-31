@@ -14,17 +14,21 @@ namespace Game.Scripts.GameFiles.Events
             get => _isTerminalBusy;
             set => _isTerminalBusy = value;
         }
-
+        
+        [SyncVar]
         private bool _isTerminalBusy;
+        
+        protected NetworkConnectionToClient currentClient;
 
-
+        [Command]
+        public virtual void CmdMinigameClose() { }
+        
+        [Command]
+        public virtual void CmdMinigameComplete() { }
+        
         [Server]
-        public virtual void TerminalAct(NetworkConnectionToClient conn)
-        {
-
-        }
-
-
+        public virtual void TerminalAct(NetworkConnectionToClient conn) { }
+        
         public override void OnStartClient()
         {
             base.OnStartClient();
@@ -38,9 +42,8 @@ namespace Game.Scripts.GameFiles.Events
         } 
         
         [Server]
-        public void ActivateMinigame(NetworkConnectionToClient senderConnection, BaseGameEvent gameEvent)
+        public bool ActivateMinigame(NetworkConnectionToClient senderConnection, BaseGameEvent gameEvent)
         {
-            
             var parameters = new MinigameParameters
             {
                 eventId = gameEvent.EventId,
@@ -54,8 +57,28 @@ namespace Game.Scripts.GameFiles.Events
             
             if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
             {
+                if (playerHandler.IsClientBusy)
+                {
+                    Debug.Log($"[SERVER] client is busy {senderConnection.connectionId}");
+                    return false;
+                }
+                
                 Debug.Log($"[SERVER] send to {senderConnection.connectionId}");
                 playerHandler.TargetOpenMinigame(parameters);
+                
+                return true;
+            }
+            
+            return false;
+        }
+        
+        [Server]
+        public void CloseMinigame(NetworkConnectionToClient senderConnection)
+        {
+            if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
+            {
+                Debug.Log($"[SERVER] closed to {senderConnection.connectionId}");
+                playerHandler.TargetCloseMinigame();
             }
         }
     }

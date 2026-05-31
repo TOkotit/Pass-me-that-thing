@@ -15,7 +15,7 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         [SerializeField] Transform _waterMeshTransform;
         
         [SerializeField] private float maxWaterWidth;
-        [SerializeField] private ValveInteract valve;
+        [SerializeField] private ValveInteractTerminal valve;
         
         [SyncVar]
         private bool _isFloodingActive = false;

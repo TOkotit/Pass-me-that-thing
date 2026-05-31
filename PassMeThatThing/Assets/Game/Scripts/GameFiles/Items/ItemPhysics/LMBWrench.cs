@@ -29,7 +29,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             
             if (EventTerminalsRegistry.Instance.TryGetItem(otherCollider.gameObject, out var terminal))
             {
-                if (terminal is PumpInteractTerminal or ValveInteract)
+                if (terminal is PumpInteractTerminal or ValveInteractTerminal)
                 {
                     terminal.TerminalAct(Item.ConnectionToClient);
                 }

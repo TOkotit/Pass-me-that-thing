@@ -20,7 +20,6 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         private readonly CompositeDisposable _subscriptions = new();
         
         private MinigameParameters _minigameParameters;
-        // public event Action<MinigameParameters, MinigameParameters> OnMinigameParametersChanged;
         
         public override string Id => "ScreenMinigame";
 
@@ -41,14 +40,15 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         public void RequestCompleteMinigame()
         {
-            _gameRandomEventManager.CmdStopEventById(_minigameParameters.eventId);
-
+            // _gameRandomEventManager.CmdStopEventById(_minigameParameters.eventId);
+            
+            _minigameParameters.eventTerminal.CmdMinigameComplete();
             RequestCloseMinigame();
         }
 
         public void RequestCloseMinigame()
         {
-            _minigameParameters.eventTerminal.IsTerminalBusy = false;
+            _minigameParameters.eventTerminal.CmdMinigameClose();
             _uiManager.OpenScreenGameplay();
         }
         

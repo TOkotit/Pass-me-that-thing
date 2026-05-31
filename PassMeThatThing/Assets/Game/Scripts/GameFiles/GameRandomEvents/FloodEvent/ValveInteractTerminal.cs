@@ -10,7 +10,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
 {
-    public class ValveInteract : EventTerminal
+    public class ValveInteractTerminal : EventTerminal
     {
         [SerializeField] private ParticleSystem impactParticles;
         [SerializeField] private Transform pivot;
@@ -41,18 +41,38 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
         {
-            base.TerminalAct(conn);
-            
             if (IsTerminalBusy) return;
             
             if (_isClosed) return;
             
             RpcPlayImpactParticles();
-            ActivateMinigame(conn, floodEvent);
-            IsTerminalBusy = true;
+            if (ActivateMinigame(conn, floodEvent))
+            {
+                Debug.Log("<color=yellow> [Server] IsTerminalBusy = true");
+                IsTerminalBusy = true;
+                currentClient = conn;
+            }
         }
-        
-        
+
+        [Command(requiresAuthority = false)]
+        public override void CmdMinigameComplete()
+        {
+            floodEvent.StopEvent();
+            _isClosed = true;
+        }
+
+        [Command(requiresAuthority = false)]
+        public override void CmdMinigameClose()
+        {
+            IsTerminalBusy = false;
+            Debug.Log("<color=yellow> [Server] IsTerminalBusy = false");
+            if (currentClient != null)
+            {
+                CloseMinigame(currentClient);
+                currentClient = null;
+            }
+        }
+
 
         [Command(requiresAuthority = false)]
         private void CmdCloseValve()
@@ -60,8 +80,8 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             if (_isClosed) return;
             
             Close();
-            RpcPlayImpactParticles();
-            floodEvent.PlayerFinishedAction();
+            // RpcPlayImpactParticles();
+            // floodEvent.PlayerFinishedAction();
         }
         
         [ClientRpc]

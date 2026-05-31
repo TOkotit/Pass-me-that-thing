@@ -16,8 +16,13 @@ namespace Game.Scripts.GameFiles.Events
         private readonly SyncDictionary<int, BaseGameEvent> _startedEvents = new();
 
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
+        
         public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
         
+        
+        private List<int> _busyClientIds = new List<int>();
+        
+        public List<int> BusyClientIds => _busyClientIds;
 
         [Server]
         public int RegisterSceneEvent(BaseGameEvent gameEvent)
