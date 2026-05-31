@@ -189,19 +189,6 @@ namespace Game.Scripts.GameFiles.Items
         }
         #endregion
 
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying) return;
-
-            var identity = GetComponent<NetworkIdentity>();
-            if (!identity || !identity.isLocalPlayer) return;
-
-            if (!interactionZone) return;
-
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
-        }
-
         public void Drop()
         {
             if (Time.time - lastInteractionTime > interactionTimeOut)
