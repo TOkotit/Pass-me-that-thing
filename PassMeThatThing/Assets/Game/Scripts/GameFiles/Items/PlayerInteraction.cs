@@ -316,7 +316,7 @@ namespace Game.Scripts.GameFiles.Items
             var item = controller.CurrentHeldItem;
             if (!item) yield break;
 
-            controller.DisableAlignment();
+            //controller.DisableAlignment();
 
             var forward = _camera.transform.forward;
             var right = _camera.transform.right;
@@ -327,7 +327,7 @@ namespace Game.Scripts.GameFiles.Items
 
             yield return new WaitForSeconds(swingDuration);
 
-            controller.EnableAlignment();
+            //controller.EnableAlignment();
         }
 
         private void SelectSlot(int index)
