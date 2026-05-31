@@ -14,10 +14,36 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         public override void TerminalAct(NetworkConnectionToClient conn)
         {
             base.TerminalAct(conn);
-            
+            if (IsTerminalBusy) return;
             if (_isFixed) return;
             
+            // RpcPlayImpactParticles();
+            if (ActivateMinigame(conn, _powerOutageEvent))
+            {
+                Debug.Log("<color=yellow> [Server] IsTerminalBusy = true");
+                IsTerminalBusy = true;
+                currentClient = conn;
+            }
+            
+            // FixFuse();
+        }
+        
+        [Command(requiresAuthority = false)]
+        public override void CmdMinigameComplete()
+        {
             FixFuse();
+        }
+
+        [Command(requiresAuthority = false)]
+        public override void CmdMinigameClose()
+        {
+            IsTerminalBusy = false;
+            Debug.Log("<color=yellow> [Server] IsTerminalBusy = false");
+            if (currentClient != null)
+            {
+                CloseMinigame(currentClient);
+                currentClient = null;
+            }
         }
         
         [Server]

@@ -58,6 +58,7 @@ namespace Game.Scripts.GameFiles.Items
             _damagableRegistry =  damagableRegistry;
         }
 
+        #region Unity / Mirror methods
         public override void OnStartLocalPlayer()
         {
             _camera = GetComponentInChildren<Camera>();
@@ -94,6 +95,20 @@ namespace Game.Scripts.GameFiles.Items
                 }
             }
         }
+        
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) return;
+            
+            var identity = GetComponent<NetworkIdentity>();
+            if (!identity || !identity.isLocalPlayer) return;
+            
+            if (!interactionZone) return;
+            
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
+        }
+        #endregion
 
         #region Subscribes
         private void TrySubscribe()
@@ -172,21 +187,6 @@ namespace Game.Scripts.GameFiles.Items
         }
         
         #endregion
-        
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying) return;
-            
-            var identity = GetComponent<NetworkIdentity>();
-            if (!identity || !identity.isLocalPlayer) return;
-            
-            if (!interactionZone) return;
-            
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
-        }
-
-        
 
         public void Drop()
         {

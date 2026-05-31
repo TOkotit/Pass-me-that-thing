@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public class LMBWirecutters : LMBReaction
+    public class LMBFlashlight : LMBReaction
     {
-        public LMBWirecutters(PhysicalItem item) : base(item)
+        public LMBFlashlight(PhysicalItem item) : base(item)
         {
         }
 
         public override void Act()
         {
-            Debug.Log($"Act {nameof(LMBWirecutters)}");
+            Debug.Log($"Act {nameof(LMBFlashlight)}");
         }
 
         public override void CollisionEnter(Collision other)
         {
             if (EventTerminalsRegistry.Instance.TryGetItem(other.gameObject, out var terminal))
             {
-                Debug.Log($"<color=orange>Collision Enter {nameof(LMBWirecutters)}");
+                Debug.Log($"<color=orange>Collision Enter {nameof(LMBFlashlight)}");
                 if (terminal is BlackoutBlowFuseTerminal) 
                 {
                     Debug.Log("<color=green> Interacting</color>");
