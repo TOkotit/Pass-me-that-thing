@@ -8,7 +8,7 @@ public static class LMBReactionFactory
     private static readonly Dictionary<string, Func<PhysicalItem, LMBReaction>> Registry = 
         new Dictionary<string, Func<PhysicalItem, LMBReaction>>()
         {
-            //{ "wrench", item => new LMBWrench(item) },
+            { "wrench", item => new LMBWrench(item) },
             { "wirecutters", item => new LMBWirecutters(item) },
             //{},
         };

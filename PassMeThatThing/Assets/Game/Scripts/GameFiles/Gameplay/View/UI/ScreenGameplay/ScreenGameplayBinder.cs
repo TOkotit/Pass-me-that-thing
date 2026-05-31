@@ -37,7 +37,7 @@ namespace Game.Gameplay.View.UI
         private Color _imageColor = new Color(1f, 1f, 1f, 1f);
         private Color _noImageColor = new Color(1f, 1f, 1f, 0f);
         
-        private int _activeSlotIndex;
+        private int _activeSlotIndex = -1;
         private Dictionary<int, GameEventUIElement> _gameEvents = new ();
         
         public TextMeshProUGUI HealthText
@@ -66,8 +66,7 @@ namespace Game.Gameplay.View.UI
             // ViewModel.InitStaminaText(UpdateStaminaText);
             // ViewModel.RequestSubStaminaText(UpdateStaminaText);
 
-            SetActiveItemSlot(_activeSlotIndex);
-            
+            SetActiveItemSlot(0);
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);
@@ -145,13 +144,19 @@ namespace Game.Gameplay.View.UI
 
         private void SetActiveItemSlot(int index)
         {
-            _itemSlots[_activeSlotIndex].color = noSelectionColor;
-            _itemSlots[_activeSlotIndex].transform.DOScale(1f, 0.3f);
+            if (_activeSlotIndex != -1)
+            {
+                _itemSlots[_activeSlotIndex].color = noSelectionColor;
+                _itemSlots[_activeSlotIndex].transform.DOScale(1f, 0.3f);
+            }
             
             _activeSlotIndex = index;
-
-            _itemSlots[_activeSlotIndex].color = selectedColor;
-            _itemSlots[_activeSlotIndex].transform.DOScale(1.2f, 0.3f);
+            
+            if (_activeSlotIndex != -1)
+            {
+                _itemSlots[_activeSlotIndex].color = selectedColor;
+                _itemSlots[_activeSlotIndex].transform.DOScale(1.2f, 0.3f);
+            }
         }
 
         private void SetItemImageSprite(int index, Sprite sprite)

@@ -86,6 +86,17 @@ public class PlayerInventory : NetworkBehaviour
     }
 
     [Command]
+    public void CmdHideItem()
+    {
+        if (_physicalСontroller.CurrentHeldItem)
+        {
+            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+        }
+        _physicalСontroller.ServerClearHeldItem();
+    }
+    
+
+    [Command]
     public void CmdDrawItem(int index, Vector3 pointToSpawn)
     {
         if (_physicalСontroller.CurrentHeldItem)
