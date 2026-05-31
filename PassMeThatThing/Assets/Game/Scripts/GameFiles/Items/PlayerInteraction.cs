@@ -41,8 +41,6 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1;
        
-        
-        // private List<Collider> targetsInRadius;
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController  PhysicalItemInteractionController => _physicalItemInteractionController;
         
@@ -63,7 +61,6 @@ namespace Game.Scripts.GameFiles.Items
         public override void OnStartLocalPlayer()
         {
             _camera = GetComponentInChildren<Camera>();
-            // targetsInRadius =  new List<Collider>();
             TrySubscribe();
         }
         private void Awake()
@@ -75,7 +72,30 @@ namespace Game.Scripts.GameFiles.Items
             TryUnsubscribe();
         }
         
+        private void FixedUpdate()
+        {
+            if (!isLocalPlayer) return;
 
+            if (_outlineRegistry.EnabledOutlines.Count > 1)
+            {
+                for (var i = _outlineRegistry.EnabledOutlines.Count - 1 - 1; i >= 0 ; i--)
+                {
+                    _outlineRegistry.DisableOutline(_outlineRegistry.EnabledOutlines[i]);
+                }
+            }
+            
+            var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+            {
+                if (_outlineRegistry.TryGetOutline(hit.collider.gameObject, out var outline))
+                {
+                    _outlineRegistry.EnableOutline(outline);
+                }
+            }
+        }
+
+        #region Subscribes
         private void TrySubscribe()
         {
             if (_gameInput == null) {
@@ -124,6 +144,35 @@ namespace Game.Scripts.GameFiles.Items
             }
         }
         
+        #endregion
+        
+        #region Callbacks / Handlers
+        private void OnInteract(InputAction.CallbackContext context)
+        {
+            TryInteract();
+        }
+        
+        private void OnDrop(InputAction.CallbackContext context)
+        {
+            Drop();
+        }
+        
+        private void Select1(InputAction.CallbackContext context)
+        {
+            SelectSlot(0);
+        }
+        
+        private void Select2(InputAction.CallbackContext context)
+        {
+            SelectSlot(1);
+        }
+        private void Select3(InputAction.CallbackContext context)
+        {
+            SelectSlot(2);
+        }
+        
+        #endregion
+        
         private void OnDrawGizmos()
         {
             if (!Application.isPlaying) return;
@@ -137,15 +186,7 @@ namespace Game.Scripts.GameFiles.Items
             Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
         }
 
-        private void OnInteract(InputAction.CallbackContext context)
-        {
-            TryInteract();
-        }
         
-        private void OnDrop(InputAction.CallbackContext context)
-        {
-            Drop();
-        }
 
         public void Drop()
         {
@@ -161,32 +202,7 @@ namespace Game.Scripts.GameFiles.Items
             }
         }
 
-        private void FixedUpdate()
-        {
-            if (!isLocalPlayer) return;
-
-            if (_outlineRegistry.EnabledOutlines.Count > 1)
-            {
-                for (var i = _outlineRegistry.EnabledOutlines.Count - 1 - 1; i >= 0 ; i--)
-                {
-                    _outlineRegistry.DisableOutline(_outlineRegistry.EnabledOutlines[i]);
-                }
-            }
-            
-            var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
-            {
-                if (_outlineRegistry.TryGetOutline(hit.collider.gameObject, out var outline))
-                {
-                    _outlineRegistry.EnableOutline(outline);
-                }
-            }
-            
-            
-            
-            
-        }
+        
         private Interactable FindInteractable(GameObject obj)
         {
             Transform t = obj.transform;
@@ -309,27 +325,23 @@ namespace Game.Scripts.GameFiles.Items
             PhysicalItemInteractionController.HandsMovement.DisableHorizontalWeakDrive();
             PhysicalItemInteractionController.EnableAlignment();
         }
-
-        private void Select1(InputAction.CallbackContext context)
-        {
-            SelectSlot(0);
-        }
         
-        private void Select2(InputAction.CallbackContext context)
-        {
-            SelectSlot(1);
-        }
-        private void Select3(InputAction.CallbackContext context)
-        {
-            SelectSlot(2);
-        }
-
         private void SelectSlot(int index)
         {
             if (_physicalItemInteractionController.CurrentHeldItem && !_physicalItemInteractionController.CurrentHeldItem.CanBeOwned)
             { inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, 0, true); }
-            _playerInventoryModel.ActiveSlotIndex = index;
-            inventory.CmdDrawItem(index, _physicalItemInteractionController.Pivot.position);
+
+            if (index == _playerInventoryModel.ActiveSlotIndex)
+            {
+                _playerInventoryModel.ActiveSlotIndex = -1;
+                
+                inventory.CmdHideItem();
+            }
+            else
+            {
+                _playerInventoryModel.ActiveSlotIndex = index;
+                inventory.CmdDrawItem(index, _physicalItemInteractionController.Pivot.position);
+            }
         }
     }
 }
