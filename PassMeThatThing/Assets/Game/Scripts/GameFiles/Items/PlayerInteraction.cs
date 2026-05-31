@@ -40,7 +40,14 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private LayerMask interactionLayer;
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1;
-       
+        [Header("Swing Attack")]
+        [SerializeField] private float swingForce = 5f;       
+        [SerializeField] private float swingTorque = 10f;     
+        [SerializeField] private float swingDuration = 0.2f;  
+        [SerializeField] private float swingCooldown = 0.8f;  
+        
+        private float lastSwingTime = -999f;
+
         
         // private List<Collider> targetsInRadius;
         public float InteractionDistance => interactionDistance;
@@ -300,16 +307,37 @@ namespace Game.Scripts.GameFiles.Items
             }
             else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
             {
-                PhysicalItemInteractionController.HandsMovement.EnableHorizontalWeakDrive();
-                PhysicalItemInteractionController.DisableAlignment();
+                StartCoroutine(SwingAttackCoroutine());
             }
         }
         private void onActCanceled(InputAction.CallbackContext context)
         {
-            PhysicalItemInteractionController.HandsMovement.DisableHorizontalWeakDrive();
-            PhysicalItemInteractionController.EnableAlignment();
+            
         }
+        private IEnumerator SwingAttackCoroutine()
+        {
+            if (Time.time - lastSwingTime < swingCooldown)
+                yield break;
 
+            lastSwingTime = Time.time;
+
+            var controller = _physicalItemInteractionController;
+            var item = controller.CurrentHeldItem;
+            if (!item) yield break;
+
+            controller.DisableAlignment();
+
+            var forward = _camera.transform.forward;   
+            var right   = _camera.transform.right;     
+            var force = forward * swingForce;
+            var torque = right * swingTorque;
+
+            controller.ApplySwingImpulse(force, torque);
+
+            yield return new WaitForSeconds(swingDuration);
+
+            controller.EnableAlignment();
+        }
         private void Select1(InputAction.CallbackContext context)
         {
             SelectSlot(0);
