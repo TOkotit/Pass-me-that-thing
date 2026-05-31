@@ -300,14 +300,12 @@ namespace Game.Scripts.GameFiles.Items
             }
             else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
             {
-                PhysicalItemInteractionController.StartSwinging();
                 PhysicalItemInteractionController.HandsMovement.EnableHorizontalWeakDrive();
                 PhysicalItemInteractionController.DisableAlignment();
             }
         }
         private void onActCanceled(InputAction.CallbackContext context)
         {
-            PhysicalItemInteractionController.StopSwinging();
             PhysicalItemInteractionController.HandsMovement.DisableHorizontalWeakDrive();
             PhysicalItemInteractionController.EnableAlignment();
         }

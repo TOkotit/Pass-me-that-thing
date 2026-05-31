@@ -26,9 +26,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _alignment;
         public void DisableAlignment() => _alignment = false;
         public void EnableAlignment() => _alignment = true;
-        private bool _swinging;
-        public void StartSwinging() => _swinging = true;
-        public void StopSwinging() => _swinging = false;
 
         public override void OnStartLocalPlayer()
         {
@@ -151,10 +148,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
-            }
-            if (_swinging)
-            {
-                _handsMovement.ApplySwingForce(strength); 
             }
         }
     }

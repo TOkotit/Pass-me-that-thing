@@ -244,20 +244,5 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
             collarbone.connectedBody = torso;
         }
-        
-        public void ApplySwingForce(float strength, float verticalMultiplier = 2f)
-        {
-            if (!grabJoint || !grabJoint.connectedBody) return;
-
-            Rigidbody itemRb = grabJoint.connectedBody;
-            
-            Vector3 anchorWorldPos = itemRb.transform.TransformPoint(grabJoint.connectedAnchor);
-            
-            Vector3 anchorVelocity = pivot.GetPointVelocity(anchorWorldPos);
-
-            anchorVelocity.y *= verticalMultiplier;
-
-            itemRb.AddForceAtPosition(anchorVelocity * strength, anchorWorldPos, ForceMode.Force);
-        }
     }
 }
