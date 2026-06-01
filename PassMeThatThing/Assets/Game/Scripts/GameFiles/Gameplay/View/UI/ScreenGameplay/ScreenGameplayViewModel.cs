@@ -138,10 +138,10 @@ namespace Game.Gameplay.View.UI
 
         public void InitImage(Action<int, Sprite> f)
         {
-            for (var i=0; i < _playerInventoryModel.Inventory.Count; i++)
+            foreach (var p in _playerInventoryModel.Inventory)
             {
-                f(i, _itemDatabase
-                    .GetItem(_playerInventoryModel.Inventory[i].itemId).ItemImage);
+                f(p.Key, _itemDatabase
+                    .GetItem(p.Value.itemId).ItemImage);
             }
         }
         

@@ -70,6 +70,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);
+            
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
 
@@ -161,8 +162,15 @@ namespace Game.Gameplay.View.UI
 
         private void SetItemImageSprite(int index, Sprite sprite)
         {
+            // if (sprite == null)
+            // {
+            //     _itemImages[index].color = _noImageColor;
+            //     
+            // }
+            
             _itemImages[index].color = sprite != null 
                 ? _imageColor : _noImageColor;
+            
             _itemImages[index].sprite = sprite;
         }
 

@@ -43,7 +43,7 @@ public class PlayerInventory : NetworkBehaviour
         if (!isLocalPlayer) return;
         base.OnStartClient();
         ServerInventory.OnChange += OnInventoryChanged;
-        _playerInventoryModel.ActiveSlotIndex = activeSlot;  
+         
         RefreshLocalModel();
     }
 
@@ -77,6 +77,7 @@ public class PlayerInventory : NetworkBehaviour
         {
             _playerInventoryModel.Inventory.Add(item);
         }
+        _playerInventoryModel.ActiveSlotIndex = activeSlot; 
     }
     [Command]
     public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
@@ -118,6 +119,7 @@ public class PlayerInventory : NetworkBehaviour
         {
             _physicalСontroller.PhysicalPickUpItem(physicalItem);
             activeSlot = index;   
+            physicalItem.ConnectionToClient = connectionToClient;
         }
     }
 
