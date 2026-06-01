@@ -58,8 +58,6 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
         public void CompleteMinigame()
         {
-            // Debug.Log("OnCompleteMinigame");
-            
             var anim =  DOTween.Sequence();
             
             successImage.gameObject.SetActive(true);

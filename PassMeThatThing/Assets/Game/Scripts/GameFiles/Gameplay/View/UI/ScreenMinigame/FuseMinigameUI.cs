@@ -16,7 +16,6 @@ public class FuseMinigameUI : MinigameUI
     private int _counter;
     private float _goal;
 
-    private bool _isCompleted;
 
     public event Action<int> OnCounterChanged;
     public int Counter

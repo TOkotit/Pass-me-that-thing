@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Game.Gameplay.View.UI.ScreenMinigame
 {
-    public class Spinner : MonoBehaviour, IPointerDownHandler, IDragHandler
+    public class UISpinner : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         private RectTransform _rectTransform;
         private RectTransform _parentRectTransform;
