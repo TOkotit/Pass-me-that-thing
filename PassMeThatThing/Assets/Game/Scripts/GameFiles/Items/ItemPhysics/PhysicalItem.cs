@@ -66,9 +66,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private NetworkTransformReliable _networkTransform;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         
-        [SerializeField] private Vector3 defaultRotation;
-        public Vector3 DefaultRotation => defaultRotation;
-        
         // private Coroutine _actingCoroutine;
         // [SyncVar]
         // private bool _isActing;
