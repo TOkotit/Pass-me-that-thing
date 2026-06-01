@@ -32,7 +32,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             if (enemyData.Id == "Zombie")
             {
-                positions = ZombieSpawnPositions;
+                positions = zombieSpawnPositions;
             }
             
             for (var i = 0; i < positions.Count && i < count; i++)
