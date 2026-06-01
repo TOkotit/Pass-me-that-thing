@@ -8,14 +8,13 @@ using UnityEngine.UI;
 
 public class PipeBreakMinigameUI : MinigameUI
 {
-    [SerializeField] private Spinner nut;
+    [SerializeField] private UISpinner nut;
     
     [SerializeField] private Slider goalSlider;
 
     private int _counter;
     private float _goal;
 
-    private bool _isCompleted;
     public event Action<float> OnGoalChanged;
 
     public float Goal
