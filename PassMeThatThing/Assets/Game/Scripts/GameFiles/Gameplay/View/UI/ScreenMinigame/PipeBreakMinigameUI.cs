@@ -8,9 +8,6 @@ using UnityEngine.UI;
 
 public class PipeBreakMinigameUI : MinigameUI
 {
-    [SerializeField] private Button minigameBtn;
-    
-    [SerializeField] private TextMeshProUGUI nutValue;
     [SerializeField] private Spinner nut;
     
     [SerializeField] private Slider goalSlider;
@@ -26,7 +23,7 @@ public class PipeBreakMinigameUI : MinigameUI
         get => _goal;
         set
         {
-            _goal = value;
+            _goal = Math.Clamp(value, 0f, 1f);
             OnGoalChanged?.Invoke(_goal);
         }
     }
@@ -34,9 +31,6 @@ public class PipeBreakMinigameUI : MinigameUI
 
     private void Start()
     {
-        minigameBtn.onClick.AddListener(OnMGBtnClick);
-
-        nut.OnValueDeltaChanged += UpdateNut;
         nut.OnValueDeltaChanged += AddToGoal;
         
         OnGoalChanged += UpdateGoal;
@@ -44,52 +38,24 @@ public class PipeBreakMinigameUI : MinigameUI
 
     private void OnDestroy()
     {
-        minigameBtn.onClick.RemoveListener(OnMGBtnClick);
-        
-        nut.OnValueDeltaChanged -= UpdateNut;
         nut.OnValueDeltaChanged -= AddToGoal;
         
         OnGoalChanged -= UpdateGoal;
     }
 
-    public void OnMGBtnClick()
-    {
-        // _counter++;
-        // if (_counter >= 3)
-        // {
-        mainBinder.CompleteMinigame();
-        // }
-    }
-
-    public void UpdateNut(float value)
-    {
-        nutValue.text = value.ToString(CultureInfo.InvariantCulture);
-
-    }
-
     public void AddToGoal(float value)
     {
-        Goal += value / 10000;
+        Goal += -value / 10000;
         if (_isCompleted) return;
         if (Goal >= 1)
         {
-            minigameBtn.gameObject.SetActive(true);
-            minigameBtn.transform.DOScale(1f, 0.2f).From(0f);
             _isCompleted =  true;
+            mainBinder.CompleteMinigame();
         }
     }
 
     public void UpdateGoal(float value)
     {
         goalSlider.value = value;
-
-        // if (goalSlider.value > 0.5f)
-        // {
-        //     goalSlider.transform.DOScale(1.5f, 0.5f)
-        //         .From(1f)
-        //         .SetLoops(1, LoopType.Yoyo)
-        //         .SetEase(Ease.OutBounce);
-        // }
-        
     }
 }
