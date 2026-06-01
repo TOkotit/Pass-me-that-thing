@@ -131,7 +131,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Server]
         public void GrabItem(PhysicalItem item)
         {
-            if (item.CanBeOwned)
+            if (item.HasToBeAligned)
             {
                 grabJoint.angularXDrive = _originalAngularXDrive;
                 grabJoint.angularYZDrive = _originalAngularYZDrive;
@@ -170,6 +170,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             else
             {
                 grabJoint.connectedAnchor = Vector3.zero; 
+            }
+            if (item.HasToBeAligned)
+            {
+                grabJoint.angularXDrive = _originalAngularXDrive;
+                grabJoint.angularYZDrive = _originalAngularYZDrive;
+            }
+            else
+            {
+                var zeroDrive = new JointDrive { positionSpring = 0f, positionDamper = 0f, maximumForce = float.MaxValue };
+                grabJoint.angularXDrive = zeroDrive;
+                grabJoint.angularYZDrive = zeroDrive;
             }
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;

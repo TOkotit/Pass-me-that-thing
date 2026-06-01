@@ -238,6 +238,7 @@ namespace Game.Scripts.GameFiles.Items
                         {
                             if (_physicalItemInteractionController.CurrentHeldItem && damagable is MainCharacter player)
                             {
+                                Debug.Log($"Попытка передать предмет. HeldItem={_physicalItemInteractionController.CurrentHeldItem}, player={player}");
                                 inventory.CmdGiveItemToPlayer(player);
                             }
                         }
