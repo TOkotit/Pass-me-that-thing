@@ -22,12 +22,13 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         [SerializeField] private Button closeBtn;
         
         [SerializeField] private TextMeshProUGUI timeLeft;
+
+        [SerializeField] private Image successImage;
         
         [SerializeField] private List<EventTypeToMinigameUI> minigames;
 
         private MinigameUI currentMinigame;
         
-        // public Action OnCompleteMinigame;
         
         private void Start()
         {
@@ -58,7 +59,14 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         public void CompleteMinigame()
         {
             // Debug.Log("OnCompleteMinigame");
-            currentMinigame.gameObject.transform.DOScale(0f, 0.5f).From(1f).SetEase(Ease.OutBounce)
+            
+            var anim =  DOTween.Sequence();
+            
+            successImage.gameObject.SetActive(true);
+            
+            anim.Append(successImage.DOFade(1f, 0.3f).From(0f))
+                .Join(successImage.rectTransform.DOScale(1f, 0.3f).From(0f).SetEase(Ease.OutBounce))
+                .Append(currentMinigame.gameObject.transform.DOScale(0f, 0.5f).From(1f).SetEase(Ease.OutBounce))
                 .OnComplete(() =>
                 {
                     ViewModel.RequestCompleteMinigame();
@@ -67,7 +75,13 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
         public void CloseMinigame()
         {
-            ViewModel.RequestCloseMinigame();
+            var anim =  DOTween.Sequence();
+
+            anim.Append(currentMinigame.gameObject.transform.DOScale(0f, 0.5f).From(1f).SetEase(Ease.OutBounce))
+                .OnComplete(() =>
+                {
+                    ViewModel.RequestCloseMinigame();
+                });
         }
     }
 }
