@@ -153,10 +153,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
-            
-            var relativeRotation = Quaternion.Inverse(Pivot.rotation) * item.transform.rotation;
-            var defaultRot = Quaternion.Euler(item.DefaultRotation);
-            grabJoint.targetRotation = relativeRotation * defaultRot;
+            AlignJointToPivot();
             
             AlignPivotForItem(item);
             ClientGrabItem(item);
@@ -177,9 +174,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
-            var relativeRotation = Quaternion.Inverse(Pivot.rotation) * item.transform.rotation;
-            var defaultRot = Quaternion.Euler(item.DefaultRotation);
-            grabJoint.targetRotation = relativeRotation * defaultRot;
+            
+            AlignJointToPivot();
             AlignPivotForItem(item);
             MoveHands(item);
         }
@@ -266,6 +262,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             collarbone.connectedBody = null;
             pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
             collarbone.connectedBody = torso;
+        }
+        
+        private void AlignJointToPivot()
+        {
+            var currentRelRot = Quaternion.Inverse(transform.rotation) * grabJoint.connectedBody.rotation;
+            var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
+            grabJoint.targetRotation = Quaternion.Inverse(currentRelRot) * desiredRelRot;
         }
     }
 }

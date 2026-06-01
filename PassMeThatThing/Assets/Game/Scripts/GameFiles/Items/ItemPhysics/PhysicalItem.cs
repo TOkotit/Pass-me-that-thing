@@ -27,6 +27,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Vector3 DefaultPosition => defaultPosition;
         
         [SerializeField] private bool canBeOwned;
+        public bool DoActAndSwing => doActAndSwing;
+        
+        [SerializeField] private bool doActAndSwing;
         public bool CanBeOwned => canBeOwned;
         
         private MainCharacter owner;

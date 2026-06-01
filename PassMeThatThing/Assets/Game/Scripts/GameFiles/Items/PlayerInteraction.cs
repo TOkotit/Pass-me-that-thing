@@ -8,15 +8,15 @@ using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
+using Mirror;
 using Systems;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
 using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    using UnityEngine;
-    using Mirror;
 
     public class PlayerInteraction : NetworkBehaviour
     {
@@ -294,11 +294,20 @@ namespace Game.Scripts.GameFiles.Items
             if (PhysicalItemInteractionController.CurrentHeldItem.Reaction != null)
             {
                 PhysicalItemInteractionController.CurrentHeldItem.Reaction.Act();
+                if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned && 
+                    PhysicalItemInteractionController.CurrentHeldItem.DoActAndSwing)
+                {
+                    StartCoroutine(SwingAttackCoroutine());
+                }
             }
-            else if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
+            else
             {
-                StartCoroutine(SwingAttackCoroutine());
+                if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
+                {
+                    StartCoroutine(SwingAttackCoroutine());
+                }
             }
+            
         }
 
         private void onActCanceled(InputAction.CallbackContext context)
@@ -316,7 +325,7 @@ namespace Game.Scripts.GameFiles.Items
             var item = controller.CurrentHeldItem;
             if (!item) yield break;
 
-            //controller.DisableAlignment();
+            controller.DisableAlignment();
 
             var forward = _camera.transform.forward;
             var right = _camera.transform.right;
@@ -326,8 +335,7 @@ namespace Game.Scripts.GameFiles.Items
             controller.ApplySwingImpulse(force, torque);
 
             yield return new WaitForSeconds(swingDuration);
-
-            //controller.EnableAlignment();
+            controller.EnableAlignment();
         }
 
         private void SelectSlot(int index)

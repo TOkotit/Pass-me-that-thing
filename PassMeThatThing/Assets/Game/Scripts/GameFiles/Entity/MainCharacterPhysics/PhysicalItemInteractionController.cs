@@ -23,10 +23,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
         
-        /*
         private bool _alignment = true; 
         public void DisableAlignment() => _alignment = false;
-        public void EnableAlignment() => _alignment = true;*/
+        public void EnableAlignment() => _alignment = true;
 
         public override void OnStartLocalPlayer()
         {
@@ -145,7 +144,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 Quaternion targetRotation = Pivot.rotation;
                 Quaternion visualOffset = Quaternion.Euler(_heldItem.DefaultRotation);
                 Quaternion desiredRotation = targetRotation * visualOffset;
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 420f * Time.fixedDeltaTime));
+                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 720f * Time.fixedDeltaTime));
                 
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
