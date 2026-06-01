@@ -19,8 +19,6 @@ namespace Game.NewMainCharacterPhysics
 
         private void Start()
         {
-            if (!isServer) return;   
-
             var col = Instantiate(colliderPrefab, transform.position, transform.rotation);
             var fixedJoint = col.GetComponent<FixedJoint>();
             var itemCatcher = col.GetComponentInChildren<ItemCatcher>();

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 9144696630835448476}
   - component: {fileID: 5040098848590109450}
   - component: {fileID: 1946118442554766779}
+  - component: {fileID: 75170548263950173}
   m_Layer: 9
   m_Name: ServerCollider
   m_TagString: Player
@@ -172,6 +173,40 @@ MonoBehaviour:
   baseMass: 5
   nonPhysicalMultiplier: 0.3
   nonPhysicalTresholdMultiplier: 3
+--- !u!114 &75170548263950173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452684027595015642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 3261451729587405869}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1 &3842919055754744358
 GameObject:
   m_ObjectHideFlags: 0
