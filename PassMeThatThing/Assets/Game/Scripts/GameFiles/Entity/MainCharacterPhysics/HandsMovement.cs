@@ -174,7 +174,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(true);
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
-            
             AlignJointToPivot();
             AlignPivotForItem(item);
             MoveHands(item);
@@ -270,5 +269,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
             grabJoint.targetRotation = Quaternion.Inverse(currentRelRot) * desiredRelRot;
         }
+        
+        
     }
 }

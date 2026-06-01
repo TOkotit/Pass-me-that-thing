@@ -135,27 +135,23 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
         
-        /*private void FixedUpdate()
+        private void FixedUpdate()
         {
             if (_heldItem && _heldItem.HasToBeAligned && _alignment)
             {
-                Rigidbody rb = _heldItem.Rigidbody;
+                var rb = _heldItem.Rigidbody;
 
-                Quaternion targetRotation = Pivot.rotation;
-                Quaternion visualOffset = Quaternion.Euler(_heldItem.DefaultRotation);
-                Quaternion desiredRotation = targetRotation * visualOffset;
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 720f * Time.fixedDeltaTime));
-                
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
+                var targetRotation = Pivot.rotation;
+                var desiredRotation = targetRotation;
+                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
             }
-        }*/
+        }
         public void ApplySwingImpulse(Vector3 force, Vector3 torque)
         {
             if (_heldItem)
             {
                 
-                Rigidbody rb = _heldItem.Rigidbody;
+                var rb = _heldItem.Rigidbody;
                 rb.AddForce(force, ForceMode.Impulse);
                 rb.AddTorque(torque, ForceMode.Impulse);
             }
