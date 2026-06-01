@@ -1,4 +1,3 @@
-// Game/NewMainCharacterPhysics/ServerCollider.cs
 using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Items.ItemPhysics;

@@ -333,7 +333,7 @@ namespace Game.Scripts.GameFiles.Items
             var force = forward * swingForce;
             var torque = right * swingTorque;
 
-            controller.ApplySwingImpulse(force, torque);
+            controller.CmdApplySwingImpulse(force, torque, swingDuration);
 
             yield return new WaitForSeconds(swingDuration);
             controller.EnableAlignment();

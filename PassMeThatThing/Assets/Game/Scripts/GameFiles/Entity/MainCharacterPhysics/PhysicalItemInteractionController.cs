@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DI;
 using Entity;
 using Game.Entity;
@@ -140,22 +141,28 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (_heldItem && _heldItem.HasToBeAligned && _alignment)
             {
                 var rb = _heldItem.Rigidbody;
-
                 var targetRotation = Pivot.rotation;
                 var desiredRotation = targetRotation;
                 rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
             }
         }
-        public void ApplySwingImpulse(Vector3 force, Vector3 torque)
+        [Command]
+        public void CmdApplySwingImpulse(Vector3 force, Vector3 torque, float duration)
         {
             if (_heldItem)
             {
-                
                 var rb = _heldItem.Rigidbody;
                 rb.AddForce(force, ForceMode.Impulse);
                 rb.AddTorque(torque, ForceMode.Impulse);
+                StartCoroutine(ServerTempDisableAlignment(duration));
             }
         }
 
+        private IEnumerator ServerTempDisableAlignment(float duration)
+        {
+            _alignment = false;
+            yield return new WaitForSeconds(duration);
+            _alignment = true;
+        }
     }
 }
