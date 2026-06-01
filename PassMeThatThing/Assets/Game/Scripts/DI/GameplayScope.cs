@@ -5,6 +5,7 @@ using VContainer;
 using VContainer.Unity;
 using UnityEngine;
 using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
@@ -20,6 +21,7 @@ namespace DI
         [SerializeField] private EnemyDatabase enemyDatabase;
         [SerializeField] private GameRandomEventManager eventManagerPrefab;
         [SerializeField] private GlobalStageManager globalStageManagerPrefab;
+        [SerializeField] private EnemySpawner enemySpawnerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -34,6 +36,7 @@ namespace DI
             
             builder.RegisterComponent(eventManagerPrefab);
             builder.RegisterComponent(globalStageManagerPrefab);
+            builder.RegisterComponent(enemySpawnerPrefab);
             
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);

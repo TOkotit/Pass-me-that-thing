@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Inject]
         private void Construct(EnemyDatabase enemyDatabase)
         {
-            _zombieData = enemyDatabase.GetEnemy("Zombie");
+            _zombieData = enemyDatabase.GetEnemy("zombie");
         }
         
         public override void OnStartServer()

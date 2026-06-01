@@ -1,5 +1,6 @@
 using System;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.Utils;
 using Mirror;
@@ -16,7 +17,9 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private GlobalStagesType _currentGameStage;
         public GlobalStagesType CurrentGameStage => _currentGameStage;
 
-        [Inject] private GameRandomEventManager  gameRandomEventManager;
+        [Inject] private GameRandomEventManager  _gameRandomEventManager;
+        [Inject] private EnemyDatabase _enemyDatabase;
+        [Inject] private EnemySpawner  _enemySpawner;
         private NetworkTimer _timer;
 
         [SerializeField] private float preparationStageDuration = 200f;
@@ -56,11 +59,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
             if (_currentGameStage == GlobalStagesType.Fight)
             {
-                gameRandomEventManager.TryTriggerRandomEvents();
+                _gameRandomEventManager.TryTriggerRandomEvents();
+                _enemySpawner.SpawnWave(3, _enemyDatabase.GetEnemy("zombie"));
             }
             else if (_currentGameStage == GlobalStagesType.Preparation)
             {
-                gameRandomEventManager.TryTriggerRandomEvents();
+                _gameRandomEventManager.TryTriggerRandomEvents();
             }
             StartTimer(duration);
         }
