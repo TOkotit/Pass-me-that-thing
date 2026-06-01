@@ -119,6 +119,7 @@ public class PlayerInventory : NetworkBehaviour
         {
             _physicalСontroller.PhysicalPickUpItem(physicalItem);
             activeSlot = index;   
+            physicalItem.ConnectionToClient = connectionToClient;
         }
     }
 
