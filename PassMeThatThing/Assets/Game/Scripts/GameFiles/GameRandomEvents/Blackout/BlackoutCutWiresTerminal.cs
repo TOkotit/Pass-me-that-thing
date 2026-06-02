@@ -10,6 +10,7 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         public bool _isFixed = true;
         
         [SerializeField] private BlackoutCutWiresEvent _cutWiresEvent;
+        [SerializeField] private ParticleSystem _particleSystem;
         
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
@@ -18,7 +19,7 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             if (IsTerminalBusy) return;
             if (_isFixed) return;
             
-            // RpcPlayImpactParticles();
+            RpcPlayImpactParticles();
             if (ActivateMinigame(conn, _cutWiresEvent))
             {
                 Debug.Log("<color=yellow> [Server] IsTerminalBusy = true");
@@ -44,6 +45,15 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             {
                 CloseMinigame(currentClient);
                 currentClient = null;
+            }
+        }
+        
+        [ClientRpc]
+        private void RpcPlayImpactParticles()
+        {
+            if (_particleSystem && !_particleSystem.isPlaying) 
+            {
+                _particleSystem.Play();
             }
         }
         

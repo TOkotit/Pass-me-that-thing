@@ -11,6 +11,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         public bool _isFixed = true;
         
         [SerializeField] PipeBreakEvent _pipeBreakEvent;
+        [SerializeField] ParticleSystem _particleSystem;
         
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
@@ -18,6 +19,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
             base.TerminalAct(conn);
             
             if (_isFixed) return;
+            RpcPlayImpactParticles();
             CmdFixPipe();
         }
         
@@ -27,6 +29,15 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
             if (_isFixed) return;
             
             _pipeBreakEvent.PlayerFixedPressure();
+        }
+        
+        [ClientRpc]
+        private void RpcPlayImpactParticles()
+        {
+            if (_particleSystem && !_particleSystem.isPlaying) 
+            {
+                _particleSystem.Play();
+            }
         }
     }
 }
