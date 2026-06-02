@@ -1,7 +1,4 @@
 ﻿using System;
-using Enums;
-using Game.Scripts.GameFiles.Entity;
-using MainCharacter_old;
 using UnityEngine;
 
 namespace Entity
@@ -15,7 +12,23 @@ namespace Entity
             set => _healthPool = value;
         }
 
-        public event Action OnTakeHit;
-        public void TakeHit() => OnTakeHit?.Invoke();
+        public event Action<int> OnHealthChanged;
+        public event Action OnDeath;
+
+        public void TakeDamage(int damage)
+        {
+            if (_healthPool == null) return;
+            int newHealth = _healthPool.TakeDamage(damage);
+            OnHealthChanged?.Invoke(newHealth);
+            if (newHealth <= 0) OnDeath?.Invoke();
+        }
+
+        public void SetHealth(int newHealth)
+        {
+            if (_healthPool == null) return;
+            _healthPool.SetCurrentHealth(newHealth);
+            OnHealthChanged?.Invoke(newHealth);
+            if (newHealth <= 0) OnDeath?.Invoke();
+        }
     }
 }
