@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using Entity;
+using Enums;
 using Mirror;
 using UnityEngine;
 
@@ -11,15 +14,17 @@ namespace Game.Scripts.GameFiles.Entity
         [SerializeField] private bool useVelocityDamage = false;
         [SerializeField] private float velocityDamageMultiplier = 1f;
         [SerializeField] private float cooldown = 0.5f;
-
+        [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
         private float _lastDamageTime = -999f;
 
         private void OnCollisionEnter(Collision other)
         {
+            
+
             if (!isServer) return;               
             if (DamagableRegistry.Instance == null) return;
 
-            if (!DamagableRegistry.Instance.TryGetDamagable(other.gameObject, out var damagable))
+            if (!DamagableRegistry.Instance.TryGetDamagable(other.gameObject, out var damageable))
                 return;
 
             if (Time.time - _lastDamageTime < cooldown)
@@ -32,7 +37,7 @@ namespace Game.Scripts.GameFiles.Entity
                 finalDamage += (int)(velocity * velocityDamageMultiplier);
             }
 
-            damagable.ServerTakeDamage(finalDamage);
+            damageable.ServerTakeDamage(finalDamage);
             _lastDamageTime = Time.time;
         }
     }
