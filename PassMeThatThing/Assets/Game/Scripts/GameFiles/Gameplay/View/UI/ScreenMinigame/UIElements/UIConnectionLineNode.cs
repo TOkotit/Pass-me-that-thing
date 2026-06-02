@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -42,12 +43,21 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            
             OnConnectionNodeClicked?.Invoke(this);
         }
         
-        public void UpdateValueVisual()
+        public void UpdateValueVisual(bool isSelected)
         {
-            // Debug.Log($"Нода {name} обновила значение: {CurrentValue}");
+            if (isSelected)
+            {
+                transform.DOScale(1.5f, 0.3f).From(1f).SetEase(Ease.OutBack);
+            }
+            else
+            {
+                transform.DOScale(1, 0.3f).From(1.5f).SetEase(Ease.OutBack);
+            }
+            
         }
     }
 }

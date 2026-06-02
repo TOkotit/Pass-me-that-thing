@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class CutWiresMinigameUI : MinigameUI
 {
-    // [SerializeField] private List<Toggle> toggles;
     [SerializeField] private TextMeshProUGUI countText;
     
     [SerializeField] private UIConnectionManager uiConnectionManager;
@@ -18,6 +17,7 @@ public class CutWiresMinigameUI : MinigameUI
 
     private void Start()
     {
+        ActiveConnectionsCountChanged(0);
         uiConnectionManager.OnActiveConnectionsCountChanged += ActiveConnectionsCountChanged;
     }
 
