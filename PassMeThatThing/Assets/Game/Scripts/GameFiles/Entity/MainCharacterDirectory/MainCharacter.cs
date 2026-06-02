@@ -42,5 +42,10 @@ namespace Game.Entity
         {
             throw new System.NotImplementedException();
         }
+
+        public override void OnHealthChanged(int health)
+        {
+            
+        }
     }
 }

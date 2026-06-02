@@ -24,6 +24,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             throw new System.NotImplementedException();
         }
 
+        public override void OnHealthChanged(int diff)
+        {
+            throw new System.NotImplementedException();
+        }
+
 
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;

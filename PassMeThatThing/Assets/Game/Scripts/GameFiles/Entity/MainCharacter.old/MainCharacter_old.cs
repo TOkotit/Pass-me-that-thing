@@ -36,6 +36,11 @@ namespace MainCharacter_old
             throw new NotImplementedException();
         }
 
+        public override void OnHealthChanged(int diff)
+        {
+            throw new NotImplementedException();
+        }
+
         public MainCharacterModel_old MainCharacterModel => _mainCharacterModel;
         [SerializeField] private GameObject arms;
         public GameObject Arms => arms;

@@ -20,7 +20,7 @@ namespace Game.Entity
         {
             _playerInventory = playerInventory;
         }
+
         
-        //Тут будут уникальные для игрока относительно других сущностей свойства
     }
 }

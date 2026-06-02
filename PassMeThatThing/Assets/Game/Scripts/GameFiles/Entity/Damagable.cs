@@ -15,6 +15,7 @@ namespace Entity
         {
             Registry?.Register(this);
             DamagableModel.HealthPool.OnDeath += () => OnDeath();
+            DamagableModel.HealthPool.OnHealthChanged += OnHealthChanged;
         }
 
         protected virtual void OnDestroy()
@@ -23,5 +24,6 @@ namespace Entity
         } 
         
         abstract public void OnDeath();
+        abstract public void OnHealthChanged(int diff);
     }
 }
