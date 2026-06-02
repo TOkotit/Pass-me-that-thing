@@ -19,7 +19,6 @@ namespace Game.Scripts.GameFiles.Entity
 
         private void OnCollisionEnter(Collision other)
         {
-            
 
             if (!isServer) return;               
             if (DamagableRegistry.Instance == null) return;
@@ -27,10 +26,11 @@ namespace Game.Scripts.GameFiles.Entity
             if (!DamagableRegistry.Instance.TryGetDamagable(other.gameObject, out var damageable))
                 return;
 
+            if(!damageTypes.ContainsKey( damageable.Type) )return;
             if (Time.time - _lastDamageTime < cooldown)
                 return;
 
-            var finalDamage = damage;
+            var finalDamage = (int)(damage * damageTypes[damageable.Type]);
             if (useVelocityDamage)
             {
                 var velocity = other.relativeVelocity.magnitude;

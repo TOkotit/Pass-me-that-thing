@@ -11,6 +11,7 @@ namespace Entity
         public abstract DamagableModel DamagableModel { get; }
         [SerializeField] protected int health;
         [SerializeField] protected DamagableType type;
+        public DamagableType Type => type;
         [SyncVar(hook = nameof(OnSyncedHealthChanged))]
         private int _syncedHealth;
 
