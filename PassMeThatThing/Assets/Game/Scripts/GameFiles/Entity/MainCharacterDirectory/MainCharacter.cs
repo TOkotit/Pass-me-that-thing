@@ -38,5 +38,9 @@ namespace Game.Entity
         }
 
         public override DamagableModel DamagableModel => _model;
+        public override void OnDeath()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

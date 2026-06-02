@@ -31,6 +31,11 @@ namespace MainCharacter_old
             _mainCharacterModel.ParryDuration = combatStats.ParryDuration;
         }
         public override DamagableModel DamagableModel => _mainCharacterModel;
+        public override void OnDeath()
+        {
+            throw new NotImplementedException();
+        }
+
         public MainCharacterModel_old MainCharacterModel => _mainCharacterModel;
         [SerializeField] private GameObject arms;
         public GameObject Arms => arms;
