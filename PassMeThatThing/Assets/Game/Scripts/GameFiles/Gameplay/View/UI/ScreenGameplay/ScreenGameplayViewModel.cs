@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
@@ -26,6 +27,8 @@ namespace Game.Gameplay.View.UI
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         
+        private readonly MainCharacterModel  _mainCharacterModel;
+        
         private readonly CompositeDisposable _subscriptions = new();
         
         public override string Id => "ScreenGameplay";
@@ -45,40 +48,24 @@ namespace Game.Gameplay.View.UI
             
             _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
             _globalStageManager = container.Resolve<GlobalStageManager>();
+            
+            _mainCharacterModel = container.Resolve<MainCharacterModel>();
         }
 
-        // public void InitHealthText(Action<int> f)
-        // {
-        //     Debug.Log("inithealthText");
-        //     f(_mainCharacter.Health.CurrentHealth);
-        // }
-        //
-        // public void RequestSubHealthText(Action<int> f)
-        // {
-        //     Debug.Log($"RequestSubText {_mainCharacter.Health == null}");
-        //     _mainCharacter.Health.OnHealthChanged += f;
-        // }
-        //
-        // public void RequestUnsubHealthText(Action<int> f)
-        // {
-        //     Debug.Log($"RequestUnsubText {_mainCharacter.Health == null}");
-        //     _mainCharacter.Health.OnHealthChanged -= f;
-        // }
-        //
-        // public void InitStaminaText(Action<float> f)
-        // {
-        //     f(_mainCharacter.Stamina_old.CurrentStamina);
-        // }
-        //
-        // public void RequestSubStaminaText(Action<float> f)
-        // {
-        //     _mainCharacter.Stamina_old.OnStaminaChanged += f;
-        // }
-        //
-        // public void RequestUnsubStaminaText(Action<float> f)
-        // {
-        //     _mainCharacter.Stamina_old.OnStaminaChanged -= f;
-        // }
+        public void InitHealthUI(Action<int, int> f)
+        {
+            // f(_mainCharacterModel.HealthPool.CurrentHealth, _mainCharacterModel.HealthPool.MaxHealth);
+        }
+        
+        public void RequestSubHealthUI(Action<int, int> f)
+        {
+            // _mainCharacterModel.HealthPool.OnHealthChangedWithMax += f;
+        }
+        
+        public void RequestUnsubHealthUI(Action<int, int> f)
+        {
+            // _mainCharacterModel.HealthPool.OnHealthChangedWithMax -= f;
+        }
 
         public void RequestSubGlobalState(Action<GlobalStagesType> f)
         {

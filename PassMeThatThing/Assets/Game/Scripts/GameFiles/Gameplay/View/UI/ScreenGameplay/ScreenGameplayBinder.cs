@@ -21,6 +21,7 @@ namespace Game.Gameplay.View.UI
         // [SerializeField] private Button _btnGoToMainMenu;
         
         [SerializeField] private TextMeshProUGUI _healthText;
+        [SerializeField] private Image healthImage;
         
         [SerializeField] private TextMeshProUGUI _staminaText;
         
@@ -61,10 +62,8 @@ namespace Game.Gameplay.View.UI
         private void Start()
         {
             // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
-            // ViewModel.InitHealthText(UpdateHealthText);
-            // ViewModel.RequestSubHealthText(UpdateHealthText);
-            // ViewModel.InitStaminaText(UpdateStaminaText);
-            // ViewModel.RequestSubStaminaText(UpdateStaminaText);
+            ViewModel.InitHealthUI(UpdateHealthUI);
+            ViewModel.RequestSubHealthUI(UpdateHealthUI);
 
             ViewModel.InitActiveSlot(SetActiveItemSlot);
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
@@ -99,8 +98,9 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsub();
         }
 
-        private void UpdateHealthText(int newValue)
+        private void UpdateHealthUI(int newValue, int maxValue)
         {
+            healthImage.color = new Color(1f, 1f, 1f, ((float)newValue / maxValue) * 0.4f);
             HealthText.text = newValue.ToString();
         }
         
