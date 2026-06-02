@@ -27,7 +27,7 @@ namespace Game.Gameplay.View.UI
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         
-        private readonly MainCharacterModel  _mainCharacterModel;
+        private readonly MCLocalModel  _mcLocalModel;
         
         private readonly CompositeDisposable _subscriptions = new();
         
@@ -49,22 +49,22 @@ namespace Game.Gameplay.View.UI
             _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
-            _mainCharacterModel = container.Resolve<MainCharacterModel>();
+            _mcLocalModel = container.Resolve<MCLocalModel>();
         }
 
         public void InitHealthUI(Action<int, int> f)
         {
-            // f(_mainCharacterModel.HealthPool.CurrentHealth, _mainCharacterModel.HealthPool.MaxHealth);
+            f(_mcLocalModel.Health, _mcLocalModel.MaxHealth);
         }
         
         public void RequestSubHealthUI(Action<int, int> f)
         {
-            // _mainCharacterModel.HealthPool.OnHealthChangedWithMax += f;
+            _mcLocalModel.OnHealthChanged += f;
         }
         
         public void RequestUnsubHealthUI(Action<int, int> f)
         {
-            // _mainCharacterModel.HealthPool.OnHealthChangedWithMax -= f;
+            _mcLocalModel.OnHealthChanged -= f;
         }
 
         public void RequestSubGlobalState(Action<GlobalStagesType> f)

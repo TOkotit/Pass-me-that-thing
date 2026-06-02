@@ -55,6 +55,8 @@ namespace DI
             
             builder.Register<MainCharacterModel>(Lifetime.Transient);
             
+            builder.Register<MCLocalModel>(Lifetime.Singleton);
+            
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             

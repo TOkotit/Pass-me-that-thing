@@ -40,7 +40,7 @@ namespace Game.Gameplay.View.UI
         
         private int _activeSlotIndex = -1;
         private Dictionary<int, GameEventUIElement> _gameEvents = new ();
-        
+
         public TextMeshProUGUI HealthText
         {
             get => _healthText;
@@ -62,8 +62,8 @@ namespace Game.Gameplay.View.UI
         private void Start()
         {
             // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
-            ViewModel.InitHealthUI(UpdateHealthUI);
-            ViewModel.RequestSubHealthUI(UpdateHealthUI);
+            ViewModel.InitHealthUI(UpdateCurrHealthUI);
+            ViewModel.RequestSubHealthUI(UpdateCurrHealthUI);
 
             ViewModel.InitActiveSlot(SetActiveItemSlot);
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
@@ -86,7 +86,7 @@ namespace Game.Gameplay.View.UI
         private void OnDestroy()
         {
             // _btnGoToMainMenu?.onClick.RemoveListener(OnGoToMainMenuButtonClicked);
-            // ViewModel.RequestUnsubHealthText(UpdateHealthText);
+            ViewModel.RequestUnsubHealthUI(UpdateCurrHealthUI);
             // ViewModel.RequestUnsubStaminaText(UpdateStaminaText);
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
@@ -98,16 +98,26 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsub();
         }
 
-        private void UpdateHealthUI(int newValue, int maxValue)
+        // private void SetHealthUI(int newValue)
+        // {
+        //     _lastMaxHp = maxValue;
+        //     healthImage.color = new Color(1f, 1f, 1f, ((float)newValue / _lastMaxHp) * 0.4f);
+        //     HealthText.text = newValue.ToString();
+        // }
+        
+        private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
-            healthImage.color = new Color(1f, 1f, 1f, ((float)newValue / maxValue) * 0.4f);
+            if (maxHealth <= 0) return;
+            
+            Debug.Log($"[UI] new hp {newValue}");
+            healthImage.color = new Color(1f, 1f, 1f, (1 - (float)newValue / maxHealth) * 0.4f);
             HealthText.text = newValue.ToString();
         }
         
-        private void UpdateStaminaText(float newValue)
-        {
-            StaminaText.text = newValue.ToString(CultureInfo.InvariantCulture);
-        }
+        // private void UpdateStaminaText(float newValue)
+        // {
+        //     StaminaText.text = newValue.ToString(CultureInfo.InvariantCulture);
+        // }
 
         private void UpdateThrowChargeText(int newValue)
         {

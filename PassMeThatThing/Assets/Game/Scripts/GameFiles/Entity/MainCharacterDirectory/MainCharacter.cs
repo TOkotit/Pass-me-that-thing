@@ -12,6 +12,8 @@ namespace Game.Entity
     {
         [Inject] private DamagableRegistry _damagableRegistry;
         [Inject] private MainCharacterModel _model;
+        
+        [Inject] private MCLocalModel _localModel;
 
         public MainCharacterModel MainCharacterModel => _model;
 
@@ -29,6 +31,7 @@ namespace Game.Entity
         {
             base.OnStartClient(); 
             Initialize();
+            
         }
 
         public override void OnStartServer()
@@ -45,7 +48,14 @@ namespace Game.Entity
 
         public override void OnHealthChanged(int currentHealth)
         {
+            if (!isLocalPlayer) return;
+            
             Debug.Log("Health: " + currentHealth);
+            _localModel.Health = currentHealth;
+            if (DamagableModel != null && DamagableModel?.HealthPool != null)
+            {
+                _localModel.MaxHealth = DamagableModel.HealthPool.MaxHealth;
+            }
         }
     }
 }
