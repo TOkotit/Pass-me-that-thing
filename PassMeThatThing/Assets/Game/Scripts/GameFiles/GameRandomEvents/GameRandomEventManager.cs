@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Game.Scripts.Enums;
 using Mirror;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts.GameFiles.Events
 {
@@ -23,6 +25,13 @@ namespace Game.Scripts.GameFiles.Events
         private List<int> _busyClientIds = new List<int>();
         
         public List<int> BusyClientIds => _busyClientIds;
+        
+        public event Action<SyncDictionary<int, BaseGameEvent>> OnEventReceived;
+
+        public override void OnStartClient()
+        {
+            OnEventReceived?.Invoke(StartedEvents);
+        }
 
         [Server]
         public int RegisterSceneEvent(BaseGameEvent gameEvent)
