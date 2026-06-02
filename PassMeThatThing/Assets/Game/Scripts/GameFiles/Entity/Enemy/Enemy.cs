@@ -18,8 +18,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             get => EnemyModel;
         }
-        
-        
+
+        public override void OnDeath()
+        {
+            throw new System.NotImplementedException();
+        }
+
+
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
         

@@ -14,11 +14,14 @@ namespace Entity
         protected virtual void Start()
         {
             Registry?.Register(this);
+            DamagableModel.HealthPool.OnDeath += () => OnDeath();
         }
 
         protected virtual void OnDestroy()
         {
-                Registry?.Unregister(this); 
+            Registry?.Unregister(this); 
         } 
+        
+        abstract public void OnDeath();
     }
 }
