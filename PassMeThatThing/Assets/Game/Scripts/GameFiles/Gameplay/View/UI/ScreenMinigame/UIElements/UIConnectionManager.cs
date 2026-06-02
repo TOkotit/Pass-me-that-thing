@@ -33,29 +33,45 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             inputNodesRight = inputNodesRightContainer.GetComponentsInChildren<UIConnectionLineNode>().ToList();
             outputNodes = outputNodesContainer.GetComponentsInChildren<UIConnectionLineNode>().ToList();
 
+            ShuffleSetup(inputNodesLeft);
+            ShuffleSetup(inputNodesRight);
+            ShuffleSetup(outputNodes);
+
+            // var rand = new Random();
+            // var shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
+            //
+            // for (var i = 0; i < shuffledColors.Count && i < inputNodesLeft.Count; i++)
+            // {
+            //     inputNodesLeft[i].OnConnectionNodeClicked += OnSocketClicked;
+            //     inputNodesLeft[i].SetupNode(shuffledColors[i]);
+            // }
+            //
+            // shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
+            //
+            // for (var i = 0; i < shuffledColors.Count && i < inputNodesRight.Count; i++)
+            // {
+            //     inputNodesRight[i].OnConnectionNodeClicked += OnSocketClicked;
+            //     inputNodesRight[i].SetupNode(shuffledColors[i]);
+            // }
+            //
+            // shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
+            //
+            // for (var i = 0; i < shuffledColors.Count && i < outputNodes.Count; i++)
+            // {
+            //     outputNodes[i].OnConnectionNodeClicked += OnSocketClicked;
+            //     outputNodes[i].SetupNode(shuffledColors[i]);
+            // }
+        }
+
+        private void ShuffleSetup(List<UIConnectionLineNode> target)
+        {
             var rand = new Random();
             var shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
             
-            for (var i = 0; i < shuffledColors.Count && i < inputNodesLeft.Count; i++)
+            for (var i = 0; i < shuffledColors.Count && i < target.Count; i++)
             {
-                inputNodesLeft[i].OnConnectionNodeClicked += OnSocketClicked;
-                inputNodesLeft[i].SetupNode(shuffledColors[i]);
-            }
-            
-            shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
-            
-            for (var i = 0; i < shuffledColors.Count && i < inputNodesRight.Count; i++)
-            {
-                inputNodesRight[i].OnConnectionNodeClicked += OnSocketClicked;
-                inputNodesRight[i].SetupNode(shuffledColors[i]);
-            }
-            
-            shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
-            
-            for (var i = 0; i < shuffledColors.Count && i < outputNodes.Count; i++)
-            {
-                outputNodes[i].OnConnectionNodeClicked += OnSocketClicked;
-                outputNodes[i].SetupNode(shuffledColors[i]);
+                target[i].OnConnectionNodeClicked += OnSocketClicked;
+                target[i].SetupNode(shuffledColors[i]);
             }
         }
         
@@ -82,12 +98,13 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             if (_selectedSocket == null)
             {
                 _selectedSocket = socket;
-                
+                _selectedSocket.UpdateValueVisual(true);
                 return;
             }
 
             if (_selectedSocket == socket)
             {
+                _selectedSocket.UpdateValueVisual(false);
                 _selectedSocket = null;
                 return;
             }
@@ -125,8 +142,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             
             newLine.SetColor(s1.NodeColor);
 
-            input.UpdateValueVisual();
-            output.UpdateValueVisual();
+            input.UpdateValueVisual(false);
+            output.UpdateValueVisual(false);
 
             _activeConnections.Add(new NodePair(output, input, newLine));
             OnActiveConnectionsCountChanged?.Invoke(_activeConnections.Count);
