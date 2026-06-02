@@ -20,7 +20,5 @@ namespace Game.Entity
         {
             _playerInventory = playerInventory;
         }
-
-        
     }
 }

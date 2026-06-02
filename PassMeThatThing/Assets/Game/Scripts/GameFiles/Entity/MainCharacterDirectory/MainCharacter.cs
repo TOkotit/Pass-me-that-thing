@@ -1,7 +1,6 @@
-// Game/Entity/MainCharacter.cs
+// Game.Entity.MainCharacter
 using DI;
 using Entity;
-using Game.Scripts.GameFiles.Entity;
 using Game.Scripts.GameFiles.Items;
 using UnityEngine;
 using VContainer;
@@ -16,6 +15,8 @@ namespace Game.Entity
 
         public MainCharacterModel MainCharacterModel => _model;
 
+        public override DamagableModel DamagableModel => _model;
+
         private void Initialize()
         {
             var playerInteraction = GetComponent<PlayerInteraction>();
@@ -26,26 +27,25 @@ namespace Game.Entity
 
         public override void OnStartClient()
         {
+            base.OnStartClient(); 
             Initialize();
         }
 
         public override void OnStartServer()
         {
             LifetimeScope.Find<GameplayScope>().Container.Inject(this);
-            _model.HealthPool = new HealthPool(health);
             Initialize();
             _damagableRegistry.Register(this);
         }
 
-        public override DamagableModel DamagableModel => _model;
         public override void OnDeath()
         {
-            throw new System.NotImplementedException();
+            
         }
 
-        public override void OnHealthChanged(int health)
+        public override void OnHealthChanged(int currentHealth)
         {
-            
+            Debug.Log("Health: " + currentHealth);
         }
     }
 }

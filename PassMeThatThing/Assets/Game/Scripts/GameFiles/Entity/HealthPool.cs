@@ -1,53 +1,38 @@
-
+// Game.Scripts.GameFiles.Entity.HealthPool
 using System;
-using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Entity
+public class HealthPool
 {
-    public class HealthPool
+    private int _maxHealth;
+    private int _currentHealth;
+
+    public int MaxHealth => _maxHealth;
+    public int CurrentHealth => _currentHealth;
+
+    public HealthPool(int maxHealth)
     {
-        private int _maxHealth;
-        private int _currentHealth;
+        _maxHealth = maxHealth;
+        _currentHealth = maxHealth;
+    }
 
-        public int MaxHealth => _maxHealth;
-        public int CurrentHealth
-        {
-            get => _currentHealth;
-            private set
-            {
-                OnHealthChanged.Invoke(value);
-                _currentHealth = value;
-                if (_currentHealth >= _maxHealth) _currentHealth = _maxHealth;
-                if (_currentHealth <= 0)
-                {
-                    _currentHealth = 0;
-                    OnDeath?.Invoke();
-                }
-            }
-        }
+    public void SetMaxHealth(int newMaxHealth, bool fullHeal)
+    {
+        _maxHealth = newMaxHealth;
+        if (fullHeal)
+            _currentHealth = _maxHealth;
+    }
+    public void SetCurrentHealth(int value)
+    {
+        _currentHealth = Mathf.Clamp(value, 0, _maxHealth);
+    }
 
-        public event Action<int> OnHealthChanged;
-        public event Action OnDeath;
-
-        public HealthPool(int maxHealth)
-        {
-            SetMaxHealth(maxHealth, true);
-        }
-
-        public void SetMaxHealth(int newMaxHealth, bool fullHeal)
-        {
-            _maxHealth = newMaxHealth;
-            if (fullHeal) CurrentHealth = _maxHealth;
-        }
-
-        public float TakeDamage(int damage)
-        {
-            if (damage <= 0) return 0;
-            CurrentHealth -= damage;
-            OnHealthChanged?.Invoke(CurrentHealth);
-            Debug.Log("Здоровье после получения урона: " + CurrentHealth);
-            return _currentHealth;
-        }
+    public int TakeDamage(int damage)
+    {
+        if (damage == 0) return _currentHealth;
+        _currentHealth -= damage;
+        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
+        Debug.Log($"Health after damage: {_currentHealth}");
+        return _currentHealth;
     }
 }
