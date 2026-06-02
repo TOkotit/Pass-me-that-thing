@@ -75,7 +75,9 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubImage(SetItemImageSprite);
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
 
-            ViewModel.InitGameEvent(SetupEventDatabase, ReceiveEvents);
+            ViewModel.InitGameEvent(Clear, AddGameEvent);
+            ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
+            
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
@@ -200,6 +202,11 @@ namespace Game.Gameplay.View.UI
             _gameEventsDatabase = gameEventsDatabase;
         }
 
+        private void Clear()
+        {
+            _gameEvents.Clear();
+        }
+        
         private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
         {
             if (_gameEvents.ContainsKey(eventId)) return;

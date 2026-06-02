@@ -154,11 +154,22 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Clear();
         }
 
-        public void InitGameEvent(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
+        public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
         {
             setupEventDatabase(_gameEventsDatabase);
             _gameRandomEventManager.OnEventReceived += f;
         }
+
+        public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
+        {
+            clear();
+            foreach (var i in _gameRandomEventManager.StartedEvents)
+            {
+                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                add(i.Value.EventId, e.EventImage, i.Value.EventId);
+            }
+        }
+        
         
         private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
         {
