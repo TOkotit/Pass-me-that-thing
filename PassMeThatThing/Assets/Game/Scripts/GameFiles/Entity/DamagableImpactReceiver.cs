@@ -43,7 +43,7 @@ namespace Game.Entity
                 return;
 
             int damage = (int)(velocity * damageMultiplier * massMultiplier);
-            _damagable.DamagableModel.HealthPool.TakeDamage(damage);
+            _damagable.ServerTakeDamage(damage);
         }
     }
 }
