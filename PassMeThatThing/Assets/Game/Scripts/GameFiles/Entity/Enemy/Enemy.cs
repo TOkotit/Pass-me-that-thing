@@ -26,7 +26,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public override void OnHealthChanged(int diff)
         {
-            
+            Debug.Log($"Zombie taken Damage {diff}");
         }
 
 

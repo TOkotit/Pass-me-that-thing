@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Enums;
+using Mirror;
 using UnityEngine;
 using VContainer;
 
@@ -9,7 +10,8 @@ namespace Entity
         [Inject] protected DamagableRegistry Registry { get; private set; }
         public abstract DamagableModel DamagableModel { get; }
         [SerializeField] protected int health;
-
+        [SerializeField] protected DamagableType type;
+        public DamagableType Type => type;
         [SyncVar(hook = nameof(OnSyncedHealthChanged))]
         private int _syncedHealth;
 

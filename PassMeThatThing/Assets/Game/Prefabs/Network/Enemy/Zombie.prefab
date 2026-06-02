@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 7370826059491095980}
   - component: {fileID: 1931763817442211047}
   - component: {fileID: 8780573388070845451}
+  - component: {fileID: 5475941992780067928}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -111,7 +112,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  health: 0
+  health: 20
+  type: 1
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
@@ -174,6 +176,12 @@ MonoBehaviour:
   useVelocityDamage: 0
   velocityDamageMultiplier: 1
   cooldown: 0.5
+  damageTypes:
+    _serializedList:
+    - Key: 2
+      Value: 1.2
+    - Key: 0
+      Value: 1
 --- !u!114 &2949989233195922033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,6 +271,24 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &5475941992780067928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e1e3af5fbad4b58b2afab8322494807, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treshold: 3
+  damageMultiplier: 1
+  baseMass: 2
+  nonPhysicalMultiplier: 0.3
+  nonPhysicalTresholdMultiplier: 20
+  _damagable: {fileID: 6059272469753625803}
 --- !u!1001 &6608624216515295132
 PrefabInstance:
   m_ObjectHideFlags: 0
