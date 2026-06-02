@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6855496352144718401}
   - component: {fileID: 3893933800504997739}
   m_Layer: 0
-  m_Name: connects
+  m_Name: ConnectionManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,14 +62,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a18eb5fe3b046468cd30e51ba8052fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linePrefab: {fileID: 0}
-  linesContainer: {fileID: 0}
-  inputNodes: []
-  outputNodes: []
+  linePrefab: {fileID: 1628536438269444100, guid: 8cdfb2658df0a9b418ec44f894086551, type: 3}
+  linesContainer: {fileID: 4311139662154923013}
   nodeColors:
-  - {r: 1, g: 0, b: 0, a: 0}
-  - {r: 0.17307985, g: 1, b: 0, a: 0}
-  - {r: 0, g: 0.083200455, b: 1, a: 0}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.17307985, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.083200455, b: 1, a: 1}
+  inputNodesLeftContainer: {fileID: 3948089815308611007}
+  inputNodesRightContainer: {fileID: 6331131707946480013}
+  outputNodesContainer: {fileID: 4298246852103803171}
 --- !u!1 &3948089815308611007
 GameObject:
   m_ObjectHideFlags: 0

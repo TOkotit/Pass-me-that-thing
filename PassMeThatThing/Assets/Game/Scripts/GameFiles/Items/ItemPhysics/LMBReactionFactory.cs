@@ -10,7 +10,7 @@ public static class LMBReactionFactory
         {
             { "wrench", item => new LMBWrench(item) },
             { "flashlight", item => new LMBFlashlight(item) },
-            { "wirecutters", item => new LMBFlashlight(item) },
+            { "wirecutters", item => new LMBWireCutters(item) },
         };
 
     public static LMBReaction CreateReaction(string id, PhysicalItem item)
@@ -20,7 +20,7 @@ public static class LMBReactionFactory
             return createFunc(item);
         }
 
-        Debug.LogError($"Reaction ID {id}");
+        Debug.LogWarning($"no Reaction ID {id}");
         return null;
     }
 }

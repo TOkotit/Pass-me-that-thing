@@ -9,9 +9,9 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         private RectTransform _startPoint;
         private RectTransform _endPoint;
-        private float _thickness = 4f;
+        private float _thickness;
 
-        public void Setup(RectTransform start, RectTransform end, float thickness = 4f)
+        public void Setup(RectTransform start, RectTransform end, float thickness = 15f)
         {
             _startPoint = start;
             _endPoint = end;
