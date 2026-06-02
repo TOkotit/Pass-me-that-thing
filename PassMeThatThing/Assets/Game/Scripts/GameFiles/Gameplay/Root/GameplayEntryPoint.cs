@@ -35,10 +35,10 @@ namespace Game.Gameplay.Root
             
             InitUI();
             
-            if (NetworkServer.active)
-            {
-                SpawnNetworkManagers();
-            }
+            // if (NetworkServer.active)
+            // {
+            //     SpawnNetworkManagers();
+            // }
             _gameManager.SetState(GameState.Gameplay);
             
             

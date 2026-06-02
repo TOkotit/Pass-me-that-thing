@@ -120,6 +120,7 @@ namespace Game.Gameplay.View.UI
         
         public void RequestUnsubInteractionText(Action<bool> f)
         {
+
             _playerInventoryModel.OnAbleInteract -= f;
         }
 
@@ -153,6 +154,12 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Clear();
         }
 
+        public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
+        {
+            setupEventDatabase(_gameEventsDatabase);
+            _gameRandomEventManager.OnEventReceived += f;
+        }
+
         public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
         {
             clear();
@@ -162,6 +169,7 @@ namespace Game.Gameplay.View.UI
                 add(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
+        
         
         private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
         {

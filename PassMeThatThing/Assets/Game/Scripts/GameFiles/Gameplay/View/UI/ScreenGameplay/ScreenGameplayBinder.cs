@@ -40,6 +40,8 @@ namespace Game.Gameplay.View.UI
         
         private int _activeSlotIndex = -1;
         private Dictionary<int, GameEventUIElement> _gameEvents = new ();
+        
+        private GameEventsDatabase _gameEventsDatabase;
 
         public TextMeshProUGUI HealthText
         {
@@ -74,6 +76,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
 
             ViewModel.InitGameEvent(Clear, AddGameEvent);
+            ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
+            
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
@@ -184,12 +188,25 @@ namespace Game.Gameplay.View.UI
             _itemImages[index].sprite = sprite;
         }
 
+        private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
+        {
+            foreach (var i in dict)
+            {
+                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                AddGameEvent(i.Value.EventId, e.EventImage, i.Value.EventId);
+            }
+        }
+
+        private void SetupEventDatabase(GameEventsDatabase gameEventsDatabase)
+        {
+            _gameEventsDatabase = gameEventsDatabase;
+        }
+
         private void Clear()
         {
             _gameEvents.Clear();
         }
         
-
         private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
         {
             if (_gameEvents.ContainsKey(eventId)) return;

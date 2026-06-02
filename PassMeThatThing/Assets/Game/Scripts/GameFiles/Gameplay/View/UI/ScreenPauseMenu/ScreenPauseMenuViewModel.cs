@@ -31,7 +31,7 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         
         public void RequestGoToMainMenu()
         {
-            _coroutines.StartRoutine(_gameManager.LoadMainMenu());
+            // _coroutines.StartRoutine(_gameManager.LoadMainMenu());
         }
         
         public void RequestGoToScreenOptions()
