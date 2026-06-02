@@ -11,8 +11,7 @@ namespace Game.Entity
         [SerializeField] private float baseMass = 5f;                 // эталонная масса для нормализации
         [SerializeField] private float nonPhysicalMultiplier = 0.3f;  // множитель урона для стен/нефизических объектов
         [SerializeField] private float nonPhysicalTresholdMultiplier = 1f; // множитель порога для стен 
-
-        private Damagable _damagable;
+        [SerializeField] private Damagable _damagable;
 
         public void SetDamagable(Damagable damagable) => _damagable = damagable;
 
