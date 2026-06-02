@@ -44,7 +44,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (verticalAlign)
             {
                 verticalAlign.Consciousness = 0f;
-                CmdSetConsciousness(0f);
+                verticalAlign.CmdSetConsciousness(0f);
             }
 
             yield return new WaitForSeconds(slipDuration);
@@ -52,7 +52,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (verticalAlign) 
             {
                 verticalAlign.Consciousness = 1f;
-                CmdSetConsciousness(1f);
+                verticalAlign.CmdSetConsciousness(1f);
             }
             
             if (movement) movement.UnlockMovement();
@@ -60,12 +60,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _isSlipping = false;
         }
         
-        [Command]
-        private void CmdSetConsciousness(float value)
-        {
-            if (verticalAlign) 
-                verticalAlign.Consciousness = value;
-        }
+        
         
         private void OnDestroy()
         {

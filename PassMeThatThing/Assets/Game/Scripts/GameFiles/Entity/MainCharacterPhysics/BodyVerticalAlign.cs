@@ -20,11 +20,19 @@ public class BodyVerticalAlign : NetworkBehaviour
     [Header("Глобальный множитель жёсткости (сознание)")]
     [Range(0f, 1f)]
     [SerializeField] private float currentConsciousness = 1f;
-    public float Consciousness { get => currentConsciousness; set => currentConsciousness = value; }
+    public bool LockConsciousness {get; set;}
+    public float Consciousness { get => currentConsciousness;
+        set
+        {
+            if (!LockConsciousness)
+            {
+                currentConsciousness = value;
+            }
+        } 
+    }
 
     [SyncVar(hook = nameof(OnTiltChanged))]
     private Quaternion _syncTiltOffset = Quaternion.identity;
-
     private Quaternion tiltOffset = Quaternion.identity;
 
     private void OnTiltChanged(Quaternion oldValue, Quaternion newValue)
@@ -41,8 +49,8 @@ public class BodyVerticalAlign : NetworkBehaviour
 
             var drive = new JointDrive
             {
-                positionSpring = pair.spring * currentConsciousness,
-                positionDamper = pair.damper * currentConsciousness,
+                positionSpring = pair.spring * Consciousness,
+                positionDamper = pair.damper * Consciousness,
                 maximumForce = float.MaxValue
             };
             pair.joint.angularXDrive = drive;
@@ -56,8 +64,8 @@ public class BodyVerticalAlign : NetworkBehaviour
             var parent = pair.joint.connectedBody;
             if (!parent) continue;
 
-            var effectiveSpring = pair.spring * currentConsciousness;
-            var effectiveDamper = pair.damper * currentConsciousness;
+            var effectiveSpring = pair.spring * Consciousness;
+            var effectiveDamper = pair.damper * Consciousness;
 
             var drive = new JointDrive
             {
@@ -69,7 +77,7 @@ public class BodyVerticalAlign : NetworkBehaviour
             pair.joint.angularYZDrive = drive;
             pair.joint.rotationDriveMode = RotationDriveMode.XYAndZ;
 
-            if (currentConsciousness <= 0f)
+            if (Consciousness <= 0f)
             {
                 pair.joint.angularXDrive = new JointDrive { positionSpring = 0, positionDamper = 0 };
                 pair.joint.angularYZDrive = new JointDrive { positionSpring = 0, positionDamper = 0 };
@@ -93,7 +101,7 @@ public class BodyVerticalAlign : NetworkBehaviour
 
     public void SetConsciousness(float multiplier)
     {
-        currentConsciousness = Mathf.Clamp01(multiplier);
+        Consciousness = Mathf.Clamp01(multiplier);
     }
 
     [Server]
@@ -106,5 +114,10 @@ public class BodyVerticalAlign : NetworkBehaviour
     public void CmdSetTilt(Vector3 eulerAngles)
     {
         SetTilt(eulerAngles);
+    }
+    [Command]
+    public void CmdSetConsciousness(float value)
+    {
+        Consciousness = Mathf.Clamp01(value);
     }
 }

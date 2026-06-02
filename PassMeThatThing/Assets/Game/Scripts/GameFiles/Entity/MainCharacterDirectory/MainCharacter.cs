@@ -2,6 +2,7 @@
 using DI;
 using Entity;
 using Game.Scripts.GameFiles.Items;
+using MainCharacter_old;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,8 +13,10 @@ namespace Game.Entity
     {
         [Inject] private DamagableRegistry _damagableRegistry;
         [Inject] private MainCharacterModel _model;
-        
         [Inject] private MCLocalModel _localModel;
+        [SerializeField] private BodyVerticalAlign verticalAlign;
+        [SerializeField] private MainCharacterMovement movement;
+        [SerializeField] private MainCharacterCamera mCamera;
 
         public MainCharacterModel MainCharacterModel => _model;
 
@@ -43,7 +46,12 @@ namespace Game.Entity
 
         public override void OnDeath()
         {
-            
+            verticalAlign.CmdSetConsciousness(0);
+            verticalAlign.Consciousness = 0f;
+            verticalAlign.LockConsciousness = true;
+            movement.LockUpMovement();
+            mCamera.IsCameraRotating = false;
+            Debug.Log("Вот тут смерть");
         }
 
         public override void OnHealthChanged(int currentHealth)
