@@ -1,5 +1,6 @@
 
 using System;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity
@@ -15,6 +16,7 @@ namespace Game.Scripts.GameFiles.Entity
             get => _currentHealth;
             private set
             {
+                OnHealthChanged.Invoke(value);
                 _currentHealth = value;
                 if (_currentHealth >= _maxHealth) _currentHealth = _maxHealth;
                 if (_currentHealth <= 0)
