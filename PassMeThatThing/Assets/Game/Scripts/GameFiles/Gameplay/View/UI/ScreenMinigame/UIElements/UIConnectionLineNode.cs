@@ -11,6 +11,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         [Header("Параметры ноды")]
         [SerializeField] private string parameterGroup = "Power";
+        [SerializeField] private Color nodeColor;
         [SerializeField] private float baseValue = 10f;
         [SerializeField] private bool isInput; // true - вход false - выход
 
@@ -25,9 +26,18 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
         public Image NodeImage => nodeImage;
 
+        public Color NodeColor => nodeColor;
+
         private void Awake()
         {
             CurrentValue = baseValue;
+        }
+
+        public void SetupNode(Color color)
+        {
+            parameterGroup = color.ToString();
+            nodeColor = color;
+            nodeImage.color = color;
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -37,7 +47,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         
         public void UpdateValueVisual()
         {
-            Debug.Log($"Нода {name} обновила значение: {CurrentValue}");
+            // Debug.Log($"Нода {name} обновила значение: {CurrentValue}");
         }
     }
 }

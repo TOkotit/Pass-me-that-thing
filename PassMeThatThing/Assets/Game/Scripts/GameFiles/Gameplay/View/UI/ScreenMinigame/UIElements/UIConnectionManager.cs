@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Random = System.Random;
 
 namespace Game.Gameplay.View.UI.ScreenMinigame
 {
@@ -9,22 +11,78 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
     {
         [SerializeField] private UIConnectionLine linePrefab;
         [SerializeField] private Transform linesContainer;
-
-        [SerializeField] private List<UIConnectionLineNode> inputNodes = new();
-        [SerializeField] private List<UIConnectionLineNode> outputNodes = new();
         
         [SerializeField] private List<Color> nodeColors;
+        
+        [SerializeField] private GameObject inputNodesLeftContainer;
+        [SerializeField] private GameObject inputNodesRightContainer;
+        [SerializeField] private GameObject outputNodesContainer;
+        
+        private List<UIConnectionLineNode> inputNodesLeft = new();
+        private List<UIConnectionLineNode> inputNodesRight = new();
+        private List<UIConnectionLineNode> outputNodes = new();
         
         private UIConnectionLineNode _selectedSocket;
         private List<NodePair> _activeConnections = new();
         
         public event Action<int> OnActiveConnectionsCountChanged;
+
+        private void Start()
+        {
+            inputNodesLeft = inputNodesLeftContainer.GetComponentsInChildren<UIConnectionLineNode>().ToList();
+            inputNodesRight = inputNodesRightContainer.GetComponentsInChildren<UIConnectionLineNode>().ToList();
+            outputNodes = outputNodesContainer.GetComponentsInChildren<UIConnectionLineNode>().ToList();
+
+            var rand = new Random();
+            var shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
+            
+            for (var i = 0; i < shuffledColors.Count && i < inputNodesLeft.Count; i++)
+            {
+                inputNodesLeft[i].OnConnectionNodeClicked += OnSocketClicked;
+                inputNodesLeft[i].SetupNode(shuffledColors[i]);
+            }
+            
+            shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
+            
+            for (var i = 0; i < shuffledColors.Count && i < inputNodesRight.Count; i++)
+            {
+                inputNodesRight[i].OnConnectionNodeClicked += OnSocketClicked;
+                inputNodesRight[i].SetupNode(shuffledColors[i]);
+            }
+            
+            shuffledColors = nodeColors.OrderBy(x => rand.Next()).ToList();
+            
+            for (var i = 0; i < shuffledColors.Count && i < outputNodes.Count; i++)
+            {
+                outputNodes[i].OnConnectionNodeClicked += OnSocketClicked;
+                outputNodes[i].SetupNode(shuffledColors[i]);
+            }
+        }
         
+        private void OnDestroy()
+        {
+            foreach (var node in inputNodesLeft)
+            {
+                node.OnConnectionNodeClicked -= OnSocketClicked;
+            }
+            
+            foreach (var node in inputNodesRight)
+            {
+                node.OnConnectionNodeClicked -= OnSocketClicked;
+            }
+            
+            foreach (var node in outputNodes)
+            {
+                node.OnConnectionNodeClicked -= OnSocketClicked;
+            }
+        }
+
         public void OnSocketClicked(UIConnectionLineNode socket)
         {
             if (_selectedSocket == null)
             {
                 _selectedSocket = socket;
+                
                 return;
             }
 
@@ -48,7 +106,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             
             if (s1.ParameterGroup != s2.ParameterGroup)
             {
-                Debug.LogWarning("Разные типы параметров! Соединение невозможно.");
+                Debug.LogWarning("[UI] разные типы параметров нод");
                 return false;
             }
 
@@ -65,16 +123,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
             var modifier = 1.5f;
             
-            if (output.ParameterGroup == "Power")
-            {
-                input.CurrentValue = output.CurrentValue * modifier;
-                newLine.SetColor(Color.green);
-            }
-            else
-            {
-                input.CurrentValue = output.CurrentValue;
-                newLine.SetColor(Color.blue);
-            }
+            newLine.SetColor(s1.NodeColor);
 
             input.UpdateValueVisual();
             output.UpdateValueVisual();
