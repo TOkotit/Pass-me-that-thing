@@ -11,33 +11,26 @@ using VContainer;
 
 namespace Game.MainMenu.View.UI.ScreenMainMenu
 {
-    public class ScreenMainMenuViewModel : WindowViewModel
+    public class ScreenLobbyViewModel : WindowViewModel
     {
-        public override string Id =>  "ScreenMainMenu";
+        public override string Id =>  "ScreenLobby";
         
-        private readonly MainMenuUIManager _uiManager;
+        private readonly LobbyUIManager _uiManager;
         private readonly GameManager _gameManager;
         private readonly ICoroutineRunner _coroutines;
         
 
-        public ScreenMainMenuViewModel(MainMenuUIManager uiManager, IObjectResolver container)
+        public ScreenLobbyViewModel(LobbyUIManager uiManager, IObjectResolver container)
         {
             _uiManager = uiManager;
             _gameManager =  container.Resolve<GameManager>();
             _coroutines = container.Resolve<ICoroutineRunner>();
         }
         
-        public void RequestPlay()
-        {
-            Debug.Log("RequestPlay");
-            // _coroutines.StartRoutine(_gameManager.LoadGameplay());
-        }
-
-        public void RequestContinue()
+        public void RequestReady()
         {
             
         }
-        
         
     }
 }

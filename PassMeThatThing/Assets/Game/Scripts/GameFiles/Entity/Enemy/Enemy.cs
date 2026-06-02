@@ -21,12 +21,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public override void OnDeath()
         {
-            throw new System.NotImplementedException();
+            Destroy(gameObject);
         }
 
         public override void OnHealthChanged(int diff)
         {
-            throw new System.NotImplementedException();
+            
         }
 
 

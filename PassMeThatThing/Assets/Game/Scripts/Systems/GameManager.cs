@@ -48,34 +48,34 @@ namespace Systems
         
         
         
-        public IEnumerator LoadMainMenu()
-        {
-            _gameInputManager.GameInput.Gameplay.Disable();
-            yield return LoadScene(SceneType.MainMenu);
-            SetState(GameState.Menu);
-        }
-
-        public IEnumerator LoadGameplay()
-        {
-            _gameInputManager.GameInput.Gameplay.Enable();
-            yield return LoadScene(SceneType.Gameplay);
-            SetState(GameState.Gameplay);
-        }
-        
-        
-        private IEnumerator LoadScene(SceneType sceneType)
-        {
-            _uiRootView.ShowLoadingScreen();
-            
-            var sceneName = sceneType.ToString();
-            var operation = SceneManager.LoadSceneAsync(sceneName);
-            
-            while (!operation.isDone)
-            {
-                yield return null;
-            }
-            
-            _uiRootView.HideLoadingScreen();
-        }
+        // public IEnumerator LoadMainMenu()
+        // {
+        //     _gameInputManager.GameInput.Gameplay.Disable();
+        //     yield return LoadScene(SceneType.MainMenu);
+        //     SetState(GameState.Menu);
+        // }
+        //
+        // public IEnumerator LoadGameplay()
+        // {
+        //     _gameInputManager.GameInput.Gameplay.Enable();
+        //     yield return LoadScene(SceneType.Gameplay);
+        //     SetState(GameState.Gameplay);
+        // }
+        //
+        //
+        // private IEnumerator LoadScene(SceneType sceneType)
+        // {
+        //     _uiRootView.ShowLoadingScreen();
+        //     
+        //     var sceneName = sceneType.ToString();
+        //     var operation = SceneManager.LoadSceneAsync(sceneName);
+        //     
+        //     while (!operation.isDone)
+        //     {
+        //         yield return null;
+        //     }
+        //     
+        //     _uiRootView.HideLoadingScreen();
+        // }
     }
 }
