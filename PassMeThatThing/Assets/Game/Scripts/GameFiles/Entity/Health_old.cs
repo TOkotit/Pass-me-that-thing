@@ -10,7 +10,6 @@ namespace Entity
     { 
         private int _maxHealth = 100 * BC.Health;
         private int _currentHealth;
-        private Dictionary<Enums.DamageTypes, float> _vulnerabilities = new Dictionary<Enums.DamageTypes, float>();
         private bool _damageImmunity;
         public int CurrentHealth
         {
@@ -26,8 +25,7 @@ namespace Entity
 
             }
         }
-        public IReadOnlyDictionary<Enums.DamageTypes, float> Vulnerabilities => _vulnerabilities;
-
+       
         public bool DamageImmunity
         {
             get => _damageImmunity;
@@ -37,21 +35,7 @@ namespace Entity
         public event Action<int> OnHealthChanged;
         public event Action OnDeath;
         
-        public float TakeDamage(float damage, Enums.DamageTypes damageType)
-        {
-            Debug.Log("Object got damaged!");
-            Debug.Log(_currentHealth);
-            if (damage <= 0) return 0;
-            if (!_vulnerabilities.TryGetValue(damageType, out float coefficient))
-                coefficient = 1f;
-            var total = (int)(damage * coefficient);
-            if (_damageImmunity) total = 0;
-            CurrentHealth -= total;
-            OnHealthChanged?.Invoke(CurrentHealth);
-            
-            if (CurrentHealth <= 0) OnDeath?.Invoke();
-            return _currentHealth;
-        }
+        
 
         public int Heal(int heal)
         {
@@ -65,18 +49,7 @@ namespace Entity
         {
             _currentHealth = _maxHealth;
         }
-        public void SetVulnerability(Enums.DamageTypes damageType, float vulnerability)
-        {
-            _vulnerabilities[damageType] = vulnerability;
-        }
-
-        public void AddVulnerability(Enums.DamageTypes damageType, float vulnerability)
-        {
-            if (_vulnerabilities.ContainsKey(damageType))
-                _vulnerabilities[damageType] += vulnerability;
-            else
-                _vulnerabilities[damageType] = 1f + vulnerability;
-        }
+        
 
         public void SetMaxHealth(int newMaxHealth, bool isFullHealNeeded)
         {

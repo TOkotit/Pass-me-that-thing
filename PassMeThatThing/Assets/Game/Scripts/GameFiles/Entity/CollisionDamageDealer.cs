@@ -32,7 +32,7 @@ namespace Game.Scripts.GameFiles.Entity
                 finalDamage += (int)(velocity * velocityDamageMultiplier);
             }
 
-            damagable.DamagableModel.HealthPool.TakeDamage(finalDamage);
+            damagable.ServerTakeDamage(finalDamage);
             _lastDamageTime = Time.time;
         }
     }

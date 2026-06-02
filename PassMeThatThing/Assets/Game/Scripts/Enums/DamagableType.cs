@@ -1,9 +1,10 @@
 ﻿namespace Enums
 {
-    public enum TeamsType
+    public enum DamagableType
     {
         Player,
         Enemy,
-        Neutral
+        Building,
+        Object
     }
 }

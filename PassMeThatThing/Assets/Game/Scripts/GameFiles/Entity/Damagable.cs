@@ -18,6 +18,7 @@ namespace Entity
 
         protected virtual void Start()
         {
+            Debug.LogWarning("Damagable: Start" + gameObject.name);
             if (isServer)
             {
                 _syncedHealth = health;
@@ -37,18 +38,7 @@ namespace Entity
         {
             Registry?.Unregister(this);
         }
-
-        [Server]
-        public virtual void ServerTakeDamage(int damage)
-        {
-            if (DamagableModel.HealthPool == null) return;
-            int newHealth = DamagableModel.HealthPool.TakeDamage(damage);
-            _syncedHealth = newHealth; 
-            OnHealthChanged(newHealth);
-            if (newHealth <= 0)
-                OnDeath();
-        }
-
+        
         [Server]
         public void ServerSetHealth(int newHealth)
         {
@@ -71,7 +61,17 @@ namespace Entity
         {
             DamagableModel.HealthPool?.SetMaxHealth(newMax, false);
         }
+        [Server]
+        public virtual void ServerTakeDamage(int damage)
+        {
+            if (DamagableModel.HealthPool == null) return;
 
+            int newHealth = DamagableModel.HealthPool.TakeDamage(damage);
+            _syncedHealth = newHealth; 
+            OnHealthChanged(newHealth);
+            if (newHealth <= 0)
+                OnDeath();
+        }
         public abstract void OnDeath();
         public abstract void OnHealthChanged(int currentHealth);
     }

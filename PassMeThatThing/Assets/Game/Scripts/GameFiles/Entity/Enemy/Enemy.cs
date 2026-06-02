@@ -62,5 +62,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if(!isServer) return;
             stateMachine.CurrentState.PhysicsUpdate();
         }
+        
+        protected virtual void Awake()
+        {
+            if (EnemyModel == null)
+                EnemyModel = new EnemyModel();
+        }
     }
 }
