@@ -19,7 +19,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         }
         public override void OnDeath()
         {
-            throw new System.NotImplementedException();
+            Destroy(gameObject);
         }
 
         public override void OnHealthChanged(int currentHealth)
