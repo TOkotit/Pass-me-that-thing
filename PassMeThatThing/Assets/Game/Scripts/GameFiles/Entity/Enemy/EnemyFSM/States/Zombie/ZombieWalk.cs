@@ -34,12 +34,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-            if (_targetDetector.Door != null)
-            {
-                _movementController.SetSpeed(_zombie.Speed / 2);
-                _movementController.NavigateTo(_targetDetector.Door);
-            }
-            
             if (_targetDetector.IsTargetVisible)
             {
                 if (_targetDetector.DistanceToTarget < _zombie.ChaseDistance)
@@ -47,6 +41,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _movementController.StopNavigating();
                     StateMachine.ChangeState(_zombie.ZombieChase);
                     return;
+                }
+                else
+                {
+                    _movementController.SetSpeed(_zombie.Speed / 2);
+                    _movementController.NavigateTo(_targetDetector.DetectedTarget);
+                
                 }
             }
         }

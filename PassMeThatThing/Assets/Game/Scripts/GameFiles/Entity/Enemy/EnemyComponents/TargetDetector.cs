@@ -80,7 +80,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 DetectTarget();
                 
                 DetectBunkerDoor();
-                
+                // Debug.Log(_detectedTarget);
                 _timer = 0f;
             }
         }
@@ -163,7 +163,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 }
                 return;
             }
-            
+
+            if (_detectedTarget == _door)
+            {
+                _detectedTarget = null;
+                _distanceToTarget = -1f;
+                _isTargetVisible = false;
+            }
             _door = null;
         }
         
