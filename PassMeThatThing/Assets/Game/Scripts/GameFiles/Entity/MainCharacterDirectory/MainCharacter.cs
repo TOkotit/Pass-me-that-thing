@@ -32,11 +32,13 @@ namespace Game.Entity
 
         public override void OnStartClient()
         {
+            var scope = LifetimeScope.Find<GameplayScope>();
+            if (scope)
+                scope.Container.Inject(this);
             base.OnStartClient(); 
             Initialize();
             
         }
-
         public override void OnStartServer()
         {
             LifetimeScope.Find<GameplayScope>().Container.Inject(this);
