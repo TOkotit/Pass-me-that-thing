@@ -22,23 +22,23 @@ namespace Game.Entity
 
             float velocity = collision.relativeVelocity.magnitude;
 
-            float massMultiplier;       
-            float thresholdMultiplier;  
+            float massMultiplier;
+            float effectiveThreshold;
 
             if (PhysicalItemRegistry.Instance != null &&
                 PhysicalItemRegistry.Instance.TryGetItem(collision.gameObject, out var physicalItem))
             {
+                effectiveThreshold = treshold;
                 float mass = physicalItem.Rigidbody ? physicalItem.Rigidbody.mass : 1f;
-                massMultiplier = mass / baseMass;           
-                thresholdMultiplier = baseMass / mass;      
+                massMultiplier = mass / baseMass;
             }
             else
             {
+                effectiveThreshold = treshold * nonPhysicalTresholdMultiplier;
                 massMultiplier = nonPhysicalMultiplier;
-                thresholdMultiplier = nonPhysicalTresholdMultiplier;
             }
 
-            if (velocity < treshold * thresholdMultiplier)
+            if (velocity < effectiveThreshold)
                 return;
 
             int damage = (int)(velocity * damageMultiplier * massMultiplier);

@@ -168,11 +168,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e1e3af5fbad4b58b2afab8322494807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treshold: 10
+  treshold: 15
   damageMultiplier: 1
-  baseMass: 5
+  baseMass: 10
   nonPhysicalMultiplier: 0.3
   nonPhysicalTresholdMultiplier: 3
+  _damagable: {fileID: 0}
 --- !u!114 &75170548263950173
 MonoBehaviour:
   m_ObjectHideFlags: 0
