@@ -34,7 +34,6 @@ namespace Game.Scripts.GameFiles.Items
         {
             CmdInteractWithObject();
         }
-
         public override void SrbToggle()
         {
             
