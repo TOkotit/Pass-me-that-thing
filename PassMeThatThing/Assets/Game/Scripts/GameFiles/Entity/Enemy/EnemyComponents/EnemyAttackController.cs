@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void AttackMelee(Vector3 halfExtents, float damage)
         {
             // заглушка
-            // gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);
+            gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);
             
             var colliders = new Collider[100];
             var size = Physics.OverlapBoxNonAlloc(
