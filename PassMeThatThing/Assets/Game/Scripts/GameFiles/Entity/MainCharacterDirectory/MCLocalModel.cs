@@ -4,25 +4,39 @@ namespace Game.Entity
 {
     public class MCLocalModel
     {
-        private int health;
-        private int maxHealth;
+        private int _health;
+        private int _maxHealth;
+
+        private bool _isDead;
 
         public event Action<int, int> OnHealthChanged;
+        public event Action<bool> OnDeathChanged;
 
         public int Health
         {
-            get => health;
+            get => _health;
             set
             {
-                OnHealthChanged?.Invoke(value, maxHealth);
-                health = value;
+                OnHealthChanged?.Invoke(value, _maxHealth);
+                _health = value;
             }
         }
 
         public int MaxHealth
         {
-            get => maxHealth;
-            set => maxHealth = value;
+            get => _maxHealth;
+            set => _maxHealth = value;
+        }
+
+        public bool IsDead
+        {
+            get => _isDead;
+            set
+            {
+                if (_isDead != value)
+                    OnDeathChanged?.Invoke(value);
+                _isDead = value;
+            }
         }
     }
 }

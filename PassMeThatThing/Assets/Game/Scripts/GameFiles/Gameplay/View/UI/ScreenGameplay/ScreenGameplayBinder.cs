@@ -23,6 +23,8 @@ namespace Game.Gameplay.View.UI
         [SerializeField] private TextMeshProUGUI _healthText;
         [SerializeField] private Image healthImage;
         
+        [SerializeField] private Image deathImage;
+        
         [SerializeField] private TextMeshProUGUI _staminaText;
         
         [SerializeField] private TextMeshProUGUI _throwChargeText;
@@ -66,6 +68,8 @@ namespace Game.Gameplay.View.UI
             // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
             ViewModel.InitHealthUI(UpdateCurrHealthUI);
             ViewModel.RequestSubHealthUI(UpdateCurrHealthUI);
+            
+            ViewModel.RequestSubDeathUI(UpdateDeathUI);
 
             ViewModel.InitActiveSlot(SetActiveItemSlot);
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
@@ -93,6 +97,10 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubHealthUI(UpdateCurrHealthUI);
             // ViewModel.RequestUnsubStaminaText(UpdateStaminaText);
             
+            ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
+
+            ViewModel.UnInitGameEventToClient(ReceiveEvents);
+            
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
             ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
@@ -101,13 +109,6 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
             ViewModel.RequestUnsub();
         }
-
-        // private void SetHealthUI(int newValue)
-        // {
-        //     _lastMaxHp = maxValue;
-        //     healthImage.color = new Color(1f, 1f, 1f, ((float)newValue / _lastMaxHp) * 0.4f);
-        //     HealthText.text = newValue.ToString();
-        // }
         
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
@@ -118,10 +119,18 @@ namespace Game.Gameplay.View.UI
             HealthText.text = newValue.ToString();
         }
         
-        // private void UpdateStaminaText(float newValue)
-        // {
-        //     StaminaText.text = newValue.ToString(CultureInfo.InvariantCulture);
-        // }
+        private void UpdateDeathUI(bool isDead)
+        {
+            Debug.Log($"[UI] death {isDead}");
+            if (isDead)
+            {
+                deathImage.DOFade(0.8f, 0.4f).From(0f);
+            }
+            else
+            {
+                deathImage.DOFade(0f, 0.2f).From(0.8f);
+            }
+        }
 
         private void UpdateThrowChargeText(int newValue)
         {

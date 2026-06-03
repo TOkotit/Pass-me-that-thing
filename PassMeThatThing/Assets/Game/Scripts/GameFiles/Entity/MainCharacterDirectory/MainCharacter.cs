@@ -52,6 +52,9 @@ namespace Game.Entity
             movement.LockUpMovement();
             mCamera.IsCameraRotating = false;
             Debug.Log("Вот тут смерть");
+            
+            if (!isLocalPlayer) return;
+            _localModel.IsDead = true;
         }
 
         public override void OnHealthChanged(int currentHealth)
