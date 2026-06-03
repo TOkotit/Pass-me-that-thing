@@ -117,6 +117,7 @@ MonoBehaviour:
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
+  animator: {fileID: 782528043384080909}
   elapsedAttack: 0
 --- !u!114 &1118780070767854037
 MonoBehaviour:
@@ -374,6 +375,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}
+--- !u!95 &782528043384080909 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}
+  m_PrefabInstance: {fileID: 6608624216515295132}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6646246285379457143 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}

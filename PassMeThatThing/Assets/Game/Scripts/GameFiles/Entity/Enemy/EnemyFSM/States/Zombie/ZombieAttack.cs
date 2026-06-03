@@ -15,17 +15,23 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController _movementController;
         
+        private Animator _animator;
+        
         public ZombieAttack(EnemyZombie enemy, 
             EnemyStateMachine stateMachine, 
             EnemyAttackController attackController,
             TargetDetector targetDetector,
-            EnemyMovementController  movementController) 
+            EnemyMovementController  movementController,
+            Animator animator) 
                 : base(enemy, stateMachine)
         {
             _attackController = attackController;
             _targetDetector = targetDetector;
             _movementController = movementController;
+            
+            _animator = animator;
             _zombie = enemy;
+            
         }
 
         public override void Enter()
@@ -58,6 +64,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             {
                 _movementController.RotateTo(_targetDetector.DetectedTarget.position);
                 _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _zombie.Damage);
+                var rand =  new System.Random();
+                if (rand.Next(0, 2) == 0)
+                {
+                    _animator.SetTrigger("attack1");
+                }
+                else
+                {
+                    
+                    _animator.SetTrigger("attack2");
+                }
                 _zombie.elapsedAttack = 0f;
             }
         }

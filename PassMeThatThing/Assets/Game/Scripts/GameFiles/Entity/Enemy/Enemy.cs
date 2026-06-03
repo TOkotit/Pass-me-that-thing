@@ -36,6 +36,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected TargetDetector targetDetector;
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
+        
+        [SerializeField] protected Animator animator;
 
         
         
