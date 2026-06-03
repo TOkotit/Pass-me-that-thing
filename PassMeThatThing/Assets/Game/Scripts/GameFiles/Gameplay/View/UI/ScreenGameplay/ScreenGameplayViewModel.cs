@@ -67,6 +67,16 @@ namespace Game.Gameplay.View.UI
             _mcLocalModel.OnHealthChanged -= f;
         }
 
+        public void RequestSubDeathUI(Action<bool> f)
+        {
+            _mcLocalModel.OnDeathChanged += f;
+        }
+        
+        public void RequestUnsubDeathUI(Action<bool> f)
+        {
+            _mcLocalModel.OnDeathChanged -= f;
+        }
+
         public void RequestSubGlobalState(Action<GlobalStagesType> f)
         {
             f(_globalStageManager.CurrentGameStage);
@@ -158,6 +168,11 @@ namespace Game.Gameplay.View.UI
         {
             setupEventDatabase(_gameEventsDatabase);
             _gameRandomEventManager.OnEventReceived += f;
+        }
+        
+        public void UnInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
+        {
+            _gameRandomEventManager.OnEventReceived -= f;
         }
 
         public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
