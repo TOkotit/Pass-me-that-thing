@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
@@ -10,6 +11,8 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
+        
+        
         
         private ItemPoolManager _itemPoolManager; 
         private PhysicalItemRegistry _physicalItemRegistry;
@@ -28,6 +31,13 @@ namespace Game.Scripts.GameFiles.Items
             itemToDrop.SetActive(true);
             _physicalItemRegistry.Register(itemToDrop.GetComponent<PhysicalItem>());
             NetworkServer.Spawn(itemToDrop);
+            
+            gameObject.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce)
+                .OnComplete(() =>
+                {
+                    
+                    gameObject.SetActive(false);
+                });
         }
         
         public override void Interact()
