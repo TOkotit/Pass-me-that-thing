@@ -20,15 +20,14 @@ namespace Game.Scripts.GameFiles.Entity
         private void OnCollisionEnter(Collision other)
         {
 
-            if (!isServer) return;               
+            if (!isServer) return;
             if (DamagableRegistry.Instance == null) return;
 
-            if (!DamagableRegistry.Instance.TryGetDamagable(other.gameObject, out var damageable))
-                return;
+            Damagable damageable = FindDamagableInHierarchy(other.gameObject);
+            if (!damageable) return;
 
-            if(!damageTypes.ContainsKey( damageable.Type) )return;
-            if (Time.time - _lastDamageTime < cooldown)
-                return;
+            if (!damageTypes.ContainsKey(damageable.Type)) return;
+            if (Time.time - _lastDamageTime < cooldown) return;
 
             var finalDamage = (int)(damage * damageTypes[damageable.Type]);
             if (useVelocityDamage)
@@ -39,6 +38,17 @@ namespace Game.Scripts.GameFiles.Entity
 
             damageable.ServerTakeDamage(finalDamage);
             _lastDamageTime = Time.time;
+        }
+        private Damagable FindDamagableInHierarchy(GameObject obj)
+        {
+            Transform t = obj.transform;
+            while (t)
+            {
+                if (DamagableRegistry.Instance.TryGetDamagable(t.gameObject, out var damagable))
+                    return damagable;
+                t = t.parent;
+            }
+            return null;
         }
     }
 }

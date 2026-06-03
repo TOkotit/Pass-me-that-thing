@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7776855572588576369}
   - component: {fileID: 4913154011383626854}
   - component: {fileID: 6213635256034360291}
+  - component: {fileID: 2873655632455000256}
   m_Layer: 7
   m_Name: wrench
   m_TagString: Item
@@ -253,6 +254,29 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _outline: {fileID: 2742765135364868261}
+--- !u!114 &2873655632455000256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0c206e7c36465691727e5bce1c7c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  damage: 10
+  useVelocityDamage: 0
+  velocityDamageMultiplier: 1
+  cooldown: 0.5
+  damageTypes:
+    _serializedList:
+    - Key: 2
+      Value: -1
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0

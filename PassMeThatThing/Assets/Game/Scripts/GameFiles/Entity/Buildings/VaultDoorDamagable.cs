@@ -1,0 +1,30 @@
+using DI;
+using Entity;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
+
+namespace Game.Scripts.GameFiles.Entity.Buildings
+{
+    public class VaultDoorDamagable : Damagable
+    {
+        [Inject] private VaultDoorDamagableModel _model;
+        [Inject] private DamagableRegistry _damagableRegistry;
+        public override DamagableModel DamagableModel { get => _model;}
+        private void Awake()
+        {
+            var scope = LifetimeScope.Find<GameplayScope>();
+            if (scope)
+                scope.Container.Inject(this);
+        }
+        public override void OnDeath()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void OnHealthChanged(int currentHealth)
+        {
+            Debug.Log("Дверь повреждена! " + currentHealth);
+        }
+    }
+}

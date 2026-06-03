@@ -5,6 +5,7 @@ using VContainer;
 using VContainer.Unity;
 using UnityEngine;
 using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Entity.Buildings;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
@@ -54,6 +55,7 @@ namespace DI
             builder.RegisterInstance(eventTerminalRegistry);
             
             builder.Register<MainCharacterModel>(Lifetime.Transient);
+            builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
             
             builder.Register<MCLocalModel>(Lifetime.Singleton);
             
