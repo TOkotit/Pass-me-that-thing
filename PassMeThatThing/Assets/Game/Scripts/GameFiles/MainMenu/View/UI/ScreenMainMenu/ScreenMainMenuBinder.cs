@@ -1,4 +1,5 @@
 ﻿using Game.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -13,7 +14,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         [SerializeField] private Button _btnOptions;
         [SerializeField] private Button _btnExit;
         
-        [SerializeField] private InputField _ipText;
+        [SerializeField] private TMP_InputField _ipText;
 
 
         private void Start()
