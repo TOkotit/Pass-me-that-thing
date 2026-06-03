@@ -451,7 +451,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3018868, g: 0.10964756, b: 0.12357669, a: 0.50980395}
+  m_Color: {r: 0.3018868, g: 0.10964756, b: 0.12357669, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -734,6 +734,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _btnHost: {fileID: 5408725221803419570}
   _btnJoin: {fileID: 2913353668924818164}
+  _btnOptions: {fileID: 0}
+  _btnExit: {fileID: 0}
+  _ipText: {fileID: 0}
 --- !u!1 &4506276713620640253
 GameObject:
   m_ObjectHideFlags: 0
