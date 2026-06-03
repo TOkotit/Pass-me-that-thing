@@ -1,3 +1,4 @@
+using DG.Tweening;
 using DI;
 using Entity;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
@@ -21,9 +22,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public override void OnDeath()
         {
-            Destroy(gameObject);
+            RpcPlayParticles();
         }
 
+        [ClientRpc]
+        private void RpcPlayParticles()
+        {
+            particles.Play();
+            animator.transform.DOScale(0f, 0.5f)
+                .OnComplete((() =>
+                {
+                    Destroy(gameObject);
+                }));
+        }
+        
         public override void OnHealthChanged(int diff)
         {
             Debug.Log($"Zombie taken Damage {diff}");
@@ -39,6 +51,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         [SerializeField] protected Animator animator;
 
+        
+        [SerializeField] protected ParticleSystem particles;
         
         
         public override void OnStartServer()

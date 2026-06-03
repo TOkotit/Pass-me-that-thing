@@ -31,7 +31,13 @@ namespace Game.Scripts.GameFiles.Items
             itemToDrop.SetActive(true);
             _physicalItemRegistry.Register(itemToDrop.GetComponent<PhysicalItem>());
             NetworkServer.Spawn(itemToDrop);
-            
+
+            RpcInteractWithObject();
+        }
+
+        [ClientRpc]
+        public void RpcInteractWithObject()
+        {
             gameObject.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce)
                 .OnComplete(() =>
                 {
