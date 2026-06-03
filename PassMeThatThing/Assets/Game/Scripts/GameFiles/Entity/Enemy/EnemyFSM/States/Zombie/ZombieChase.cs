@@ -42,6 +42,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 return;
             }
             
+            if (_targetDetector.DetectedTarget == null) return; 
+            
             _movementController.SetSpeed(_zombie.Speed);
             _movementController.NavigateTo(_targetDetector.DetectedTarget);
             
