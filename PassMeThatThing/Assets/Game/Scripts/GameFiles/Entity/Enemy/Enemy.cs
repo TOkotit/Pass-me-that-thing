@@ -13,7 +13,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class Enemy : Damagable
     {
+        [SerializeField] protected TargetDetector targetDetector;
+        [SerializeField] protected EnemyMovementController movementController;
+        [SerializeField] protected EnemyAttackController attackController;
+        
+        [SerializeField] protected Animator animator;
+        [SerializeField] protected ParticleSystem particles;
+
+        
         [Inject] private DamagableRegistry _damagableRegistry;
+        
+        protected EnemyModel EnemyModel;
+        protected EnemyStateMachine stateMachine;
         
         public override DamagableModel DamagableModel
         {
@@ -22,47 +33,27 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public override void OnDeath()
         {
-            RpcPlayParticles();
-        }
-
-        [ClientRpc]
-        private void RpcPlayParticles()
-        {
-            particles.Play();
-            animator.transform.DOScale(0f, 0.5f)
-                .OnComplete((() =>
-                {
-                    Destroy(gameObject);
-                }));
+            
         }
         
         public override void OnHealthChanged(int diff)
         {
             Debug.Log($"Zombie taken Damage {diff}");
         }
+        
+        protected virtual void Awake()
+        {
+            if (EnemyModel == null)
+                EnemyModel = new EnemyModel();
+        }
 
-
-        protected EnemyModel EnemyModel;
-        protected EnemyStateMachine stateMachine;
-        
-        [SerializeField] protected TargetDetector targetDetector;
-        [SerializeField] protected EnemyMovementController movementController;
-        [SerializeField] protected EnemyAttackController attackController;
-        
-        [SerializeField] protected Animator animator;
-
-        
-        [SerializeField] protected ParticleSystem particles;
-        
-        
+        #region ServerLogic
         public override void OnStartServer()
         {
             LifetimeScope.Find<GameplayScope>().Container.Inject(this);
 
             stateMachine = new EnemyStateMachine();
             EnemyModel = new EnemyModel();
-            
-            
             
             _damagableRegistry.Register(this);
         }
@@ -78,11 +69,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if(!isServer) return;
             stateMachine.CurrentState.PhysicsUpdate();
         }
+        #endregion
+
         
-        protected virtual void Awake()
-        {
-            if (EnemyModel == null)
-                EnemyModel = new EnemyModel();
-        }
     }
 }

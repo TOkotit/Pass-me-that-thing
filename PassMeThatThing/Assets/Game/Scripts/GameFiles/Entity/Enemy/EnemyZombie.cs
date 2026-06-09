@@ -1,4 +1,6 @@
+using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
+using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
@@ -49,6 +51,24 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ZombieDeath = new ZombieDeath(this, stateMachine);
             
             stateMachine.Initialize(ZombieWalk);
+        }
+
+        public override void OnDeath()
+        {
+            base.OnDeath();
+            stateMachine.ChangeState(ZombieDeath);
+            
+        }
+
+        [ClientRpc]
+        private void RpcPlayParticles()
+        {
+            particles.Play();
+            animator.transform.DOScale(0f, 0.5f)
+                .OnComplete((() =>
+                {
+                    Destroy(gameObject);
+                }));
         }
         
         private new void Update()

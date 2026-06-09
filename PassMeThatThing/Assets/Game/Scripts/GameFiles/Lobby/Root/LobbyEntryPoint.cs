@@ -30,7 +30,7 @@ namespace Game.Scripts.GameFiles.Lobby.Root
     
         private void InitUI(IObjectResolver resolver)
         {
-            Debug.Log($"InitUI Lobby");
+            // Debug.Log($"InitUI Lobby");
         
             // Создали UI для сцены (это было)
             var uiRoot = resolver.Resolve<UIRootView>();

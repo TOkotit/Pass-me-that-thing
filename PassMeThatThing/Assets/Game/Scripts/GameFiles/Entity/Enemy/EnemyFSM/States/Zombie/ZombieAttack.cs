@@ -64,6 +64,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             {
                 _movementController.RotateTo(_targetDetector.DetectedTarget.position);
                 _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _zombie.Damage);
+                
                 var rand =  new System.Random();
                 if (rand.Next(0, 2) == 0)
                 {
@@ -71,9 +72,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 }
                 else
                 {
-                    
                     _animator.SetTrigger("attack2");
                 }
+                
                 _zombie.elapsedAttack = 0f;
             }
         }
