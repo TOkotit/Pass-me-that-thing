@@ -23,6 +23,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
         public ZombieDeath ZombieDeath { get; private set; }
+        
+        public ZombieKnockout ZombieKnockout { get; private set; }
 
         [Inject]
         private void Construct(EnemyDatabase enemyDatabase)
@@ -50,6 +52,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 animator);
             ZombieDeath = new ZombieDeath(this, stateMachine);
             
+            ZombieKnockout =  new ZombieKnockout(this, stateMachine);
+            
             stateMachine.Initialize(ZombieWalk);
         }
 
@@ -58,17 +62,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.OnDeath();
             stateMachine.ChangeState(ZombieDeath);
             
-        }
-
-        [ClientRpc]
-        private void RpcPlayParticles()
-        {
-            particles.Play();
-            animator.transform.DOScale(0f, 0.5f)
-                .OnComplete((() =>
-                {
-                    Destroy(gameObject);
-                }));
         }
         
         private new void Update()
@@ -83,7 +76,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public void SelfDestroy()
         {
-            Destroy(gameObject);
+            RpcPlayParticles();
+        }
+        
+        [ClientRpc]
+        private void RpcPlayParticles()
+        {
+            particles.Play();
+            animator.transform.DOScale(0f, 0.5f)
+                .OnComplete((() =>
+                {
+                    Destroy(gameObject);
+                }));
         }
     }
 }

@@ -2,25 +2,20 @@ using Game.Scripts.Enums;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
-    public class ZombieDeath : EnemyState
+    public class ZombieKnockout : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Death;
+        protected override EnemyStates EnemyStateType => EnemyStates.Knockout;
         
         private EnemyZombie _zombie;
         
-        public ZombieDeath(EnemyZombie enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+        public ZombieKnockout(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
         {
-            _zombie = enemy;
         }
 
         public override void Enter()
         {
             base.Enter();
-            
-            if (_zombie != null)
-            {
-                _zombie.SelfDestroy();
-            }
+
         }
 
         public override void LogicUpdate()
