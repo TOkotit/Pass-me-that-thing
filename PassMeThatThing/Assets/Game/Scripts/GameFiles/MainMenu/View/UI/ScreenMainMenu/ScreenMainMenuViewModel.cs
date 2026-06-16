@@ -35,7 +35,17 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         public void RequestHost()
         {
             Debug.Log("RequestHost");
-            _networkRoomManager.StartHost(); 
+            if (_networkRoomManager.TryGetComponent<SteamLobbyManager>(out var steamLobby))
+            {
+                Debug.Log("[STEAM] Найдено Стим-лобби. Запускаем создание виртуальной комнаты...");
+                steamLobby.CreateSteamLobby();
+            }
+            else
+            {
+                // Если скрипта SteamLobbyManager нет на объекте, запускаем обычный локальный хост (для Radmin)
+                Debug.Log("[LOCAL] Стим-менеджер не найден. Запускаем стандартный Host...");
+                _networkRoomManager.StartHost(); 
+            }
         }
 
         public void RequestJoin()
