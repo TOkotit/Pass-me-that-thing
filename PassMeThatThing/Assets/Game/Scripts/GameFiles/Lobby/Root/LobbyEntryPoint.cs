@@ -1,4 +1,5 @@
 using Game.MainMenu.View.UI;
+using Steamworks;
 using Systems;
 using UIRoot;
 using UnityEngine;
@@ -16,6 +17,11 @@ namespace Game.Scripts.GameFiles.Lobby.Root
         public void Start()
         {
             Debug.Log("LobbyEntryPoint.Start");
+            
+            if (SteamManager.Initialized)
+            {
+                Debug.Log($"<color=orange>[STEAM] Мой SteamID для подключения друга:</color> <color=green>{SteamUser.GetSteamID().m_SteamID}</color>");
+            }
         }
         
         public LobbyEntryPoint(IObjectResolver resolver)
