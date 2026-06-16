@@ -119,8 +119,7 @@ MonoBehaviour:
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
-  animator: {fileID: 782528043384080909}
-  particles: {fileID: 1214718825922223393}
+  enemyView: {fileID: 8086733510187608558}
   elapsedAttack: 0
 --- !u!114 &1118780070767854037
 MonoBehaviour:
@@ -509,6 +508,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 8086733510187608558}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7391201978983771602}
   m_SourcePrefab: {fileID: 100100000, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}
@@ -522,6 +524,20 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ac674dec99e005f4396c66477ec9aa1c, type: 3}
   m_PrefabInstance: {fileID: 6608624216515295132}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8086733510187608558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6302758421648968397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c42f15596d84f0da17a6aad26b2d86e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 7391201978983771602}
+  particles: {fileID: 1214718825922223393}
 --- !u!114 &7391201978983771602
 MonoBehaviour:
   m_ObjectHideFlags: 0

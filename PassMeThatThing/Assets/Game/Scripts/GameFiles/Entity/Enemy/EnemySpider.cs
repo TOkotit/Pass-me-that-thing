@@ -34,19 +34,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             base.OnStartServer();
             
             SpiderWalk = new SpiderWalk(this, 
-                stateMachine, 
-                targetDetector, 
-                movementController);
+                stateMachine);
             SpiderChase = new SpiderChase(this, 
-                stateMachine, 
-                targetDetector, 
-                movementController);
+                stateMachine);
             SpiderAttack = new SpiderAttack(this, 
-                stateMachine, 
-                attackController,
-                targetDetector,
-                movementController,
-                animator);
+                stateMachine);
             SpiderDeath = new SpiderDeath(this, stateMachine);
             
             SpiderKnockout =  new SpiderKnockout(this, stateMachine);
@@ -73,18 +65,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public void SelfDestroy()
         {
-            RpcPlayParticles();
+            // RpcPlayParticles();
         }
         
-        [ClientRpc]
-        private void RpcPlayParticles()
-        {
-            particles.Play();
-            animator.transform.DOScale(0f, 0.5f)
-                .OnComplete((() =>
-                {
-                    Destroy(gameObject);
-                }));
-        }
+        // [ClientRpc]
+        // private void RpcPlayParticles()
+        // {
+        //     particles.Play();
+        //     animator.transform.DOScale(0f, 0.5f)
+        //         .OnComplete((() =>
+        //         {
+        //             Destroy(gameObject);
+        //         }));
+        // }
     }
 }

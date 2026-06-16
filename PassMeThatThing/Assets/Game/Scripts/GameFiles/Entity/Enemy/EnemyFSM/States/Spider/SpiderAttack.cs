@@ -1,4 +1,5 @@
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror.BouncyCastle.Asn1.X509;
 using UnityEngine;
 using Time = UnityEngine.Time;
@@ -15,21 +16,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController _movementController;
         
-        private Animator _animator;
+        private EnemyView _enemyView;
         
         public SpiderAttack(EnemySpider enemy, 
-            EnemyStateMachine stateMachine, 
-            EnemyAttackController attackController,
-            TargetDetector targetDetector,
-            EnemyMovementController  movementController,
-            Animator animator) 
+            EnemyStateMachine stateMachine) 
                 : base(enemy, stateMachine)
         {
-            _attackController = attackController;
-            _targetDetector = targetDetector;
-            _movementController = movementController;
+            _attackController = enemy.AttackController;
+            _targetDetector = enemy.TargetDetector;
+            _movementController = enemy.MovementController;
             
-            _animator = animator;
+            _enemyView = enemy.EnemyView;
             _spider = enemy;
             
         }

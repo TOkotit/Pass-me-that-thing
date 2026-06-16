@@ -2,6 +2,7 @@ using DG.Tweening;
 using DI;
 using Entity;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
+using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
@@ -16,20 +17,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected TargetDetector targetDetector;
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
-        
-        [SerializeField] protected Animator animator;
-        [SerializeField] protected ParticleSystem particles;
 
+        [SerializeField] protected EnemyView enemyView;
         
         [Inject] private DamagableRegistry _damagableRegistry;
         
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
         
-        public override DamagableModel DamagableModel
-        {
-            get => EnemyModel;
-        }
+        public override DamagableModel DamagableModel => EnemyModel;
+
+        public TargetDetector TargetDetector => targetDetector;
+        public EnemyMovementController MovementController => movementController;
+        public EnemyAttackController AttackController => attackController;
+        public EnemyView EnemyView => enemyView;
 
         public override void OnDeath()
         {

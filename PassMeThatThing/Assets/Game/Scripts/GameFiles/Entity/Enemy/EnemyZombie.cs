@@ -37,19 +37,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.OnStartServer();
             
             ZombieWalk = new ZombieWalk(this, 
-                stateMachine, 
-                targetDetector, 
-                movementController);
+                stateMachine);
             ZombieChase = new ZombieChase(this, 
-                stateMachine, 
-                targetDetector, 
-                movementController);
+                stateMachine);
             ZombieAttack = new ZombieAttack(this, 
-                stateMachine, 
-                attackController,
-                targetDetector,
-                movementController,
-                animator);
+                stateMachine);
             ZombieDeath = new ZombieDeath(this, stateMachine);
             
             ZombieKnockout =  new ZombieKnockout(this, stateMachine);
@@ -76,18 +68,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public void SelfDestroy()
         {
-            RpcPlayParticles();
+            // RpcPlayParticles();
         }
         
-        [ClientRpc]
-        private void RpcPlayParticles()
-        {
-            particles.Play();
-            animator.transform.DOScale(0f, 0.5f)
-                .OnComplete((() =>
-                {
-                    Destroy(gameObject);
-                }));
-        }
+        // [ClientRpc]
+        // private void RpcPlayParticles()
+        // {
+        //     particles.Play();
+        //     animator.transform.DOScale(0f, 0.5f)
+        //         .OnComplete((() =>
+        //         {
+        //             Destroy(gameObject);
+        //         }));
+        // }
     }
 }

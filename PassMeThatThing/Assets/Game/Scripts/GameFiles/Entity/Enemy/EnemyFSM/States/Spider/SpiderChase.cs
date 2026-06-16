@@ -12,14 +12,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController  _movementController;
         
-        public SpiderChase(EnemySpider enemy, EnemyStateMachine stateMachine, 
-            TargetDetector targetDetector,
-            EnemyMovementController  movementController) 
+        public SpiderChase(EnemySpider enemy, EnemyStateMachine stateMachine) 
             : base(enemy, stateMachine)
         {
             _spider = enemy;
-            _targetDetector = targetDetector;
-            _movementController = movementController;
+            _targetDetector = enemy.TargetDetector;
+            _movementController = enemy.MovementController;
         }
 
         public override void Enter()
