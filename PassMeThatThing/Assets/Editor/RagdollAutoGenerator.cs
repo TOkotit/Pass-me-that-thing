@@ -1,31 +1,65 @@
-// RagdollDirectGeneratorFixed.cs
+// RagdollGeneratorWindow.cs
 // Place inside an Editor folder.
-// Select a model with SkinnedMeshRenderer → Tools → Generate Direct Ragdoll (fixed).
+// Menu: Tools → Generate Direct Ragdoll
 
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 
-public class RagdollDirectGeneratorFixed : EditorWindow
+public class RagdollGeneratorWindow : EditorWindow
 {
-    private const float BOUNDS_SHRINK = 0.85f;
+    private GameObject target;
+    private Transform rootBone;
+    private enum ColliderType { Box, Capsule }
+    private ColliderType colliderType = ColliderType.Capsule;
+    private float angularSpring = 1000f;
+    private float angularDamper = 100f;
+    private float angularMaxForce = 0f; // 0 → unlimited (float.MaxValue), >0 → limited
+
     private const string RAGDOLL_LAYER_NAME = "Ragdoll";
 
-    [MenuItem("Tools/Generate Direct Ragdoll (fixed)")]
-    private static void GenerateDirectRagdollFixed()
+    [MenuItem("Tools/Generate Direct Ragdoll")]
+    public static void ShowWindow()
     {
-        var selected = Selection.activeGameObject;
-        if (!selected)
+        GetWindow<RagdollGeneratorWindow>("Ragdoll Generator");
+    }
+
+    private void OnGUI()
+    {
+        GUILayout.Label("Ragdoll Generator", EditorStyles.boldLabel);
+
+        target = (GameObject)EditorGUILayout.ObjectField("Target", target, typeof(GameObject), true);
+        rootBone = (Transform)EditorGUILayout.ObjectField("Root Bone (optional)", rootBone, typeof(Transform), true);
+
+        GUILayout.Space(5);
+        colliderType = (ColliderType)EditorGUILayout.EnumPopup("Collider Type", colliderType);
+
+        GUILayout.Space(5);
+        GUILayout.Label("Joint Drive Settings", EditorStyles.boldLabel);
+        angularSpring = EditorGUILayout.FloatField("Spring", angularSpring);
+        angularDamper = EditorGUILayout.FloatField("Damper", angularDamper);
+        angularMaxForce = EditorGUILayout.FloatField("Max Force (0 = unlimited)", angularMaxForce);
+
+        GUILayout.Space(10);
+        GUI.enabled = target != null;
+        if (GUILayout.Button("Generate Ragdoll"))
+            Generate();
+        GUI.enabled = true;
+    }
+
+    private void Generate()
+    {
+        if (!target)
         {
-            Debug.LogError("No GameObject selected.");
+            Debug.LogError("No target GameObject assigned.");
             return;
         }
 
-        var smr = selected.GetComponentInChildren<SkinnedMeshRenderer>();
+        var smr = target.GetComponentInChildren<SkinnedMeshRenderer>();
         if (!smr)
         {
-            Debug.LogError("No SkinnedMeshRenderer found on selected object.");
+            Debug.LogError("No SkinnedMeshRenderer found on target.");
             return;
         }
 
@@ -35,9 +69,9 @@ public class RagdollDirectGeneratorFixed : EditorWindow
             return;
         }
 
-        EnsureRagdollLayerAndDisableSelfCollisions();
+        EnsureRagdollLayer();
 
-        var anim = selected.GetComponentInChildren<Animator>();
+        var anim = target.GetComponentInChildren<Animator>();
         if (anim)
         {
             Undo.RecordObject(anim, "Disable Animator");
@@ -45,10 +79,10 @@ public class RagdollDirectGeneratorFixed : EditorWindow
             Debug.Log("Animator disabled.");
         }
 
-        GenerateFixedRagdoll(smr);
+        BuildRagdoll(smr);
     }
 
-    private static void GenerateFixedRagdoll(SkinnedMeshRenderer smr)
+    private void BuildRagdoll(SkinnedMeshRenderer smr)
     {
         var mesh = smr.sharedMesh;
         var bones = smr.bones;
@@ -58,15 +92,15 @@ public class RagdollDirectGeneratorFixed : EditorWindow
             return;
         }
 
+        // Save original bone poses
         var originalPoses = new Dictionary<Transform, Matrix4x4>();
         foreach (var bone in bones)
-        {
             if (bone)
                 originalPoses[bone] = Matrix4x4.TRS(bone.localPosition, bone.localRotation, bone.localScale);
-        }
 
         SetBonesToBindPose(smr);
 
+        // Collect vertices per bone (in local space)
         var boneVertices = new Dictionary<Transform, List<Vector3>>();
         for (var i = 0; i < bones.Length; i++)
             if (bones[i])
@@ -110,28 +144,66 @@ public class RagdollDirectGeneratorFixed : EditorWindow
         Undo.IncrementCurrentGroup();
         var undoGroup = Undo.GetCurrentGroup();
 
+        // Determine root bone
         var boneSet = new HashSet<Transform>(bones);
-        var rootBone = bones.FirstOrDefault(b => b && (!b.parent || !boneSet.Contains(b.parent)));
-        if (!rootBone) rootBone = bones[0];
+        var actualRoot = rootBone;
+        if (!actualRoot)
+            actualRoot = bones.FirstOrDefault(b => b && (!b.parent || !boneSet.Contains(b.parent)));
+        if (!actualRoot)
+            actualRoot = bones[0];
 
         var boneToRigidbody = new Dictionary<Transform, Rigidbody>();
+
+        // Build drive settings: 0 maxForce → unlimited (float.MaxValue)
+        var drive = new JointDrive
+        {
+            positionSpring = angularSpring,
+            positionDamper = angularDamper,
+            maximumForce = angularMaxForce > 0 ? angularMaxForce : float.MaxValue
+        };
 
         foreach (var bone in bones)
         {
             if (!bone) continue;
             if (!boneVertices.TryGetValue(bone, out var vertsLocal) || vertsLocal.Count == 0) continue;
 
-            var bounds = new Bounds(vertsLocal[0], Vector3.zero);
-            foreach (var p in vertsLocal)
-                bounds.Encapsulate(p);
-            var shrink = bounds.size * (1f - BOUNDS_SHRINK) * 0.5f;
-            bounds.Expand(-shrink.magnitude);
+            // Compute AABB in local space
+            var localBounds = new Bounds(vertsLocal[0], Vector3.zero);
+            foreach (var v in vertsLocal)
+                localBounds.Encapsulate(v);
+            // Slight shrink to avoid overlaps
+            localBounds.Expand(-localBounds.size.magnitude * 0.075f);
 
             bone.gameObject.layer = ragdollLayer;
 
-            var box = Undo.AddComponent<BoxCollider>(bone.gameObject);
-            box.center = bounds.center;
-            box.size = bounds.size;
+            if (colliderType == ColliderType.Capsule)
+            {
+                var capsule = Undo.AddComponent<CapsuleCollider>(bone.gameObject);
+
+                // Find the longest axis of the AABB
+                Vector3 size = localBounds.size;
+                float maxSize = Mathf.Max(size.x, size.y, size.z);
+                int longestAxis = 0;
+                if (size.y == maxSize) longestAxis = 1;
+                else if (size.z == maxSize) longestAxis = 2;
+
+                float height = maxSize;
+
+                float other1 = size[(longestAxis + 1) % 3];
+                float other2 = size[(longestAxis + 2) % 3];
+                float radius = Mathf.Max(other1, other2) * 0.5f;
+
+                capsule.radius = radius;
+                capsule.height = height;
+                capsule.center = localBounds.center;
+                capsule.direction = longestAxis; // 0 = X, 1 = Y, 2 = Z
+            }
+            else
+            {
+                var box = Undo.AddComponent<BoxCollider>(bone.gameObject);
+                box.center = localBounds.center;
+                box.size = localBounds.size;
+            }
 
             var rb = Undo.AddComponent<Rigidbody>(bone.gameObject);
             rb.mass = 1f;
@@ -139,7 +211,8 @@ public class RagdollDirectGeneratorFixed : EditorWindow
             rb.isKinematic = false;
             boneToRigidbody[bone] = rb;
 
-            if (bone != rootBone && bone.parent && boneToRigidbody.TryGetValue(bone.parent, out var parentRb))
+            // ConfigurableJoint for all bones except root
+            if (bone != actualRoot && bone.parent && boneToRigidbody.TryGetValue(bone.parent, out var parentRb))
             {
                 var joint = Undo.AddComponent<ConfigurableJoint>(bone.gameObject);
                 joint.connectedBody = parentRb;
@@ -167,8 +240,8 @@ public class RagdollDirectGeneratorFixed : EditorWindow
                 joint.angularYLimit = new SoftJointLimit { limit = 30f };
                 joint.angularZLimit = new SoftJointLimit { limit = 30f };
 
-                joint.angularXDrive = new JointDrive { positionSpring = 0, positionDamper = 0, maximumForce = 0 };
-                joint.angularYZDrive = new JointDrive { positionSpring = 0, positionDamper = 0, maximumForce = 0 };
+                joint.angularXDrive = drive;
+                joint.angularYZDrive = drive;
 
                 joint.projectionMode = JointProjectionMode.PositionAndRotation;
                 joint.projectionDistance = 0.1f;
@@ -176,6 +249,7 @@ public class RagdollDirectGeneratorFixed : EditorWindow
             }
         }
 
+        // Restore original bone poses
         foreach (var kv in originalPoses)
         {
             var bone = kv.Key;
@@ -204,7 +278,7 @@ public class RagdollDirectGeneratorFixed : EditorWindow
         }
     }
 
-    private static void EnsureRagdollLayerAndDisableSelfCollisions()
+    private static void EnsureRagdollLayer()
     {
         var tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         var layersProp = tagManager.FindProperty("layers");
@@ -243,8 +317,10 @@ public class RagdollDirectGeneratorFixed : EditorWindow
         }
 
         var layerIndex = LayerMask.NameToLayer(RAGDOLL_LAYER_NAME);
-        if (layerIndex < 0) return;
-        Physics.IgnoreLayerCollision(layerIndex, layerIndex, true);
-        Debug.Log($"Self-collisions disabled for layer '{RAGDOLL_LAYER_NAME}'.");
+        if (layerIndex >= 0)
+        {
+            Physics.IgnoreLayerCollision(layerIndex, layerIndex, true);
+            Debug.Log($"Self-collisions disabled for layer '{RAGDOLL_LAYER_NAME}'.");
+        }
     }
 }
