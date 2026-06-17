@@ -12,14 +12,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController  _movementController;
         
-        public ZombieChase(EnemyZombie enemy, EnemyStateMachine stateMachine, 
-            TargetDetector targetDetector,
-            EnemyMovementController  movementController) 
+        public ZombieChase(EnemyZombie enemy, EnemyStateMachine stateMachine) 
             : base(enemy, stateMachine)
         {
             _zombie = enemy;
-            _targetDetector = targetDetector;
-            _movementController = movementController;
+            _targetDetector = enemy.TargetDetector;
+            _movementController = enemy.MovementController;
         }
 
         public override void Enter()

@@ -18,7 +18,7 @@ namespace Game.Scripts.GameFiles.Events
             var terminalGameObject = terminal.gameObject;
             if (!_eventTerminals.ContainsKey(terminalGameObject))
                 _eventTerminals.Add(terminalGameObject, terminal); 
-            Debug.Log($"<color=blue> [EvTermsReg]{terminal.gameObject.name} has been registered");
+            Debug.Log($"<color=orange> [EvTermsReg]{terminal.gameObject.name} has been registered");
         }
         
         public void Unregister(EventTerminal terminal)

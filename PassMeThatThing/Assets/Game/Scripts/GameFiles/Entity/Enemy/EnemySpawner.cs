@@ -21,8 +21,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             var enemyInstance = Instantiate(enemyData.WorldPrefab, pos, Quaternion.identity);
             NetworkServer.Spawn(enemyInstance);
-            // var enemy = enemyInstance.GetComponent<Enemy>();
-            // enemy _____ += OnEnemyDied;
+            var enemy = enemyInstance.GetComponent<Enemy>();
+            enemy.DamagableModel.OnDeath += OnEnemyDied;
             _enemyCount++;
             Debug.Log($"Spawned enemy {enemyData.Id}");
         }

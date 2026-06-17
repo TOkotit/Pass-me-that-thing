@@ -1,4 +1,6 @@
+using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
+using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
@@ -21,6 +23,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
         public ZombieDeath ZombieDeath { get; private set; }
+        
+        public ZombieKnockout ZombieKnockout { get; private set; }
 
         [Inject]
         private void Construct(EnemyDatabase enemyDatabase)
@@ -33,22 +37,23 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.OnStartServer();
             
             ZombieWalk = new ZombieWalk(this, 
-                stateMachine, 
-                targetDetector, 
-                movementController);
+                stateMachine);
             ZombieChase = new ZombieChase(this, 
-                stateMachine, 
-                targetDetector, 
-                movementController);
+                stateMachine);
             ZombieAttack = new ZombieAttack(this, 
-                stateMachine, 
-                attackController,
-                targetDetector,
-                movementController,
-                animator);
+                stateMachine);
             ZombieDeath = new ZombieDeath(this, stateMachine);
             
+            ZombieKnockout =  new ZombieKnockout(this, stateMachine);
+            
             stateMachine.Initialize(ZombieWalk);
+        }
+
+        public override void OnDeath()
+        {
+            base.OnDeath();
+            stateMachine.ChangeState(ZombieDeath);
+            
         }
         
         private new void Update()
@@ -63,7 +68,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public void SelfDestroy()
         {
-            Destroy(gameObject);
+            // RpcPlayParticles();
         }
+        
+        // [ClientRpc]
+        // private void RpcPlayParticles()
+        // {
+        //     particles.Play();
+        //     animator.transform.DOScale(0f, 0.5f)
+        //         .OnComplete((() =>
+        //         {
+        //             Destroy(gameObject);
+        //         }));
+        // }
     }
 }

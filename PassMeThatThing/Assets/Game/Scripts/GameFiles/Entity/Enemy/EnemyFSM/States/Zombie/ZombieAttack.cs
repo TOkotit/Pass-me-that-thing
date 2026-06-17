@@ -1,4 +1,5 @@
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror.BouncyCastle.Asn1.X509;
 using UnityEngine;
 using Time = UnityEngine.Time;
@@ -15,23 +16,19 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController _movementController;
         
-        private Animator _animator;
+        private EnemyView _enemyView;
         
         public ZombieAttack(EnemyZombie enemy, 
-            EnemyStateMachine stateMachine, 
-            EnemyAttackController attackController,
-            TargetDetector targetDetector,
-            EnemyMovementController  movementController,
-            Animator animator) 
+            EnemyStateMachine stateMachine) 
                 : base(enemy, stateMachine)
         {
-            _attackController = attackController;
-            _targetDetector = targetDetector;
-            _movementController = movementController;
-            
-            _animator = animator;
             _zombie = enemy;
             
+            _attackController = enemy.AttackController;
+            _targetDetector = enemy.TargetDetector;
+            _movementController = enemy.MovementController;
+            
+            _enemyView = enemy.EnemyView;
         }
 
         public override void Enter()
@@ -64,16 +61,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             {
                 _movementController.RotateTo(_targetDetector.DetectedTarget.position);
                 _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _zombie.Damage);
+                
                 var rand =  new System.Random();
-                if (rand.Next(0, 2) == 0)
-                {
-                    _animator.SetTrigger("attack1");
-                }
-                else
-                {
-                    
-                    _animator.SetTrigger("attack2");
-                }
+                // if (rand.Next(0, 2) == 0)
+                // {
+                //     _animator.SetTrigger("attack1");
+                // }
+                // else
+                // {
+                //     _animator.SetTrigger("attack2");
+                // }
+                
                 _zombie.elapsedAttack = 0f;
             }
         }

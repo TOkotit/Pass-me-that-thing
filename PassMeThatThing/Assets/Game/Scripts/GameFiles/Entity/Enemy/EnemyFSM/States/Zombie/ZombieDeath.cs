@@ -8,8 +8,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private EnemyZombie _zombie;
         
-        public ZombieDeath(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+        public ZombieDeath(EnemyZombie enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
         {
+            _zombie = enemy;
         }
 
         public override void Enter()
