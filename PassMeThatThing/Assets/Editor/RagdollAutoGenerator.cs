@@ -15,7 +15,7 @@ public class RagdollGeneratorWindow : EditorWindow
     private ColliderType colliderType = ColliderType.Capsule;
     private float angularSpring = 1000f;
     private float angularDamper = 100f;
-    private float angularMaxForce = 0f; // 0 → unlimited (float.MaxValue), >0 → limited
+    private float angularMaxForce = 0f; // 0 → unlimited, >0 → limited
 
     private const string RAGDOLL_LAYER_NAME = "Ragdoll";
 
@@ -144,17 +144,69 @@ public class RagdollGeneratorWindow : EditorWindow
         Undo.IncrementCurrentGroup();
         var undoGroup = Undo.GetCurrentGroup();
 
-        // Determine root bone
+        // Determine the actual physical root
         var boneSet = new HashSet<Transform>(bones);
-        var actualRoot = rootBone;
-        if (!actualRoot)
+        Transform actualRoot;
+
+        if (rootBone)
+        {
+            // Validate: rootBone must be in the skeleton
+            if (!boneSet.Contains(rootBone))
+            {
+                Debug.LogWarning($"Specified root '{rootBone.name}' is not in the skeleton. Auto-detecting.");
+                actualRoot = bones.FirstOrDefault(b => b && (!b.parent || !boneSet.Contains(b.parent)));
+            }
+            else
+            {
+                actualRoot = rootBone;
+            }
+        }
+        else
+        {
             actualRoot = bones.FirstOrDefault(b => b && (!b.parent || !boneSet.Contains(b.parent)));
+        }
+
         if (!actualRoot)
             actualRoot = bones[0];
 
+        Debug.Log($"Physical root set to: {actualRoot.name}");
+
+        // Build a map of physical parents (who connects to whom via a joint)
+        var physicalParent = new Dictionary<Transform, Transform>();
+
+        // Handle ancestors of the root (bones above the root in hierarchy)
+        var ancestorsChain = new List<Transform>();
+        var current = actualRoot.parent;
+        while (current && boneSet.Contains(current))
+        {
+            ancestorsChain.Insert(0, current); // collect from topmost to the one just above root
+            current = current.parent;
+        }
+
+        // Set physical parents for ancestors (reverse chain towards root)
+        for (int i = 0; i < ancestorsChain.Count; i++)
+        {
+            var ancestor = ancestorsChain[i];
+            // The next one in the chain, or actualRoot if it's the last
+            var parentInPhysics = (i < ancestorsChain.Count - 1) ? ancestorsChain[i + 1] : actualRoot;
+            physicalParent[ancestor] = parentInPhysics;
+        }
+
+        // For all other bones, physical parent is the actual transform.parent (if it's in the skeleton)
+        foreach (var bone in bones)
+        {
+            if (!bone || bone == actualRoot) continue;
+            if (physicalParent.ContainsKey(bone)) continue; // already set for ancestors
+
+            if (bone.parent && boneSet.Contains(bone.parent))
+                physicalParent[bone] = bone.parent;
+            // else no physical parent (will be free)
+        }
+
+        // First pass: create Rigidbody and Collider for every bone
         var boneToRigidbody = new Dictionary<Transform, Rigidbody>();
 
-        // Build drive settings: 0 maxForce → unlimited (float.MaxValue)
+        // Drive settings
         var drive = new JointDrive
         {
             positionSpring = angularSpring,
@@ -171,7 +223,6 @@ public class RagdollGeneratorWindow : EditorWindow
             var localBounds = new Bounds(vertsLocal[0], Vector3.zero);
             foreach (var v in vertsLocal)
                 localBounds.Encapsulate(v);
-            // Slight shrink to avoid overlaps
             localBounds.Expand(-localBounds.size.magnitude * 0.075f);
 
             bone.gameObject.layer = ragdollLayer;
@@ -179,8 +230,6 @@ public class RagdollGeneratorWindow : EditorWindow
             if (colliderType == ColliderType.Capsule)
             {
                 var capsule = Undo.AddComponent<CapsuleCollider>(bone.gameObject);
-
-                // Find the longest axis of the AABB
                 Vector3 size = localBounds.size;
                 float maxSize = Mathf.Max(size.x, size.y, size.z);
                 int longestAxis = 0;
@@ -188,7 +237,6 @@ public class RagdollGeneratorWindow : EditorWindow
                 else if (size.z == maxSize) longestAxis = 2;
 
                 float height = maxSize;
-
                 float other1 = size[(longestAxis + 1) % 3];
                 float other2 = size[(longestAxis + 2) % 3];
                 float radius = Mathf.Max(other1, other2) * 0.5f;
@@ -196,7 +244,7 @@ public class RagdollGeneratorWindow : EditorWindow
                 capsule.radius = radius;
                 capsule.height = height;
                 capsule.center = localBounds.center;
-                capsule.direction = longestAxis; // 0 = X, 1 = Y, 2 = Z
+                capsule.direction = longestAxis;
             }
             else
             {
@@ -210,43 +258,47 @@ public class RagdollGeneratorWindow : EditorWindow
             rb.useGravity = true;
             rb.isKinematic = false;
             boneToRigidbody[bone] = rb;
+        }
 
-            // ConfigurableJoint for all bones except root
-            if (bone != actualRoot && bone.parent && boneToRigidbody.TryGetValue(bone.parent, out var parentRb))
-            {
-                var joint = Undo.AddComponent<ConfigurableJoint>(bone.gameObject);
-                joint.connectedBody = parentRb;
+        // Second pass: create ConfigurableJoints using physicalParent map
+        foreach (var bone in bones)
+        {
+            if (!bone || bone == actualRoot) continue;
+            if (!physicalParent.TryGetValue(bone, out var physParent)) continue;
+            if (!boneToRigidbody.TryGetValue(physParent, out var parentRb)) continue;
 
-                joint.anchor = Vector3.zero;
-                joint.connectedAnchor = bone.parent.InverseTransformPoint(bone.position);
+            var joint = Undo.AddComponent<ConfigurableJoint>(bone.gameObject);
+            joint.connectedBody = parentRb;
 
-                var worldAxis = (bone.position - bone.parent.position).normalized;
-                joint.axis = bone.InverseTransformDirection(worldAxis);
+            joint.anchor = Vector3.zero;
+            joint.connectedAnchor = physParent.InverseTransformPoint(bone.position);
 
-                var boneUp = bone.up;
-                Vector3.OrthoNormalize(ref worldAxis, ref boneUp);
-                joint.secondaryAxis = bone.InverseTransformDirection(boneUp);
+            var worldAxis = (bone.position - physParent.position).normalized;
+            joint.axis = bone.InverseTransformDirection(worldAxis);
 
-                joint.xMotion = ConfigurableJointMotion.Locked;
-                joint.yMotion = ConfigurableJointMotion.Locked;
-                joint.zMotion = ConfigurableJointMotion.Locked;
+            var boneUp = bone.up;
+            Vector3.OrthoNormalize(ref worldAxis, ref boneUp);
+            joint.secondaryAxis = bone.InverseTransformDirection(boneUp);
 
-                joint.angularXMotion = ConfigurableJointMotion.Limited;
-                joint.angularYMotion = ConfigurableJointMotion.Limited;
-                joint.angularZMotion = ConfigurableJointMotion.Limited;
+            joint.xMotion = ConfigurableJointMotion.Locked;
+            joint.yMotion = ConfigurableJointMotion.Locked;
+            joint.zMotion = ConfigurableJointMotion.Locked;
 
-                joint.lowAngularXLimit = new SoftJointLimit { limit = 20f };
-                joint.highAngularXLimit = new SoftJointLimit { limit = 20f };
-                joint.angularYLimit = new SoftJointLimit { limit = 30f };
-                joint.angularZLimit = new SoftJointLimit { limit = 30f };
+            joint.angularXMotion = ConfigurableJointMotion.Limited;
+            joint.angularYMotion = ConfigurableJointMotion.Limited;
+            joint.angularZMotion = ConfigurableJointMotion.Limited;
 
-                joint.angularXDrive = drive;
-                joint.angularYZDrive = drive;
+            joint.lowAngularXLimit = new SoftJointLimit { limit = 20f };
+            joint.highAngularXLimit = new SoftJointLimit { limit = 20f };
+            joint.angularYLimit = new SoftJointLimit { limit = 30f };
+            joint.angularZLimit = new SoftJointLimit { limit = 30f };
 
-                joint.projectionMode = JointProjectionMode.PositionAndRotation;
-                joint.projectionDistance = 0.1f;
-                joint.projectionAngle = 10f;
-            }
+            joint.angularXDrive = drive;
+            joint.angularYZDrive = drive;
+
+            joint.projectionMode = JointProjectionMode.PositionAndRotation;
+            joint.projectionDistance = 0.1f;
+            joint.projectionAngle = 10f;
         }
 
         // Restore original bone poses
