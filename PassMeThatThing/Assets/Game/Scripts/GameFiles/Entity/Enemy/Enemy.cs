@@ -18,6 +18,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
 
+        [SerializeField] protected EnemyRagdollHandler  ragdollHandler;
         [SerializeField] protected EnemyView enemyView;
         
         [Inject] private DamagableRegistry _damagableRegistry;
@@ -46,6 +47,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             if (EnemyModel == null)
                 EnemyModel = new EnemyModel();
+        }
+
+        public void EnableRagdoll()
+        {
+            ragdollHandler.EnableRagdoll();
+            enemyView.DisableAnimator();
+        }
+        
+        public void DisableRagdoll()
+        {
+            ragdollHandler.DisableRagdoll();
+            enemyView.EnableAnimator();
         }
 
         #region ServerLogic

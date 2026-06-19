@@ -8,5 +8,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
         [SerializeField] protected NetworkAnimator animator;
         [SerializeField] protected ParticleSystem particles;
         
+        
+        public void EnableAnimator() => animator.enabled = true;
+        public void DisableAnimator() => animator.enabled = false;
+        
+        public void PlayParticles() => particles.Play();
     }
 }
