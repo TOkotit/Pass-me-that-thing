@@ -15,9 +15,7 @@ namespace DI
     /// </summary>
     public class RootScope : LifetimeScope
     {
-        
         [SerializeField] private GameObject networkManager;
-        
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("RootScope.Configure called");
@@ -30,7 +28,6 @@ namespace DI
             DontDestroyOnLoad(uiRoot.gameObject);
             var uiRootView = uiRoot.GetComponent<UIRootView>();
             builder.RegisterInstance<UIRootView>(uiRootView);
-            
             
             var networkManagerGo = Instantiate(networkManager);
             DontDestroyOnLoad(networkManagerGo);
@@ -62,5 +59,7 @@ namespace DI
                 builder.RegisterEntryPoint<Root.EntryPoint>(Lifetime.Singleton);
             }
         }
+        
+        
     }
 }
