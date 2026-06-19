@@ -16,7 +16,6 @@ namespace MainCharacter_old
         [SerializeField] private bool lockCursor = true;
         [SerializeField] private float tiltMultiplier = 0.2f;
         [SerializeField] BodyVerticalAlign bodyVerticalAlign;
-        [SerializeField] private Transform head;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -79,9 +78,6 @@ namespace MainCharacter_old
                 return;
             
             ReadRotation();
-            head.transform.rotation = Quaternion.Euler(head.transform.rotation.eulerAngles.x,
-                transform.eulerAngles.y,
-                head.transform.rotation.eulerAngles.z);
         }
 
         private void ReadRotation()

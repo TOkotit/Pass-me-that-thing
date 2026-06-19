@@ -73,9 +73,9 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void Rotate(Quaternion rotation)
     {
-        if (!isCharacterCanMove)
+        /*if (!isCharacterCanMove)
             return;
-        transform.rotation = rotation;
+        root.rotation = rotation;*/
     }
     
     public void Jump()
@@ -105,7 +105,6 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void MoveInternal()
     {
-        root.AddForce(Vector3.up * gravity);
         
         if (!isCharacterCanMove)
             return;
