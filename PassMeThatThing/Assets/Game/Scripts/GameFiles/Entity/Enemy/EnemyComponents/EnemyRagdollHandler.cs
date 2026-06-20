@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -11,6 +12,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void Init()
         {
             _rigidbodies = new List<Rigidbody>(GetComponentsInChildren<Rigidbody>());
+        }
+        
+        public void Hit(Vector3 force, Vector3 hitPosition)
+        {
+            Rigidbody injuredRigidbody = _rigidbodies
+                .OrderBy(rigidbody => Vector3.Distance(rigidbody.position, hitPosition))
+                .First();
+
+            injuredRigidbody.AddForceAtPosition(force, hitPosition, ForceMode.Impulse);
         }
 
         public void EnableRagdoll()

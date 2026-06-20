@@ -26,7 +26,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _targetDetector = enemy.TargetDetector;
             _movementController = enemy.MovementController;
             
-            _enemyView = enemy.EnemyView;
+            // _enemyView = enemy.EnemyView;
             _spider = enemy;
             
         }

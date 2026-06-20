@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
+using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,6 +10,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemyZombie : Enemy
     {
+        [SerializeField] protected ZombieView enemyView;
+        
         private EnemyData _zombieData;
         
         public float elapsedAttack;
@@ -18,6 +21,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         public float Speed => _zombieData.Speed;
         public float Damage => _zombieData.Damage;
+        
+        
+        public EnemyView EnemyView => enemyView;
         
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
@@ -48,6 +54,28 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             stateMachine.Initialize(ZombieWalk);
             
+            DisableRagdoll();
+        }
+        
+        public void EnableRagdoll()
+        {
+            movementController.DisableNavAgent();
+            
+            enemyView.DisableAnimator();
+            ragdollHandler.EnableRagdoll();
+        }
+        
+        public void DisableRagdoll()
+        {
+            movementController.EnableNavAgent();
+            
+            ragdollHandler.DisableRagdoll();
+            enemyView.EnableAnimator();
+        }
+
+        public void StandUp()
+        {
+            enemyView.PlayStandingUp();
             DisableRagdoll();
         }
 

@@ -80,6 +80,11 @@ MonoBehaviour:
   animator: {fileID: 5357255404907162795}
   netAnimator: {fileID: 977046466881952610}
   particles: {fileID: 136479865338665025}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _parent: {fileID: 227837763217859650}
+  _hipsBone: {fileID: 6055661159305638082}
 --- !u!1 &8090700475096468142
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,6 +356,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 9662003f68327ce44bbc468054cb5ec0, type: 2}
+    - target: {fileID: 4092925731618836473, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7306811379753668409, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
       propertyPath: m_Name
       value: zombie
@@ -449,6 +458,11 @@ Transform:
 --- !u!95 &5357255404907162795 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 4092925731618836473, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
+  m_PrefabInstance: {fileID: 8256282482685125458}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6055661159305638082 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2782717221757047696, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
   m_PrefabInstance: {fileID: 8256282482685125458}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8961889807683087475

@@ -19,7 +19,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected EnemyAttackController attackController;
 
         [SerializeField] protected EnemyRagdollHandler  ragdollHandler;
-        [SerializeField] protected EnemyView enemyView;
+        
         
         [Inject] private DamagableRegistry _damagableRegistry;
         
@@ -31,7 +31,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public TargetDetector TargetDetector => targetDetector;
         public EnemyMovementController MovementController => movementController;
         public EnemyAttackController AttackController => attackController;
-        public EnemyView EnemyView => enemyView;
+        
 
         public override void OnDeath()
         {
@@ -49,21 +49,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 EnemyModel = new EnemyModel();
         }
 
-        public void EnableRagdoll()
-        {
-            movementController.DisableNavAgent();
-            
-            enemyView.DisableAnimator();
-            ragdollHandler.EnableRagdoll();
-        }
-        
-        public void DisableRagdoll()
-        {
-            movementController.EnableNavAgent();
-            
-            ragdollHandler.DisableRagdoll();
-            enemyView.EnableAnimator();
-        }
 
         #region ServerLogic
         public override void OnStartServer()

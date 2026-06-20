@@ -1,4 +1,6 @@
+using System.Collections;
 using Game.Scripts.Enums;
+using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
@@ -18,6 +20,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             base.Enter();
 
             _zombie.EnableRagdoll();
+            _zombie.StartCoroutine(Wait());
+        }
+
+        private IEnumerator Wait()
+        {
+            for (var i = 0; i < 5; i++)
+            {
+                yield return new WaitForSeconds(1);
+            }
+            StateMachine.ChangeState(_zombie.ZombieWalk);
+            
         }
 
         public override void LogicUpdate()
@@ -27,13 +40,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-
+            
         }
         
         public override void Exit()
         {
             base.Exit();
-            _zombie.DisableRagdoll();
+            _zombie.StandUp();
         }
         
     }
