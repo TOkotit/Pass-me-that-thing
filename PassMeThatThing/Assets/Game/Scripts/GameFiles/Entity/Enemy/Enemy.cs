@@ -51,12 +51,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public void EnableRagdoll()
         {
-            ragdollHandler.EnableRagdoll();
+            movementController.DisableNavAgent();
+            
             enemyView.DisableAnimator();
+            ragdollHandler.EnableRagdoll();
         }
         
         public void DisableRagdoll()
         {
+            movementController.EnableNavAgent();
+            
             ragdollHandler.DisableRagdoll();
             enemyView.EnableAnimator();
         }

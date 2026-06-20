@@ -47,6 +47,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ZombieKnockout =  new ZombieKnockout(this, stateMachine);
             
             stateMachine.Initialize(ZombieWalk);
+            
+            DisableRagdoll();
         }
 
         public override void OnDeath()

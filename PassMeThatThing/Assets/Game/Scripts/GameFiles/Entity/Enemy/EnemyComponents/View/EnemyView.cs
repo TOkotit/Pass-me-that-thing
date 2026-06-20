@@ -5,7 +5,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 {
     public class EnemyView : MonoBehaviour
     {
-        [SerializeField] protected NetworkAnimator animator;
+        [SerializeField] protected Animator animator;
+        [SerializeField] protected NetworkAnimator netAnimator;
         [SerializeField] protected ParticleSystem particles;
         
         

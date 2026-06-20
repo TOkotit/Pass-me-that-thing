@@ -7,30 +7,41 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
     public class EnemyMovementController : NetworkBehaviour
     {
         [SerializeField] private NavMeshAgent navMeshAgent;
+
+        [Header("Движение через Rigidbody Иначе через navAgent")]
+        [SerializeField] private bool isMovingRB;
+        
         [SerializeField] private Rigidbody rb;
         
-        [Header("Настройки движения")]
         private Transform _target;
-        private float _moveForce = 15f;
-        private float _maxSpeed = 5f;
+        private float _moveForce;
+        private float _maxSpeed;
         private float _rotationSpeed = 10f;
 
         private void Start()
         {
-            navMeshAgent.updatePosition = false;
-            navMeshAgent.updateRotation = false;
-            
-            navMeshAgent.updateUpAxis = false;
+            if (isMovingRB)
+            {
+                navMeshAgent.updatePosition = false;
+                navMeshAgent.updateRotation = false;
+                navMeshAgent.updateUpAxis = false;
+            }
         }
 
         private void Update()
         {
-            navMeshAgent.nextPosition = rb.position;
+            if (isMovingRB)
+            {
+                navMeshAgent.nextPosition = rb.position;
+            }
         }
 
         private void FixedUpdate()
         {
-            MoveWithPhysics();
+            if (isMovingRB)
+            {
+                MoveWithPhysics();
+            }
         }
 
         private void MoveWithPhysics()
@@ -72,11 +83,28 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             navMeshAgent.isStopped = true;
         }
 
+        public void EnableNavAgent()
+        {
+            navMeshAgent.enabled = true;
+        }
+        
+        public void DisableNavAgent()
+        {
+            navMeshAgent.enabled = false;
+        }
+
         [Server]
         public void SetSpeed(float speed)
         {
-            _moveForce = speed;
-            _maxSpeed = speed;
+            if (isMovingRB)
+            {
+                _moveForce = speed;
+                _maxSpeed = speed;
+            }
+            else
+            {
+                navMeshAgent.speed = speed;
+            }
         }
 
         [Server]
@@ -87,17 +115,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             direction.y = 0;
             
             var lookRotation = Quaternion.LookRotation(direction);
-            
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, lookRotation, Time.fixedDeltaTime * _rotationSpeed));
-            
-            
-            
-            // while (Quaternion.Angle(lookRotation, transform.rotation) >= 5f)
-            // {
-            //     transform.rotation = Quaternion.Slerp(transform.rotation, 
-            //         lookRotation, 
-            //         Time.fixedDeltaTime * rotationSpeed);
-            // }
+
+            if (isMovingRB)
+            {
+                rb.MoveRotation(Quaternion.Slerp(rb.rotation, lookRotation, Time.fixedDeltaTime * _rotationSpeed));
+            }
+            else
+            {
+                while (Quaternion.Angle(lookRotation, transform.rotation) >= 5f)
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation, 
+                        lookRotation, 
+                        Time.fixedDeltaTime * rotationSpeed);
+                }
+            }
         }
     }
 }

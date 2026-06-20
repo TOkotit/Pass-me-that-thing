@@ -6,7 +6,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemyRagdollHandler : NetworkBehaviour
     {
-        private List<Rigidbody> _rigidbodies;
+        [SerializeField] private List<Rigidbody> _rigidbodies;
 
         public void Init()
         {

@@ -8,14 +8,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private EnemyZombie _zombie;
         
-        public ZombieKnockout(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+        public ZombieKnockout(EnemyZombie enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
         {
+            _zombie = enemy;
         }
 
         public override void Enter()
         {
             base.Enter();
 
+            _zombie.EnableRagdoll();
         }
 
         public override void LogicUpdate()
@@ -31,6 +33,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Exit()
         {
             base.Exit();
+            _zombie.DisableRagdoll();
         }
         
     }
