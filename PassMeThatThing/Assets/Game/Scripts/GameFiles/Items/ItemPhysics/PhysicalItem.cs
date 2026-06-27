@@ -12,63 +12,48 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
     public class PhysicalItem : NetworkBehaviour
     {
         [SerializeField] private float hardness;
-        public float Hardness => hardness;
         [SyncVar]
         [SerializeField] private int durability;
-        public int Durability {get => durability; set => durability = value; }
         [SerializeField] private HandleType handleType;
-        public HandleType HandleType => handleType;
         [SerializeField] private Rigidbody universalPoint;
-        public Rigidbody UniversalPoint => universalPoint;
         [SerializeField] private Rigidbody leftHandPoint;
-        public Rigidbody LeftHandPoint => leftHandPoint;
         [SerializeField] private Rigidbody rightHandPoint;
-        public Rigidbody RightHandPoint => rightHandPoint;
         [SerializeField] private Vector3 defaultPosition;
-        public Vector3 DefaultPosition => defaultPosition;
-        
         [SerializeField] private bool canBeOwned;
-        public bool DoActAndSwing => doActAndSwing;
-        
         [SerializeField] private bool doActAndSwing;
-        public bool CanBeOwned => canBeOwned;
-        
-        private MainCharacter owner;
-        public MainCharacter Owner {get => owner; set => owner = value;}
-        
-        private NetworkConnectionToClient connectionToClient;
+        [SerializeField] private Rigidbody rigidBody;
+        [SerializeField] private NetworkItem _network;
+        [SerializeField] private bool hasToBeAligned;
+        [SerializeField] private ParticleSystem particles;
+        [SyncVar]
+        [SerializeField] private bool _isThrown;
         
         private LMBReaction reaction;
+        private Outline _outline;
+        private CollisionDamageDealer  damageDealer;
+        private NetworkTransformReliable _networkTransform;
+        
+        public float Hardness => hardness;
+        public int Durability {get => durability; set => durability = value; }
+        public HandleType HandleType => handleType;
+        public Rigidbody UniversalPoint => universalPoint;
+        public Rigidbody LeftHandPoint => leftHandPoint;
+        public Rigidbody RightHandPoint => rightHandPoint;
+        public Vector3 DefaultPosition => defaultPosition;
+        public bool DoActAndSwing => doActAndSwing;
+        public bool CanBeOwned => canBeOwned;
+        public MainCharacter Owner { get; set; }
+        public NetworkConnectionToClient ConnectionToClient { get; set; }
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
-        
-        [SerializeField] private Rigidbody rigidBody;
         public Rigidbody Rigidbody => rigidBody;
-        
-        private Outline _outline;
-        public Outline Outline => _outline;
-        
-        [SerializeField] private NetworkItem _network;
         public NetworkItem Network => _network;
-
-
-        [SerializeField] private bool hasToBeAligned;
         public bool HasToBeAligned => hasToBeAligned;
-        private CollisionDamageDealer  damageDealer;
-        [SerializeField] private ParticleSystem particles;
-        
-        [SyncVar]
-        [SerializeField] private bool _isThrown;
-        public bool IsThrown
-        {
-            get => _isThrown;
-            set => _isThrown = value;
-        }
-        
-        private NetworkTransformReliable _networkTransform;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
+        public bool IsThrown { get => _isThrown; set => _isThrown = value; }
+        
         
         // private Coroutine _actingCoroutine;
         // [SyncVar]
@@ -79,11 +64,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         //     set => _isActing = value;
         // }
 
-        public NetworkConnectionToClient ConnectionToClient
-        {
-            get => connectionToClient;
-            set => connectionToClient = value;
-        }
+        
 
 
         [Inject]
@@ -114,7 +95,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         }
         
         [ClientRpc]
-        public void RpcPlayParticlesOnHit() => particles.Play();
+        private void RpcPlayParticlesOnHit() => particles.Play();
 
         // [Command(requiresAuthority = false)]
         // public void EnableActingMode(float duration)
