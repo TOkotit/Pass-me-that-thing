@@ -2,6 +2,7 @@
 using System.Collections;
 using Game.Entity;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -55,6 +56,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         [SerializeField] private bool hasToBeAligned;
         public bool HasToBeAligned => hasToBeAligned;
+        private CollisionDamageDealer  damageDealer;
+        [SerializeField] private ParticleSystem particles;
+        
         [SyncVar]
         [SerializeField] private bool _isThrown;
         public bool IsThrown
@@ -92,8 +96,11 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
-
+            
             reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
+            
+            if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
+                damageDealer.OnServerTakeDamage += RpcPlayParticlesOnHit;
         }
 
         private void OnCollisionEnter(Collision other)
@@ -105,6 +112,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 reaction?.CollisionEnter(other);
             }
         }
+        
+        [ClientRpc]
+        public void RpcPlayParticlesOnHit() => particles.Play();
 
         // [Command(requiresAuthority = false)]
         // public void EnableActingMode(float duration)

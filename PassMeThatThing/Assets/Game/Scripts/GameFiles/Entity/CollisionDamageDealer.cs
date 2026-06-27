@@ -16,6 +16,8 @@ namespace Game.Scripts.GameFiles.Entity
         [SerializeField] private float cooldown = 0.5f;
         [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
         private float _lastDamageTime = -999f;
+        
+        public event Action OnServerTakeDamage;
 
         private void OnCollisionEnter(Collision other)
         {
@@ -23,7 +25,7 @@ namespace Game.Scripts.GameFiles.Entity
             if (!isServer) return;
             if (DamagableRegistry.Instance == null) return;
 
-            Damagable damageable = FindDamagableInHierarchy(other.gameObject);
+            var damageable = FindDamagableInHierarchy(other.gameObject);
             if (!damageable) return;
 
             if (!damageTypes.ContainsKey(damageable.Type)) return;
@@ -37,11 +39,12 @@ namespace Game.Scripts.GameFiles.Entity
             }
 
             damageable.ServerTakeDamage(finalDamage);
+            OnServerTakeDamage?.Invoke();
             _lastDamageTime = Time.time;
         }
         private Damagable FindDamagableInHierarchy(GameObject obj)
         {
-            Transform t = obj.transform;
+            var t = obj.transform;
             while (t)
             {
                 if (DamagableRegistry.Instance.TryGetDamagable(t.gameObject, out var damagable))
