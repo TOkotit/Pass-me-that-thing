@@ -16,7 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         public void Hit(Vector3 force, Vector3 hitPosition)
         {
-            Rigidbody injuredRigidbody = _rigidbodies
+            var injuredRigidbody = _rigidbodies
                 .OrderBy(rigidbody => Vector3.Distance(rigidbody.position, hitPosition))
                 .First();
 

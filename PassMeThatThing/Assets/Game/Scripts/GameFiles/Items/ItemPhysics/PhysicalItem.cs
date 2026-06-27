@@ -24,7 +24,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Rigidbody rigidBody;
         [SerializeField] private NetworkItem _network;
         [SerializeField] private bool hasToBeAligned;
-        [SerializeField] private ParticleSystem particles;
         [SyncVar]
         [SerializeField] private bool _isThrown;
         
@@ -32,6 +31,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private Outline _outline;
         private CollisionDamageDealer  damageDealer;
         private NetworkTransformReliable _networkTransform;
+        
+        private ParticlePoolManager particlePool;
         
         public float Hardness => hardness;
         public int Durability {get => durability; set => durability = value; }
@@ -95,7 +96,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         }
         
         [ClientRpc]
-        private void RpcPlayParticlesOnHit() => particles.Play();
+        private void RpcPlayParticlesOnHit()
+        {
+            Debug.Log("PlayParticlesOnHit");
+            
+            particlePool.GetAndPlayParticle(Particles.pow, transform.position);
+            
+        }
 
         // [Command(requiresAuthority = false)]
         // public void EnableActingMode(float duration)

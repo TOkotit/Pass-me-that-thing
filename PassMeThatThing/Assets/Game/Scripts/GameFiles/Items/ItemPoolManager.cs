@@ -29,7 +29,7 @@ namespace Game.Scripts.GameFiles.Items
             }
         }
 
-        // Обработчик появления (вызывается на клиентах)
+        // Обработчик появления
         public GameObject SpawnHandler(SpawnMessage msg, string itemId)
         {
             var obj = GetFromPool(itemId);
@@ -39,7 +39,7 @@ namespace Game.Scripts.GameFiles.Items
             return obj;
         }
 
-        // Обработчик исчезновения (вызывается на клиентах)
+        // Обработчик исчезновения
         public void UnspawnHandler(GameObject spawned)
         {
             var id = spawned.GetComponent<NetworkItem>().itemId;

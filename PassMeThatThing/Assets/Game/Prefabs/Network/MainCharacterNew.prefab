@@ -2055,7 +2055,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  interactionZone: {fileID: 2558772292210885621}
+  interactionZone: {fileID: 0}
   _physicalItemInteractionController: {fileID: 9071510599438279358}
   mainCharacter: {fileID: 7770340711354438675}
   interactionLayer:
@@ -3841,7 +3841,6 @@ GameObject:
   - component: {fileID: 1047243114865079847}
   - component: {fileID: 4425290267958934517}
   - component: {fileID: 846044020810354653}
-  - component: {fileID: 2558772292210885621}
   m_Layer: 8
   m_Name: interactionZone
   m_TagString: Untagged
@@ -3919,21 +3918,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.071693406, y: 0.08627987, z: 2.4298208}
   m_Center: {x: -0.023760974, y: -0.043139935, z: 1.4389948}
---- !u!114 &2558772292210885621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5810278021926315257}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab7698a14ecb0d54c82c3d587e0fddfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!1 &6114159513840627895
 GameObject:
   m_ObjectHideFlags: 0
