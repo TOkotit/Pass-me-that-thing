@@ -7,48 +7,48 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    public class ParticlePoolManager : NetworkBehaviour
+    public class ParticlePoolManager : MonoBehaviour
     {
-        [Header("Префабы партиклов")]
-        [SerializedDictionary] private SerializedDictionary<Particles, GameObject> particles;
+        [SerializeField] private ParticleDatabase particleDatabase;
         
         [SerializeField] private int maxParticleCount = 10;
         private Dictionary<Particles, int> _totalParticlesCount = new ();
         private Dictionary<Particles, Stack<ParticleHandler>> _activeParticles = new ();
 
-        public void Initialize()
+        public void Awake()
         {
-            foreach (var item in particles)
+            foreach (var item in particleDatabase.particles)
             {
+                _totalParticlesCount[item.Key] = 0;
                 _activeParticles[item.Key] = new Stack<ParticleHandler>();
             }
         }
         
-        public void CreateParticle(Particles id)
+        public void CreateParticle(Particles type)
         {
-            var particlePrefab = particles[id];
+            var particlePrefab = particleDatabase.GetParticlePrefab(type);
             var particleInstance = Instantiate(particlePrefab, transform.position, Quaternion.identity);
-            NetworkServer.Spawn(particleInstance);
+            //NetworkServer.Spawn(particleInstance);
             var particle = particleInstance.GetComponent<ParticleHandler>();
             particle.OnParticleEnd += ReturnParticleInPool;
             
-            _totalParticlesCount[id]++;
-            _activeParticles[id].Push(particle);
+            _totalParticlesCount[type]++;
+            _activeParticles[type].Push(particle);
         }
         
-        public bool GetFromPool(Particles id, out ParticleHandler particle)
+        public bool GetFromPool(Particles type, out ParticleHandler particle)
         {
-            if (_activeParticles.ContainsKey(id))
+            if (_activeParticles.ContainsKey(type))
             {
-                if (_activeParticles[id].Count > 0)
+                if (_activeParticles[type].Count > 0)
                 {
-                    particle = _activeParticles[id].Pop();
+                    particle = _activeParticles[type].Pop();
                     return true;
                 }
-                if (_activeParticles[id].Count < maxParticleCount)
+                if (_activeParticles[type].Count < maxParticleCount)
                 {
-                    CreateParticle(id);
-                    particle = _activeParticles[id].Pop();
+                    CreateParticle(type);
+                    particle = _activeParticles[type].Pop();
                     return true;
                 }
             }
@@ -57,18 +57,22 @@ namespace Game.Scripts.GameFiles.Items
             return false;
         }
         
-        public void GetAndPlayParticle(Particles id, Vector3 position)
+        public void GetAndPlayParticle(Particles type, Vector3 position)
         {
-            if (!GetFromPool(id, out var particle)) return;
-            particle.Id = id;
+            if (!GetFromPool(type, out var particle))
+            {
+                Debug.Log("<color=red>NO Particle");
+                return;
+            }
+            particle.Id = type;
             particle.transform.position = position;
             particle.particleSystem.Play();
             
         }
 
-        public void ReturnParticleInPool(Particles id, ParticleHandler particle)
+        public void ReturnParticleInPool(Particles type, ParticleHandler particle)
         {
-            _activeParticles[id].Push(particle);
+            _activeParticles[type].Push(particle);
         }
         
     }

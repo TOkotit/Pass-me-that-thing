@@ -17,10 +17,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
-            if (_zombie != null)
-            {
-                _zombie.SelfDestroy();
-            }
+            _zombie.RpcSelfDestroy();
+            
         }
 
         public override void LogicUpdate()

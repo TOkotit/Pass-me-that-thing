@@ -54,18 +54,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             stateMachine.Initialize(ZombieWalk);
             
-            DisableRagdoll();
+            RpcDisableRagdoll();
         }
         
-        public void EnableRagdoll()
+        [ClientRpc]
+        public void RpcEnableRagdoll()
         {
             movementController.DisableNavAgent();
             
             enemyView.DisableAnimator();
             ragdollHandler.EnableRagdoll();
         }
-        
-        public void DisableRagdoll()
+        public void RpcDisableRagdoll()
         {
             movementController.EnableNavAgent();
             
@@ -73,17 +73,19 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             enemyView.EnableAnimator();
         }
 
+        [ClientRpc]
         public void StandUp()
         {
             enemyView.PlayStandingUp();
-            DisableRagdoll();
+            RpcDisableRagdoll();
         }
 
         public override void OnDeath()
         {
             base.OnDeath();
-            stateMachine.ChangeState(ZombieDeath);
+            if (!isServer) return;
             
+            stateMachine.ChangeState(ZombieDeath);
         }
         
         private new void Update()
@@ -96,9 +98,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.FixedUpdate();
         }
 
-        public void SelfDestroy()
+        [ClientRpc]
+        public void RpcSelfDestroy()
         {
             // RpcPlayParticles();
+            if (gameObject != null)
+                Destroy(gameObject);
         }
         
         // [ClientRpc]

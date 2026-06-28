@@ -40,6 +40,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         public override void OnHealthChanged(int diff)
         {
+            if (!isServer) return;
             Debug.Log($"Zombie taken Damage {diff}");
         }
         

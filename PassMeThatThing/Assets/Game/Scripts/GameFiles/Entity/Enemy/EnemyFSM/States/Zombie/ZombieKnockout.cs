@@ -19,7 +19,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
 
-            _zombie.EnableRagdoll();
+            _zombie.RpcEnableRagdoll();
             _zombie.StartCoroutine(Wait());
         }
 

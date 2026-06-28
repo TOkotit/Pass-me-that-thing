@@ -32,7 +32,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private CollisionDamageDealer  damageDealer;
         private NetworkTransformReliable _networkTransform;
         
-        private ParticlePoolManager particlePool;
+        private ParticlePoolManager _particlePool;
         
         public float Hardness => hardness;
         public int Durability {get => durability; set => durability = value; }
@@ -69,9 +69,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
 
         [Inject]
-        private void Construct(PhysicalItemRegistry physicalItemRegistry)
+        private void Construct(NetworkManager networkManager)
         {
-            physicalItemRegistry.Register(this);
+            _particlePool = networkManager.GetComponent<ParticlePoolManager>();
         }
 
         private void Start()
@@ -98,9 +98,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [ClientRpc]
         private void RpcPlayParticlesOnHit()
         {
-            Debug.Log("PlayParticlesOnHit");
+            Debug.Log("<color=yellow>PlayParticlesOnHit");
             
-            particlePool.GetAndPlayParticle(Particles.pow, transform.position);
+            _particlePool.GetAndPlayParticle(Particles.pow, transform.position);
             
         }
 
