@@ -22,9 +22,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             Destroy(gameObject);
         }
 
-        public override void OnHealthChanged(int currentHealth)
+        public override void OnHealthChanged(int currentHealth,  int maxHealth)
         {
-            Debug.Log("Дверь повреждена! " + currentHealth);
+            Debug.Log($"Дверь повреждена! {currentHealth}/{maxHealth}");
         }
     }
 }

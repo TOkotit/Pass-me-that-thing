@@ -5,34 +5,42 @@ using VContainer;
 
 namespace Entity
 {
+    /// <summary>
+    /// Хост считает хп у себя в DamagableModel обновляет syncHealth
+    /// хуки syncHealth обновляют damagableModel на клиентах
+    /// 
+    /// Хост выполняет OnHealthChanged при срабатываний событий DamagableModel
+    /// Клиенты выполняют OnHealthChanged при срабатывании хуков
+    /// </summary>
     public abstract class Damagable : NetworkBehaviour
     {
-        [Inject] protected DamagableRegistry Registry { get; private set; }
-        public abstract DamagableModel DamagableModel { get; }
-        [SerializeField] protected int health;
+        [SerializeField] protected int defaultHealth;
         [SerializeField] protected DamagableType type;
-        public DamagableType Type => type;
+        
+        [Inject] protected DamagableRegistry Registry { get; private set; }
+        
         [SyncVar(hook = nameof(OnSyncedHealthChanged))]
         private int _syncedHealth;
 
         [SyncVar(hook = nameof(OnSyncedMaxHealthChanged))]
         private int _syncedMaxHealth;
+        
+        public abstract DamagableModel DamagableModel { get; }
+        public DamagableType Type => type;
 
         protected virtual void Start()
         {
             Debug.LogWarning("Damagable: Start " + gameObject.name);
             if (isServer)
             {
-                _syncedHealth = health;
-                _syncedMaxHealth = health;
                 if (DamagableModel.HealthPool == null)
-                    DamagableModel.HealthPool = new HealthPool(health);
+                    DamagableModel.HealthPool = new HealthPool(defaultHealth);
                 DamagableModel.OnHealthChanged += OnHealthChanged;
                 DamagableModel.OnDeath += OnDeath;
             }
             else
             {
-                DamagableModel.HealthPool = new HealthPool(health);
+                DamagableModel.HealthPool = new HealthPool(defaultHealth);
             }
 
             Registry?.Register(this);
@@ -41,6 +49,7 @@ namespace Entity
         protected virtual void OnDestroy()
         {
             Registry?.Unregister(this);
+            
             if (isServer)
             {
                 DamagableModel.OnHealthChanged -= OnHealthChanged;
@@ -52,7 +61,14 @@ namespace Entity
         public void ServerSetHealth(int newHealth)
         {
             DamagableModel.SetHealth(newHealth);
-            _syncedHealth = newHealth;
+            _syncedHealth = DamagableModel.HealthPool.CurrentHealth;
+        }
+        
+        [Server]
+        public void ServerSetMaxHealth(int newHealth)
+        {
+            DamagableModel.SetMaxHealth(newHealth, true);
+            _syncedMaxHealth = DamagableModel.HealthPool.MaxHealth;
         }
 
         [Server]
@@ -65,21 +81,25 @@ namespace Entity
         // Хуки 
         private void OnSyncedHealthChanged(int oldHealth, int newHealth)
         {
-            DamagableModel.HealthPool?.SetCurrentHealth(newHealth);
-            
             if (!isServer) 
             {
-                OnHealthChanged(newHealth);
+                DamagableModel.SetHealth(newHealth);
+                
+                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, 
+                    DamagableModel.HealthPool.MaxHealth);
                 if (newHealth <= 0) OnDeath();
             }
         }
 
         private void OnSyncedMaxHealthChanged(int oldMax, int newMax)
         {
-            DamagableModel.HealthPool?.SetMaxHealth(newMax, false);
+            if (!isServer)
+            {
+                DamagableModel.SetMaxHealth(newMax, false);
+            }
         }
 
         public abstract void OnDeath();
-        public abstract void OnHealthChanged(int currentHealth);
+        public abstract void OnHealthChanged(int currentHealth, int maxHealth);
     }
 }

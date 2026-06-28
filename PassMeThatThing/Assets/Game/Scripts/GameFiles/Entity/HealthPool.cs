@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 
+
 public class HealthPool
 {
     private int _maxHealth;
@@ -16,12 +17,11 @@ public class HealthPool
         _currentHealth = maxHealth;
     }
 
-    public void SetMaxHealth(int newMaxHealth, bool fullHeal)
+    public void SetMaxHealth(int newMaxHealth)
     {
         _maxHealth = newMaxHealth;
-        if (fullHeal)
-            _currentHealth = _maxHealth;
     }
+    
     public void SetCurrentHealth(int value)
     {
         _currentHealth = Mathf.Clamp(value, 0, _maxHealth);

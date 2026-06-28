@@ -37,7 +37,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             _zombieData = enemyDatabase.GetEnemy("zombie");
         }
-        
+
+        public new void Awake()
+        {
+            base.Awake();
+        }
+
+        public new void Start()
+        {
+            base.Start();
+            
+            if (isServer)
+                ServerSetMaxHealth(_zombieData.MaxHealth);
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
@@ -86,6 +99,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if (!isServer) return;
             
             stateMachine.ChangeState(ZombieDeath);
+        }
+
+        public override void OnHealthChanged(int currentHealth, int maxHealth)
+        {
+            if (!isServer) return;
+            
+            Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
         }
         
         private new void Update()

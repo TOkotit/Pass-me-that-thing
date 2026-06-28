@@ -38,16 +38,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
         }
         
-        public override void OnHealthChanged(int diff)
+        public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            if (!isServer) return;
-            Debug.Log($"Zombie taken Damage {diff}");
+            
         }
         
         protected virtual void Awake()
         {
-            if (EnemyModel == null)
-                EnemyModel = new EnemyModel();
+            EnemyModel = new EnemyModel();
         }
 
 
@@ -57,7 +55,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             LifetimeScope.Find<GameplayScope>().Container.Inject(this);
 
             stateMachine = new EnemyStateMachine();
-            EnemyModel = new EnemyModel();
             
             _damagableRegistry.Register(this);
         }

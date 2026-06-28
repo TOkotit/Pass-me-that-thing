@@ -30,21 +30,24 @@ namespace Game.Entity
             _model.SetPlayerInventory(playerInventory);
         }
 
-        public override void OnStartClient()
+        public new void Start()
         {
-            var scope = LifetimeScope.Find<GameplayScope>();
-            if (scope)
-                scope.Container.Inject(this);
-            base.OnStartClient(); 
+            base.Start();
             Initialize();
             
+            if (isServer)
+                ServerSetMaxHealth(100); //SO
         }
-        public override void OnStartServer()
-        {
-            LifetimeScope.Find<GameplayScope>().Container.Inject(this);
-            Initialize();
-            _damagableRegistry.Register(this);
-        }
+
+        // public override void OnStartClient()
+        // {
+        //     Initialize();
+        // }
+        // public override void OnStartServer()
+        // {
+        //     Initialize();
+        //     _damagableRegistry.Register(this);
+        // }
 
         public override void OnDeath()
         {
@@ -53,17 +56,21 @@ namespace Game.Entity
             verticalAlign.LockConsciousness = true;
             movement.LockUpMovement();
             mCamera.IsCameraRotating = false;
-            Debug.Log("Вот тут смерть");
+            
             
             if (!isLocalPlayer) return;
+            
+            Debug.Log("[MainCharacter] OnDeath");
+            
             _localModel.IsDead = true;
         }
 
-        public override void OnHealthChanged(int currentHealth)
+        public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
             if (!isLocalPlayer) return;
             
-            Debug.Log("Health: " + currentHealth);
+            Debug.Log($"[MainCharacter] OnHealthChanged {currentHealth}");
+            
             _localModel.Health = currentHealth;
             if (DamagableModel != null && DamagableModel?.HealthPool != null)
             {

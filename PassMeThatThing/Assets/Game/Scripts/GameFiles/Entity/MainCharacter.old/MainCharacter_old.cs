@@ -36,7 +36,7 @@ namespace MainCharacter_old
             throw new NotImplementedException();
         }
 
-        public override void OnHealthChanged(int diff)
+        public override void OnHealthChanged(int diff, int a)
         {
             throw new NotImplementedException();
         }

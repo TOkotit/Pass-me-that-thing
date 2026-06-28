@@ -85,6 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8578295271834888118}
+  - component: {fileID: 5095730745409891892}
   - component: {fileID: 1548522528971783998}
   - component: {fileID: 8017386652393745044}
   - component: {fileID: 7096747882219086433}
@@ -119,6 +120,18 @@ Transform:
   - {fileID: 1611070218803074564}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5095730745409891892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8955384447202622732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &1548522528971783998
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -295,7 +308,6 @@ MonoBehaviour:
   rigidBody: {fileID: 8017386652393745044}
   _network: {fileID: 7096747882219086433}
   hasToBeAligned: 1
-  particles: {fileID: 626559089376418397}
   _isThrown: 0
 --- !u!114 &219373079575563197
 MonoBehaviour:
@@ -388,11 +400,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4cd1144d0c8a66742905a691b33306bb, type: 3}
---- !u!198 &626559089376418397 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 4258714148638059294, guid: 4cd1144d0c8a66742905a691b33306bb, type: 3}
-  m_PrefabInstance: {fileID: 3722227120530960707}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1611070218803074564 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2734716368592398151, guid: 4cd1144d0c8a66742905a691b33306bb, type: 3}
