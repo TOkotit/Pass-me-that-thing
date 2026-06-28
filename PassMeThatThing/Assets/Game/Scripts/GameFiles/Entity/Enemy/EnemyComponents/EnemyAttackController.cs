@@ -1,21 +1,29 @@
+using System;
+using AYellowpaper.SerializedCollections;
 using DG.Tweening;
 using Entity;
+using Enums;
 using Mirror;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
+    
     public class EnemyAttackController : NetworkBehaviour
     {
         private LayerMask _targetLayer;
         
         [SerializeField] protected Transform attackCubeCenter;
-
+        [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
+        
+        public event Action OnAttackMelee;
+        
         public override void OnStartServer()
         {
             base.OnStartServer();
             
-            _targetLayer = LayerMask.GetMask("ServerCollider", "BunkerDoor");
+            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor");
             
             if (attackCubeCenter == null) 
                 attackCubeCenter = transform;
@@ -24,41 +32,47 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void AttackMelee(Vector3 halfExtents, float damage)
         {
-            // заглушка
-            gameObject.transform.DOScale(1.5f, 0.1f).From(1f).SetLoops(2, LoopType.Yoyo);
-            
-            var colliders = new Collider[100];
-            var size = Physics.OverlapBoxNonAlloc(
+            if (DamagableRegistry.Instance == null) return;
+
+            var size = Physics.OverlapBox(
                 attackCubeCenter.position,
                 halfExtents,
-                colliders, 
+                // colliders, 
                 transform.rotation, 
                 _targetLayer
             );
-    
-            // DamagableModel playerModel = null;
-            // bool hitPlayer = false;
-            // for (var i = 0; i < size; i++)
-            // {
-            //     if (!colliders[i].CompareTag("Player")) continue;
-            //     // playerModel = _registry.TryGetCharacter(col.gameObject);
-            //     // if (playerModel != null && playerModel.Team != Teams.Enemy)
-            //     // {
-            //     //     hitPlayer = true;
-            //     //     break;
-            //     // }
-            // }
-            //
-            // if (hitPlayer)
-            // {
-            //     // playerModel.Health_old.TakeDamage(closeAttackData.Damage, closeAttackData.DamageType);
-            // }
+
+            foreach (var col in size)
+            {
+                var damageable = FindDamagableInHierarchy(col.gameObject);
+                if (!damageable) continue;
+
+                if (!damageTypes.ContainsKey(damageable.Type)) continue;
+            
+                var finalDamage = (int)(damage * damageTypes[damageable.Type]);
+            
+                damageable.ServerTakeDamage(finalDamage);
+                OnAttackMelee?.Invoke();
+                
+            }
+        }
+        
+        private Damagable FindDamagableInHierarchy(GameObject obj)
+        {
+            var t = obj.transform;
+            while (t)
+            {
+                if (DamagableRegistry.Instance.TryGetDamagable(t.gameObject, out var damagable))
+                    return damagable;
+                t = t.parent;
+            }
+            return null;
         }
         
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.softRed;
-            Gizmos.DrawCube(attackCubeCenter.position, new Vector3(1f, 1f, 1f));
+            Gizmos.DrawCube(attackCubeCenter.position, new Vector3(0.2f, 0.2f, 0.2f));
         }
     }
 }

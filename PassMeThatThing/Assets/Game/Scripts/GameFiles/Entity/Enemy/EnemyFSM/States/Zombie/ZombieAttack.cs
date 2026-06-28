@@ -60,7 +60,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
             {
                 _movementController.RotateTo(_targetDetector.DetectedTarget.position);
-                _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _zombie.Damage);
+                _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _zombie.Damage);
                 
                 var rand =  new System.Random();
                 // if (rand.Next(0, 2) == 0)

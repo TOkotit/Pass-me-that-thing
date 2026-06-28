@@ -16,14 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Header("Sight settings")]
         [SerializeField] private float sightDistance;
         [SerializeField] private float sightAngle; 
-        // [SerializeField] private LayerMask playerLayer; 
-        // [SerializeField] private LayerMask doorLayer; 
-        // [SerializeField] private LayerMask enemyLayer;  
         [SerializeField] private LayerMask obstacleLayer;
-
-        // [Header("Sharing signal settings")]
-        // private Transform SharingAreaCenter => transform;
-        // [SerializeField] private float sharingAreaRadius;
         
         public Transform DetectedTarget => _detectedTarget;
         public float DistanceToTarget => _distanceToTarget;
@@ -96,7 +89,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if (size > 0)
             {
                 Transform bestTarget = null;
-                float minDistance = float.MaxValue;
+                var minDistance = float.MaxValue;
 
                 for (var i = 0; i < size; i++)
                 {
