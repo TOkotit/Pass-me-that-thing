@@ -77,16 +77,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void NavigateTo(Vector3 pos)
         {
-            navMeshAgent.isStopped = false;
+            if (navMeshAgent.enabled)
+            {
+                navMeshAgent.isStopped = false;
             
-            _targetPosition = pos;
-            navMeshAgent.SetDestination(_targetPosition);
+                _targetPosition = pos;
+                navMeshAgent.SetDestination(_targetPosition);
+            }
         }
 
         [Server]
         public void StopNavigating()
         {
-            navMeshAgent.isStopped = true;
+            if (navMeshAgent.enabled)
+                navMeshAgent.isStopped = true;
         }
 
         public void EnableNavAgent()

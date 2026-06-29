@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
@@ -14,6 +15,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         private EnemyData _zombieData;
         
+        private bool hitRagdollCoroutine;
+        
         public float elapsedAttack;
         public float AttackCooldown => _zombieData.AttackCooldown;
         public float ChaseDistance => _zombieData.ChaseDistance;
@@ -23,7 +26,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public float Damage => _zombieData.Damage;
         
         
-        public EnemyView EnemyView => enemyView;
+        public ZombieView EnemyView => enemyView;
         
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
@@ -47,6 +50,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.Start();
             
+            EnemyView.Initialize();
+            
             if (isServer)
                 ServerSetMaxHealth(_zombieData.MaxHealth);
         }
@@ -67,30 +72,35 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             stateMachine.Initialize(ZombieWalk);
             
-            RpcDisableRagdoll();
+            DisableRagdoll();
         }
         
         [ClientRpc]
-        public void RpcEnableRagdoll()
+        public void RpcFall()
+        {
+            EnableRagdoll();
+        }
+
+        public void EnableRagdoll()
         {
             movementController.DisableNavAgent();
             
             enemyView.DisableAnimator();
             ragdollHandler.EnableRagdoll();
         }
-        public void RpcDisableRagdoll()
+        
+        [ClientRpc]
+        public void RpcStandUp()
+        {
+            enemyView.PlayStandingUp((() => DisableRagdoll()));
+            
+        }
+        public void DisableRagdoll()
         {
             movementController.EnableNavAgent();
             
             ragdollHandler.DisableRagdoll();
             enemyView.EnableAnimator();
-        }
-
-        [ClientRpc]
-        public void StandUp()
-        {
-            enemyView.PlayStandingUp();
-            RpcDisableRagdoll();
         }
 
         public override void OnDeath()
@@ -106,6 +116,25 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if (!isServer) return;
             
             Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
+            
+            stateMachine.ChangeState(ZombieKnockout);
+            //
+            // if (!hitRagdollCoroutine)
+            // {
+            //     hitRagdollCoroutine = true;
+            //     StartCoroutine(StartHit());
+            // }
+        }
+
+        private IEnumerator StartHit()
+        {
+            RpcFall();
+            for (var i = 0; i < 1; i++)
+            {
+                yield return new WaitForSeconds(1f);
+            }
+            RpcStandUp();
+            hitRagdollCoroutine = false;
         }
         
         private new void Update()

@@ -19,13 +19,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
         public void Death() => base.animator.SetTrigger(DeathKey);
         
         
-        //
-        
-        // private const string BackStandUpClipName = "BackStandUp";
-        // private const string FrontStandClipName = "FrontStandUp";
+        private const string IdleClipName = "tentacls|tentacls|zombie-walkLegs";
+        private const string BackStandUpClipName = "BackStandUp";
+        private const string FrontStandClipName = "FrontStandUp";
 
         private const int DefaultLayer = -1;
 
+        private RigAdjusterForAnimation _rigAdjusterForReturnAnimation;
+        
         private RigAdjusterForAnimation _rigAdjusterForBackStandingUpAnimation;
         private RigAdjusterForAnimation _rigAdjusterForFrontStandingUpAnimation;
 
@@ -36,14 +37,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
         private bool IsFrontUp => Vector3.Dot(_hipsBone.up, Vector3.up) > 0;
 
-        public void Initialize(Transform parent)
+        public void Initialize()
         {
-            // _parent = parent;
-            // _hipsBone = animator.GetBoneTransform(HumanBodyBones.Hips);
+            var currentClips = animator.runtimeAnimatorController.animationClips;
+            var bones = _hipsBone.GetComponentsInChildren<Transform>();
 
-            // var currentClips = animator.runtimeAnimatorController.animationClips;
-            // var bones = _hipsBone.GetComponentsInChildren<Transform>();
 
+            _rigAdjusterForReturnAnimation = new RigAdjusterForAnimation(
+                    currentClips.First(clip => clip.name == IdleClipName), 
+                    bones, 
+                    this);
+            
             // _rigAdjusterForBackStandingUpAnimation = new RigAdjusterForAnimation(currentClips.First(clip => clip.name == BackStandUpClipName), bones, this);
             // _rigAdjusterForFrontStandingUpAnimation = new RigAdjusterForAnimation(currentClips.First(clip => clip.name == FrontStandClipName), bones, this);
         }
@@ -53,12 +57,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
             AdjustParentRotationToHipsBone();
             AdjustParentPositionToHipsBone();
 
-            // _standingUpCallback = animationEndedCallback;
-            //
+            //_standingUpCallback = animationEndedCallback;
+            
+            _rigAdjusterForReturnAnimation.Adjust(adjustAnimationEndedCallback);
+            
             // if (IsFrontUp)
-            //     _rigAdjusterForFrontStandingUpAnimation.Adjust(() => CallbackForAdjustStandingUpAnimation(FrontStandClipName, adjustAnimationEndedCallback));
+            //     _rigAdjusterForFrontStandingUpAnimation.Adjust(
+            //         () => CallbackForAdjustStandingUpAnimation(FrontStandClipName, adjustAnimationEndedCallback));
             // else
-            //     _rigAdjusterForBackStandingUpAnimation.Adjust(() => CallbackForAdjustStandingUpAnimation(BackStandUpClipName, adjustAnimationEndedCallback));
+            //     _rigAdjusterForBackStandingUpAnimation.Adjust(
+            //         () => CallbackForAdjustStandingUpAnimation(BackStandUpClipName, adjustAnimationEndedCallback));
         }
 
         public void OnStandingUpAnimationEnded() => _standingUpCallback?.Invoke();

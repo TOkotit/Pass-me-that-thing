@@ -9,18 +9,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
     {
         [SerializeField] private List<Rigidbody> _rigidbodies;
 
-        public void Init()
-        {
-            _rigidbodies = new List<Rigidbody>(GetComponentsInChildren<Rigidbody>());
-        }
+        private Rigidbody _injuredRigidbody;
         
         public void Hit(Vector3 force, Vector3 hitPosition)
         {
-            var injuredRigidbody = _rigidbodies
+            _injuredRigidbody = _rigidbodies
                 .OrderBy(rigidbody => Vector3.Distance(rigidbody.position, hitPosition))
                 .First();
 
-            injuredRigidbody.AddForceAtPosition(force, hitPosition, ForceMode.Impulse);
+            _injuredRigidbody.AddForceAtPosition(force, hitPosition, ForceMode.Impulse);
         }
 
         public void EnableRagdoll()

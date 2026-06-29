@@ -19,18 +19,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
 
-            _zombie.RpcEnableRagdoll();
+            _zombie.RpcFall();
             _zombie.StartCoroutine(Wait());
         }
 
         private IEnumerator Wait()
         {
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 1; i++)
             {
                 yield return new WaitForSeconds(1);
             }
             StateMachine.ChangeState(_zombie.ZombieWalk);
-            
         }
 
         public override void LogicUpdate()
@@ -46,7 +45,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Exit()
         {
             base.Exit();
-            _zombie.StandUp();
+            _zombie.RpcStandUp();
         }
         
     }
