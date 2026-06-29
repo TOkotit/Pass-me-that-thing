@@ -1,7 +1,9 @@
 using System;
+using Game.Entity;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
@@ -17,49 +19,34 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] private float sightDistance;
         [SerializeField] private float sightAngle; 
         [SerializeField] private LayerMask obstacleLayer;
+
+        [Inject]
+        private EnemyTargetsRegistry _enemyTargetsRegistry;
         
-        public Transform DetectedTarget => _detectedTarget;
-        public float DistanceToTarget => _distanceToTarget;
-        public bool IsTargetVisible => _isTargetVisible;
-
-        public Transform Door => _door;
-
-        // public bool IsTargetVisibleByGroup => _isTargetVisibleByGroup;
-
-        private LayerMask _targetLayer;
-        private LayerMask _onlyDoorLayer;
-        
+        //temp
         private float _timer;
-        
-        private Transform _detectedTarget;
-        private float _distanceToTarget = -1f;
-        private bool _isTargetVisible;
-        // private bool _isTargetVisibleByGroup;
-        
-        private Transform _door;
-        
-        public event Action<Transform> OnDetectedTarget;
-        
-        // public void SetTargetFromOther(Transform detectedTarget, float distanceToTarget, bool isTargetVisible)
-        // {
-        //     // Debug.Log("SetTargetFromOther");
-        //     _detectedTarget = detectedTarget;
-        //     _distanceToTarget = distanceToTarget;
-        //     // _isTargetVisibleByGroup = isTargetVisible;
-        //     _isTargetVisible = isTargetVisible;
-        // }
+        private float _maxDetectionRange;
+        private float _tempDistance;
+        private float _minDistance;
+        private int _bestPriority;
+        private Vector3 _bestTarget;
+        private bool _bestTargetFound;
+        private Vector3 _direction;
+        private float _tempAngleToTargetDirection;
+        private bool _inSight;
+        private bool _inProximity;
 
-        // public float UpdateDistanceToTarget()
-        // {
-        //     return Vector3.Distance(transform.position, DetectedTarget.position);
-        // }
+
+        public Vector3 DetectedTarget { get; private set; }
+        public float DistanceToTarget { get; private set; } = -1f;
+        public bool IsTargetVisible { get; private set; }
+
+
+        public event Action<Vector3> OnDetectedTarget;
 
         public override void OnStartServer()
         {
-            base.OnStartServer();
-
-            _targetLayer = LayerMask.GetMask("ServerCollider");
-            _onlyDoorLayer =  LayerMask.GetMask("BunkerDoor");
+            _maxDetectionRange = Mathf.Max(proximityAreaRadius, sightDistance);
         }
 
         private void FixedUpdate()
@@ -70,100 +57,70 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             if (_timer >= detectionInterval)
             {
-                DetectTarget();
-                
-                DetectBunkerDoor();
-                // Debug.Log(_detectedTarget);
+                CalculateTarget();
                 _timer = 0f;
             }
         }
 
         [Server]
-        public void DetectTarget()
+        private void CalculateTarget()
         {
-            var maxRange = Mathf.Max(proximityAreaRadius, sightDistance);
-            var targetsInRadius = new Collider[100];
-            var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, 
-                targetsInRadius, _targetLayer);
-
-            if (size > 0)
+            _minDistance = float.MaxValue;
+            _bestTargetFound = false;
+            
+            foreach (var d in _enemyTargetsRegistry.EnemyTargetObjects)
             {
-                Transform bestTarget = null;
-                var minDistance = float.MaxValue;
+                _tempDistance =  Vector3.Distance(d.Key.transform.position, transform.position);
+                if (_tempDistance > _maxDetectionRange) continue;
+                
+                _direction = (d.Key.transform.position - transform.position).normalized;
 
-                for (var i = 0; i < size; i++)
+                _inProximity = false;
+                _inSight = false;
+                
+                if (_tempDistance <= proximityAreaRadius)
                 {
-                    var potentialTarget = targetsInRadius[i].transform;
-                    if (potentialTarget == transform) continue;
-
-                    var directionToTarget = (potentialTarget.position - transform.position).normalized;
-                    var distance = Vector3.Distance(transform.position, potentialTarget.position);
-
-                    var inProximity = distance <= proximityAreaRadius;
-                    var inSight = false;
-
-                    if (distance <= sightDistance)
+                    if (!Physics.Raycast(transform.position, _direction, _tempDistance, obstacleLayer))
                     {
-                        var angle = Vector3.Angle(transform.forward, directionToTarget);
-                        if (angle < sightAngle / 2f)
+                        _inProximity = true;
+                    }
+                }
+                else if (_tempDistance <= sightDistance)
+                {
+                    _tempAngleToTargetDirection = Vector3.Angle(transform.forward, _direction);
+                    if (_tempAngleToTargetDirection < sightAngle / 2f)
+                    {
+                        if (!Physics.Raycast(transform.position, _direction, _tempDistance, obstacleLayer))
                         {
-                            if (!Physics.Raycast(transform.position, directionToTarget, distance, obstacleLayer))
-                            {
-                                inSight = true;
-                            }
+                            _inSight = true;
                         }
                     }
-                    
-                    if ((inProximity || inSight) && distance < minDistance)
-                        bestTarget = potentialTarget;
-                    minDistance = distance;
                 }
-
-
-                if (bestTarget != null)
+                
+                if ((_inProximity || _inSight) 
+                    && _tempDistance <= _minDistance
+                    && d.Value.Priority >= _bestPriority)
                 {
-                    // Debug.Log($"{size} targets detected");
-                    OnDetectedTarget?.Invoke(bestTarget);
-                    _detectedTarget = bestTarget;
-                    _distanceToTarget = minDistance;
-                    _isTargetVisible = true;
-                    return;
+                    _bestTarget = d.Key.transform.position;
+                    _bestTargetFound = true;
+                    _minDistance = _tempDistance;
+                    _bestPriority = d.Value.Priority;
                 }
             }
-
-            _detectedTarget = null;
-            _distanceToTarget = -1f;
-            _isTargetVisible = false;
-        }
-
-        [Server]
-        private void DetectBunkerDoor()
-        {
-            var maxRange = proximityAreaRadius * 20;
-            var targetsInRadius = new Collider[10];
-            var size = Physics.OverlapSphereNonAlloc(transform.position, maxRange, 
-                targetsInRadius, _onlyDoorLayer);
             
-            if (size > 0)
+            if (_bestTargetFound)
             {
-                _door = targetsInRadius[0].transform;
-                if (!_isTargetVisible)
-                {
-                    OnDetectedTarget?.Invoke(_door);
-                    _detectedTarget = _door;
-                    _distanceToTarget = Vector3.Distance(transform.position, _door.position);;
-                    _isTargetVisible = true;
-                }
-                return;
+                OnDetectedTarget?.Invoke(_bestTarget);
+                DetectedTarget = _bestTarget;
+                DistanceToTarget = _minDistance;
+                IsTargetVisible = true;
             }
-
-            if (_detectedTarget == _door)
+            else
             {
-                _detectedTarget = null;
-                _distanceToTarget = -1f;
-                _isTargetVisible = false;
+                DetectedTarget = new Vector3();
+                DistanceToTarget = -1f;
+                IsTargetVisible = false;
             }
-            _door = null;
         }
         
         
@@ -172,9 +129,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(proximityAreaCenter.position, proximityAreaRadius);
-            
-            // Gizmos.color = Color.green;
-            // Gizmos.DrawWireSphere(SharingAreaCenter ? SharingAreaCenter.position : transform.position, sharingAreaRadius);
             
             Gizmos.color = Color.red;
             var leftRayRotation = Quaternion.AngleAxis(-sightAngle / 2, Vector3.up);

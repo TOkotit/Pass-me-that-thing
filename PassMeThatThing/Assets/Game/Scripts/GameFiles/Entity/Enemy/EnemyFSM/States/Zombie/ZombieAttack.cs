@@ -59,7 +59,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _zombie.elapsedAttack += Time.fixedDeltaTime;
             if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
             {
-                _movementController.RotateTo(_targetDetector.DetectedTarget.position);
+                _movementController.RotateTo(_targetDetector.DetectedTarget);
                 _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _zombie.Damage);
                 
                 var rand =  new System.Random();

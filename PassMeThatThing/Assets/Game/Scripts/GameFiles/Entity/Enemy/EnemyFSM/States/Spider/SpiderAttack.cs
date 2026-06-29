@@ -59,7 +59,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _spider.elapsedAttack += Time.fixedDeltaTime;
             if (_spider.elapsedAttack >= _spider.AttackCooldown)
             {
-                _movementController.RotateTo(_targetDetector.DetectedTarget.position);
+                _movementController.RotateTo(_targetDetector.DetectedTarget);
                 _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _spider.Damage);
                 
                 _spider.elapsedAttack = 0f;

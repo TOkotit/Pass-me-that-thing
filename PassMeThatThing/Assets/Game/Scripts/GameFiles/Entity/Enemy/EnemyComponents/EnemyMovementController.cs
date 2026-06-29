@@ -13,9 +13,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         [SerializeField] private Rigidbody rb;
         
-        private Transform _target;
+        private Vector3 _targetPosition;
         private float _moveForce;
         private float _maxSpeed;
+        
+        private Vector3 _moveDirection;
+        private Vector3 _currentVelocity;
+
+        private Vector3 _rotateDirection;
+        private Quaternion _lookRotation;
         private float _rotationSpeed = 10f;
 
         private void Start()
@@ -46,35 +52,35 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         private void MoveWithPhysics()
         {
-            var direction = navMeshAgent.desiredVelocity;
+            _moveDirection = navMeshAgent.desiredVelocity;
 
-            direction.y = 0;
+            _moveDirection.y = 0;
 
-            if (direction.sqrMagnitude > 0.1f)
+            if (_moveDirection.sqrMagnitude > 0.1f)
             {
-                direction.Normalize();
+                _moveDirection.Normalize();
 
-                var currentVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+                _currentVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
-                if (currentVelocity.magnitude < _maxSpeed)
+                if (_currentVelocity.magnitude < _maxSpeed)
                 {
-                    rb.AddForce(direction * _moveForce, ForceMode.Force);
+                    rb.AddForce(_moveDirection * _moveForce, ForceMode.Force);
                 }
 
-                var targetRotation = Quaternion.LookRotation(direction);
-                rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * _rotationSpeed));
+                rb.MoveRotation(Quaternion.Slerp(rb.rotation, 
+                    Quaternion.LookRotation(_moveDirection), Time.fixedDeltaTime * _rotationSpeed));
             }
         }
         
         
         
         [Server]
-        public void NavigateTo(Transform target)
+        public void NavigateTo(Vector3 pos)
         {
             navMeshAgent.isStopped = false;
             
-            _target = target;
-            navMeshAgent.SetDestination(_target.position);
+            _targetPosition = pos;
+            navMeshAgent.SetDestination(_targetPosition);
         }
 
         [Server]
@@ -110,22 +116,22 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void RotateTo(Vector3 target, float rotationSpeed=1f)
         {
-            var direction = (target - transform.position).normalized;
+            _rotateDirection = (target - transform.position).normalized;
             
-            direction.y = 0;
+            _rotateDirection.y = 0;
             
-            var lookRotation = Quaternion.LookRotation(direction);
+            _lookRotation = Quaternion.LookRotation(_rotateDirection);
 
             if (isMovingRB)
             {
-                rb.MoveRotation(Quaternion.Slerp(rb.rotation, lookRotation, Time.fixedDeltaTime * _rotationSpeed));
+                rb.MoveRotation(Quaternion.Slerp(rb.rotation, _lookRotation, Time.fixedDeltaTime * _rotationSpeed));
             }
             else
             {
-                while (Quaternion.Angle(lookRotation, transform.rotation) >= 5f)
+                while (Quaternion.Angle(_lookRotation, transform.rotation) >= 5f)
                 {
                     transform.rotation = Quaternion.Slerp(transform.rotation, 
-                        lookRotation, 
+                        _lookRotation, 
                         Time.fixedDeltaTime * rotationSpeed);
                 }
             }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Entity;
+using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using UnityEngine;
 
 namespace Game.Entity
@@ -7,43 +8,43 @@ namespace Game.Entity
     public class EnemyTargetsRegistry
     {
         public static EnemyTargetsRegistry Instance { get; private set; }
-        private Dictionary<GameObject, Damagable> _damagableObjects = new Dictionary<GameObject, Damagable>();
+        private Dictionary<GameObject, EnemyTargetObject> _enemyTargetObjects = new Dictionary<GameObject, EnemyTargetObject>();
 
-        public Dictionary<GameObject, Damagable> DamagableObjects => _damagableObjects;
+        public Dictionary<GameObject, EnemyTargetObject> EnemyTargetObjects => _enemyTargetObjects;
         
         public EnemyTargetsRegistry()
         {
             Instance = this;
         }
         
-        public void Register(Damagable damagable)
+        public void Register(EnemyTargetObject damagable)
         {
             var damagableObject = damagable.gameObject;
-            if (!_damagableObjects.ContainsKey(damagableObject))
-                _damagableObjects.Add(damagableObject, damagable); 
-            Debug.Log($"[EnemyTarget] {damagable.gameObject.name} has been registered");
+            if (!_enemyTargetObjects.ContainsKey(damagableObject))
+                _enemyTargetObjects.Add(damagableObject, damagable); 
+            Debug.Log($"[EnemyTargetObject] {damagable.gameObject.name} has been registered");
         }
         
-        public void Register(GameObject gameObject, Damagable damagable)
+        public void Register(GameObject gameObject, EnemyTargetObject damagable)
         {
-            if (!_damagableObjects.ContainsKey(gameObject))
-                _damagableObjects.Add(gameObject, damagable); 
-            Debug.Log($"[EnemyTarget] {damagable.gameObject.name} has been registered");
+            if (!_enemyTargetObjects.ContainsKey(gameObject))
+                _enemyTargetObjects.Add(gameObject, damagable); 
+            Debug.Log($"[EnemyTargetObject] {damagable.gameObject.name} has been registered");
         }
         
-        public void Unregister(Damagable damagable)
+        public void Unregister(EnemyTargetObject damagable)
         {
             var damagableObject = damagable.gameObject;
-            if (_damagableObjects.ContainsKey(damagableObject))
-                _damagableObjects.Remove(damagableObject);
+            if (_enemyTargetObjects.ContainsKey(damagableObject))
+                _enemyTargetObjects.Remove(damagableObject);
             
         }
 
-        public Damagable TryGetTargetDamagable(GameObject damagable, out Damagable item)
+        public EnemyTargetObject TryGetTargetDamagable(GameObject damagable, out EnemyTargetObject item)
         {
-            if (_damagableObjects.ContainsKey(damagable))
+            if (_enemyTargetObjects.ContainsKey(damagable))
             {
-                item = _damagableObjects[damagable];
+                item = _enemyTargetObjects[damagable];
                 return item;
             }
             item = null;

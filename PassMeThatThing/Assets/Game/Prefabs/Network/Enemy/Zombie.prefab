@@ -94,6 +94,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 227837763217859650}
+  - component: {fileID: 5686190622791376666}
   - component: {fileID: 6059272469753625803}
   - component: {fileID: 1118780070767854037}
   - component: {fileID: 1833560880880073641}
@@ -128,6 +129,18 @@ Transform:
   - {fileID: 9086114221855915269}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5686190622791376666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6059272469753625803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,12 +181,12 @@ MonoBehaviour:
   syncInterval: 0
   detectionInterval: 0.5
   proximityAreaCenter: {fileID: 227837763217859650}
-  proximityAreaRadius: 30
-  sightDistance: 50
+  proximityAreaRadius: 50.3
+  sightDistance: 114.4
   sightAngle: 60
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 2056
+    m_Bits: 8
 --- !u!114 &1833560880880073641
 MonoBehaviour:
   m_ObjectHideFlags: 0
