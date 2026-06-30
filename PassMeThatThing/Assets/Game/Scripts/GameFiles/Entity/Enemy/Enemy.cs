@@ -12,7 +12,7 @@ using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
-    public class Enemy : Damagable
+    public class Enemy : ToughnessDamagable
     {
         [SerializeField] protected TargetDetector targetDetector;
         [SerializeField] protected EnemyMovementController movementController;
@@ -22,11 +22,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         
         [Inject] private DamagableRegistry _damagableRegistry;
+        private float SMTimer;
+        private float SMInterval = 0.1f;
         
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
         
         public override DamagableModel DamagableModel => EnemyModel;
+        
 
         public TargetDetector TargetDetector => targetDetector;
         public EnemyMovementController MovementController => movementController;
@@ -43,11 +46,21 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
         }
         
+        public override void OnToughnessBreak()
+        {
+            
+        }
+
+        public override void OnToughnessChanged(int currentToughness, int maxToughness)
+        {
+            
+        }
+        
         protected virtual void Awake()
         {
             EnemyModel = new EnemyModel();
+            _toughnessModel = new ToughnessModel();
         }
-
 
         #region ServerLogic
         public override void OnStartServer()
@@ -68,10 +81,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         protected void FixedUpdate()
         {
             if(!isServer) return;
-            stateMachine.CurrentState.PhysicsUpdate();
+            
+            SMTimer += Time.fixedDeltaTime;
+
+            if (SMTimer >= SMInterval)
+            {
+                stateMachine.CurrentState.PhysicsUpdate();
+                SMTimer = 0f;
+            }
         }
         #endregion
 
-        
     }
 }

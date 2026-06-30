@@ -45,6 +45,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Exit()
         {
             base.Exit();
+            _zombie.ServerFullToughnessRecover();
             _zombie.RpcStandUp();
         }
         

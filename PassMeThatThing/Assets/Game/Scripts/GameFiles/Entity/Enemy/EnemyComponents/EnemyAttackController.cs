@@ -3,9 +3,11 @@ using AYellowpaper.SerializedCollections;
 using DG.Tweening;
 using Entity;
 using Enums;
+using Game.Scripts.Systems;
 using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
@@ -13,6 +15,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
     public class EnemyAttackController : NetworkBehaviour
     {
         private LayerMask _targetLayer;
+
+        [Inject] private DamageSystem _damageSystem;
         
         [SerializeField] protected Transform attackCubeCenter;
         [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
@@ -44,17 +48,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             foreach (var col in size)
             {
-                var damageable = FindDamagableInHierarchy(col.gameObject);
-                if (!damageable) continue;
-
-                if (!damageTypes.ContainsKey(damageable.Type)) continue;
-            
-                var finalDamage = (int)(damage * damageTypes[damageable.Type]);
-            
-                damageable.ServerTakeDamage(finalDamage);
-                OnAttackMelee?.Invoke();
-                
+                _damageSystem.TakeDamage(damage, col.gameObject, damageTypes);
             }
+
+            OnAttackMelee?.Invoke();
         }
         
         private Damagable FindDamagableInHierarchy(GameObject obj)

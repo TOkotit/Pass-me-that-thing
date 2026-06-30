@@ -24,6 +24,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         public float Speed => _zombieData.Speed;
         public float Damage => _zombieData.Damage;
+
+        public int MaxHealth => _zombieData.MaxHealth;
+        public int MaxToughness => _zombieData.MaxToughness;
         
         
         public ZombieView EnemyView => enemyView;
@@ -51,9 +54,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.Start();
             
             EnemyView.Initialize();
-            
+
             if (isServer)
-                ServerSetMaxHealth(_zombieData.MaxHealth);
+            {
+                ServerSetMaxHealth(MaxHealth, true);
+                ServerSetMaxToughness(MaxToughness, true);
+            }
         }
 
         public override void OnStartServer()
@@ -116,25 +122,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if (!isServer) return;
             
             Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
-            
-            stateMachine.ChangeState(ZombieKnockout);
-            //
-            // if (!hitRagdollCoroutine)
-            // {
-            //     hitRagdollCoroutine = true;
-            //     StartCoroutine(StartHit());
-            // }
         }
 
-        private IEnumerator StartHit()
+        public override void OnToughnessChanged(int currentToughness, int maxToughness)
         {
-            RpcFall();
-            for (var i = 0; i < 1; i++)
-            {
-                yield return new WaitForSeconds(1f);
-            }
-            RpcStandUp();
-            hitRagdollCoroutine = false;
+            Debug.Log($"[Zombie] OnToughnessChanged {currentToughness}/{maxToughness}");
+        }
+
+        public override void OnToughnessBreak()
+        {
+            stateMachine.ChangeState(ZombieKnockout);
         }
         
         private new void Update()

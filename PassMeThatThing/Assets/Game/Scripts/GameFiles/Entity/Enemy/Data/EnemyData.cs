@@ -12,6 +12,7 @@ public class EnemyData : ScriptableObject
 
     [Header("Stats")]
     [SerializeField] private int maxHealth;
+    [SerializeField] private int maxToughness;
     [SerializeField] private int speed;
     [SerializeField] private int damage;
     [SerializeField] private int attackCooldown;
@@ -25,9 +26,12 @@ public class EnemyData : ScriptableObject
     public Sprite EnemyImage => enemyImage;
 
     public int MaxHealth => maxHealth;
+    public int MaxToughness => maxToughness;
     public int Speed => speed;
     public int Damage => damage;
     public int AttackCooldown => attackCooldown;
     public int ChaseDistance => chaseDistance;
     public int AttackDistance => attackDistance;
+
+    
 }

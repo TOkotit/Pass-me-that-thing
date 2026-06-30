@@ -32,7 +32,7 @@ public class HealthPool
         if (damage == 0) return _currentHealth;
         _currentHealth -= damage;
         _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
-        Debug.Log($"Health after damage: {_currentHealth}");
+        // Debug.Log($"Health after damage: {_currentHealth}");
         return _currentHealth;
     }
 }
