@@ -2,7 +2,7 @@ using DI;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace Game.Scripts.GameFiles.Items
+namespace Game.Scripts.Systems
 {
     public class AutoGameplayScopeInjector : MonoBehaviour
     {
@@ -18,10 +18,10 @@ namespace Game.Scripts.GameFiles.Items
                     Debug.Log($"AutoGameplayScopeInjector {gameObject.name} injected");
                     InjectAllComponents(scope);
                 }
-                // else
-                // {
-                //     StartCoroutine(WaitAndInject(scope));
-                // }
+                else
+                {
+                    StartCoroutine(WaitAndInject(scope));
+                }
             }
         }
 
