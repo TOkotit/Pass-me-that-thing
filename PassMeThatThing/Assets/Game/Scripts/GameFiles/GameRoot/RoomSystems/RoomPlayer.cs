@@ -1,43 +1,49 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using UnityEngine;
 
 public class NetworkRoomPlayer : NetworkBehaviour
 {
-    // // Синхронизируем имя и статус готовности со всеми клиентами
-    // [SyncVar(OnChange = nameof(OnNameChanged))]
-    // public string PlayerName = "Player";
-    //
-    // [SyncVar(OnChange = nameof(OnReadyChanged))]
-    // public bool IsReady = false;
-    //
-    // public override void OnStartClient()
-    // {
-    //     base.OnStartClient();
-    //     // Регистрируем игрока в локальном списке менеджера лобби
-    //     RoomManager.Instance.RegisterPlayer(this);
-    // }
-    //
-    // public override void OnStopClient()
-    // {
-    //     base.OnStopClient();
-    //     RoomManager.Instance.UnregisterPlayer(this);
-    // }
-    //
-    // // Этот метод вызывается на клиенте, чтобы сказать серверу "я готов"
-    // [ServerRpc]
-    // public void CmdSetReady(bool ready)
-    // {
-    //     IsReady = ready;
-    //     RoomManager.Instance.CheckStartCondition();
-    // }
-    //
-    // [ServerRpc]
-    // public void CmdSetName(string name)
-    // {
-    //     PlayerName = name;
-    // }
-    //
-    // private void OnNameChanged(string oldName, string newName, bool asServer) => RoomManager.Instance.RefreshGUI();
-    // private void OnReadyChanged(bool oldReady, bool newReady, bool asServer) => RoomManager.Instance.RefreshGUI();
+    public readonly SyncVar<string> PlayerName = new("Player");
+    public readonly SyncVar<bool> IsReady = new SyncVar<bool>();
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        CustomRoomManager.Instance.RegisterRoomPlayer(this);
+
+        PlayerName.OnChange += OnNameChanged;
+        IsReady.OnChange += OnReadyChanged;
+        
+        // Вызываем один раз при старте, чтобы отобразить текущие данные
+        CustomRoomManager.Instance.RefreshGUI();
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        if (CustomRoomManager.Instance != null)
+            CustomRoomManager.Instance.UnregisterRoomPlayer(this);
+
+        // Обязательно отписываемся от событий во избежание утечек памяти
+        PlayerName.OnChange -= OnNameChanged;
+        IsReady.OnChange -= OnReadyChanged;
+    }
+
+    [ServerRpc]
+    public void CmdSetReady(bool ready)
+    {
+        // Изменение значения SyncVar<> на сервере происходит через .Value
+        IsReady.Value = ready;
+        CustomRoomManager.Instance.CheckStartCondition();
+    }
+
+    [ServerRpc]
+    public void CmdSetName(string name)
+    {
+        PlayerName.Value = name;
+    }
+
+    // Сигнатура метода OnChange в FishNet принимает: (T prev, T next, bool asServer)
+    private void OnNameChanged(string prev, string next, bool asServer) => CustomRoomManager.Instance.RefreshGUI();
+    private void OnReadyChanged(bool prev, bool next, bool asServer) => CustomRoomManager.Instance.RefreshGUI();
 }
