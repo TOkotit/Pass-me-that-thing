@@ -26,6 +26,7 @@ namespace Entity
         private int _syncedMaxHealth;
         
         public abstract DamagableModel DamagableModel { get; }
+        
         public DamagableType Type => type;
 
         protected virtual void Start()
@@ -65,9 +66,9 @@ namespace Entity
         }
         
         [Server]
-        public void ServerSetMaxHealth(int newHealth)
+        public void ServerSetMaxHealth(int newHealth, bool fullHeal=false)
         {
-            DamagableModel.SetMaxHealth(newHealth, true);
+            DamagableModel.SetMaxHealth(newHealth, fullHeal);
             _syncedMaxHealth = DamagableModel.HealthPool.MaxHealth;
         }
 

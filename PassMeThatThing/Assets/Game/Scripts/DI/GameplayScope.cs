@@ -12,6 +12,7 @@ using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
+using Game.Scripts.Systems;
 
 namespace DI
 {
@@ -36,10 +37,12 @@ namespace DI
 
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
-            
             builder.RegisterComponent(eventManagerPrefab);
             builder.RegisterComponent(globalStageManagerPrefab);
             builder.RegisterComponent(enemySpawnerPrefab);
+            
+            var damageSystem = new DamageSystem();
+            builder.RegisterInstance(damageSystem);
             
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);

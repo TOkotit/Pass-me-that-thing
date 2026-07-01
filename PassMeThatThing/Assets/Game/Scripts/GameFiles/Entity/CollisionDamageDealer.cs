@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using Entity;
 using Enums;
+using Game.Scripts.Systems;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity
 {
     public class CollisionDamageDealer : NetworkBehaviour
     {
         [SerializeField] private int damage = 10;
+        [SerializeField] private int toughnessDamage = 1;
         [SerializeField] private bool useVelocityDamage = false;
         [SerializeField] private float velocityDamageMultiplier = 1f;
         [SerializeField] private float cooldown = 0.5f;
         [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
+        
+        [Inject] private DamageSystem _damageSystem;
+        
         private float _lastDamageTime = -999f;
         
         public event Action OnServerTakeDamage;
@@ -24,22 +30,17 @@ namespace Game.Scripts.GameFiles.Entity
 
             if (!isServer) return;
             if (DamagableRegistry.Instance == null) return;
-
-            var damageable = FindDamagableInHierarchy(other.gameObject);
-            if (!damageable) return;
-
-            if (!damageTypes.ContainsKey(damageable.Type)) return;
             if (Time.time - _lastDamageTime < cooldown) return;
-
-            var finalDamage = (int)(damage * damageTypes[damageable.Type]);
+            
+            var finalDamage = damage;
             if (useVelocityDamage)
             {
                 var velocity = other.relativeVelocity.magnitude;
                 finalDamage += (int)(velocity * velocityDamageMultiplier);
             }
-
-            damageable.ServerTakeDamage(finalDamage);
-            OnServerTakeDamage?.Invoke();
+            
+            _damageSystem.TakeDamage(finalDamage, other.gameObject, damageTypes, toughnessDamage, OnServerTakeDamage);
+            
             _lastDamageTime = Time.time;
         }
         private Damagable FindDamagableInHierarchy(GameObject obj)
