@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using DI;
 using Entity;
+using FishNet.Connection;
+using FishNet.Object;
 using Game.Entity;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;

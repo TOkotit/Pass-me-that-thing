@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using DG.Tweening;
+using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.UI;

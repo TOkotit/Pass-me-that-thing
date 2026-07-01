@@ -1,4 +1,6 @@
 using DI;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
 using Mirror;
 using UnityEngine;

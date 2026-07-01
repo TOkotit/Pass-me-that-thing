@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using Entity;
 using Enums;
+using FishNet.Object;
 using Game.Scripts.Systems;
 using Mirror;
 using UnityEngine;

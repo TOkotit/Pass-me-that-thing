@@ -1,4 +1,5 @@
 ﻿using System;
+using FishNet.Object.Synchronizing;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;

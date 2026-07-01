@@ -1,3 +1,5 @@
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using Game.Scripts.Utils;
 using Mirror;

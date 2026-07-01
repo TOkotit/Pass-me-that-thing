@@ -1,5 +1,6 @@
 using Entity;
 using Enums;
+using FishNet.Object;
 using Mirror;
 using UnityEngine;
 

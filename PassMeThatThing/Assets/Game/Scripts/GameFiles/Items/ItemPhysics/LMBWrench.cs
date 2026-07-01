@@ -1,4 +1,5 @@
 using DG.Tweening;
+using FishNet.Object;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using Game.Scripts.GameFiles.GameRandomEvents.FloodEvent;

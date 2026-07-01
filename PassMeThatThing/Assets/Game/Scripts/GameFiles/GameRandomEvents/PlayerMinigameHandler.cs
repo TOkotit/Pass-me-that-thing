@@ -1,3 +1,5 @@
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Gameplay.View.UI;
 using Mirror;
 using UnityEngine;

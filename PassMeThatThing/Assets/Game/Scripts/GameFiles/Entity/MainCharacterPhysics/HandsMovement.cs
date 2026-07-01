@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using FishNet.Object;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;

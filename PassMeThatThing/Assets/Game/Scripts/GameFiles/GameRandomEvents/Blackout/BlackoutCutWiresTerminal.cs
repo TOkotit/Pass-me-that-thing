@@ -1,3 +1,5 @@
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;

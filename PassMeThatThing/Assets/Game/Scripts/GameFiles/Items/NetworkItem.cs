@@ -1,3 +1,5 @@
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Mirror;
 
 namespace Game.Scripts.GameFiles.Items

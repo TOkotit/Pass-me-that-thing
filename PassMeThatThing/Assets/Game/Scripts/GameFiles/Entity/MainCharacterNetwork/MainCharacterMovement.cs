@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using DI;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using MainCharacter_old;
 using Mirror;

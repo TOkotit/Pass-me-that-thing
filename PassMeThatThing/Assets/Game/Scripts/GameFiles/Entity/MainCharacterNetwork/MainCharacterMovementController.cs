@@ -1,5 +1,6 @@
 ﻿using System;
 using DI;
+using FishNet.Object;
 using Mirror;
 using Systems;
 using UnityEngine;

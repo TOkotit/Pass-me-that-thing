@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using FishNet.Managing;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;

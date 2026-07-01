@@ -1,5 +1,8 @@
 
 using System.Collections;
+using FishNet.Managing;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;

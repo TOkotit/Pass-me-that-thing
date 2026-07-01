@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Mirror;
 using UnityEngine;
 

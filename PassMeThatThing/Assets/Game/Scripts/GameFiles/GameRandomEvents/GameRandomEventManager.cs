@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
 using Mirror;
 using UnityEditor;

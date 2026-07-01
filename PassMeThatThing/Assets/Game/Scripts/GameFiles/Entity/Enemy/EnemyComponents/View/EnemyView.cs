@@ -1,3 +1,4 @@
+using FishNet.Component.Animating;
 using Mirror;
 using UnityEngine;
 

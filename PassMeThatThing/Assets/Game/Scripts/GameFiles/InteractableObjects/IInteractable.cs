@@ -1,3 +1,4 @@
+using FishNet.Object;
 using Game.Scripts.GameFiles.Items;
 using Mirror;
 

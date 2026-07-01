@@ -4,6 +4,7 @@ using Ami.BroAudio.Data;
 using Ami.BroAudio.Runtime;
 using Ami.Extension;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Ami.BroAudio
 {
@@ -163,13 +164,13 @@ namespace Ami.BroAudio
             return this;
         }
 
-        /// <inheritdoc cref="Wrap"/>
+        /// <inheritdoc cref="UnityEngine.UIElements.Wrap"/>
         private IMusicPlayer Wrap(IMusicPlayer musicPlayer)
         {
             return this;
         }
 
-        /// <inheritdoc cref="Wrap"/>
+        /// <inheritdoc cref="UnityEngine.UIElements.Wrap"/>
         private IPlayerEffect Wrap(IPlayerEffect dominator)
         {
             return this;

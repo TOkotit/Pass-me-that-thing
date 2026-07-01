@@ -1143,13 +1143,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8572835845391485891}
-  - component: {fileID: 4659918486380289279}
   - component: {fileID: 795636107137034896}
   - component: {fileID: 7399799905044466384}
   - component: {fileID: 9057745976237410458}
   - component: {fileID: 817134635841920794}
   - component: {fileID: 4567991071284443534}
   - component: {fileID: 2421882705470040773}
+  - component: {fileID: -6445984068935225763}
   m_Layer: 0
   m_Name: MainCharacter_old
   m_TagString: Untagged
@@ -1189,23 +1189,6 @@ Transform:
   - {fileID: 6237591860451392263}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4659918486380289279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2645522413353200517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 0
-  _assetId: 1170744666
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
 --- !u!114 &795636107137034896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1233,17 +1216,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  joints:
-  - joint: {fileID: 173344307844624988}
-    spring: 600
-    damper: 0.5
-  - joint: {fileID: 1695402308512339797}
-    spring: 600
-    damper: 0.5
-  - joint: {fileID: 2181451318277074280}
-    spring: 600
-    damper: 0.5
-  globalSpringMultiplier: 1
+  spineAlignJoints: []
+  otherJoints: []
+  currentConsciousness: 1
 --- !u!114 &9057745976237410458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1259,6 +1234,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  rendererData: {fileID: 0}
 --- !u!114 &817134635841920794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1291,11 +1267,18 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  interactionDistance: 1
   interactionZone: {fileID: 1112594576372790595}
-  itemLayer:
+  _physicalItemInteractionController: {fileID: 0}
+  mainCharacter: {fileID: 0}
+  interactionLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
+  interactionDistance: 1
+  interactionTimeOut: 1
+  swingForce: 5
+  swingTorque: 10
+  swingDuration: 0.2
+  swingCooldown: 0.8
 --- !u!114 &2421882705470040773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1312,7 +1295,65 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _interactionZone: {fileID: 1112594576372790595}
-  throwMultiplier: 2.5
+  "_physical\u0421ontroller": {fileID: 0}
+  activeSlot: 0
+--- !u!114 &-6445984068935225763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645522413353200517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  WasActiveDuringEdit: 0
+  WasActiveDuringEdit_Set1: 1
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  <PredictedOwner>k__BackingField: {fileID: 0}
+  NetworkBehaviours: []
+  InitializedParentNetworkBehaviour: {fileID: 0}
+  InitializedNestedNetworkObjects: []
+  RuntimeParentNetworkBehaviour: {fileID: 0}
+  RuntimeChildNetworkBehaviours: []
+  _isNetworked: 1
+  _isSpawnable: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _preventDespawnOnDisconnect: 0
+  _defaultDespawnType: 0
+  _initializedTimestamp: 0
+  _localLevelOfDetailCalculationType: 0
+  _useLevelOfDetail: 0
+  _useRootLevelOfDetail: 1
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 0
+  _predictionType: 0
+  _localReconcileCorrectionType: 2
+  _graphicalObject: {fileID: 0}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 1
+  _ownerSmoothedProperties: 255
+  _adaptiveInterpolation: 3
+  _spectatorSmoothedProperties: 255
+  _spectatorInterpolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 65535
+  <SpawnableCollectionId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 17300012403478881215
+  SceneId: 0
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    Scale: {x: 0, y: 0, z: 0}
+    IsValid: 0
 --- !u!1 &2909725294491179631
 GameObject:
   m_ObjectHideFlags: 0
@@ -1600,9 +1641,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2176e8a27ff49e7bae81b5dfe3bd018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
 --- !u!1 &3054673784607645384
 GameObject:
   m_ObjectHideFlags: 0
@@ -4082,9 +4120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2176e8a27ff49e7bae81b5dfe3bd018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
 --- !u!1 &8473090374347820402
 GameObject:
   m_ObjectHideFlags: 0
