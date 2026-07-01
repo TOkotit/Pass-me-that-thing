@@ -17,6 +17,8 @@ namespace DI
 {
     public class GameplayScope: LifetimeScope
     {
+        public static IObjectResolver Resolver { get; private set; }
+        
         [SerializeField] ItemDatabase itemDatabase;
         [SerializeField] GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
@@ -66,6 +68,20 @@ namespace DI
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
+        }
+        
+        private void Awake()
+        {
+            base.Awake();
+            Resolver = Container;
+        }
+
+        protected override void OnDestroy()
+        {
+            if (Resolver == Container)
+                Resolver = null;
+            
+            base.OnDestroy();
         }
     }
 }

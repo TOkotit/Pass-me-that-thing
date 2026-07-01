@@ -39,47 +39,35 @@ namespace Game.Scripts.GameFiles.Events
         public GameRandomEventManager GameRandomEventManager => _gameRandomEventManager;
         private bool _isInjected;
         
-        private void EnsureInjected()
-        {
-            if (_isInjected) return;
-
-            var scope = LifetimeScope.Find<GameplayScope>();
-            if (scope != null && scope.Container != null)
-            {
-                scope.Container.Inject(this);
-                _isInjected = true;
-            }
-        }        
         
         [Server]
         public override void OnStartServer()
         {
             base.OnStartServer();
-            EnsureInjected();
             _currentTriggerChance = _baseTriggerChance;
-            if (_gameRandomEventManager)
-            {
-                _eventId = _gameRandomEventManager.RegisterSceneEvent(this);
-                Debug.Log($"[BaseGameEvent] Ивент успешно зарегистрирован на сервере. ID: {_eventId}");
-            }
-            else
-            {
-                Debug.LogError($"[BaseGameEvent] Менеджер ивентов НЕ НАЙДЕН вообще нигде (ни DI, ни Find)! Ивент не зарегистрирован.");
-            }
+            RegisterEvent();
         }
         public override void OnStartClient()
         {
             base.OnStartClient();
-            EnsureInjected();
+            if (!isServer && !_isInjected)
+            {
+                
+                GameplayScope.Resolver?.Inject(this);
+                _isInjected = true;
+            }
         }
         
-        
-        public void Initialize(int uniqueId, GameEventsType assignedType, GameRandomEventManager manager)
+        private void RegisterEvent()
         {
-            _eventId = uniqueId;
-            eventType = assignedType;
-            
-            manager.RegisterSceneEvent(this);
+            if (_gameRandomEventManager != null)
+            {
+                _eventId = _gameRandomEventManager.RegisterSceneEvent(this);
+            }
+            else
+            {
+                Debug.LogError("EventManager не заинжектился!");
+            }
         }
         
         [Server]

@@ -4,11 +4,14 @@ using AYellowpaper.SerializedCollections;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
     public class LevelSpawnerTest_ : MonoBehaviour
     {
+        
+        private IObjectResolver _resolver;
         public float roomSizeMultiplier = 10f; 
 
         [Header("Префабы комнат")]
@@ -50,6 +53,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             SpawnGraph(rootNode);
         }
 
+        [Inject]
+        public void Construct(IObjectResolver resolver)
+        {
+            _resolver = resolver;
+        }
+        
         private void SpawnGraph(RoomNode startNode)
         {
             var visited = new HashSet<int>();
