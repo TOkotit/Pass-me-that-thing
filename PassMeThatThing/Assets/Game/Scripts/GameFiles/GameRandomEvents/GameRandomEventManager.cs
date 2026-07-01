@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
-using Mirror;
+
 using UnityEditor;
 using UnityEngine;
 using VContainer;
@@ -98,7 +98,7 @@ namespace Game.Scripts.GameFiles.Events
         }
 
 
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         public void CmdStopEventById(int id)
         {
             Debug.Log($"<color=yellow> CmdStopEventById {id}");

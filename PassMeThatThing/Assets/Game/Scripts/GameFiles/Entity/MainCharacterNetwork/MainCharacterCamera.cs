@@ -1,6 +1,7 @@
 ﻿using System;
 using DI;
-using Mirror;
+using FishNet.Object;
+
 using Systems;
 using UnityEngine;
 using VContainer;
@@ -8,7 +9,7 @@ using VContainer;
 namespace MainCharacter_old
 {
     [RequireComponent(typeof(Camera))]
-    public class MainCharacterCamera : MonoBehaviour
+    public class MainCharacterCamera : NetworkBehaviour
     {
         [SerializeField] private Camera _camera;
         [SerializeField] private float sensitivity = 1f;
@@ -18,11 +19,11 @@ namespace MainCharacter_old
         [SerializeField] BodyVerticalAlign bodyVerticalAlign;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
-        private NetworkIdentity _ownerIdentity;
+        // private NetworkIdentity _ownerIdentity;
 
         private Vector2 _rotation;
         private bool _initialized;
-        private bool _isLocalPlayer;
+        // private bool _isLocalPlayer;
         private bool _isCameraRotating = true;
 
         public bool IsCameraRotating
@@ -36,15 +37,15 @@ namespace MainCharacter_old
             if (!_camera)
                 _camera = GetComponent<Camera>();
 
-            _ownerIdentity = GetComponentInParent<NetworkIdentity>();
+            // _ownerIdentity = GetComponentInParent<NetworkIdentity>();
             _movementController = GetComponentInParent<MainCharacterMovementController>();
         }
-        
-        private void Start()
-        {
-            _isLocalPlayer = _ownerIdentity && _ownerIdentity.isLocalPlayer;
 
-            if (!_isLocalPlayer)
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            
+            if (!IsOwner)
             {
                 if (_camera)
                     _camera.enabled = false;
@@ -71,7 +72,7 @@ namespace MainCharacter_old
 
         private void LateUpdate()
         {
-            if (!_isLocalPlayer || !_initialized)
+            if (!IsOwner || !_initialized)
                 return;
 
             if (!_isCameraRotating)
@@ -98,7 +99,9 @@ namespace MainCharacter_old
             _movementController.ControllerRotate(characterRotation);
             
             var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
-            if (_ownerIdentity.isServer)
+            
+            
+            if (IsServerStarted)
             {
                 bodyVerticalAlign.SetTilt(targetTilt);
             }

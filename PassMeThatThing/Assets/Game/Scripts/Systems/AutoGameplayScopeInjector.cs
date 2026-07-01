@@ -6,21 +6,22 @@ namespace Game.Scripts.GameFiles.Items
 {
     public class AutoGameplayScopeInjector : MonoBehaviour
     {
-        // Используем Start вместо Awake, чтобы дать Mirror время настроить объект
         private void Awake()
         {
+            Debug.Log($"AutoGameplayScopeInjector AWAKE {gameObject.name}");
             var scope = LifetimeScope.Find<GameplayScope>();
     
             if (scope != null)
             {
                 if (scope.Container != null)
                 {
+                    Debug.Log($"AutoGameplayScopeInjector {gameObject.name} injected");
                     InjectAllComponents(scope);
                 }
-                else
-                {
-                    StartCoroutine(WaitAndInject(scope));
-                }
+                // else
+                // {
+                //     StartCoroutine(WaitAndInject(scope));
+                // }
             }
         }
 

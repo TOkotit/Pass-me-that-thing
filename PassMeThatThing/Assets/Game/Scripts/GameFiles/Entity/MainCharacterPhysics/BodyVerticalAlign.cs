@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 using UnityEngine;
 
 [Serializable]
@@ -33,11 +33,21 @@ public class BodyVerticalAlign : NetworkBehaviour
         } 
     }
 
-    [SyncVar(hook = nameof(OnTiltChanged))]
-    private Quaternion _syncTiltOffset = Quaternion.identity;
+    //[SyncVar(OnChange = nameof(OnTiltChanged))]
+    private readonly SyncVar<Quaternion>  _syncTiltOffset = new(Quaternion.identity);
     private Quaternion tiltOffset = Quaternion.identity;
 
-    private void OnTiltChanged(Quaternion oldValue, Quaternion newValue)
+    private void Start()
+    {
+        _syncTiltOffset.OnChange += OnTiltChanged;
+    }
+
+    private void OnDestroy()
+    {
+        _syncTiltOffset.OnChange -= OnTiltChanged;
+    }
+
+    private void OnTiltChanged(Quaternion oldValue, Quaternion newValue, bool asServer)
     {
         tiltOffset = newValue;
     }
@@ -109,15 +119,15 @@ public class BodyVerticalAlign : NetworkBehaviour
     [Server]
     public void SetTilt(Vector3 eulerAngles)
     {
-        _syncTiltOffset = Quaternion.Euler(eulerAngles);
+        _syncTiltOffset.Value = Quaternion.Euler(eulerAngles);
     }
 
-    [Command]
+    [ServerRpc]
     public void CmdSetTilt(Vector3 eulerAngles)
     {
         SetTilt(eulerAngles);
     }
-    [Command]
+    [ServerRpc]
     public void CmdSetConsciousness(float value)
     {
         Consciousness = Mathf.Clamp01(value);

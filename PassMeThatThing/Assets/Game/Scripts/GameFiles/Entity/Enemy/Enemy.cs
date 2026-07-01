@@ -4,7 +4,7 @@ using Entity;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Game.Scripts.GameFiles.Items;
-using Mirror;
+
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -74,13 +74,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         protected void Update()
         {
-            if(!isServer) return;
+            if(!IsServerStarted) return;
             stateMachine.CurrentState.LogicUpdate();
         }
 
         protected void FixedUpdate()
         {
-            if(!isServer) return;
+            if(!IsServerStarted) return;
             
             SMTimer += Time.fixedDeltaTime;
 

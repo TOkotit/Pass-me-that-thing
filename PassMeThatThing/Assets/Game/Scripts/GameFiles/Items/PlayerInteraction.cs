@@ -9,7 +9,7 @@ using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using Mirror;
+
 using Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -65,8 +65,10 @@ namespace Game.Scripts.GameFiles.Items
         }
 
         #region Unity / Mirror methods
-        public override void OnStartLocalPlayer()
+        public override void OnStartClient()
         {
+            if (!IsOwner) return;
+            
             _camera = GetComponentInChildren<Camera>();
             TrySubscribe();
         }
@@ -76,14 +78,15 @@ namespace Game.Scripts.GameFiles.Items
             inventory = GetComponent<PlayerInventory>();
         }
 
-        public override void OnStopLocalPlayer()
+        public override void OnStopClient()
         {
+            if (!IsOwner) return;
             TryUnsubscribe();
         }
 
         private void FixedUpdate()
         {
-            if (!isLocalPlayer) return;
+            if (!IsOwner) return;
 
             if (_outlineRegistry.EnabledOutlines.Count > 1)
             {
@@ -102,19 +105,6 @@ namespace Game.Scripts.GameFiles.Items
                     _outlineRegistry.EnableOutline(outline);
                 }
             }
-        }
-        
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying) return;
-            
-            var identity = GetComponent<NetworkIdentity>();
-            if (!identity || !identity.isLocalPlayer) return;
-            
-            if (!interactionZone) return;
-            
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
         }
         #endregion
 

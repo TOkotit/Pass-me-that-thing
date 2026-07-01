@@ -35,7 +35,7 @@ namespace Game.Entity
             base.Start();
             Initialize();
             
-            if (isServer)
+            if (IsServerStarted)
                 ServerSetMaxHealth(100); //SO
         }
 
@@ -58,7 +58,7 @@ namespace Game.Entity
             mCamera.IsCameraRotating = false;
             
             
-            if (!isLocalPlayer) return;
+            if (!IsOwner) return;
             
             Debug.Log("[MainCharacter] OnDeath");
             
@@ -67,7 +67,7 @@ namespace Game.Entity
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            if (!isLocalPlayer) return;
+            if (!IsOwner) return;
             
             Debug.Log($"[MainCharacter] OnHealthChanged {currentHealth}");
             

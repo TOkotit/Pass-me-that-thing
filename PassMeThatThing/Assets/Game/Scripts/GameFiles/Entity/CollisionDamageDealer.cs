@@ -5,7 +5,7 @@ using Entity;
 using Enums;
 using FishNet.Object;
 using Game.Scripts.Systems;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 
@@ -29,7 +29,7 @@ namespace Game.Scripts.GameFiles.Entity
         private void OnCollisionEnter(Collision other)
         {
 
-            if (!isServer) return;
+            if (!IsServerStarted) return;
             if (DamagableRegistry.Instance == null) return;
             if (Time.time - _lastDamageTime < cooldown) return;
             

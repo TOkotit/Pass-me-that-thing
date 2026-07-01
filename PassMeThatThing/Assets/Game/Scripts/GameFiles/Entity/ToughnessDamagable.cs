@@ -1,7 +1,7 @@
 ﻿using Enums;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 
@@ -14,16 +14,20 @@ namespace Entity
     {
         protected ToughnessModel _toughnessModel;
         
-        [SyncVar(hook = nameof(OnSyncedToughnessChanged))]
-        private int _syncedToughness;
+        // [SyncVar(OnChange = nameof(OnSyncedToughnessChanged))]
+        private readonly SyncVar<int> _syncedToughness = new();
         
-        [SyncVar(hook = nameof(OnSyncedMaxToughnessChanged))]
-        private int _syncedMaxToughness;
+        //[SyncVar(OnChange = nameof(OnSyncedMaxToughnessChanged))]
+        private readonly SyncVar<int> _syncedMaxToughness = new();
         
         protected virtual void Start()
         {
             base.Start();
-            if (isServer)
+
+            _syncedToughness.OnChange += OnSyncedToughnessChanged;
+            _syncedMaxToughness.OnChange += OnSyncedMaxToughnessChanged;
+            
+            if (IsServerStarted)
             {
                 _toughnessModel.OnToughnessChanged += OnToughnessChanged;
                 _toughnessModel.OnToughnessBreak += OnToughnessBreak;
@@ -34,7 +38,7 @@ namespace Entity
         {
             base.OnDestroy();
             
-            if (isServer)
+            if (IsServerStarted)
             {
                 _toughnessModel.OnToughnessChanged -= OnToughnessChanged;
                 _toughnessModel.OnToughnessBreak -= OnToughnessBreak;
@@ -46,35 +50,35 @@ namespace Entity
         public void ServerReduceToughness(int amount)
         {
             _toughnessModel.ReduceToughness(amount);
-            _syncedToughness = _toughnessModel.CurrentToughness;
+            _syncedToughness.Value = _toughnessModel.CurrentToughness;
         }
         
         [Server]
         public void ServerSetToughness(int newToughness)
         {
             _toughnessModel.SetToughness(newToughness);
-            _syncedToughness =  _toughnessModel.CurrentToughness;
+            _syncedToughness.Value =  _toughnessModel.CurrentToughness;
         }
         
         [Server]
         public void ServerFullToughnessRecover()
         {
             _toughnessModel.SetToughness(_toughnessModel.MaxToughness);
-            _syncedToughness =  _toughnessModel.CurrentToughness;
+            _syncedToughness.Value =  _toughnessModel.CurrentToughness;
         }
         
         [Server]
         public void ServerSetMaxToughness(int newToughness, bool fullToughness)
         {
             _toughnessModel.SetMaxToughness(newToughness, fullToughness);
-            _syncedMaxToughness = _toughnessModel.CurrentToughness;
+            _syncedMaxToughness.Value = _toughnessModel.CurrentToughness;
         }
 
 
         // Хуки 
-        public void OnSyncedToughnessChanged(int oldToughness, int newToughness)
+        public void OnSyncedToughnessChanged(int oldToughness, int newToughness, bool asServer)
         {
-            if (!isServer) 
+            if (!IsServerStarted) 
             {
                 _toughnessModel.SetToughness(newToughness);
                 
@@ -84,9 +88,9 @@ namespace Entity
             }
         }
         
-        public void OnSyncedMaxToughnessChanged(int oldMax, int newMax)
+        public void OnSyncedMaxToughnessChanged(int oldMax, int newMax, bool asServer)
         {
-            if (!isServer)
+            if (!IsServerStarted)
             {
                 _toughnessModel.SetMaxToughness(newMax, false);
             }

@@ -1,6 +1,6 @@
 using System;
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 namespace MainCharacter_old

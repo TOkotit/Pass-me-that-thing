@@ -1,7 +1,8 @@
 ﻿using System;
 using DI;
+using FishNet.Component.Transforming;
 using FishNet.Object;
-using Mirror;
+
 using Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -62,13 +63,24 @@ namespace MainCharacter_old
         
         public override void OnStartClient()
         {
-            if (isLocalPlayer) return; 
+            if (IsOwner)
+            {
+                _gameInput.Gameplay.Enable();
+
+                if (_mainCamera)
+                {
+                    _mainCamera.gameObject.SetActive(true);
+                    _mainCamera.SetupInput(_gameInput); 
+                }
+
+                TrySubscribe();
+            }
 
             var allRbs = GetComponentsInChildren<Rigidbody>();
             foreach (var rb in allRbs)
             {
                 rb.detectCollisions = false;
-                var hasNetTransform = rb.TryGetComponent<NetworkTransformReliable>(out var netTransform);
+                var hasNetTransform = rb.TryGetComponent<NetworkTransform>(out var netTransform);
                 
                 if (hasNetTransform)
                 {
@@ -84,28 +96,20 @@ namespace MainCharacter_old
             }
         }
         
-        public override void OnStartLocalPlayer()
-        {
-            _gameInput.Gameplay.Enable();
-
-            if (_mainCamera)
-            {
-                _mainCamera.gameObject.SetActive(true);
-                _mainCamera.SetupInput(_gameInput); 
-            }
-
-            TrySubscribe();
-        }
+        // public override void OnStartLocalPlayer()
+        // {
+        //     
+        // }
 
         private void OnEnable()
         {
-            if (isLocalPlayer) 
+            if (IsOwner) 
                 TrySubscribe();
         }
 
         private void OnDisable()
         {
-            if (isLocalPlayer)
+            if (IsOwner)
                 TryUnsubscribe();
         }
 
@@ -145,7 +149,7 @@ namespace MainCharacter_old
         
         private void Update()
         {
-            if (!isLocalPlayer) return;
+            if (!IsOwner) return;
 
             ReadMovement();
             
@@ -214,32 +218,32 @@ namespace MainCharacter_old
         
         // ================== COMMANDS ==================
         
-        // [Command]
+        // [ServerRpc]
         // private void CmdJump()
         // {
         //     _controllable.Jump();
         // }
         //
-        // [Command]
+        // [ServerRpc]
         // private void CmdSprintStarted()
         // {
         //     _controllable.SetSprinting(true); 
         // }
         //
-        // [Command]
+        // [ServerRpc]
         // private void CmdSprintCanceled()
         // {
         //     _controllable.SetSprinting(false);
         // }
         //
-        // [Command]
+        // [ServerRpc]
         // private void CmdMove(Vector3 direction)
         // {
         //     // Debug.Log($"<color=aliceblue>[{gameObject.name}] Moving to {direction}...");
         //     _controllable.Move(direction);
         // }
         //
-        // [Command]
+        // [ServerRpc]
         // public void CmdRotate(Quaternion rotation)
         // {
         //     _controllable.Rotate(rotation);
@@ -249,7 +253,7 @@ namespace MainCharacter_old
         
         private void OnDestroy()
         {
-            if (isLocalPlayer && _gameInput != null)
+            if (IsOwner && _gameInput != null)
             {
                 TryUnsubscribe();
                 _gameInput.Gameplay.Disable();

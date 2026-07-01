@@ -1,12 +1,14 @@
 
 using System.Collections;
+using FishNet.Component.Transforming;
+using FishNet.Connection;
 using FishNet.Managing;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 
@@ -15,8 +17,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
     public class PhysicalItem : NetworkBehaviour
     {
         [SerializeField] private float hardness;
-        [SyncVar]
-        [SerializeField] private int durability;
+        
+        
         [SerializeField] private HandleType handleType;
         [SerializeField] private Rigidbody universalPoint;
         [SerializeField] private Rigidbody leftHandPoint;
@@ -27,18 +29,21 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Rigidbody rigidBody;
         [SerializeField] private NetworkItem _network;
         [SerializeField] private bool hasToBeAligned;
-        [SyncVar]
-        [SerializeField] private bool _isThrown;
+        
+        // [SyncVar]
+        private readonly SyncVar<int> durability = new();
+        // [SyncVar]
+        private readonly SyncVar<bool> _isThrown = new();
         
         private LMBReaction reaction;
         private Outline _outline;
         private CollisionDamageDealer  damageDealer;
-        private NetworkTransformReliable _networkTransform;
+        private NetworkTransform _networkTransform;
         
         private ParticlePoolManager _particlePool;
         
         public float Hardness => hardness;
-        public int Durability {get => durability; set => durability = value; }
+        public int Durability {get => durability.Value; set => durability.Value = value; }
         public HandleType HandleType => handleType;
         public Rigidbody UniversalPoint => universalPoint;
         public Rigidbody LeftHandPoint => leftHandPoint;
@@ -47,7 +52,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public bool DoActAndSwing => doActAndSwing;
         public bool CanBeOwned => canBeOwned;
         public MainCharacter Owner { get; set; }
-        public NetworkConnectionToClient ConnectionToClient { get; set; }
+        public NetworkConnection ConnectionToClient { get; set; }
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 
@@ -55,8 +60,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Rigidbody Rigidbody => rigidBody;
         public NetworkItem Network => _network;
         public bool HasToBeAligned => hasToBeAligned;
-        public NetworkTransformReliable NetworkTransform => _networkTransform;
-        public bool IsThrown { get => _isThrown; set => _isThrown = value; }
+        public NetworkTransform NetworkTransform => _networkTransform;
+        public bool IsThrown { get => _isThrown.Value; set => _isThrown.Value = value; }
         
         
         // private Coroutine _actingCoroutine;
@@ -80,9 +85,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private void Start()
         {
             _outline = GetComponent<Outline>();
-            _networkTransform = GetComponent<NetworkTransformReliable>();
+            _networkTransform = GetComponent<NetworkTransform>();
             
-            reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
+            reaction = LMBReactionFactory.CreateReaction(_network.itemId.Value, this);
             
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnServerTakeDamage += RpcPlayParticlesOnHit;
@@ -90,7 +95,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void OnCollisionEnter(Collision other)
         {
-            if (isServer)
+            if (IsServerStarted)
             {
                 IsThrown = false;
 
@@ -98,7 +103,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             }
         }
         
-        [ClientRpc]
+        [ObserversRpc]
         private void RpcPlayParticlesOnHit()
         {
             Debug.Log("<color=yellow>PlayParticlesOnHit");
@@ -107,7 +112,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             
         }
 
-        // [Command(requiresAuthority = false)]
+        // [ServerRpc(RequireOwnership = false)]
         // public void EnableActingMode(float duration)
         // {
         //     _isActing = true;
@@ -128,7 +133,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override void OnStartClient()
         {
             base.OnStartClient();
-            if (!isServer)
+            if (!IsServerStarted)
             {
                 PhysicalItemRegistry.Instance.Register(this);
             }
@@ -136,7 +141,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void OnDestroy()
         {
-            if (!isServer)
+            if (!IsServerStarted)
             {
                 PhysicalItemRegistry.Instance.Unregister(this);
             }
@@ -144,7 +149,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void OnEnable()
         {
-            if (!isServer && PhysicalItemRegistry.Instance.GetItem(gameObject) == null)
+            if (!IsServerStarted && PhysicalItemRegistry.Instance.GetItem(gameObject) == null)
             {
                 PhysicalItemRegistry.Instance.Register(this);
             }

@@ -1,6 +1,6 @@
 using FishNet.Object;
 using Game.Scripts.GameFiles.Items;
-using Mirror;
+
 
 namespace Game.Scripts.GameFiles.InteractableObjects
 {

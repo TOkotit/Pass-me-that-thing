@@ -1,3 +1,4 @@
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
@@ -5,8 +6,7 @@ using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
-using Mirror;
-using Mirror.SimpleWeb;
+
 using UnityEngine;
 using VContainer;
 
@@ -23,8 +23,8 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [SerializeField] private float moveSpeed = 100f;
         [SerializeField] private Events.FloodEvent.FloodEvent floodEvent;
         
-        [SyncVar(hook = nameof(OnClosedStateChanged))]
-        public bool _isClosed = true;
+        // [SyncVar(OnChange = nameof(OnClosedStateChanged))]
+        public readonly SyncVar<bool> _isClosed = new(true);
 
         private float _currentAngle;
         private float _targetAngle;
@@ -32,6 +32,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         
         private void Awake()
         {
+            _isClosed.OnChange += OnClosedStateChanged;
             if (pivot) _initialRotation = pivot.localRotation;
             
             
@@ -40,12 +41,17 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             
         }
 
+        protected override void OnDestroy()
+        {
+            _isClosed.OnChange -= OnClosedStateChanged;
+        }
+
         [Server]
-        public override void TerminalAct(NetworkConnectionToClient conn)
+        public override void TerminalAct(NetworkConnection conn)
         {
             if (IsTerminalBusy) return;
             
-            if (_isClosed) return;
+            if (_isClosed.Value) return;
             
             RpcPlayImpactParticles();
             if (ActivateMinigame(conn, floodEvent))
@@ -56,14 +62,14 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             }
         }
 
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         public override void CmdMinigameComplete()
         {
             floodEvent.StopEvent();
-            _isClosed = true;
+            _isClosed.Value = true;
         }
 
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         public override void CmdMinigameClose()
         {
             IsTerminalBusy = false;
@@ -76,17 +82,17 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         }
 
 
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         private void CmdCloseValve()
         {
-            if (_isClosed) return;
+            if (_isClosed.Value) return;
             
             Close();
             // RpcPlayImpactParticles();
             // floodEvent.PlayerFinishedAction();
         }
         
-        [ClientRpc]
+        [ObserversRpc]
         private void RpcPlayImpactParticles()
         {
             if (impactParticles && !impactParticles.isPlaying) 
@@ -95,9 +101,9 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             }
         }
         
-        private void OnClosedStateChanged(bool oldValue, bool newValue)
+        private void OnClosedStateChanged(bool oldValue, bool newValue, bool asServer)
         {
-            _isClosed = newValue;
+            _isClosed.Value = newValue;
             _targetAngle = newValue ? closedAngle : openAngle;
             
             if (oldValue == newValue) 
@@ -119,14 +125,14 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [Server]
         public void Open()
         { 
-            _isClosed = false;
+            _isClosed.Value = false;
             _targetAngle = openAngle;
         }
 
         [Server]
         public void Close()
         {
-            _isClosed = true;
+            _isClosed.Value = true;
             _targetAngle = closedAngle;
         }
     }

@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 using UnityEngine;
 
 public class NetworkOutlineShader : NetworkBehaviour
 {
     [SerializeField] private float radius = 10f;
     
-    [SyncVar] 
-    private bool _isActive = true;
+    // [SyncVar] 
+    private readonly SyncVar<bool> _isActive = new(true);
     
-    public bool IsActive => _isActive;
+    public bool IsActive => _isActive.Value;
 
 
     
@@ -36,12 +36,12 @@ public class NetworkOutlineShader : NetworkBehaviour
     [Server]
     public void SetVisionState(bool state)
     {
-        _isActive = state;
+        _isActive.Value = state;
     }
     
     private void Update()
     {
-        if (!_isActive) return;
+        if (!_isActive.Value) return;
         if (!GlobalVisionShaderManager.Instance) return;
 
         GlobalVisionShaderManager.Instance.AddZone(transform.position, radius);

@@ -1,5 +1,5 @@
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Events.Blackout
@@ -16,7 +16,7 @@ namespace Game.Scripts.GameFiles.Events.Blackout
                 Debug.Log("[PowerOutageEvent] Электричество вырубилось! Лампы погасли.");
             }
             
-            if (_powerTerminal) _powerTerminal._isFixed = false;
+            if (_powerTerminal) _powerTerminal._isFixed.Value = false;
         }
         
         [Server]

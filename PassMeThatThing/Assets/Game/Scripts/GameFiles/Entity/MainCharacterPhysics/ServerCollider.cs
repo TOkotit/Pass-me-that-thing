@@ -2,7 +2,7 @@ using Entity;
 using FishNet.Object;
 using Game.Entity;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 

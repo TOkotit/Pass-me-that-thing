@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Mirror;
+using FishNet;
+
 using UnityEngine;
 
 public class GlobalVisionShaderManager : MonoBehaviour
@@ -47,7 +48,7 @@ public class GlobalVisionShaderManager : MonoBehaviour
     
     public void ToggleAllLampsServerOnly()
     {
-        if (!NetworkServer.active) return;
+        if (!InstanceFinder.IsServerStarted) return;
 
         foreach (var lamp in _allLamps.Where(lamp => lamp != null))
         {

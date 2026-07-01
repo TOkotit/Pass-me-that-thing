@@ -1,7 +1,7 @@
 using System;
 using FishNet.Object;
 using Game.Entity;
-using Mirror;
+
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
@@ -52,7 +52,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         private void FixedUpdate()
         {
-            if (!isServer) return;
+            if (!IsServerStarted) return;
             
             _timer += Time.fixedDeltaTime;
 

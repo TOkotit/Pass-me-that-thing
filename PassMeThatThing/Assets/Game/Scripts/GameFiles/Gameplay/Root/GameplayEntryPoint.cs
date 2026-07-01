@@ -1,7 +1,9 @@
-﻿using Game.Gameplay.View.UI;
+﻿using FishNet;
+using FishNet.Managing.Server;
+using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
-using Mirror;
+
 using R3;
 using Systems;
 using UIRoot;
@@ -72,13 +74,13 @@ namespace Game.Gameplay.Root
             Object.DontDestroyOnLoad(eventManagerInstance.gameObject);
             
             resolver.Inject(eventManagerInstance); 
-            NetworkServer.Spawn(eventManagerInstance.gameObject); 
+            InstanceFinder.ServerManager.Spawn(eventManagerInstance.gameObject); 
 
             var stageManagerInstance = Object.Instantiate(globalStageManagerPrefab);
             Object.DontDestroyOnLoad(stageManagerInstance.gameObject);
             
             resolver.Inject(stageManagerInstance); 
-            NetworkServer.Spawn(stageManagerInstance.gameObject);
+            InstanceFinder.ServerManager.Spawn(stageManagerInstance.gameObject);
             
         }
     }

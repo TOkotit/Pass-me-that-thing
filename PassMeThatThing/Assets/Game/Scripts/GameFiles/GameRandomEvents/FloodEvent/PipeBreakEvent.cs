@@ -1,7 +1,7 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Scripts.GameFiles.Events;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
@@ -10,8 +10,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
     {
         [SerializeField] private float _chanceBoost = 0.5f;
         
-        [SyncVar]
-        private bool _isPressureCritical = false;
+        // [SyncVar]
+        private readonly SyncVar<bool> _isPressureCritical = new(false);
         
         [SerializeField] private Events.FloodEvent.FloodEvent _siblingFloodEvent;
         [SerializeField] private PumpInteractTerminal pumpInteractTerminal;
@@ -23,8 +23,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         
         protected override void OnStartEvent()
         {
-            _isPressureCritical = true;
-            pumpInteractTerminal._isFixed = false;
+            _isPressureCritical.Value = true;
+            pumpInteractTerminal._isFixed.Value = false;
             if (_siblingFloodEvent)
             {
                 _siblingFloodEvent.CurrentTriggerChance += _chanceBoost;
@@ -42,7 +42,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         [Server]
         protected override void OnStopEvent()
         {
-            _isPressureCritical = false;
+            _isPressureCritical.Value = false;
             
             if (_siblingFloodEvent)
             {

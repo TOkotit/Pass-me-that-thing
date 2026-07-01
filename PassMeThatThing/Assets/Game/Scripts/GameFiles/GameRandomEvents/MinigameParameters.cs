@@ -1,6 +1,6 @@
 using System;
 using Game.Scripts.Enums;
-using Mirror;
+
 
 namespace Game.Scripts.GameFiles.Events
 {

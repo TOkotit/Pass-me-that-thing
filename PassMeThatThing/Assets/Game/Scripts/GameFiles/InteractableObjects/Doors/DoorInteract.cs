@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,17 +15,28 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         [SerializeField] private float openYRotation = 90f;
         [SerializeField] private float moveSpeed = 2f;
 
-        [SyncVar(hook = nameof(OnOpenStateChanged))]
-        private bool isOpen;
+        // [SyncVar(OnChange = nameof(OnOpenStateChanged))]
+        private readonly SyncVar<bool> isOpen = new();
         
         
         private float targetRotationY;
         private bool initialized;
 
+
+        private void Awake()
+        {
+            isOpen.OnChange += OnOpenStateChanged;
+        }
+        
+        private void OnDestroy()
+        {
+            isOpen.OnChange -= OnOpenStateChanged;
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
-            isOpen = false;
+            isOpen.Value = false;
             targetRotationY = closedYRotation;
             initialized = true;
         }
@@ -33,7 +45,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         {
             base.OnStartClient();
 
-            targetRotationY = isOpen ? openYRotation : closedYRotation;
+            targetRotationY = isOpen.Value ? openYRotation : closedYRotation;
             initialized = true;
         }
 
@@ -57,11 +69,11 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
             CmdToggleDoor();
         }
 
-        [Command(requiresAuthority = false)] 
+        [ServerRpc(RequireOwnership = false)] 
         private void CmdToggleDoor() 
         {
-            isOpen = !isOpen;
-            UpdateTarget(isOpen); 
+            isOpen.Value = !isOpen.Value;
+            UpdateTarget(isOpen.Value); 
         }
         
         private void UpdateTarget(bool open)
@@ -70,17 +82,17 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
             initialized = true;
         }
         
-        [ServerCallback]
-        public override void SrbToggle() => isOpen = !isOpen;
+        [Server]
+        public override void SrbToggle() => isOpen.Value = !isOpen.Value;
 
         [Server]
-        public void Open() => isOpen = true;
+        public void Open() => isOpen.Value = true;
 
         [Server]
-        public void Close() => isOpen = false;
+        public void Close() => isOpen.Value = false;
         
 
-        private void OnOpenStateChanged(bool oldValue, bool newValue)
+        private void OnOpenStateChanged(bool oldValue, bool newValue, bool asServer)
         {
             UpdateTarget(newValue);
             

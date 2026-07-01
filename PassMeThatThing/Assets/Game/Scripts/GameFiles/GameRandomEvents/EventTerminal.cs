@@ -1,7 +1,8 @@
+using System;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using FishNet.Connection;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using Mirror;
 using UnityEngine;
 using VContainer;
 
@@ -9,15 +10,16 @@ namespace Game.Scripts.GameFiles.Events
 {
     public class EventTerminal : NetworkBehaviour
     {
-        protected NetworkConnectionToClient currentClient;
+        protected NetworkConnection currentClient;
         
-        [SyncVar] private bool _isTerminalBusy;
+        // [SyncVar] 
+        private readonly SyncVar<bool> _isTerminalBusy = new();
         private EventTerminalsRegistry _registry;
         
         public bool IsTerminalBusy
         {
-            get => _isTerminalBusy;
-            set => _isTerminalBusy = value;
+            get => _isTerminalBusy.Value;
+            set => _isTerminalBusy.Value = value;
         }
         
         protected EventTerminalsRegistry Registry
@@ -35,27 +37,28 @@ namespace Game.Scripts.GameFiles.Events
 
         protected virtual void OnDestroy()
         {
-            Registry.Unregister(this); 
+            if (Registry != null)
+            {
+                Registry.Unregister(this); 
+            }
         } 
         
-        [Command]
+        [ServerRpc]
         public virtual void CmdMinigameClose() { }
         
-        [Command]
+        [ServerRpc]
         public virtual void CmdMinigameComplete() { }
         
         [Server]
-        public virtual void TerminalAct(NetworkConnectionToClient conn) { }
-        
-        
+        public virtual void TerminalAct(NetworkConnection conn) { }
         
         [Server]
-        public bool ActivateMinigame(NetworkConnectionToClient senderConnection, BaseGameEvent gameEvent)
+        public bool ActivateMinigame(NetworkConnection senderConnection, BaseGameEvent gameEvent)
         {
             var parameters = new MinigameParameters
             {
                 eventId = gameEvent.EventId,
-                eventType = gameEvent.eventType,
+                eventType = gameEvent.eventType.Value,
                 description = gameEvent.description,
                 difficulty = gameEvent.difficulty,
                 timeLimit = gameEvent.timeLimit,
@@ -63,16 +66,17 @@ namespace Game.Scripts.GameFiles.Events
                 eventTerminal = this
             };
             
-            if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
+            if (senderConnection.FirstObject != null 
+                && senderConnection.FirstObject.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
             {
                 if (playerHandler.IsClientBusy)
                 {
-                    Debug.Log($"[SERVER] client is busy {senderConnection.connectionId}");
+                    Debug.Log($"[SERVER] client is busy {senderConnection.ClientId}");
                     return false;
                 }
                 
-                Debug.Log($"[SERVER] send to {senderConnection.connectionId}");
-                playerHandler.TargetOpenMinigame(parameters);
+                Debug.Log($"[SERVER] send to {senderConnection.ClientId}");
+                playerHandler.TargetOpenMinigame(senderConnection, parameters);
                 
                 return true;
             }
@@ -81,12 +85,12 @@ namespace Game.Scripts.GameFiles.Events
         }
         
         [Server]
-        public void CloseMinigame(NetworkConnectionToClient senderConnection)
+        public void CloseMinigame(NetworkConnection senderConnection)
         {
-            if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
+            if (senderConnection.FirstObject != null && senderConnection.FirstObject.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))
             {
-                Debug.Log($"[SERVER] closed to {senderConnection.connectionId}");
-                playerHandler.TargetCloseMinigame();
+                Debug.Log($"[SERVER] closed to {senderConnection.ClientId}");
+                playerHandler.TargetCloseMinigame(senderConnection);
             }
         }
     }

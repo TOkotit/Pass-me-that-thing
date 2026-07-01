@@ -6,7 +6,7 @@ using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.UI;
-using Mirror;
+
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -202,7 +202,7 @@ namespace Game.Gameplay.View.UI
         {
             foreach (var i in dict)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                var e = _gameEventsDatabase.GetEvent(i.Value.eventType.Value);
                 AddGameEvent(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }

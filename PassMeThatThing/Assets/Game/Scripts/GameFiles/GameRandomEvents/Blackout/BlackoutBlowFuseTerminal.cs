@@ -1,23 +1,24 @@
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Events.Blackout
 {
     public class BlackoutBlowFuseTerminal : EventTerminal
     {
-        [SyncVar]
-        public bool _isFixed = true;
+        // [SyncVar]
+        public readonly SyncVar<bool> _isFixed = new(true);
         
         [SerializeField] private BlackoutBlowFuseEvent _powerOutageEvent;
         [SerializeField] private ParticleSystem _particleSystem;
         [Server]
-        public override void TerminalAct(NetworkConnectionToClient conn)
+        public override void TerminalAct(NetworkConnection conn)
         {
             base.TerminalAct(conn);
             if (IsTerminalBusy) return;
-            if (_isFixed) return;
+            if (_isFixed.Value) return;
             
             RpcPlayImpactParticles();
             if (ActivateMinigame(conn, _powerOutageEvent))
@@ -30,13 +31,13 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             // FixFuse();
         }
         
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         public override void CmdMinigameComplete()
         {
             FixFuse();
         }
 
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         public override void CmdMinigameClose()
         {
             IsTerminalBusy = false;
@@ -51,14 +52,14 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         [Server]
         private void FixFuse()
         {
-            _isFixed = true;
+            _isFixed.Value = true;
             
             if (_powerOutageEvent != null)
             {
                 _powerOutageEvent.PlayerFixedPower();
             }
         }
-        [ClientRpc]
+        [ObserversRpc]
         private void RpcPlayImpactParticles()
         {
             if (_particleSystem && !_particleSystem.isPlaying) 

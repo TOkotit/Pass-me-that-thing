@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
@@ -21,7 +21,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void SpawnEnemy(Vector3 pos, EnemyData enemyData)
         {
             var enemyInstance = Instantiate(enemyData.WorldPrefab, pos, Quaternion.identity);
-            NetworkServer.Spawn(enemyInstance);
+            ServerManager.Spawn(enemyInstance);
             var enemy = enemyInstance.GetComponent<Enemy>();
             enemy.DamagableModel.OnDeath += OnEnemyDied;
             _enemyCount++;

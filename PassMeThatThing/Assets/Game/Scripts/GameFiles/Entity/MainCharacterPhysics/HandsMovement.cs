@@ -4,7 +4,7 @@ using FishNet.Object;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 
@@ -161,7 +161,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             MoveHands(item);
         }
 
-        [ClientRpc]
+        [ObserversRpc]
         private void ClientGrabItem(PhysicalItem item)
         {
             if (item.UniversalPoint)
@@ -211,7 +211,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             ClientReleaseItem();
         }
 
-        [ClientRpc]
+        [ObserversRpc]
         private void ClientApplyThrowForce(PhysicalItem item, Vector3 force)
         {
             if (item)
@@ -220,7 +220,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
         
-        [ClientRpc]
+        [ObserversRpc]
         private void ClientReleaseItem()
         {
             ResetHands();

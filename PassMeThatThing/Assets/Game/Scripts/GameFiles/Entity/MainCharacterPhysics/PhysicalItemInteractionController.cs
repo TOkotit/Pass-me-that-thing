@@ -7,7 +7,7 @@ using FishNet.Object;
 using Game.Entity;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using Mirror;
+
 using Systems;
 using UnityEngine;
 using VContainer;
@@ -30,10 +30,14 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void DisableAlignment() => _alignment = false;
         public void EnableAlignment() => _alignment = true;
 
-        public override void OnStartLocalPlayer()
+        public override void OnStartClient()
         {
+            base.OnStartClient();
+            if (!IsOwner) return;
+            
             InjectSelf();
         }
+
 
         private void Start()
         {
@@ -54,7 +58,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (item.CanBeOwned)
             {
                 item.Owner = mainCharacter;
-                if (isLocalPlayer)
+                if (IsOwner)
                 {
                     item.gameObject.layer = LayerMask.NameToLayer("HeldItem");
                 }
@@ -81,12 +85,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             _heldItem = item;
             SetOwnerAndLayer(item);
-            TargetPickUpItem(item);
+            TargetPickUpItem(Owner, item);
             _handsMovement.GrabItem(item);
         }
 
         [TargetRpc]
-        private void TargetPickUpItem(PhysicalItem item)
+        private void TargetPickUpItem(NetworkConnection conn, PhysicalItem item)
         {
             _heldItem = item;
             SetOwnerAndLayer(item);
@@ -102,7 +106,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 RestoreLayerAndClear(_heldItem);
                 _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow);
                 _heldItem = null;
-                TargetClearHeldItem();
+                TargetClearHeldItem(Owner);
             }
         }
 
@@ -114,11 +118,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 RestoreLayerAndClear(_heldItem);
                 _heldItem = null;
             }
-            TargetClearHeldItem();
+            TargetClearHeldItem(Owner);
         }
 
         [TargetRpc]
-        public void TargetClearHeldItem()
+        public void TargetClearHeldItem(NetworkConnection conn)
         {
             if (_heldItem)
             {
@@ -148,7 +152,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
             }
         }
-        [Command]
+        [ServerRpc]
         public void CmdApplySwingImpulse(Vector3 force, Vector3 torque, float duration)
         {
             if (_heldItem)

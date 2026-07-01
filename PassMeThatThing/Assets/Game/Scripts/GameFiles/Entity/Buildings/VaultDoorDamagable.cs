@@ -11,12 +11,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         [Inject] private VaultDoorDamagableModel _model;
         [Inject] private DamagableRegistry _damagableRegistry;
         public override DamagableModel DamagableModel { get => _model;}
-        private void Awake()
-        {
-            var scope = LifetimeScope.Find<GameplayScope>();
-            if (scope)
-                scope.Container.Inject(this);
-        }
+        
+        
+        // private void Awake()
+        // {
+        //     var scope = LifetimeScope.Find<GameplayScope>();
+        //     if (scope)
+        //         scope.Container.Inject(this);
+        // }
+        
+        
         public override void OnDeath()
         {
             Destroy(gameObject);

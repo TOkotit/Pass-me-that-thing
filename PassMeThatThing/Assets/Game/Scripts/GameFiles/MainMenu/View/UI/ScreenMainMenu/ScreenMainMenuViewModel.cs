@@ -3,7 +3,7 @@ using System.Collections;
 using FishNet.Managing;
 using Game.Gameplay.View.UI;
 using Game.UI;
-using Mirror;
+
 using R3;
 using Root;
 using Systems;
@@ -35,28 +35,28 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         
         public void RequestHost()
         {
-            Debug.Log("RequestHost");
-            if (_networkRoomManager.TryGetComponent<SteamLobbyManager>(out var steamLobby))
-            {
-                Debug.Log("[STEAM] Найдено Стим-лобби. Запускаем создание виртуальной комнаты...");
-                steamLobby.CreateSteamLobby();
-            }
-            else
-            {
-                // Если скрипта SteamLobbyManager нет на объекте, запускаем обычный локальный хост (для Radmin)
-                Debug.Log("[LOCAL] Стим-менеджер не найден. Запускаем стандартный Host...");
-                _networkRoomManager.StartHost(); 
-            }
+            // Debug.Log("RequestHost");
+            // if (_networkRoomManager.TryGetComponent<SteamLobbyManager>(out var steamLobby))
+            // {
+            //     Debug.Log("[STEAM] Найдено Стим-лобби. Запускаем создание виртуальной комнаты...");
+            //     steamLobby.CreateSteamLobby();
+            // }
+            // else
+            // {
+            //     // Если скрипта SteamLobbyManager нет на объекте, запускаем обычный локальный хост (для Radmin)
+            //     Debug.Log("[LOCAL] Стим-менеджер не найден. Запускаем стандартный Host...");
+            //     _networkRoomManager.StartHost(); 
+            // }
         }
 
         public void RequestJoin()
         {
-            _networkRoomManager.StartClient();
+            // _networkRoomManager.StartClient();
         }
         
         public void RequestIpAddress(string value)
         {
-            _networkRoomManager.networkAddress = value;
+            // _networkRoomManager.networkAddress = value;
         }
     }
 }

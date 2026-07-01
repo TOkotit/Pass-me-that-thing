@@ -1,18 +1,15 @@
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 public class CollisionDiagnostic : NetworkBehaviour
 {
-    private void Start()
-    {
-        if (isLocalPlayer || (!isServer && !isLocalPlayer) || (isServer && !isLocalPlayer))
-            Debug.Log($"[{name}] Layer: {LayerMask.LayerToName(gameObject.layer)}");
-    }
-
     public override void OnStartClient()
     {
-        if (isServer) return;
+        if (IsOwner || (!IsServerStarted && !IsOwner) || (IsServerStarted && !IsOwner))
+            Debug.Log($"[{name}] Layer: {LayerMask.LayerToName(gameObject.layer)}");
+        
+        if (IsServerStarted) return;
 
         var rb = GetComponent<Rigidbody>();
         var cols = GetComponentsInChildren<Collider>();

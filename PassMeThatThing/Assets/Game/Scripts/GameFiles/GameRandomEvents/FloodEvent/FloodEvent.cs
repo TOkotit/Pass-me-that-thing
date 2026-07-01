@@ -2,7 +2,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Scripts.GameFiles.GameEvents.FloodEvent;
 using Game.Scripts.Utils;
-using Mirror;
+
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -19,24 +19,24 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         [SerializeField] private float maxWaterWidth;
         [SerializeField] private ValveInteractTerminal valve;
         
-        [SyncVar]
-        private bool _isFloodingActive = false;
-        public bool IsFloodingActive => _isFloodingActive;
+        // [SyncVar]
+        private readonly SyncVar<bool> _isFloodingActive = new(false);
+        public bool IsFloodingActive => _isFloodingActive.Value;
         
         protected override void OnStartEvent()
         {
-            _isFloodingActive = true;
+            _isFloodingActive.Value = true;
             valve.Open();
             _waterMeshInstance = Instantiate(waterMesh);
             _waterMeshInstance.transform.position = transform.position;
             _waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
             
-            NetworkServer.Spawn(_waterMeshInstance);
+            ServerManager.Spawn(_waterMeshInstance);
         }
         
         private void FixedUpdate()
         {
-            if (isServer && _isFloodingActive && _waterMeshInstance != null)
+            if (IsServerStarted && _isFloodingActive.Value && _waterMeshInstance != null)
             {
                 ExecuteFloodLogic();
             }
@@ -60,10 +60,10 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         [Server]
         protected override void OnStopEvent()
         {
-            _isFloodingActive = false;
+            _isFloodingActive.Value = false;
             if (_waterMeshInstance != null)
             {
-                NetworkServer.Destroy(_waterMeshInstance);
+                ServerManager.Despawn(_waterMeshInstance);
             }
             GameRandomEventManager.DisableEvent(EventId);
         }

@@ -5,7 +5,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using MainCharacter_old;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -24,8 +24,8 @@ public class MainCharacterMovement : NetworkBehaviour
 
     [SerializeField] private Rigidbody root;
     
-    [SyncVar]
-    private bool isCharacterCanMove = true;
+    
+    private readonly SyncVar<bool> isCharacterCanMove = new(true);
     private bool _isSprinting = false;
     private Vector3 _moveDirection;
     private Vector3 _velocity;
@@ -47,7 +47,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public override void OnStartClient()
     {
-        if (!isLocalPlayer)
+        if (!IsOwner)
         {
             root.isKinematic = true;
         }
@@ -55,20 +55,20 @@ public class MainCharacterMovement : NetworkBehaviour
 
     public void Move(Vector3 direction)
     {
-        if (isCharacterCanMove)
+        if (isCharacterCanMove.Value)
             _moveDirection = direction;
     }
 
     public void LockUpMovement()
     {
-        isCharacterCanMove = false;
+        isCharacterCanMove.Value = false;
         _moveDirection = Vector3.zero;
         Debug.Log("MOVE LOCKED");
     }
 
     public void UnlockMovement()
     {
-        isCharacterCanMove = true;
+        isCharacterCanMove.Value = true;
         Debug.Log("MOVE UNLOCKED");
     }
     
@@ -96,7 +96,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
+        if (!IsOwner) return;
         
         
         MoveInternal();
@@ -108,7 +108,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void MoveInternal()
     {
         
-        if (!isCharacterCanMove)
+        if (!isCharacterCanMove.Value)
             return;
         
         var currentSpeed = speed;

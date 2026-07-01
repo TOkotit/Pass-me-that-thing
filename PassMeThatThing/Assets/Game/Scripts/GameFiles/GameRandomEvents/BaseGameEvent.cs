@@ -2,7 +2,7 @@ using DI;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Scripts.Enums;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -11,21 +11,24 @@ namespace Game.Scripts.GameFiles.Events
 {
     public class BaseGameEvent : NetworkBehaviour
     {
-        [SyncVar] private int _eventId; 
-        public int EventId => _eventId;
+        // [SyncVar] 
+        private readonly SyncVar<int> _eventId = new(); 
+        public int EventId => _eventId.Value;
         
-        [SyncVar] public GameEventsType eventType;
+        // [SyncVar] 
+        public readonly SyncVar<GameEventsType> eventType = new();
 
         public virtual int timeLimit { get; }
         public virtual int difficulty { get; }
         public virtual string description { get; }
         
-        [SyncVar]
-        private bool _isEventActive;
-        public bool IsEventActive => _isEventActive;
+        // [SyncVar]
+        private readonly SyncVar<bool> _isEventActive = new();
+        public bool IsEventActive => _isEventActive.Value;
 
-        [SyncVar] private int _roomNumber;
-        public int RoomNumber => _roomNumber;
+        //[SyncVar] 
+        private readonly SyncVar<int> _roomNumber = new();
+        public int RoomNumber => _roomNumber.Value;
         
         [Inject] private GameRandomEventManager  _gameRandomEventManager;
         
@@ -61,8 +64,8 @@ namespace Game.Scripts.GameFiles.Events
             _currentTriggerChance = _baseTriggerChance;
             if (_gameRandomEventManager)
             {
-                _eventId = _gameRandomEventManager.RegisterSceneEvent(this);
-                Debug.Log($"[BaseGameEvent] Ивент успешно зарегистрирован на сервере. ID: {_eventId}");
+                _eventId.Value = _gameRandomEventManager.RegisterSceneEvent(this);
+                Debug.Log($"[BaseGameEvent] Ивент успешно зарегистрирован на сервере. ID: {_eventId.Value}");
             }
             else
             {
@@ -78,8 +81,8 @@ namespace Game.Scripts.GameFiles.Events
         
         public void Initialize(int uniqueId, GameEventsType assignedType, GameRandomEventManager manager)
         {
-            _eventId = uniqueId;
-            eventType = assignedType;
+            _eventId.Value = uniqueId;
+            eventType.Value = assignedType;
             
             manager.RegisterSceneEvent(this);
         }
@@ -87,9 +90,9 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public void StartEvent()
         {
-            if (_isEventActive) return;
+            if (_isEventActive.Value) return;
             
-            _isEventActive = true;
+            _isEventActive.Value = true;
             OnStartEvent();
             Debug.Log($"[Server] Ивент ID:{_eventId} ({eventType}) ЗАПУЩЕН.");
         }
@@ -97,9 +100,9 @@ namespace Game.Scripts.GameFiles.Events
         [Server]
         public void StopEvent()
         {
-            if (!_isEventActive) return;
+            if (!_isEventActive.Value) return;
 
-            _isEventActive = false;
+            _isEventActive.Value = false;
             OnStopEvent();
             Debug.Log($"[Server] Ивент ID:{_eventId} ({eventType}) ЗАВЕРШЕН.");
         }

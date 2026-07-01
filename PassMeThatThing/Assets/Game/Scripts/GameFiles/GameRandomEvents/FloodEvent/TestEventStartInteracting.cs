@@ -1,6 +1,7 @@
+using FishNet.Object;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.InteractableObjects;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 
@@ -22,14 +23,14 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
             throw new System.NotImplementedException();
         }
         
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         private void CmdTest()
         {
             Debug.Log("CmdTest");
             floodEvent.GameRandomEventManager.ActivateEvent(floodEvent.EventId);
         }
 
-        [Command(requiresAuthority = false)]
+        [ServerRpc(RequireOwnership = false)]
         private void CmdTest2()
         {
             GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();

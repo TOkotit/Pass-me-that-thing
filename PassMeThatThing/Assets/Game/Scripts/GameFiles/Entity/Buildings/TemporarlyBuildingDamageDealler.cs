@@ -1,7 +1,6 @@
 using Entity;
 using Enums;
 using FishNet.Object;
-using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings
@@ -17,7 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         private void Update()
         {
-            if (!isServer) return;
+            if (!IsServerStarted) return;
 
             if (Time.time >= _nextDamageTime)
             {

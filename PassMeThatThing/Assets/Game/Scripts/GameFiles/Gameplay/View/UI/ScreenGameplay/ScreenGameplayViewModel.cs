@@ -8,7 +8,7 @@ using Game.Scripts.GameFiles.Items;
 using Game.UI;
 using MainCharacter_old;
 using Microsoft.Unity.VisualStudio.Editor;
-using Mirror;
+
 using ObservableCollections;
 using R3;
 using Systems;
@@ -181,24 +181,24 @@ namespace Game.Gameplay.View.UI
             clear();
             foreach (var i in _gameRandomEventManager.StartedEvents)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                var e = _gameEventsDatabase.GetEvent(i.Value.eventType.Value);
                 add(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
         
         
-        private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
+        private void OnStartedEventsChanged(SyncDictionaryOperation op, int key, BaseGameEvent newItem, bool asServer)
         {
-            var e = _gameEventsDatabase.GetEvent(newItem.eventType);
+            var e = _gameEventsDatabase.GetEvent(newItem.eventType.Value);
             switch (op)
             {
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
+                case SyncDictionaryOperation.Add:
                     addEvent(newItem.EventId, e.EventImage, newItem.EventId);
                     break;
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
+                case SyncDictionaryOperation.Set:
                     updateEvent(newItem.EventId, e.EventImage, newItem.EventId);
                     break;
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
+                case SyncDictionaryOperation.Remove:
                     removeEvent(newItem.EventId);
                     break;
             }

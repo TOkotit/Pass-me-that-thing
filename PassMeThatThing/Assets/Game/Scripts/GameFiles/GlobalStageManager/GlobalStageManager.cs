@@ -5,7 +5,7 @@ using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.Utils;
-using Mirror;
+
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
@@ -15,9 +15,9 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
     
     public class GlobalStageManager : NetworkBehaviour
     {
-        [SyncVar(hook = nameof(OnStageChanged))]
-        private GlobalStagesType _currentGameStage;
-        public GlobalStagesType CurrentGameStage => _currentGameStage;
+        // [SyncVar(OnChange = nameof(OnStageChanged))]
+        private readonly SyncVar<GlobalStagesType> _currentGameStage = new();
+        public GlobalStagesType CurrentGameStage => _currentGameStage.Value;
 
         [Inject] private GameRandomEventManager  _gameRandomEventManager;
         [Inject] private EnemyDatabase _enemyDatabase;
@@ -27,14 +27,17 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [SerializeField] private float preparationStageDuration = 200f;
         [SerializeField] private float fightStageDuration = 300f;
         
-        [SyncVar(hook = nameof(OnTimeChanged))]
-        private float _syncRemainingTime;
+        // [SyncVar(OnChange = nameof(OnTimeChanged))]
+        private readonly SyncVar<float> _syncRemainingTime = new();
         
         public event Action<float> OnTimerChangedUI;
         public event Action<GlobalStagesType> OnStageChangedUI;
 
         private void Awake()
         {
+            _syncRemainingTime.OnChange += OnTimeChanged;
+            _currentGameStage.OnChange += OnStageChanged;
+            
             _timer = new NetworkTimer(this, OnTimerTick);
             _timer.TimeIsOver += OnTimerFinished;
         }
@@ -50,21 +53,21 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             _timer.Stop();
 
-            _currentGameStage = newStage;
+            _currentGameStage.Value = newStage;
 
-            var duration = _currentGameStage switch
+            var duration = _currentGameStage.Value switch
             {
                 GlobalStagesType.Preparation => preparationStageDuration,
                 GlobalStagesType.Fight => fightStageDuration,
                 _ => 0f
             };
 
-            if (_currentGameStage == GlobalStagesType.Fight)
+            if (_currentGameStage.Value == GlobalStagesType.Fight)
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
                 _enemySpawner.SpawnWave(3, _enemyDatabase.GetEnemy("zombie"));
             }
-            else if (_currentGameStage == GlobalStagesType.Preparation)
+            else if (_currentGameStage.Value == GlobalStagesType.Preparation)
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
             }
@@ -74,7 +77,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [Server]
         public void TrySkipPreparationStage()
         {
-            if (_currentGameStage != GlobalStagesType.Preparation)
+            if (_currentGameStage.Value != GlobalStagesType.Preparation)
             {
                 Debug.LogWarning("[Server] Попытка пропустить стадию, но сейчас идет не подготовка!");
                 return;
@@ -92,12 +95,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         private void OnTimerTick(float remainingTime)
         {
-            _syncRemainingTime = remainingTime;
+            _syncRemainingTime.Value = remainingTime;
         }
 
         private void OnTimerFinished()
         {
-            var nextStage = _currentGameStage == GlobalStagesType.Preparation 
+            var nextStage = _currentGameStage.Value == GlobalStagesType.Preparation 
                 ? GlobalStagesType.Fight 
                 : GlobalStagesType.Preparation;
 
@@ -113,7 +116,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
         }
         
-        private void OnTimeChanged(float oldTime, float newTime)
+        private void OnTimeChanged(float oldTime, float newTime, bool asServer)
         {
             var secondsVisual = Mathf.CeilToInt(newTime);
             
@@ -126,9 +129,9 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             OnTimerChangedUI?.Invoke(secondsVisual);
         }
 
-        private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage)
+        private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage, bool asServer)
         {
-            OnStageChangedUI?.Invoke(_currentGameStage);
+            OnStageChangedUI?.Invoke(_currentGameStage.Value);
         }
     }
 }

@@ -1,5 +1,5 @@
 using DG.Tweening;
-using Mirror;
+
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
@@ -68,7 +68,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             // RpcPlayParticles();
         }
         
-        // [ClientRpc]
+        // [ObserversRpc]
         // private void RpcPlayParticles()
         // {
         //     particles.Play();

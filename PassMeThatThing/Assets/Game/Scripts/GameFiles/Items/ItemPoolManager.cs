@@ -1,7 +1,8 @@
 using VContainer;
 using UnityEngine;
-using Mirror;
+using FishNet.Object;
 using System.Collections.Generic;
+using FishNet;
 
 namespace Game.Scripts.GameFiles.Items
 {
@@ -9,55 +10,70 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SerializeField] private ItemDatabase database;
         
-        private Dictionary<string, Stack<GameObject>> _poolDict = new ();
+        private readonly Dictionary<string, Stack<NetworkObject>> _poolDict = new();
 
         public void Start()
         {
             InitializePool();
         }
-        
+
         public void InitializePool()
         {
             foreach (var item in database.allItems)
             {
-                _poolDict[item.Id] = new Stack<GameObject>();
-
-                // Регистрируем префаб в Mirror
-                NetworkClient.RegisterPrefab(item.WorldPrefab, 
-                    (msg) => SpawnHandler(msg, item.Id), 
-                    UnspawnHandler);
+                _poolDict[item.Id] = new Stack<NetworkObject>();
             }
         }
 
-        // Обработчик появления
-        public GameObject SpawnHandler(SpawnMessage msg, string itemId)
+        // --- Взятие из пула ---
+        public NetworkObject GetFromPool(string id, Vector3 position, Quaternion rotation)
         {
-            var obj = GetFromPool(itemId);
-            obj.transform.position = msg.position;
-            obj.transform.rotation = msg.rotation;
-            obj.SetActive(true);
-            return obj;
-        }
+            NetworkObject netObj = null;
 
-        // Обработчик исчезновения
-        public void UnspawnHandler(GameObject spawned)
-        {
-            var id = spawned.GetComponent<NetworkItem>().itemId;
-            spawned.SetActive(false);
-            _poolDict[id].Push(spawned);
-        }
-        
-        public GameObject GetFromPool(string id)
-        {
-            if (_poolDict.ContainsKey(id) && _poolDict[id].Count > 0)
+            if (_poolDict.TryGetValue(id, out var stack) && stack.Count > 0)
             {
-                return _poolDict[id].Pop();
+                netObj = stack.Pop();
+                netObj.transform.position = position;
+                netObj.transform.rotation = rotation;
+                netObj.gameObject.SetActive(true);
             }
-            
-            var data = database.GetItem(id);
-            var obj = Instantiate(data.WorldPrefab);
-            obj.GetComponent<NetworkItem>().itemId = id;
-            return obj;
+            else
+            {
+                var data = database.GetItem(id);
+                var go = Instantiate(data.WorldPrefab, position, rotation);
+                netObj = go.GetComponent<NetworkObject>();
+                
+                if (go.TryGetComponent<NetworkItem>(out var networkItem))
+                {
+                    networkItem.itemId.Value = id;
+                }
+            }
+
+            return netObj;
+        }
+
+        // --- Возврат в пул ---
+        public void ReturnToPool(NetworkObject spawned)
+        {
+            if (spawned.TryGetComponent<NetworkItem>(out var networkItem) && !string.IsNullOrEmpty(networkItem.itemId.Value))
+            {
+                var id = networkItem.itemId;
+                
+                spawned.gameObject.SetActive(false);
+                spawned.transform.SetParent(null);
+
+                if (!_poolDict.ContainsKey(id.Value))
+                {
+                    _poolDict[id.Value] = new Stack<NetworkObject>();
+                }
+
+                _poolDict[id.Value].Push(spawned);
+            }
+            else
+            {
+                // Если это не наш предмет, просто уничтожаем
+                Destroy(spawned.gameObject);
+            }
         }
     }
 }

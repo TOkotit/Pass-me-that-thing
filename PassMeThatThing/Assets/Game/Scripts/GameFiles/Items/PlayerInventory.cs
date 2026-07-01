@@ -8,8 +8,7 @@ using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
-using Mirror;
-using Mirror.Examples.RigidbodyPhysics;
+
 using VContainer;
 
 public class PlayerInventory : NetworkBehaviour
@@ -23,8 +22,9 @@ public class PlayerInventory : NetworkBehaviour
 
     [SerializeField] private Transform _interactionZone;
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
-    [SyncVar(hook = nameof(OnActiveSlotChanged))]
-    public int activeSlot;
+    
+    // [SyncVar(OnChange = nameof(OnActiveSlotChanged))]
+    public readonly SyncVar<int> activeSlot = new();
     
     [Inject]
     private void Construct(NetworkManager networkManager, PhysicalItemRegistry physicalItemRegistry)
@@ -32,19 +32,27 @@ public class PlayerInventory : NetworkBehaviour
         _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
         _physicalItemRegistry = physicalItemRegistry;
     }
-    
 
-    private void OnActiveSlotChanged(int oldIndex, int newIndex)
+    private void Awake()
     {
-        if (isLocalPlayer)
+        activeSlot.OnChange += OnActiveSlotChanged;
+    }
+
+    private void OnDestroy()
+    {
+        activeSlot.OnChange -= OnActiveSlotChanged;
+    }
+    private void OnActiveSlotChanged(int oldIndex, int newIndex, bool asServer)
+    {
+        if (IsOwner)
         {
             _playerInventoryModel.ActiveSlotIndex = newIndex;
         }
     }
     public override void OnStartClient()
     {
-        if (!isLocalPlayer) return;
         base.OnStartClient();
+        if (!IsOwner) return;
         ServerInventory.OnChange += OnInventoryChanged;
          
         RefreshLocalModel();
@@ -52,23 +60,44 @@ public class PlayerInventory : NetworkBehaviour
 
     public override void OnStopClient()
     {
-        if (isLocalPlayer)
-            ServerInventory.OnChange -= OnInventoryChanged;
+        if (!IsOwner) return;
+        
+        ServerInventory.OnChange -= OnInventoryChanged;
     }
 
-    private void OnInventoryChanged(SyncDictionary<int, ItemSlot>.Operation op, int index, ItemSlot newItem)
+    // private void OnInventoryChanged(SyncDictionary<int, ItemSlot>.Operation op, int index, ItemSlot newItem)
+    // {
+    //     if (!IsOwner) return;
+    //
+    //     switch (op)
+    //     {
+    //         case SyncDictionary<int, ItemSlot>.Operation.OP_ADD:
+    //         case SyncDictionary<int, ItemSlot>.Operation.OP_SET:
+    //             _playerInventoryModel.Inventory[index] = newItem;
+    //             break;
+    //
+    //         case SyncDictionary<int, ItemSlot>.Operation.OP_REMOVE:
+    //             _playerInventoryModel.Inventory.Remove(index);
+    //             break;
+    //     }
+    // }
+    private void OnInventoryChanged(SyncDictionaryOperation op, int index, ItemSlot newItem, bool asServer)
     {
-        if (!isLocalPlayer) return;
+        if (!IsOwner) return;
 
         switch (op)
         {
-            case SyncDictionary<int, ItemSlot>.Operation.OP_ADD:
-            case SyncDictionary<int, ItemSlot>.Operation.OP_SET:
+            case SyncDictionaryOperation.Add:
+            case SyncDictionaryOperation.Set:
                 _playerInventoryModel.Inventory[index] = newItem;
                 break;
 
-            case SyncDictionary<int, ItemSlot>.Operation.OP_REMOVE:
+            case SyncDictionaryOperation.Remove:
                 _playerInventoryModel.Inventory.Remove(index);
+                break;
+                
+            case SyncDictionaryOperation.Clear:
+                _playerInventoryModel.Inventory.Clear();
                 break;
         }
     }
@@ -80,66 +109,69 @@ public class PlayerInventory : NetworkBehaviour
         {
             _playerInventoryModel.Inventory.Add(item);
         }
-        _playerInventoryModel.ActiveSlotIndex = activeSlot; 
+        _playerInventoryModel.ActiveSlotIndex = activeSlot.Value; 
     }
-    [Command]
+    [ServerRpc]
     public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
     {
-        physicalItem.ConnectionToClient = connectionToClient;
+        physicalItem.ConnectionToClient = Owner;
         TryPickUpItemInternal(physicalItem, preferredSlot);
     }
 
-    [Command]
+    [ServerRpc]
     public void CmdHideItem()
     {
         if (_physicalСontroller.CurrentHeldItem)
         {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            ServerManager.Despawn(_physicalСontroller.CurrentHeldItem.NetworkObject, DespawnType.Pool);
+            
+            _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.NetworkObject);
         }
         _physicalСontroller.ServerClearHeldItem();
     }
     
 
-    [Command]
+    [ServerRpc]
     public void CmdDrawItem(int index, Vector3 pointToSpawn)
     {
         if (_physicalСontroller.CurrentHeldItem)
         {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            ServerManager.Despawn(_physicalСontroller.CurrentHeldItem.NetworkObject, DespawnType.Pool);
+            
+            _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.NetworkObject);
         }
         _physicalСontroller.ServerClearHeldItem();
 
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
-
-        itemToDrop.transform.position = pointToSpawn;
-        NetworkServer.Spawn(itemToDrop, connectionToClient);
         
-        itemToDrop.SetActive(true);
+        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId, pointToSpawn, Quaternion.identity);
+
+        ServerManager.Spawn(itemToDrop);
+        
         var physicalItem = _physicalItemRegistry.GetItem(itemToDrop.gameObject);
         if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
         if (physicalItem)
         {
             _physicalСontroller.PhysicalPickUpItem(physicalItem);
-            activeSlot = index;   
-            physicalItem.ConnectionToClient = connectionToClient;
+            activeSlot.Value = index;   
+            physicalItem.ConnectionToClient = Owner;
         }
     }
 
-    [Command]
+    [ServerRpc]
     public void CmdDropItem(int index, float throwForce, bool canThrow)
     {
         var heldItem = _physicalСontroller.CurrentHeldItem;
-        if (heldItem && ServerInventory.TryGetValue(index, out var slot) && slot.itemId == heldItem.Network.itemId)
+        if (heldItem && ServerInventory.TryGetValue(index, out var slot) && slot.itemId == heldItem.Network.itemId.Value)
         {
             Vector3 dropPos = heldItem.transform.position;
             Quaternion dropRot = heldItem.transform.rotation;
-            _physicalСontroller.TargetSyncPositionForDrop(connectionToClient, dropPos, dropRot);
+            _physicalСontroller.TargetSyncPositionForDrop(Owner, dropPos, dropRot);
             _physicalСontroller.ReleaseCurrentItem(throwForce, canThrow); 
         }
         ServerInventory.Remove(index);
     }
-    [Command]
+    [ServerRpc]
     public void CmdGiveItemToPlayer(MainCharacter target)
     {
         if (!target) return;
@@ -156,7 +188,7 @@ public class PlayerInventory : NetworkBehaviour
         int mySlot = -1;
         foreach (var kvp in ServerInventory)
         {
-            if (kvp.Value.itemId == item.Network.itemId)
+            if (kvp.Value.itemId == item.Network.itemId.Value)
             {
                 mySlot = kvp.Key;
                 break;
@@ -183,7 +215,7 @@ public class PlayerInventory : NetworkBehaviour
 
         targetInventory.ServerInventory[targetSlot] = new ItemSlot
         {
-            itemId = item.Network.itemId,
+            itemId = item.Network.itemId.Value,
             amount = 1
         };
 
@@ -213,7 +245,7 @@ public class PlayerInventory : NetworkBehaviour
                 int slotToRemove = -1;
                 foreach (var kvp in oldInventory.ServerInventory)
                 {
-                    if (kvp.Value.itemId == networkItem.itemId)
+                    if (kvp.Value.itemId == networkItem.itemId.Value)
                     {
                         slotToRemove = kvp.Key;
                         break;
@@ -246,15 +278,18 @@ public class PlayerInventory : NetworkBehaviour
 
         if (targetSlot == -1) return; 
 
-        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId.Value, amount = 1 };
 
         if (_physicalСontroller.CurrentHeldItem)
         {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            ServerManager.Despawn(_physicalСontroller.CurrentHeldItem.NetworkObject, DespawnType.Pool);
+            
+            _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.NetworkObject);
+            
             _physicalСontroller.ReleaseCurrentItem(0f, false);
         }
 
         _physicalСontroller.PhysicalPickUpItem(physicalItem);
-        activeSlot = targetSlot;
+        activeSlot.Value = targetSlot;
     }
 }

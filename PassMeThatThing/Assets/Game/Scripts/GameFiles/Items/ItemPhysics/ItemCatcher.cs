@@ -1,7 +1,7 @@
 using System;
 using FishNet.Object;
 using Game.NewMainCharacterPhysics;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 

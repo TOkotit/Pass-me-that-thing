@@ -1,8 +1,9 @@
 using System.Collections;
 using DG.Tweening;
+using FishNet.Object;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
-using Mirror;
+
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
@@ -55,7 +56,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             EnemyView.Initialize();
 
-            if (isServer)
+            if (IsServerStarted)
             {
                 ServerSetMaxHealth(MaxHealth, true);
                 ServerSetMaxToughness(MaxToughness, true);
@@ -81,7 +82,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             DisableRagdoll();
         }
         
-        [ClientRpc]
+        [ObserversRpc]
         public void RpcFall()
         {
             EnableRagdoll();
@@ -95,7 +96,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ragdollHandler.EnableRagdoll();
         }
         
-        [ClientRpc]
+        [ObserversRpc]
         public void RpcStandUp()
         {
             enemyView.PlayStandingUp((() => DisableRagdoll()));
@@ -112,14 +113,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public override void OnDeath()
         {
             base.OnDeath();
-            if (!isServer) return;
+            if (!IsServerStarted) return;
             
             stateMachine.ChangeState(ZombieDeath);
         }
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            if (!isServer) return;
+            if (!IsServerStarted) return;
             
             Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
         }
@@ -144,7 +145,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.FixedUpdate();
         }
 
-        [ClientRpc]
+        [ObserversRpc]
         public void RpcSelfDestroy()
         {
             // RpcPlayParticles();
@@ -152,7 +153,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 Destroy(gameObject);
         }
         
-        // [ClientRpc]
+        // [ObserversRpc]
         // private void RpcPlayParticles()
         // {
         //     particles.Play();

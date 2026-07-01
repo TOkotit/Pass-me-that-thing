@@ -1,7 +1,7 @@
 using System;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,16 +15,27 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         [SerializeField] private float openY = 4f;
         [SerializeField] private float moveSpeed = 2f;
         
-        [SyncVar(hook = nameof(OnOpenStateChanged))]
-        private bool isOpen;
+        // [SyncVar(OnChange = nameof(OnOpenStateChanged))]
+        private readonly SyncVar<bool> isOpen = new();
         
         private float targetY;
         private bool targetYInitialized;
 
+
+        private void Awake()
+        {
+            isOpen.OnChange += OnOpenStateChanged;
+        }
+
+        private void OnDestroy()
+        {
+            isOpen.OnChange -= OnOpenStateChanged;
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
-            isOpen = false;
+            isOpen.Value = false;
             targetY = closedY;
             targetYInitialized = true;
         }
@@ -33,7 +44,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         {
             base.OnStartClient();
 
-            targetY = isOpen ? openY : closedY;
+            targetY = isOpen.Value ? openY : closedY;
             targetYInitialized = true;
         }
 
@@ -56,21 +67,21 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             CmdToggleGate();
         }
 
-        [Command(requiresAuthority = false)] 
-        private void CmdToggleGate() => isOpen = !isOpen;
+        [ServerRpc(RequireOwnership = false)] 
+        private void CmdToggleGate() => isOpen.Value = !isOpen.Value;
         
-        [ServerCallback]
-        public override void SrbToggle() => isOpen = !isOpen;
+        [Server]
+        public override void SrbToggle() => isOpen.Value = !isOpen.Value;
 
         
         [Server]
-        public void Open() => isOpen = true;
+        public void Open() => isOpen.Value = true;
         
         [Server]
-        public void Close() => isOpen = false;
+        public void Close() => isOpen.Value = false;
         
         
-        private void OnOpenStateChanged(bool oldValue, bool newValue)
+        private void OnOpenStateChanged(bool oldValue, bool newValue, bool asServer)
         {
             targetY = newValue ? openY : closedY;
         }

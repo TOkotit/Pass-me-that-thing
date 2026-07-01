@@ -1,5 +1,5 @@
 using FishNet.Component.Animating;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.View

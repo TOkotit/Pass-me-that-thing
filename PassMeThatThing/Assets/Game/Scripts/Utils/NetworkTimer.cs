@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 
@@ -31,7 +31,7 @@ namespace Game.Scripts.Utils
 
         public void Start()
         {
-            if (!_context.isServer)
+            if (!_context.IsServerStarted)
             {
                 return;
             }

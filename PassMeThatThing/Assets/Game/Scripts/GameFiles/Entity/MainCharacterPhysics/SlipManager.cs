@@ -1,7 +1,7 @@
 using System.Collections;
 using FishNet.Object;
 using MainCharacter_old;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
@@ -22,8 +22,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _isSlipping;
         
         
-        public override void OnStartLocalPlayer()        {
-            base.OnStartLocalPlayer();
+        public override void OnStartClient()        {
+            base.OnStartClient();
+            if (!IsOwner) return;
             
             if (leftLeg) leftLeg.OnWaterTouched += TrySlip;
             if (rightLeg) rightLeg.OnWaterTouched += TrySlip;
@@ -66,7 +67,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private void OnDestroy()
         {
-            if (isLocalPlayer)
+            if (IsOwner)
             {
                 if (leftLeg) leftLeg.OnWaterTouched -= TrySlip;
                 if (rightLeg) rightLeg.OnWaterTouched -= TrySlip;

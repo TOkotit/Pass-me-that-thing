@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy

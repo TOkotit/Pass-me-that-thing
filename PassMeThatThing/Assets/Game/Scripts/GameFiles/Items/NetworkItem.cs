@@ -1,12 +1,13 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Mirror;
+
 
 namespace Game.Scripts.GameFiles.Items
 {
     public class NetworkItem : NetworkBehaviour 
     {
-        [SyncVar] public string itemId;
+        // [SyncVar] 
+        public readonly SyncVar<string> itemId = new();
         
         
     }

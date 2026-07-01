@@ -1,5 +1,5 @@
 using FishNet.Object;
-using Mirror;
+
 using UnityEngine;
 
 namespace MainCharacter_old
@@ -15,14 +15,16 @@ namespace MainCharacter_old
         private bool _isActive;
         
 
-        public override void OnStartLocalPlayer()
+        public override void OnStartClient()
         {
+            base.OnStartClient();
+            if (!IsOwner) return;
             EnableVision();
         }
         
         private void Update()
         {
-            if (!_isActive || !isLocalPlayer) return;
+            if (!_isActive || !IsOwner) return;
             if (GlobalVisionShaderManager.Instance == null) return;
 
             var pos = targetTransform ? targetTransform.position : transform.position;

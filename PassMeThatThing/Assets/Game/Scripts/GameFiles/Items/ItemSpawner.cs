@@ -1,8 +1,9 @@
 using DG.Tweening;
 using FishNet.Managing;
+using FishNet.Object;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using Mirror;
+
 using UnityEngine;
 using VContainer;
 
@@ -24,19 +25,20 @@ namespace Game.Scripts.GameFiles.Items
             _physicalItemRegistry = itemRegistry;
         }
         
-        [Command(requiresAuthority = false)] 
+        [ServerRpc(RequireOwnership = false)] 
         private void CmdInteractWithObject()
         {
-            var itemToDrop = _itemPoolManager.GetFromPool(item.Id);
-            itemToDrop.transform.position = pointToSpawn.position;
-            itemToDrop.SetActive(true);
+            var itemToDrop = _itemPoolManager.GetFromPool(item.Id, pointToSpawn.position, Quaternion.identity);
+            //itemToDrop.transform.position = pointToSpawn.position;
+            //itemToDrop.SetActive(true);
+            
             _physicalItemRegistry.Register(itemToDrop.GetComponent<PhysicalItem>());
-            NetworkServer.Spawn(itemToDrop);
+            ServerManager.Spawn(itemToDrop);
 
             RpcInteractWithObject();
         }
 
-        [ClientRpc]
+        [ObserversRpc]
         public void RpcInteractWithObject()
         {
             gameObject.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce)
