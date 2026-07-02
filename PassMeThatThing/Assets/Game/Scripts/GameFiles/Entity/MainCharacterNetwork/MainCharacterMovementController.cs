@@ -6,8 +6,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 using VContainer;
+using VContainer.Unity;
 
-namespace MainCharacter_old
+namespace MainCharacterNetwork
 {
     public class MainCharacterMovementController : NetworkBehaviour
     {
@@ -29,6 +30,8 @@ namespace MainCharacter_old
         
         private void Awake()
         {
+            var rootScope = LifetimeScope.Find<RootScope>();
+            rootScope.Container.Inject(this);
             _controllable = GetComponentInChildren<MainCharacterMovement>();
 
             if (!_controllable)

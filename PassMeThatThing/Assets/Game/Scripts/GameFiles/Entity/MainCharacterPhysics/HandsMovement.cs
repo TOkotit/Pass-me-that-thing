@@ -12,8 +12,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     public class HandsMovement : NetworkBehaviour
     {
         [Header("Hands")]
-        [SerializeField] private ConfigurableJoint leftJoint;
-        [SerializeField] private ConfigurableJoint rightJoint;
+        /*[SerializeField] private ConfigurableJoint leftJoint;
+        [SerializeField] private ConfigurableJoint rightJoint;*/
 
         [Header("Throwing")]
         [SerializeField] private float throwForceGrow = 5f;
@@ -30,8 +30,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private Vector3 _pivotDefaultLocalPos;
 
         [Header("Grabbing")] 
-        [SerializeField] private FixedJoint collarbone;
-        [SerializeField] private Rigidbody torso;
+        //[SerializeField] private FixedJoint baseJoint;
         [SerializeField] private ConfigurableJoint grabJoint;   
         [SerializeField] private Rigidbody pivot;
 
@@ -53,7 +52,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
 
-        public void MoveHands( PhysicalItem item)
+        /*public void MoveHands( PhysicalItem item)
         {
             if (item.HandleType == HandleType.OneHanded)
             {
@@ -88,14 +87,14 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 leftJoint.gameObject.SetActive(true);
                 leftJoint.connectedBody = item.Rigidbody;
             }
-        }
+        }*/
 
-        public void ResetHands()
+        /*public void ResetHands()
         {
             ResetLeftHand();
             ResetRightHand();
-        }
-        public void ResetLeftHand()
+        }*/
+        /*public void ResetLeftHand()
         {
             if (leftJoint)
                 leftJoint.connectedBody = null;
@@ -107,7 +106,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (rightJoint)
                 rightJoint.connectedBody = null;
             rightJoint.gameObject.SetActive(false);
-        }
+        }*/
         public void EnableHorizontalWeakDrive()
         {
             JointDrive weakXDrive = _originalXDrive;
@@ -155,9 +154,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.connectedBody = item.Rigidbody;
             AlignJointToPivot();
             
-            AlignPivotForItem(item);
+            //AlignPivotForItem(item);
             ClientGrabItem(item);
-            MoveHands(item);
+            /*MoveHands(item);*/
         }
 
         [ClientRpc]
@@ -186,8 +185,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
             AlignJointToPivot();
-            AlignPivotForItem(item);
-            MoveHands(item);
+            //AlignPivotForItem(item);
+            /*MoveHands(item);*/
         }
 
         [Server]
@@ -206,7 +205,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     
             _throwForce = 0;
             _isThrowing = false;
-            ResetHands();
+            /*ResetHands();*/
             ClientReleaseItem();
         }
 
@@ -222,7 +221,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [ClientRpc]
         private void ClientReleaseItem()
         {
-            ResetHands();
+            /*ResetHands();*/
             grabJoint.connectedBody = null;
             grabJoint.gameObject.SetActive(false);
         }
@@ -259,20 +258,20 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _playerInventoryModel.ThrowCharge = (int)(_throwForce / maxThrowForce * 100);
         }
         
-        public void ResetPivot()
+        /*public void ResetPivot()
         {
-            collarbone.connectedBody = null;
+            baseJoint.connectedBody = null;
             pivot.transform.localPosition = _pivotDefaultLocalPos;
-            collarbone.connectedBody = torso;
+            baseJoint.connectedBody = torso;
         }
         
         public void AlignPivotForItem(PhysicalItem item)
         {
             ResetPivot();
-            collarbone.connectedBody = null;
+            baseJoint.connectedBody = null;
             pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
-            collarbone.connectedBody = torso;
-        }
+            baseJoint.connectedBody = torso;
+        }*/
         
         private void AlignJointToPivot()
         {

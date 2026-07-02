@@ -4,8 +4,9 @@ using Mirror;
 using Systems;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
-namespace MainCharacter_old
+namespace MainCharacterNetwork
 {
     [RequireComponent(typeof(Camera))]
     public class MainCharacterCamera : MonoBehaviour
@@ -32,6 +33,8 @@ namespace MainCharacter_old
 
         private void Awake()
         {
+            var rootScope = LifetimeScope.Find<RootScope>();
+            rootScope.Container.Inject(this);
             if (!_camera)
                 _camera = GetComponent<Camera>();
 

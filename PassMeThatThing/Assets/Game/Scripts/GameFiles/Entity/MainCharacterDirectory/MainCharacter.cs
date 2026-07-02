@@ -3,6 +3,7 @@ using DI;
 using Entity;
 using Game.Scripts.GameFiles.Items;
 using MainCharacter_old;
+using MainCharacterNetwork;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
