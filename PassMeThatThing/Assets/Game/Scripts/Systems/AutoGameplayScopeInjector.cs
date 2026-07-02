@@ -13,6 +13,7 @@ namespace Game.Scripts.Systems
     
             if (scope != null)
             {
+                
                 if (scope.Container != null)
                 {
                     Debug.Log($"AutoGameplayScopeInjector {gameObject.name} injected");
@@ -20,8 +21,13 @@ namespace Game.Scripts.Systems
                 }
                 else
                 {
+                    Debug.Log($"<color=red>SCOPE.CONTAINER is null");
                     StartCoroutine(WaitAndInject(scope));
                 }
+            }
+            else
+            {
+                Debug.Log($"<color=red>SCOPE is null");
             }
         }
 

@@ -1,16 +1,23 @@
+using System;
 using FishNet;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RoomGUI : MonoBehaviour
 {
-    private string playerNameInput = "Player_" + Random.Range(100, 999);
-    
+    private string playerNameInput = "Player";
+
+    private void Awake()
+    {
+        playerNameInput +=  "_" + Random.Range(100, 999);
+    }
+
     private void OnGUI()
     {
         // Если мы еще не подключены (главное меню)
         if (!InstanceFinder.NetworkManager.IsServerStarted && !InstanceFinder.NetworkManager.IsClientStarted)
         {
-            DrawMainMenu();
+            
         }
         else // Мы в лобби
         {
@@ -18,26 +25,7 @@ public class RoomGUI : MonoBehaviour
         }
     }
     
-    private void DrawMainMenu()
-    {
-        GUILayout.BeginArea(new Rect(20, 20, 250, 200));
-        GUILayout.Label("Имя игрока:");
-        playerNameInput = GUILayout.TextField(playerNameInput, 15);
-    
-        if (GUILayout.Button("Создать сервер (Host)"))
-        {
-            InstanceFinder.ServerManager.StartConnection();
-            InstanceFinder.ClientManager.StartConnection();
-            Invoke(nameof(SetInitialName), 0.2f); // Небольшая задержка, чтобы объект игрока успел заспавниться
-        }
-    
-        if (GUILayout.Button("Подключиться (Client)"))
-        {
-            InstanceFinder.ClientManager.StartConnection();
-            Invoke(nameof(SetInitialName), 0.2f);
-        }
-        GUILayout.EndArea();
-    }
+
     
     private void DrawLobbyMenu()
     {
@@ -45,11 +33,11 @@ public class RoomGUI : MonoBehaviour
         GUILayout.Label("=== ЛОББИ ===");
     
         // Выводим список игроков
-        if (RoomManager.Instance != null)
+        if (CustomRoomManager.Instance != null)
         {
-            foreach (var player in RoomManager.Instance.Players)
+            foreach (var player in CustomRoomManager.Instance.RoomPlayers)
             {
-                string readyStatus = player.IsReady ? "[ГОТОВ]" : "[НЕ ГОТОВ]";
+                string readyStatus = player.IsReady.Value ? "[ГОТОВ]" : "[НЕ ГОТОВ]";
                 GUILayout.Label($"{player.PlayerName} — {readyStatus}");
             }
     
@@ -59,10 +47,10 @@ public class RoomGUI : MonoBehaviour
             NetworkRoomPlayer localPlayer = GetLocalRoomPlayer();
             if (localPlayer != null)
             {
-                string btnText = localPlayer.IsReady ? "Снять готовность" : "Готов!";
+                string btnText = localPlayer.IsReady.Value ? "Снять готовность" : "Готов!";
                 if (GUILayout.Button(btnText))
                 {
-                    localPlayer.CmdSetReady(!localPlayer.IsReady);
+                    localPlayer.CmdSetReady(!localPlayer.IsReady.Value);
                 }
             }
         }
@@ -87,7 +75,7 @@ public class RoomGUI : MonoBehaviour
     
     private NetworkRoomPlayer GetLocalRoomPlayer()
     {
-        foreach (var player in RoomManager.Instance.Players)
+        foreach (var player in CustomRoomManager.Instance.RoomPlayers)
         {
             if (player.IsOwner) return player;
         }

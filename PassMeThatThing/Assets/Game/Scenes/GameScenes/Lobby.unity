@@ -343,7 +343,7 @@ PrefabInstance:
     - target: {fileID: 4012056358138138438, guid: 9b2ec610322e5fd4f84d3576ee293779, type: 3}
       propertyPath: networkAudioManager
       value: 
-      objectReference: {fileID: 5683539997656213016}
+      objectReference: {fileID: 0}
     - target: {fileID: 4853616083282056534, guid: 9b2ec610322e5fd4f84d3576ee293779, type: 3}
       propertyPath: m_Name
       value: LobbyScope
@@ -449,22 +449,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: AudioManager
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3838048142092443086, guid: 50724210217e9fc43b161bc3bcbbbdb0, type: 3}
+    - {fileID: 1361878691388512369, guid: 50724210217e9fc43b161bc3bcbbbdb0, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50724210217e9fc43b161bc3bcbbbdb0, type: 3}
---- !u!114 &5683539997656213016 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3838048142092443086, guid: 50724210217e9fc43b161bc3bcbbbdb0, type: 3}
-  m_PrefabInstance: {fileID: 5683539997656213015}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b4ff0a1ae044cb890d2262ddb6cc48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -18,10 +18,10 @@ namespace Game.Scripts.GameFiles.Lobby.Root
         {
             Debug.Log("LobbyEntryPoint.Start");
             
-            if (SteamManager.Initialized)
-            {
-                Debug.Log($"<color=orange>[STEAM] Мой SteamID для подключения друга:</color> <color=green>{SteamUser.GetSteamID().m_SteamID}</color>");
-            }
+            // if (SteamManager.Initialized)
+            // {
+            //     Debug.Log($"<color=orange>[STEAM] Мой SteamID для подключения друга:</color> <color=green>{SteamUser.GetSteamID().m_SteamID}</color>");
+            // }
         }
         
         public LobbyEntryPoint(IObjectResolver resolver)

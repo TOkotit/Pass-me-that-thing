@@ -730,9 +730,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a7af7d86274eafbe2f25ac78bf5f63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   bodyPart: {fileID: 7294071976170680824}
   colliderPrefab: {fileID: 3452684027595015642, guid: 5c7438c5fe272ac4998cf12cc14be36e, type: 3}
   player: {fileID: 7770340711354438675}
@@ -1094,8 +1094,8 @@ GameObject:
   - component: {fileID: 1016172811850124004}
   - component: {fileID: 583510414746106251}
   - component: {fileID: 3329725917548430492}
-  - component: {fileID: 9195067247384821187}
   - component: {fileID: 8724959205557740488}
+  - component: {fileID: 9124043759799027863}
   m_Layer: 8
   m_Name: hips
   m_TagString: Player
@@ -1348,9 +1348,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f71a112128a364aacebc4ce4f2def1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   speed: 100
   sprintMultiplier: 1.5
   jumpHeight: 120
@@ -1361,40 +1361,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   root: {fileID: 3804564485564321220}
---- !u!114 &9195067247384821187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2367077665615707722}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6391566352839445736}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!114 &8724959205557740488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1407,9 +1373,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d52acbb1945ce807ba81ab1387de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   leftJoint: {fileID: 769588050050098023}
   rightJoint: {fileID: 4570636756147039003}
   throwForceGrow: 10
@@ -1419,6 +1385,52 @@ MonoBehaviour:
   torso: {fileID: 1527932578361883255}
   grabJoint: {fileID: 8093723739365716607}
   pivot: {fileID: 1221596706237876440}
+--- !u!114 &9124043759799027863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2367077665615707722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 1
+  _teleportThreshold: 1
+  _clientAuthoritative: 1
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &2645522413353200517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1507,9 +1519,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc8fb09e8e0543f79791dd883537e8d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   spineAlignJoints:
   - joint: {fileID: 1695402308512339797}
     spring: 1000
@@ -1543,9 +1555,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1ca5f936fa4a979865020714600df4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   rendererData: {fileID: 11400000, guid: f288ae1f4751b564a96ac7587541f7a2, type: 2}
 --- !u!114 &817134635841920794
 MonoBehaviour:
@@ -1559,9 +1571,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa740bf93d184c288a0f819074632ac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   leftLeg: {fileID: 223720912939564511}
   rightLeg: {fileID: 2266395818998739654}
 --- !u!114 &9071510599438279358
@@ -1576,9 +1588,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 350f563f82ce432d8ccecb6bd3c09027, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   _heldItem: {fileID: 0}
   mainCharacter: {fileID: 7770340711354438675}
   strength: 20
@@ -1594,12 +1606,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e867d38d4fb4c47b11118ad0b699626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   _interactionZone: {fileID: 1047243114865079847}
   "_physical\u0421ontroller": {fileID: 9071510599438279358}
-  activeSlot: 0
 --- !u!114 &681644347487620103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1612,9 +1623,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 799375a40c494ac2813be2922df824c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   interactionZone: {fileID: 2558772292210885621}
   _physicalItemInteractionController: {fileID: 9071510599438279358}
   mainCharacter: {fileID: 7770340711354438675}
@@ -1639,9 +1650,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6827e743274828a0414e23f3882bba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   radius: 10
   targetTransform: {fileID: 6391566352839445736}
 --- !u!114 &7770340711354438675
@@ -1656,9 +1667,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 769558bd7da14c9faf9016612be78da5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   defaultHealth: 0
   type: 0
   verticalAlign: {fileID: 7399799905044466384}
@@ -1676,9 +1687,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb6c0ccc4aa24a699fb5b668c42fc7b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   verticalAlign: {fileID: 7399799905044466384}
   leftLeg: {fileID: 223720912939564511}
   rightLeg: {fileID: 2266395818998739654}
@@ -1697,9 +1708,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f497c76bf3eb45deb51628cd08f49004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &8493398176240786304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1772,7 +1783,7 @@ GameObject:
   - component: {fileID: 932635085945757624}
   - component: {fileID: 9182991982786517163}
   - component: {fileID: 223720912939564511}
-  - component: {fileID: 4404922120849158170}
+  - component: {fileID: 3624156877979275704}
   m_Layer: 8
   m_Name: left foot
   m_TagString: Player
@@ -2010,7 +2021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2176e8a27ff49e7bae81b5dfe3bd018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4404922120849158170
+--- !u!114 &3624156877979275704
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2019,31 +2030,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 2909725294491179631}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 5383839384820338648}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 1
+  _extrapolation: 0
+  _enableTeleport: 1
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &3054673784607645384
 GameObject:
   m_ObjectHideFlags: 0
@@ -2059,7 +2082,7 @@ GameObject:
   - component: {fileID: 693245307775307819}
   - component: {fileID: 173344307844624988}
   - component: {fileID: 8334996625824373133}
-  - component: {fileID: 7276181104310394380}
+  - component: {fileID: 1596311175360631842}
   m_Layer: 8
   m_Name: Head
   m_TagString: Player
@@ -2301,7 +2324,7 @@ MonoBehaviour:
   ToDisable:
   - {fileID: 6327564880427163023}
   - {fileID: 360127967911920747}
---- !u!114 &7276181104310394380
+--- !u!114 &1596311175360631842
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2310,31 +2333,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 3054673784607645384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 8021082061785335846}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 1
+  _teleportThreshold: 2
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &3607671285350145050
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,7 +2385,7 @@ GameObject:
   - component: {fileID: 1527932578361883255}
   - component: {fileID: 1695402308512339797}
   - component: {fileID: 700000704844478381}
-  - component: {fileID: 170567783177577394}
+  - component: {fileID: 8847451251326230971}
   m_Layer: 8
   m_Name: torso
   m_TagString: Player
@@ -2594,7 +2629,7 @@ MonoBehaviour:
   - {fileID: 5435578551888501836}
   - {fileID: 6068485737705467806}
   - {fileID: 6391566352839445736}
---- !u!114 &170567783177577394
+--- !u!114 &8847451251326230971
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2603,31 +2638,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 3607671285350145050}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 845892500949389548}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 1
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &3618159550628641426
 GameObject:
   m_ObjectHideFlags: 0
@@ -2640,7 +2687,7 @@ GameObject:
   - component: {fileID: 6972008711956958972}
   - component: {fileID: 6673101370865257379}
   - component: {fileID: 4570636756147039003}
-  - component: {fileID: 6861131110220141386}
+  - component: {fileID: 5657042091349170496}
   m_Layer: 8
   m_Name: RightHandGrab
   m_TagString: Untagged
@@ -2808,7 +2855,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 0.5
---- !u!114 &6861131110220141386
+--- !u!114 &5657042091349170496
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2817,31 +2864,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 3618159550628641426}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 4366219563928244434}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &3796684385266664144
 GameObject:
   m_ObjectHideFlags: 0
@@ -3826,7 +3885,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4927395285961022493}
-  - component: {fileID: 2447738185046492951}
+  - component: {fileID: 4720016527424325412}
   m_Layer: 8
   m_Name: HandlingPivot
   m_TagString: Untagged
@@ -3850,7 +3909,7 @@ Transform:
   - {fileID: 4925432040484134864}
   m_Father: {fileID: 845892500949389548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2447738185046492951
+--- !u!114 &4720016527424325412
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3859,31 +3918,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 4677326810371898778}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 4927395285961022493}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 0
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  _clientAuthoritative: 1
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &5658505966005881544
 GameObject:
   m_ObjectHideFlags: 0
@@ -3898,8 +3969,8 @@ GameObject:
   - component: {fileID: 8721461862520721328}
   - component: {fileID: 357820658037476853}
   - component: {fileID: 2374275921394357119}
-  - component: {fileID: 4678307513864827752}
   - component: {fileID: 7708625809867889250}
+  - component: {fileID: 7843162574002171109}
   m_Layer: 8
   m_Name: left hand
   m_TagString: Player
@@ -4126,40 +4197,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &4678307513864827752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5658505966005881544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6080320782352048441}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!114 &7708625809867889250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4174,6 +4211,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToDisable:
   - {fileID: 263068789334185924}
+--- !u!114 &7843162574002171109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5658505966005881544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 1
+  _extrapolation: 0
+  _enableTeleport: 1
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &5810278021926315257
 GameObject:
   m_ObjectHideFlags: 0
@@ -4183,7 +4266,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1047243114865079847}
-  - component: {fileID: 4425290267958934517}
   - component: {fileID: 846044020810354653}
   - component: {fileID: 2558772292210885621}
   m_Layer: 8
@@ -4208,40 +4290,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8498720533798266895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4425290267958934517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5810278021926315257}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 1047243114865079847}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!65 &846044020810354653
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4531,7 +4579,7 @@ GameObject:
   - component: {fileID: 3534702729030724195}
   - component: {fileID: 5268901376810761752}
   - component: {fileID: 3947005561567857132}
-  - component: {fileID: 4744409057346741808}
+  - component: {fileID: 5935261049171996105}
   m_Layer: 8
   m_Name: right arm
   m_TagString: Player
@@ -4759,7 +4807,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 5
   m_ConnectedMassScale: 1
---- !u!114 &4744409057346741808
+--- !u!114 &5935261049171996105
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4768,31 +4816,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 5973621809445079124}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6068485737705467806}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 1
+  _teleportThreshold: 2
+  _clientAuthoritative: 1
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &6114159513840627895
 GameObject:
   m_ObjectHideFlags: 0
@@ -5134,7 +5194,7 @@ GameObject:
   - component: {fileID: 3492850137832162424}
   - component: {fileID: 1926015515028009888}
   - component: {fileID: 8495651633032814117}
-  - component: {fileID: 3527603493946011144}
+  - component: {fileID: 8989724463362604411}
   m_Layer: 8
   m_Name: left arm
   m_TagString: Player
@@ -5362,7 +5422,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 5
   m_ConnectedMassScale: 1
---- !u!114 &3527603493946011144
+--- !u!114 &8989724463362604411
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5371,31 +5431,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 6463088830018673628}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 5435578551888501836}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 1
+  _extrapolation: 0
+  _enableTeleport: 1
+  _teleportThreshold: 1
+  _clientAuthoritative: 1
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &7118417652258738031
 GameObject:
   m_ObjectHideFlags: 0
@@ -5410,8 +5482,8 @@ GameObject:
   - component: {fileID: 2295153766997449749}
   - component: {fileID: 4616260084515053752}
   - component: {fileID: 1112904798639818763}
-  - component: {fileID: 3883791635408120527}
   - component: {fileID: 8985101020094495505}
+  - component: {fileID: 7395955236270693136}
   m_Layer: 8
   m_Name: right hand
   m_TagString: Player
@@ -5638,40 +5710,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &3883791635408120527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7118417652258738031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 1168195336085224623}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!114 &8985101020094495505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5686,6 +5724,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ToDisable:
   - {fileID: 7809725971191443519}
+--- !u!114 &7395955236270693136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7118417652258738031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 1
+  _extrapolation: 0
+  _enableTeleport: 1
+  _teleportThreshold: 2
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &7679785167110516565
 GameObject:
   m_ObjectHideFlags: 0
@@ -5698,7 +5782,7 @@ GameObject:
   - component: {fileID: 1221596706237876440}
   - component: {fileID: 8093723739365716607}
   - component: {fileID: 4262172158442673699}
-  - component: {fileID: 2148412666843667683}
+  - component: {fileID: 7275856850429629306}
   m_Layer: 8
   m_Name: Grab
   m_TagString: Untagged
@@ -5866,7 +5950,7 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &2148412666843667683
+--- !u!114 &7275856850429629306
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5875,31 +5959,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 7679785167110516565}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 4874145427392134729}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &8285682312484365845
 GameObject:
   m_ObjectHideFlags: 0
@@ -5915,7 +6011,7 @@ GameObject:
   - component: {fileID: 9089162926515686594}
   - component: {fileID: 4358172615876660447}
   - component: {fileID: 2266395818998739654}
-  - component: {fileID: 8656453151491133740}
+  - component: {fileID: 5882333077642343078}
   m_Layer: 8
   m_Name: right foot
   m_TagString: Player
@@ -6153,7 +6249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2176e8a27ff49e7bae81b5dfe3bd018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8656453151491133740
+--- !u!114 &5882333077642343078
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6162,31 +6258,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 8285682312484365845}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 7739491245338055218}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 1
+  _extrapolation: 0
+  _enableTeleport: 1
+  _teleportThreshold: 2
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &8473090374347820402
 GameObject:
   m_ObjectHideFlags: 0
@@ -6202,7 +6310,6 @@ GameObject:
   - component: {fileID: 8960217898737254533}
   - component: {fileID: 864170193374181119}
   - component: {fileID: 5641960250625316459}
-  - component: {fileID: 6411017401852427994}
   m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -6341,6 +6448,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32d9bb2e88c43dc95119cb747e556a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
   _camera: {fileID: 6357698489711108223}
   sensitivity: 1
   maxPitch: 80
@@ -6476,40 +6586,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &6411017401852427994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8473090374347820402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 8498720533798266895}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!1 &8834487590370711204
 GameObject:
   m_ObjectHideFlags: 0
@@ -6522,7 +6598,7 @@ GameObject:
   - component: {fileID: 8808583821054388584}
   - component: {fileID: 1688782923223840103}
   - component: {fileID: 769588050050098023}
-  - component: {fileID: 2524956700000786530}
+  - component: {fileID: 7176667682457455873}
   m_Layer: 8
   m_Name: LeftHandGrab
   m_TagString: Untagged
@@ -6690,7 +6766,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 0.5
---- !u!114 &2524956700000786530
+--- !u!114 &7176667682457455873
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6699,31 +6775,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 8834487590370711204}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 5607992304566923963}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8493398176240786304}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &8836174396640923526
 GameObject:
   m_ObjectHideFlags: 0

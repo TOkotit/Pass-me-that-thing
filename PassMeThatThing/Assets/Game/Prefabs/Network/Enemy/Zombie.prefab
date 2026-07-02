@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 5357255404907162795}
-  netAnimator: {fileID: 977046466881952610}
+  netAnimator: {fileID: 0}
   particles: {fileID: 136479865338665025}
   groundMask:
     serializedVersion: 2
@@ -153,9 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7dda6d1eb05458b8240ba926ac14c0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3324100984209181231}
+  _networkObjectCache: {fileID: 0}
   defaultHealth: 50
   type: 1
   targetDetector: {fileID: 1118780070767854037}
@@ -176,9 +176,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 370e6159660847ee824a454dc2e1fbe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3324100984209181231}
+  _networkObjectCache: {fileID: 0}
   detectionInterval: 0.5
   proximityAreaCenter: {fileID: 227837763217859650}
   proximityAreaRadius: 50.3
@@ -199,9 +199,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf501dd71de7462cbc88b88b0f55efee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3324100984209181231}
+  _networkObjectCache: {fileID: 0}
   attackCubeCenter: {fileID: 387873943417241419}
   damageTypes:
     _serializedList:
@@ -219,9 +219,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9348607fd334ed3b1a2e7fb255a22ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3324100984209181231}
+  _networkObjectCache: {fileID: 0}
   navMeshAgent: {fileID: 5286021340439170528}
   isMovingRB: 0
   rb: {fileID: 0}
@@ -277,9 +277,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b95c365ae0148cb9990864d9aabd75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3324100984209181231}
+  _networkObjectCache: {fileID: 0}
   radius: 2
   damagePerSecond: 10
   interval: 1
@@ -421,25 +421,9 @@ PrefabInstance:
       propertyPath: WasActiveDuringEdit
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4092925731618836473, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4092925731618836473, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 9662003f68327ce44bbc468054cb5ec0, type: 2}
-    - target: {fileID: 4092925731618836473, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7306811379753668409, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
       propertyPath: m_Name
       value: zombie
-      objectReference: {fileID: 0}
-    - target: {fileID: 7704680763704067414, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
-      propertyPath: _assetId
-      value: 3971454560
       objectReference: {fileID: 0}
     - target: {fileID: 7938951759069681027, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -481,43 +465,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7704680763704067414, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7306811379753668409, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 977046466881952610}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
---- !u!1 &1725783625066474603 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7306811379753668409, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
-  m_PrefabInstance: {fileID: 8256282482685125458}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &977046466881952610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725783625066474603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  clientAuthority: 0
-  animator: {fileID: 5357255404907162795}
 --- !u!114 &1976506774925312268 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: -1587022592858283426, guid: c9f1cdd6713b63a48b3ba87d153bb1e2, type: 3}
   m_PrefabInstance: {fileID: 8256282482685125458}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725783625066474603}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b768fec2ad1e4217a8e1e3ae3805d7fe, type: 3}
