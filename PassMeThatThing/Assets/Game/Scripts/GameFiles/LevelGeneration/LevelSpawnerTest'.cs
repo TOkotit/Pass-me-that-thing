@@ -1,10 +1,13 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using AYellowpaper.SerializedCollections;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
+using Game.Scripts.GameFiles.LevelGeneration.Objects;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
@@ -18,6 +21,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [Tooltip("Твой сериализуемый словарь из аддона")]
         public SerializedDictionary<RoomType, GameObject> roomPrefabs;
         public SerializedDictionary<GameEventsType, GameObject> eventPrefabs;
+        
+        public SerializedDictionary<SpotType, GameObject> spotPrefabs;
+        public SerializedDictionary<GameEventsType, GameObject> eventTerminalPrefabs;
+        
+        
+        [Inject]
+        public void Construct(IObjectResolver resolver)
+        {
+            _resolver = resolver;
+        }
+        
         private void Start()
         {
             var eventsPool = new List<EventRoomDefinition>
@@ -28,11 +42,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 new EventRoomDefinition("other_1", GameEventsType.OtherEvent, 5)
             };
 
-            // 2. РАНДОМИЗИРУЕМ входные параметры уровня
-            int randomDefenseRooms = Random.Range(3, 5); 
-            int maxSideRoomsCapacity = randomDefenseRooms * 10;
-            int randomSideRooms = Random.Range(3, maxSideRoomsCapacity + 1); 
-            int randomBudget = Random.Range(70, 130); 
+            var randomDefenseRooms = Random.Range(3, 5); 
+            var maxSideRoomsCapacity = randomDefenseRooms * 10;
+            var randomSideRooms = Random.Range(3, maxSideRoomsCapacity + 1); 
+            var randomBudget = Random.Range(70, 130); 
 
             Debug.Log($"<color=orange><b>[Тест Generation]</b></color> Сгенерированы параметры: " +
                       $"Оборона = {randomDefenseRooms}, Боковые = {randomSideRooms}, Бюджет = {randomBudget}");
@@ -52,12 +65,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             SpawnGraph(rootNode);
         }
-
-        [Inject]
-        public void Construct(IObjectResolver resolver)
-        {
-            _resolver = resolver;
-        }
+        
         
         private void SpawnGraph(RoomNode startNode)
         {
@@ -71,20 +79,19 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var (node, parent) = queue.Dequeue();
 
-                Vector3 spawnPosition = new Vector3(node.X * roomSizeMultiplier, 0, node.Y * roomSizeMultiplier);
-                
-                Quaternion spawnRotation = Quaternion.identity;
+                var spawnPosition = new Vector3(node.X * roomSizeMultiplier, 0, node.Y * roomSizeMultiplier);
+                var spawnRotation = Quaternion.identity;
 
                 if (parent != null)
                 {
-                    Vector3 parentPosition = new Vector3(parent.X * roomSizeMultiplier, 0, parent.Y * roomSizeMultiplier);
-                    Vector3 directionToParent = parentPosition - spawnPosition;
+                    var parentPosition = new Vector3(parent.X * roomSizeMultiplier, 0, parent.Y * roomSizeMultiplier);
+                    var directionToParent = parentPosition - spawnPosition;
 
                     spawnRotation = Quaternion.FromToRotation(Vector3.right, directionToParent.normalized);
                 }
 
                 GameObject prefabToSpawn = null;
-                string roomLogName = node.Type.ToString();
+                var roomLogName = node.Type.ToString();
 
                 if (node.Type == RoomType.Event && node.EventData != null)
                 {
@@ -104,8 +111,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (prefabToSpawn != null)
                 {
-                    GameObject spawnedRoom = Instantiate(prefabToSpawn, spawnPosition, spawnRotation, this.transform);
+                    var spawnedRoom = _resolver.Instantiate(prefabToSpawn, spawnPosition, spawnRotation, this.transform);
                     spawnedRoom.name = $"Room [{node.NodeId}] {roomLogName} ({node.X}, {node.Y})";
+
+                    ProcessRoomMicroGeneration(spawnedRoom, node);
                 }
                 else
                 {
@@ -114,11 +123,61 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 foreach (var connectedNode in node.ConnectedNodes)
                 {
-                    if (!visited.Contains(connectedNode.NodeId))
+                    if (!visited.Add(connectedNode.NodeId)) continue;
+                    queue.Enqueue((connectedNode, node));
+                }
+            }
+        }
+        
+        private void ProcessRoomMicroGeneration(GameObject spawnedRoom, RoomNode node)
+        {
+            var allSpots = spawnedRoom.GetComponentsInChildren<LevelPartSpot>();
+            if (allSpots.Length == 0) return;
+
+            var spotsGroups = allSpots.GroupBy(spot => spot.spotType);
+
+            foreach (var group in spotsGroups)
+            {
+                var currentType = group.Key;
+                var availableSpots = group.ToList();
+
+                var randomIndex = Random.Range(0, availableSpots.Count);
+                var selectedSpot = availableSpots[randomIndex];
+
+                GameObject prefabToSpawn = null;
+
+                if (currentType == SpotType.EventTerminal)
+                {
+                    if (node.Type == RoomType.Event && node.EventData != null)
+                        eventTerminalPrefabs.TryGetValue(node.EventData.EventType, out prefabToSpawn);
+                }
+                else
+                    spotPrefabs.TryGetValue(currentType, out prefabToSpawn);
+
+                if (prefabToSpawn != null)
+                {
+                    var faceRotation = selectedSpot.transform.rotation * prefabToSpawn.transform.rotation;
+
+                    var spawnedPart = _resolver.Instantiate(
+                        prefabToSpawn, 
+                        selectedSpot.transform.position, 
+                        faceRotation, 
+                        spawnedRoom.transform
+                    );
+                    
+                    spawnedPart.name = $"[Micro] {currentType}";
+                }
+                else
+                {
+                    if (currentType != SpotType.EventTerminal || node.Type == RoomType.Event)
                     {
-                        visited.Add(connectedNode.NodeId);
-                        queue.Enqueue((connectedNode, node));
+                        Debug.LogWarning($"[MicroGen] Пропущен спавн для {currentType} в комнате ID:{node.NodeId}. Нет префаба в словаре.");
                     }
+                }
+
+                foreach (var spot in availableSpots)
+                {
+                    Destroy(spot.gameObject);
                 }
             }
         }
