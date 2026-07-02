@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 63168392369181549}
   - component: {fileID: 8713809886147482736}
   - component: {fileID: 8000697871299242606}
+  - component: {fileID: 7738454446967838304}
   m_Layer: 0
   m_Name: MainCharacterNew
   m_TagString: Untagged
@@ -307,7 +308,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  speed: 140
+  speed: 10
   sprintMultiplier: 1.5
   jumpHeight: 2
   gravity: 9.81
@@ -370,6 +371,33 @@ MonoBehaviour:
   minChargeTime: 0.3
   grabJoint: {fileID: 1400182014616025524}
   pivot: {fileID: 5197336109614078870}
+--- !u!114 &7738454446967838304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536434559861024044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799375a40c494ac2813be2922df824c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _physicalItemInteractionController: {fileID: 8713809886147482736}
+  mainCharacter: {fileID: 2071321613668209993}
+  _camera: {fileID: 5118679166540889808}
+  interactionLayer:
+    serializedVersion: 2
+    m_Bits: 960
+  interactionDistance: 2
+  interactionTimeOut: 0.5
+  swingForce: 5
+  swingTorque: 10
+  swingDuration: 0.2
+  swingCooldown: 0.8
 --- !u!1 &6882059111334076874
 GameObject:
   m_ObjectHideFlags: 0

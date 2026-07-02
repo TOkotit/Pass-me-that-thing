@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using DI;
 using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
@@ -20,12 +21,10 @@ namespace Game.Scripts.GameFiles.Items
 
     public class PlayerInteraction : NetworkBehaviour
     {
-        public InteractionZone interactionZone;
-
+        
         private PlayerInventory inventory;
         private GameInput _gameInput;
         private PlayerInventoryModel _playerInventoryModel;
-        private Camera _camera;
         private PhysicalItemRegistry _physicalItemRegistry;
         private OutlineRegistry _outlineRegistry;
         private DamagableRegistry _damagableRegistry;
@@ -35,6 +34,7 @@ namespace Game.Scripts.GameFiles.Items
 
         [SerializeField] private PhysicalItemInteractionController _physicalItemInteractionController;
         [SerializeField] private MainCharacter mainCharacter;
+        [SerializeField] private Camera _camera;
         [SerializeField] private LayerMask interactionLayer;
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1f;
@@ -66,12 +66,13 @@ namespace Game.Scripts.GameFiles.Items
         #region Unity / Mirror methods
         public override void OnStartLocalPlayer()
         {
-            _camera = GetComponentInChildren<Camera>();
             TrySubscribe();
         }
 
         private void Awake()
         {
+            var gameplayScope = LifetimeScope.Find<GameplayScope>();
+            if (gameplayScope) gameplayScope.Container.Inject(this);
             inventory = GetComponent<PlayerInventory>();
         }
 
@@ -109,11 +110,6 @@ namespace Game.Scripts.GameFiles.Items
             
             var identity = GetComponent<NetworkIdentity>();
             if (!identity || !identity.isLocalPlayer) return;
-            
-            if (!interactionZone) return;
-            
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(interactionZone.transform.position, 1f);
         }
         #endregion
 
