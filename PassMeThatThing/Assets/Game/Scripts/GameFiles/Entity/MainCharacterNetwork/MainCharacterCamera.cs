@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using DI;
 using Mirror;
 using Systems;
@@ -15,7 +15,6 @@ namespace MainCharacter_old
         [SerializeField] private float maxPitch = 80f;
         [SerializeField] private bool lockCursor = true;
         [SerializeField] private float tiltMultiplier = 0.2f;
-        [SerializeField] BodyVerticalAlign bodyVerticalAlign;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -98,14 +97,14 @@ namespace MainCharacter_old
             _movementController.ControllerRotate(characterRotation);
             
             var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
-            if (_ownerIdentity.isServer)
+            /*if (_ownerIdentity.isServer)
             {
                 bodyVerticalAlign.SetTilt(targetTilt);
             }
             else
             {
                 bodyVerticalAlign.CmdSetTilt(targetTilt);
-            }
+            }*/
         }
         
         public void SetupInput(GameInput input)

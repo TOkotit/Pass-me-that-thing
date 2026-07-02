@@ -14,13 +14,11 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private float sprintMultiplier = 1.5f;
     
     [SerializeField] private float jumpHeight = 2f;
-    [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float gravity = 9.81f;
     
     [SerializeField] private GroundStateManager groundStateManager;
-    [SerializeField] private float groundCheckRadius = 0.4f;
     [SerializeField] private LayerMask groundMask;
-
-    [SerializeField] private Rigidbody root;
+    [SerializeField] private CharacterController characterController;
     
     [SyncVar]
     private bool isCharacterCanMove = true;
@@ -47,7 +45,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (!isLocalPlayer)
         {
-            root.isKinematic = true;
+            characterController.enabled = false;
         }
     }
 
@@ -73,18 +71,16 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void Rotate(Quaternion rotation)
     {
-        /*if (!isCharacterCanMove)
-            return;
-        root.rotation = rotation;*/
+        transform.rotation = rotation;
     }
+
     
     public void Jump()
     {
-        if (!groundStateManager.IsGrounded())
-            return;
-        root.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
-        
-        Debug.Log(jumpHeight * -2f * gravity);
+        if (groundStateManager.IsGrounded())
+        {
+            _velocity.y = jumpHeight;
+        }
     }
     
     public void SetSprinting(bool isSprinting)
@@ -96,9 +92,8 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
         
-        
         MoveInternal();
-
+        ApplyGravity();
         if (groundStateManager.IsGrounded() && _velocity.y < 0f)
             _velocity.y = -2f;
     }
@@ -110,10 +105,15 @@ public class MainCharacterMovement : NetworkBehaviour
             return;
         
         var currentSpeed = speed;
-
         if (_isSprinting)
             currentSpeed *= sprintMultiplier;
         
-        root.AddForce(_moveDirection * currentSpeed, ForceMode.Acceleration);
+        characterController.Move(_moveDirection * (currentSpeed * Time.fixedDeltaTime));
+    }
+    
+    private void ApplyGravity()
+    {
+        _velocity += Vector3.down * (gravity * Time.fixedDeltaTime);
+        characterController.Move(_velocity * Time.fixedDeltaTime);
     }
 }

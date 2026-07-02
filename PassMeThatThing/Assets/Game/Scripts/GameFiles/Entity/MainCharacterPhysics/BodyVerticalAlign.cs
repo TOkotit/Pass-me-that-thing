@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -120,4 +120,4 @@ public class BodyVerticalAlign : NetworkBehaviour
     {
         Consciousness = Mathf.Clamp01(value);
     }
-}
+}*/
