@@ -16,7 +16,7 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private float gravity = 9.81f;
     
-    [SerializeField] private GroundStateManager groundStateManager;
+    [SerializeField] private GroundCheck groundCheck;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
     
@@ -77,7 +77,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void Jump()
     {
-        if (groundStateManager.IsGrounded())
+        if (groundCheck.IsGrounded)
         {
             _velocity.y = jumpHeight;
         }
@@ -94,7 +94,7 @@ public class MainCharacterMovement : NetworkBehaviour
         
         MoveInternal();
         ApplyGravity();
-        if (groundStateManager.IsGrounded() && _velocity.y < 0f)
+        if (groundCheck.IsGrounded && _velocity.y < 0f)
             _velocity.y = -2f;
     }
     
