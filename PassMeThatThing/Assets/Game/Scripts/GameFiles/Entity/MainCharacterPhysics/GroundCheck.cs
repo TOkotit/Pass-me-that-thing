@@ -54,5 +54,4 @@ public class GroundCheck : MonoBehaviour
             TouchesWater = state;
         }
     }
-    
 }

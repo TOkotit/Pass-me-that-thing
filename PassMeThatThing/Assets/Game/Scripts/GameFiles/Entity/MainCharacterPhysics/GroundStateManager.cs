@@ -1,4 +1,4 @@
-using Mirror;
+/*using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
@@ -12,4 +12,4 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             return leftLeg.IsGrounded || rightLeg.IsGrounded;
         }
     }
-}
+}*/

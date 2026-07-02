@@ -1,11 +1,12 @@
-﻿using System;
+﻿ using System;
 using DI;
 using Mirror;
 using Systems;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
-namespace MainCharacter_old
+namespace MainCharacterNetwork
 {
     [RequireComponent(typeof(Camera))]
     public class MainCharacterCamera : MonoBehaviour
@@ -15,7 +16,6 @@ namespace MainCharacter_old
         [SerializeField] private float maxPitch = 80f;
         [SerializeField] private bool lockCursor = true;
         [SerializeField] private float tiltMultiplier = 0.2f;
-        [SerializeField] BodyVerticalAlign bodyVerticalAlign;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -33,6 +33,8 @@ namespace MainCharacter_old
 
         private void Awake()
         {
+            var rootScope = LifetimeScope.Find<RootScope>();
+            rootScope.Container.Inject(this);
             if (!_camera)
                 _camera = GetComponent<Camera>();
 
@@ -97,7 +99,7 @@ namespace MainCharacter_old
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
             _movementController.ControllerRotate(characterRotation);
             
-            var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
+            /*var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
             if (_ownerIdentity.isServer)
             {
                 bodyVerticalAlign.SetTilt(targetTilt);
@@ -105,7 +107,7 @@ namespace MainCharacter_old
             else
             {
                 bodyVerticalAlign.CmdSetTilt(targetTilt);
-            }
+            }*/
         }
         
         public void SetupInput(GameInput input)
