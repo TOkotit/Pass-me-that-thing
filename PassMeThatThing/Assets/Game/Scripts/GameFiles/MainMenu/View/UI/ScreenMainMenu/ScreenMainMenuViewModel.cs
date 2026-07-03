@@ -57,5 +57,10 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         {
             _networkRoomManager.networkAddress = value;
         }
+        
+        public void RequestGoToScreenOptions()
+        {
+            _uiManager.OpenScreenOptionsMenu();
+        }
     }
 }

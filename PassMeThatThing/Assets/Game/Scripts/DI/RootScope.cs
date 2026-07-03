@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Game.Scripts.Systems;
+using Mirror;
 using Systems;
 using UIRoot;
 using Unity.VisualScripting;
@@ -41,6 +42,8 @@ namespace DI
             {
                 builder.RegisterComponent(networkManagerComponent);
             }
+            
+            builder.Register<OptionsManager>(Lifetime.Singleton);
             
             builder.Register<GameInputManager>(Lifetime.Singleton);
             builder.Register<GameManager>(Lifetime.Singleton);

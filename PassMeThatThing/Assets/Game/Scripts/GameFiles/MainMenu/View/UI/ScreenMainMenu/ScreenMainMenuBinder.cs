@@ -49,7 +49,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
 
         private void OnOptionsButtonClicked()
         {
-            
+            ViewModel.RequestGoToScreenOptions();
         }
 
         
