@@ -3,9 +3,9 @@ using System.Linq;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Entity.Enemy
+namespace Game.Scripts.GameFiles.Entity.GlobalView
 {
-    public class EnemyRagdollHandler : NetworkBehaviour
+    public class RagdollHandler : NetworkBehaviour
     {
         [SerializeField] private List<Rigidbody> _rigidbodies;
 

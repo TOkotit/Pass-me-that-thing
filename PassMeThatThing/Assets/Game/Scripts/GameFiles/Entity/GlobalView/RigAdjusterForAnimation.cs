@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Entity.Enemy.View
+namespace Game.Scripts.GameFiles.Entity.GlobalView
 {
     public class RigAdjusterForAnimation
     {

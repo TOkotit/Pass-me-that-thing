@@ -3,6 +3,7 @@ using DI;
 using Entity;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
+using Game.Scripts.GameFiles.Entity.GlobalView;
 using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
 
-        [SerializeField] protected EnemyRagdollHandler  ragdollHandler;
+        [SerializeField] protected RagdollHandler  ragdollHandler;
         
         
         [Inject] private DamagableRegistry _damagableRegistry;

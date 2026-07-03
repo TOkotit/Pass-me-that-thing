@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Entity.Enemy.View
+namespace Game.Scripts.GameFiles.Entity.GlobalView
 {
     public class BoneTransformData
     {

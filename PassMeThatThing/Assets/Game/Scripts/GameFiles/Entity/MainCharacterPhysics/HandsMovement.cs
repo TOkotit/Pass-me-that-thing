@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
+using DI;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
@@ -40,6 +42,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         private void Awake()
         {
+            var gameplayScope = LifetimeScope.Find<GameplayScope>();
+            if (gameplayScope) gameplayScope.Container.Inject(this);
             _originalXDrive = grabJoint.xDrive;
             _originalZDrive = grabJoint.zDrive;
             _originalYDrive = grabJoint.yDrive;

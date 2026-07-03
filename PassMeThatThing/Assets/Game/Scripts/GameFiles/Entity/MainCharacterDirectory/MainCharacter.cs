@@ -1,9 +1,12 @@
 // Game.Entity.MainCharacter
 using DI;
 using Entity;
+using Game.Scripts.GameFiles.Entity.GlobalView;
+using Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View;
 using Game.Scripts.GameFiles.Items;
 using MainCharacter_old;
 using MainCharacterNetwork;
+using Mirror;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -19,6 +22,9 @@ namespace Game.Entity
         [SerializeField] private MainCharacterCamera mCamera;
         [SerializeField] private PlayerInteraction playerInteraction;
         [SerializeField] private PlayerInventory playerInventory;
+        [SerializeField] private Animator animator;
+        [SerializeField] private MainCharacterView view;
+        [SerializeField] private RagdollHandler ragdollHandler; 
 
         public MainCharacterModel MainCharacterModel => _model;
 
@@ -26,10 +32,39 @@ namespace Game.Entity
 
         private void Initialize()
         {
+            view.Initialize(); 
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
         }
+        
+        [Server]
+        public void Fall()
+        {
+            movement.LockUpMovement();
+            if (mCamera) mCamera.IsCameraRotating = false;
+            RpcFall();
+        }
+        [ClientRpc]
+        private void RpcFall()
+        {
+            movement.LockUpMovement();
+            if (mCamera) mCamera.IsCameraRotating = false;
+            view.DisableAnimator();
+            ragdollHandler.EnableRagdoll();
+        }
+        [ClientRpc]
+        private void RpcStandUp()
+        {
+            view.PlayStandingUp(() =>
+            {
+                ragdollHandler.DisableRagdoll();
+                view.EnableAnimator();
+                movement.UnlockMovement();
+                if (mCamera) mCamera.IsCameraRotating = true;
+            });
+        }
 
+        
         protected override void Awake()
         {
             base.Awake();

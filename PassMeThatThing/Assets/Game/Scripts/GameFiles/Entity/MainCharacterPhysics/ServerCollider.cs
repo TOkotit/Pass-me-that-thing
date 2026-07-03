@@ -1,9 +1,12 @@
+using System;
+using DI;
 using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Game.NewMainCharacterPhysics
 {
@@ -15,6 +18,12 @@ namespace Game.NewMainCharacterPhysics
 
         [Inject] private DamagableRegistry _damagableRegistry;
         [Inject] private PhysicalItemRegistry _physicalItemRegistry;
+
+        private void Awake()
+        {
+            var gameplayScope = LifetimeScope.Find<GameplayScope>();
+            if (gameplayScope) gameplayScope.Container.Inject(this);
+        }
 
         private void Start()
         {

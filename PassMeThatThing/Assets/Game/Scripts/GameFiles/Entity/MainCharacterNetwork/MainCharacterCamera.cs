@@ -94,7 +94,7 @@ namespace MainCharacterNetwork
 
             _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
 
-            transform.localRotation = Quaternion.Euler(_rotation.x, _rotation.y, 0f);
+            transform.localRotation = Quaternion.Euler(_rotation.x, 0f, 0f);
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
             _movementController.ControllerRotate(characterRotation);

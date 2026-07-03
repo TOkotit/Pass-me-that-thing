@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Game.Scripts.GameFiles.Entity.GlobalView;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.View
