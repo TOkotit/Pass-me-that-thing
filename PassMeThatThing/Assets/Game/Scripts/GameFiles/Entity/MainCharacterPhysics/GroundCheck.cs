@@ -2,7 +2,7 @@ using System;
 using Mirror;
 using UnityEngine;
 
-public class GroundCheck : MonoBehaviour
+public class GroundCheck : NetworkBehaviour
 {
     private bool _isGrounded;
     private bool _touchesWater;
@@ -24,24 +24,27 @@ public class GroundCheck : MonoBehaviour
     private void OnCollisionStay(Collision collision)
     {
         CheckContact(collision.collider, true);
-    }
+        Debug.LogWarning(_isGrounded);
+    } 
 
     private void OnCollisionExit(Collision collision)
     {
         CheckContact(collision.collider, false);
+        
+        Debug.LogWarning(_isGrounded);
     }
     
     private void OnTriggerEnter(Collider other)
     {
         CheckContact(other, true);
+        Debug.LogWarning(_isGrounded);
     }
 
     private void OnTriggerExit(Collider other)
     {
         CheckContact(other, false);
-
-    }
-    
+        Debug.LogWarning(_isGrounded);
+    }   
     private void CheckContact(Collider other, bool state)
     {
         if (other.CompareTag("Ground"))

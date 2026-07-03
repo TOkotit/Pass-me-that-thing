@@ -196,6 +196,7 @@ namespace MainCharacterNetwork
         
         private void OnJumpPerformed(InputAction.CallbackContext context)
         {
+            Debug.Log($"[{gameObject.name}] Jump input received!");
             _controllable.Jump();
         }
 

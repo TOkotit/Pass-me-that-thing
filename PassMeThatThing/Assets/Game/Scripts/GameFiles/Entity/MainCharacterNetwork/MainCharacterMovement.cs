@@ -77,6 +77,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void Jump()
     {
+        Debug.Log("Jump: " + groundCheck.IsGrounded);
         if (groundCheck.IsGrounded)
         {
             _velocity.y = jumpHeight;
