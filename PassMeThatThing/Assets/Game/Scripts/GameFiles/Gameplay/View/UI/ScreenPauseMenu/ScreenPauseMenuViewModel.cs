@@ -27,6 +27,7 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         public void RequestGoToScreenGameplay()
         {
             _uiManager.OpenScreenGameplay();
+            _uiManager.LockUpCursor();
         }
         
         public void RequestGoToMainMenu()

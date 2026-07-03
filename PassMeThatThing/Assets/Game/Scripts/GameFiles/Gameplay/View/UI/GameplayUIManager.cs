@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using Enums;
 using Game.Gameplay.View.UI.ScreenMinigame;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
@@ -13,7 +14,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Gameplay.View.UI
 {
-    public class GameplayUIManager : UIManager
+    public class GameplayUIManager : UIManager, IDisposable
     {
         // private MainCharacterCamera _mainCharacterCamera;
         // private MainCharacterMovement _mainCharacterMovement;
@@ -29,8 +30,8 @@ namespace Game.Gameplay.View.UI
             // _mainCharacterMovement = Container.Resolve<MainCharacterMovement>();
             _gameInputManager = Container.Resolve<GameInputManager>();
             
-
-            // _gameInputManager.GameInput.Gameplay.PauseMenu.performed += OnTogglePause;
+            _gameInputManager.GameInput.Gameplay.PauseMenu.performed += OnTogglePause;
+            _gameInputManager.GameInput.UI.PauseMenu.performed += OnTogglePause;
         }
         
         
@@ -63,11 +64,11 @@ namespace Game.Gameplay.View.UI
         
         private void OnTogglePause(InputAction.CallbackContext c)
         {
-            if (rootUI.OpenedScreen.CurrentValue is not ScreenPauseMenuViewModel)
+            if (rootUI.OpenedScreen.CurrentValue is ScreenGameplayViewModel)
             {
                 OpenScreenPauseMenu();
             }
-            else
+            else if (rootUI.OpenedScreen.CurrentValue is ScreenPauseMenuViewModel)
             {
                 OpenScreenGameplay();
             }
@@ -111,6 +112,13 @@ namespace Game.Gameplay.View.UI
         {
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
+        }
+
+        public void Dispose()
+        {
+            Debug.Log("GameplayUIManager disposed");
+            _gameInputManager.GameInput.Gameplay.PauseMenu.performed -= OnTogglePause;
+            _gameInputManager.GameInput.UI.PauseMenu.performed -= OnTogglePause;
         }
     }
 }

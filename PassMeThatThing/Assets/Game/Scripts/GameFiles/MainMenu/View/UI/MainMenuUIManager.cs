@@ -25,9 +25,9 @@ namespace Game.MainMenu.View.UI
             return viewModel;
         }
         
-        public ScreenOptionsMenuViewModel OpenScreenOptionsMenu()
+        public ScreenOptionsViewModel OpenScreenOptionsMenu()
         {
-            var viewModel = new ScreenOptionsMenuViewModel(this, Container);
+            var viewModel = new ScreenOptionsViewModel(this, Container);
             
             rootUI.OpenScreen(viewModel);
 
