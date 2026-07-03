@@ -10,13 +10,15 @@ using VContainer.Unity;
 
 namespace Game.Entity
 {
-    public class MainCharacter : Damagable
+    public class MainCharacter : ToughnessDamagable
     {
         [Inject] private DamagableRegistry _damagableRegistry;
         [Inject] private MainCharacterModel _model;
         [Inject] private MCLocalModel _localModel;
         [SerializeField] private MainCharacterMovement movement;
         [SerializeField] private MainCharacterCamera mCamera;
+        [SerializeField] private PlayerInteraction playerInteraction;
+        [SerializeField] private PlayerInventory playerInventory;
 
         public MainCharacterModel MainCharacterModel => _model;
 
@@ -24,10 +26,14 @@ namespace Game.Entity
 
         private void Initialize()
         {
-            var playerInteraction = GetComponent<PlayerInteraction>();
-            var playerInventory = GetComponent<PlayerInventory>();
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _toughnessModel = new ToughnessModel();
         }
 
         public new void Start()
@@ -37,6 +43,16 @@ namespace Game.Entity
             
             if (isServer)
                 ServerSetMaxHealth(100); //SO
+        }
+
+        public override void OnToughnessBreak()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void OnToughnessChanged(int currentToughness, int maxToughness)
+        {
+            throw new System.NotImplementedException();
         }
 
         // public override void OnStartClient()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DI;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;
@@ -8,6 +9,7 @@ using UnityEngine;
 using Mirror;
 using Mirror.Examples.RigidbodyPhysics;
 using VContainer;
+using VContainer.Unity;
 
 public class PlayerInventory : NetworkBehaviour
 {
@@ -18,7 +20,6 @@ public class PlayerInventory : NetworkBehaviour
     private ItemPoolManager _itemPoolManager;
     private PhysicalItemRegistry _physicalItemRegistry;
 
-    [SerializeField] private Transform _interactionZone;
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
     [SyncVar(hook = nameof(OnActiveSlotChanged))]
     public int activeSlot;
@@ -29,7 +30,11 @@ public class PlayerInventory : NetworkBehaviour
         _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
         _physicalItemRegistry = physicalItemRegistry;
     }
-    
+    protected virtual void Awake()
+    {
+        var gameplayScope = LifetimeScope.Find<GameplayScope>();
+        if (gameplayScope) gameplayScope.Container.Inject(this);
+    }
 
     private void OnActiveSlotChanged(int oldIndex, int newIndex)
     {

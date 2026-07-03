@@ -154,7 +154,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.connectedBody = item.Rigidbody;
             AlignJointToPivot();
             
-            //AlignPivotForItem(item);
+            AlignPivotForItem(item);
             ClientGrabItem(item);
             /*MoveHands(item);*/
         }
@@ -185,7 +185,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.connectedBody = null;
             grabJoint.connectedBody = item.Rigidbody;
             AlignJointToPivot();
-            //AlignPivotForItem(item);
+            AlignPivotForItem(item);
             /*MoveHands(item);*/
         }
 
@@ -258,20 +258,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _playerInventoryModel.ThrowCharge = (int)(_throwForce / maxThrowForce * 100);
         }
         
-        /*public void ResetPivot()
+        public void ResetPivot()
         {
-            baseJoint.connectedBody = null;
             pivot.transform.localPosition = _pivotDefaultLocalPos;
-            baseJoint.connectedBody = torso;
         }
-        
+
         public void AlignPivotForItem(PhysicalItem item)
         {
-            ResetPivot();
-            baseJoint.connectedBody = null;
+            if (!item) return;
             pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
-            baseJoint.connectedBody = torso;
-        }*/
+        }
         
         private void AlignJointToPivot()
         {
@@ -279,7 +275,5 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
             grabJoint.targetRotation = Quaternion.Inverse(currentRelRot) * desiredRelRot;
         }
-        
-        
     }
 }

@@ -17,7 +17,8 @@ namespace Entity
         
         [SyncVar(hook = nameof(OnSyncedMaxToughnessChanged))]
         private int _syncedMaxToughness;
-        
+
+
         protected virtual void Start()
         {
             base.Start();

@@ -1,7 +1,9 @@
-﻿using Enums;
+﻿using DI;
+using Enums;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Entity
 {
@@ -28,7 +30,11 @@ namespace Entity
         public abstract DamagableModel DamagableModel { get; }
         
         public DamagableType Type => type;
-
+        protected virtual void Awake()
+        {
+            var gameplayScope = LifetimeScope.Find<GameplayScope>();
+            if (gameplayScope) gameplayScope.Container.Inject(this);
+        }
         protected virtual void Start()
         {
             Debug.LogWarning("Damagable: Start " + gameObject.name);
