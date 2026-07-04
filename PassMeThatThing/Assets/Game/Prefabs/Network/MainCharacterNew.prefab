@@ -1792,7 +1792,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: a077d55f484821d419de6f209e364621, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 296bc4c84618da942b2a085db492820e, type: 2}
+      objectReference: {fileID: 9100000, guid: 4bee3aa01b4801649bcea4ba7e37c7e4, type: 2}
     - target: {fileID: 5866666021909216657, guid: a077d55f484821d419de6f209e364621, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 1
@@ -2292,11 +2292,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!4 &1893581831006513416 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -5247279263119779989, guid: a077d55f484821d419de6f209e364621, type: 3}
-  m_PrefabInstance: {fileID: 3272623703090675299}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2049745572892942692 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5685625934203805945, guid: a077d55f484821d419de6f209e364621, type: 3}
@@ -2467,7 +2462,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 8935181529844188146}
   _parent: {fileID: 1761147164635753575}
-  _hipsBone: {fileID: 1893581831006513416}
+  _hipsBone: {fileID: 3393740394347641825}
   groundMask:
     serializedVersion: 2
     m_Bits: 8
@@ -2629,6 +2624,11 @@ ConfigurableJoint:
 --- !u!4 &3089478785863735688 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a077d55f484821d419de6f209e364621, type: 3}
+  m_PrefabInstance: {fileID: 3272623703090675299}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3393740394347641825 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -9047084024765217406, guid: a077d55f484821d419de6f209e364621, type: 3}
   m_PrefabInstance: {fileID: 3272623703090675299}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &3586501293443242900 stripped
