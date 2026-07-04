@@ -29,10 +29,12 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         {
             ViewModel.RequestGoToScreenGameplay();
         }
+        
         private void OnOptionsButtonClicked()
         {
-            
+            ViewModel.RequestGoToScreenOptions();
         }
+        
         private void OnExitButtonClicked()
         {
             ViewModel.RequestGoToMainMenu();

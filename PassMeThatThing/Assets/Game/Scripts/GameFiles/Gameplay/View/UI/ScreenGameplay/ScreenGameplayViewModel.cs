@@ -12,6 +12,7 @@ using ObservableCollections;
 using R3;
 using Systems;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Utils;
 using VContainer;
 
@@ -26,6 +27,8 @@ namespace Game.Gameplay.View.UI
         private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
+        
+        private readonly GameInputManager _gameInputManager;
         
         private readonly MCLocalModel  _mcLocalModel;
         
@@ -50,6 +53,21 @@ namespace Game.Gameplay.View.UI
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
+            
+            _gameInputManager = container.Resolve<GameInputManager>();
+            
+            _gameInputManager.GameInput.Gameplay.PauseMenu.performed += RequestOpenPause;
+        }
+        
+        public override void Dispose()
+        {
+            // Debug.Log("Disposing ScreenGameplayViewModel");
+            _gameInputManager.GameInput.Gameplay.PauseMenu.performed -= RequestOpenPause;
+        }
+
+        public void RequestOpenPause(InputAction.CallbackContext c)
+        {
+            _uiManager.OpenScreenPauseMenu();
         }
 
         public void InitHealthUI(Action<int, int> f)
@@ -220,7 +238,7 @@ namespace Game.Gameplay.View.UI
         {
             _gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
         }
-        
+
         
         
         // public void RequestGoToMainMenu()

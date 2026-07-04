@@ -50,17 +50,19 @@ namespace DI
             
             
             
-            var activeSceneName = SceneManager.GetActiveScene().name;
+            // var activeSceneName = SceneManager.GetActiveScene().name;
+            //
+            //
+            // if (Application.isEditor && !string.Equals(activeSceneName, "Boot", System.StringComparison.OrdinalIgnoreCase))
+            // {
+            //     Debug.Log($"Skipping RegisterEntryPoint — running in editor and active scene is '{activeSceneName}' (not 'Boot').");
+            // }
+            // else
+            // {
+            //     builder.RegisterEntryPoint<Root.EntryPoint>();
+            // }
             
-            
-            if (Application.isEditor && !string.Equals(activeSceneName, "Boot", System.StringComparison.OrdinalIgnoreCase))
-            {
-                Debug.Log($"Skipping RegisterEntryPoint — running in editor and active scene is '{activeSceneName}' (not 'Boot').");
-            }
-            else
-            {
-                builder.RegisterEntryPoint<Root.EntryPoint>(Lifetime.Singleton);
-            }
+            builder.RegisterEntryPoint<Root.EntryPoint>();
         }
         
         

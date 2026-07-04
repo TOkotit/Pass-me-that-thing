@@ -55,7 +55,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         
         private void OnExitButtonClicked()
         {
-            
+            Debug.Log("OnExitButtonClicked");
         }
 
         private void OnIpTextChanged(string value)

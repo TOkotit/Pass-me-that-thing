@@ -47,15 +47,12 @@ namespace Game.Gameplay.Root
 
         private void InitUI()
         {
-            // Создали UI для сцены (это было)
             var uiRoot = resolver.Resolve<UIRootView>();
             var uiSceneRootBinder = resolver.Instantiate(_sceneUIRootPrefab);
             uiRoot.AttachSceneUI(uiSceneRootBinder.gameObject);
-            
-            // Запрашиваем рутовую вью модель и пихаем ее в баиндер, который создали
+
             var uiSceneRootViewModel = resolver.Resolve<GameplayUIRootViewModel>();
             uiSceneRootBinder.Bind(uiSceneRootViewModel);
-            // можно открывать окошки
             
             var uiManager = resolver.Resolve<GameplayUIManager>();
             uiManager.OpenScreenGameplay();

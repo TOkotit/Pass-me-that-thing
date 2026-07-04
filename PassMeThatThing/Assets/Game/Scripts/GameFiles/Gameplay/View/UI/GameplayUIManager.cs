@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Enums;
 using Game.Gameplay.View.UI.ScreenMinigame;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
+using Game.MainMenu.View.UI.ScreenOptionsMenu;
 using Game.Scripts.GameFiles.Events;
 using Game.UI;
 using MainCharacter_old;
@@ -14,7 +15,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Gameplay.View.UI
 {
-    public class GameplayUIManager : UIManager, IDisposable
+    public class GameplayUIManager : UIManager
     {
         // private MainCharacterCamera _mainCharacterCamera;
         // private MainCharacterMovement _mainCharacterMovement;
@@ -30,8 +31,7 @@ namespace Game.Gameplay.View.UI
             // _mainCharacterMovement = Container.Resolve<MainCharacterMovement>();
             _gameInputManager = Container.Resolve<GameInputManager>();
             
-            _gameInputManager.GameInput.Gameplay.PauseMenu.performed += OnTogglePause;
-            _gameInputManager.GameInput.UI.PauseMenu.performed += OnTogglePause;
+
         }
         
         
@@ -62,18 +62,18 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
         
-        private void OnTogglePause(InputAction.CallbackContext c)
-        {
-            if (rootUI.OpenedScreen.CurrentValue is ScreenGameplayViewModel)
-            {
-                OpenScreenPauseMenu();
-            }
-            else if (rootUI.OpenedScreen.CurrentValue is ScreenPauseMenuViewModel)
-            {
-                OpenScreenGameplay();
-            }
-            
-        }
+        // private void OnTogglePause(InputAction.CallbackContext c)
+        // {
+        //     if (rootUI.OpenedScreen.CurrentValue is ScreenGameplayViewModel)
+        //     {
+        //         OpenScreenPauseMenu();
+        //     }
+        //     else if (rootUI.OpenedScreen.CurrentValue is ScreenPauseMenuViewModel)
+        //     {
+        //         OpenScreenGameplay();
+        //     }
+        //     
+        // }
         
         
         public ScreenPauseMenuViewModel OpenScreenPauseMenu()
@@ -89,6 +89,21 @@ namespace Game.Gameplay.View.UI
 
             return viewModel;
         }
+        
+        public ScreenOptionsViewModel OpenScreenOptions()
+        {
+            var viewModel = new ScreenOptionsViewModel(this, Container);
+            
+            
+            // _mainCharacterMovement.LockUpMovement();
+            UnlockCursor();
+            // LockUpCamera();
+            rootUI.OpenScreen(viewModel);
+            _gameInputManager.ToggleMap(InputMapType.UI);
+
+            return viewModel;
+        }
+        
         // блокировка камеры
         // public void LockUpCamera()
         // {
@@ -112,13 +127,6 @@ namespace Game.Gameplay.View.UI
         {
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
-        }
-
-        public void Dispose()
-        {
-            Debug.Log("GameplayUIManager disposed");
-            _gameInputManager.GameInput.Gameplay.PauseMenu.performed -= OnTogglePause;
-            _gameInputManager.GameInput.UI.PauseMenu.performed -= OnTogglePause;
         }
     }
 }

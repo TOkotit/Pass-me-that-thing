@@ -18,7 +18,7 @@ namespace Game.UI
             _closeRequested.OnNext(this);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             
         }

@@ -1,5 +1,7 @@
 ﻿using Game.UI;
 using Systems;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using Utils;
 using VContainer;
 
@@ -22,6 +24,20 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
             
             _gameInputManager = container.Resolve<GameInputManager>();
             
+            _gameInputManager.GameInput.UI.PauseMenu.performed += PauseMenuPerformed;
+            
+        }
+
+        public override void Dispose()
+        {
+            // Debug.Log("Disposing ScreenPauseMenuViewModel");
+            _gameInputManager.GameInput.UI.PauseMenu.performed -= PauseMenuPerformed;
+        }
+        
+
+        public void PauseMenuPerformed(InputAction.CallbackContext c)
+        {
+            RequestGoToScreenGameplay();
         }
 
         public void RequestGoToScreenGameplay()
@@ -37,7 +53,7 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         
         public void RequestGoToScreenOptions()
         {
-            // _uiManager.OpenScreenGameplay();
+            _uiManager.OpenScreenOptions();
         }
     }
 }

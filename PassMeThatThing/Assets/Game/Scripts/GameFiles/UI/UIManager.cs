@@ -9,7 +9,6 @@ namespace Game.UI
     /// </summary>
     public abstract class UIManager
     {
-        // чтобы вытаскивать барахло, чтобы собирать вьюмодели окошек
         protected readonly IObjectResolver Container; 
         
         protected UIManager(IObjectResolver container)

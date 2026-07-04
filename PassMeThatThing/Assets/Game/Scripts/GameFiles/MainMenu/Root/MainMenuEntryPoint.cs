@@ -40,17 +40,14 @@ public class MainMenuEntryPoint : IStartable
     {
         Debug.Log($"InitUI MainMenu");
         
-        // Создали UI для сцены (это было)
         var uiRoot = resolver.Resolve<UIRootView>();
         var uiSceneRootBinder = resolver
             .Instantiate<MainMenuUIRootBinder>(_sceneUIRootPrefab);
         uiRoot.AttachSceneUI(uiSceneRootBinder.gameObject);
         
-        // Запрашиваем рутовую вью модель и пихаем ее в баиндер, который создали
         var uiSceneRootViewModel = resolver.Resolve<MainMenuUIRootViewModel>();
         uiSceneRootBinder.Bind(uiSceneRootViewModel);
         
-        // Открываем окно
         var uiManager = resolver.Resolve<MainMenuUIManager>();
         uiManager.OpenScreenMainMenu();
     }
