@@ -28,7 +28,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private bool _isSprinting = false;
     private Vector3 _moveDirection;
     private Vector3 _velocity;
-    
+    private float _lastWaterDrop;
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
 
@@ -67,7 +67,11 @@ public class MainCharacterMovement : NetworkBehaviour
 
     private void OnWaterTouched()
     {
-        character.Fall(3);
+        if (Time.time - _lastWaterDrop > 7f)
+        {
+            character.Fall(3);
+            _lastWaterDrop = Time.time;
+        }
     }
     public void LockUpMovement()
     {
