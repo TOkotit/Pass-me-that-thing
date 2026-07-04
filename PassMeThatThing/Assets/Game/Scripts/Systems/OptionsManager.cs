@@ -9,6 +9,7 @@ namespace Game.Scripts.Systems
         private const string FilePath = "OptionsData.json";
         
         public OptionsData OptionsData;
+        public bool IsDataSaved;
         
         public Resolution[] Resolutions => Screen.resolutions;
 
@@ -17,23 +18,30 @@ namespace Game.Scripts.Systems
         {
             LoadFromJson();
             
-            if (OptionsData != null)
+            if (OptionsData == null)
             {
-                SetLanguage(OptionsData.language);
-                SetResolution(OptionsData.resolutionIndex);
-                SetFullScreen(OptionsData.isFullScreen);
-                foreach (var pair in OptionsData.audioValues)
+                OptionsData = new OptionsData()
                 {
-                    SetAudioVolume(pair.Key, pair.Value);
-                }
+                    isFullScreen = false,
+                    resolutionIndex = 0,
+                    language = "English",
+                    audioValues = new ()
+                    {
+                        {BroAudioType.All, 0.5f},
+                        {BroAudioType.Music, 0.5f},
+                        {BroAudioType.SFX, 0.5f}
+                    }
+                };
+                
             }
-            else
+            
+            SetLanguage(OptionsData.language);
+            SetResolution(OptionsData.resolutionIndex);
+            SetFullScreen(OptionsData.isFullScreen);
+            foreach (var pair in OptionsData.audioValues)
             {
-                OptionsData = new OptionsData();
-                
-                
+                SetAudioVolume(pair.Key, pair.Value);
             }
-
         }
         
         //general game settings
@@ -70,6 +78,7 @@ namespace Game.Scripts.Systems
         {
             var jsonData = JsonUtility.ToJson(OptionsData);
             File.WriteAllText(Application.dataPath + "/" + FilePath, jsonData);
+            IsDataSaved =  true;
         }
 
         public void LoadFromJson()
