@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using DI;
+using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using MainCharacter_old;
 using Mirror;
@@ -20,6 +21,8 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
     
+    [SerializeField] private MainCharacter character;
+    
     [SyncVar]
     private bool isCharacterCanMove = true;
     private bool _isSprinting = false;
@@ -28,7 +31,12 @@ public class MainCharacterMovement : NetworkBehaviour
     
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
-    
+
+    private void Awake()
+    {
+        groundCheck.OnWaterTouched += OnWaterTouched;
+    }
+
     public Vector3 Velocity
     {
         get => _velocity;
@@ -57,6 +65,10 @@ public class MainCharacterMovement : NetworkBehaviour
             _moveDirection = direction;
     }
 
+    private void OnWaterTouched()
+    {
+        character.Fall(3);
+    }
     public void LockUpMovement()
     {
         isCharacterCanMove = false;
@@ -117,6 +129,6 @@ public class MainCharacterMovement : NetworkBehaviour
     private void ApplyGravity()
     {
         _velocity += Vector3.down * (gravity * Time.fixedDeltaTime);
-        characterController.Move(_velocity * Time.fixedDeltaTime);
+        if (isCharacterCanMove) characterController.Move(_velocity * Time.fixedDeltaTime);
     }
 }

@@ -1,4 +1,7 @@
 // Game.Entity.MainCharacter
+
+using System.Collections;
+using System.Runtime.InteropServices.ComTypes;
 using DI;
 using Entity;
 using Game.Scripts.GameFiles.Entity.GlobalView;
@@ -38,12 +41,20 @@ namespace Game.Entity
         }
         
         [Server]
-        public void Fall()
+        public void Fall(float delay)
         {
             movement.LockUpMovement();
             if (mCamera) mCamera.IsCameraRotating = false;
             RpcFall();
+            StartCoroutine(GetUpAfterDelay(delay));
         }
+        [Server]
+        private IEnumerator GetUpAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if(delay > 0) StandUp();
+        }
+        
         [ClientRpc]
         private void RpcFall()
         {
@@ -53,12 +64,20 @@ namespace Game.Entity
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
         }
+        
+        [Server]
+        public void StandUp()
+        {
+            movement.UnlockMovement();               
+            if (mCamera) mCamera.IsCameraRotating = true; 
+            RpcStandUp();
+        }
         [ClientRpc]
         private void RpcStandUp()
         {
-            view.PlayStandingUp(() =>
+            ragdollHandler.DisableRagdoll();
+            view.PlayStandingUp(() => 
             {
-                ragdollHandler.DisableRagdoll();
                 view.EnableAnimator();
                 movement.UnlockMovement();
                 movement.EnableController();
@@ -106,8 +125,9 @@ namespace Game.Entity
             /*
             verticalAlign.CmdSetConsciousness(0);
             verticalAlign.Consciousness = 0f;
-            verticalAlign.LockConsciousness = true;*/
-            Fall();
+            verticalAlign.LockConsciousness = true;
+            */
+            Fall(0);
             movement.LockUpMovement();
             mCamera.IsCameraRotating = false;
             

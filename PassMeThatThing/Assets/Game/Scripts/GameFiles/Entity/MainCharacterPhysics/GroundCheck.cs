@@ -5,7 +5,8 @@ using UnityEngine;
 public class GroundCheck : NetworkBehaviour
 {
     private bool _isGrounded;
-    private bool _touchesWater;
+    
+    [SyncVar] private bool _touchesWater;
     public bool IsGrounded => _isGrounded;
 
     public bool TouchesWater
