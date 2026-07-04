@@ -652,7 +652,6 @@ GameObject:
   - component: {fileID: 1338298018572165447}
   - component: {fileID: 964495858747652649}
   - component: {fileID: 8805327884920507483}
-  - component: {fileID: 1669087492429728402}
   - component: {fileID: 5028845775452447155}
   - component: {fileID: 3637594559047336785}
   - component: {fileID: 9049365366940597573}
@@ -780,7 +779,7 @@ MonoBehaviour:
   playerInteraction: {fileID: 4478196668402527849}
   playerInventory: {fileID: 6709948530886720346}
   animator: {fileID: 8935181529844188146}
-  view: {fileID: 1669087492429728402}
+  view: {fileID: 61961466200725570}
   ragdollHandler: {fileID: 8805327884920507483}
 --- !u!114 &7498316292668135758
 MonoBehaviour:
@@ -1111,24 +1110,6 @@ MonoBehaviour:
   - {fileID: 8237284482449413213}
   - {fileID: 7772442820503902198}
   - {fileID: 154417488650167984}
---- !u!114 &1669087492429728402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7528151646145926360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7957ec0dc2e64eabadaf3d64575c7a07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 8935181529844188146}
-  _parent: {fileID: 1761147164635753575}
-  _hipsBone: {fileID: 1893581831006513416}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &5028845775452447155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1159,7 +1140,7 @@ MonoBehaviour:
   baseMass: 10
   nonPhysicalMultiplier: 0.3
   nonPhysicalTresholdMultiplier: 3
-  _damagable: {fileID: 0}
+  _damagable: {fileID: 3471299420040406428}
 --- !u!114 &9049365366940597573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1812,6 +1793,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 296bc4c84618da942b2a085db492820e, type: 2}
+    - target: {fileID: 5866666021909216657, guid: a077d55f484821d419de6f209e364621, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5997983995887684273, guid: a077d55f484821d419de6f209e364621, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.99999994
@@ -1983,6 +1968,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a077d55f484821d419de6f209e364621, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8634793547797183727}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a077d55f484821d419de6f209e364621, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 61961466200725570}
     - targetCorrespondingSourceObject: {fileID: -5685625934203805945, guid: a077d55f484821d419de6f209e364621, type: 3}
       insertIndex: -1
       addedObject: {fileID: 427638673505212484}
@@ -2465,6 +2453,24 @@ MonoBehaviour:
   syncInterval: 0
   clientAuthority: 0
   animator: {fileID: 8935181529844188146}
+--- !u!114 &61961466200725570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2426270571616731954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7957ec0dc2e64eabadaf3d64575c7a07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 8935181529844188146}
+  _parent: {fileID: 1761147164635753575}
+  _hipsBone: {fileID: 1893581831006513416}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &2682288877409739554 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 600058947344473409, guid: a077d55f484821d419de6f209e364621, type: 3}

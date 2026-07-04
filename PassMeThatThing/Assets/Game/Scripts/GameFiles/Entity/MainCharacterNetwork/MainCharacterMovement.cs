@@ -105,7 +105,7 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer || !characterController.enabled) return;
         
         MoveInternal();
         ApplyGravity();
@@ -116,8 +116,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void MoveInternal()
     {
         
-        if (!isCharacterCanMove)
-            return;
+        if (!isCharacterCanMove || !characterController.enabled) return;
         
         var currentSpeed = speed;
         if (_isSprinting)
@@ -128,7 +127,8 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void ApplyGravity()
     {
+        if (!isCharacterCanMove || !characterController.enabled) return;
         _velocity += Vector3.down * (gravity * Time.fixedDeltaTime);
-        if (isCharacterCanMove) characterController.Move(_velocity * Time.fixedDeltaTime);
+        characterController.Move(_velocity * Time.fixedDeltaTime);
     }
 }
