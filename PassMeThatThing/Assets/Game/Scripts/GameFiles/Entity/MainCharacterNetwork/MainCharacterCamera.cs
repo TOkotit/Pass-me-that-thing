@@ -33,8 +33,6 @@ namespace MainCharacterNetwork
 
         private void Awake()
         {
-            var rootScope = LifetimeScope.Find<RootScope>();
-            rootScope.Container.Inject(this);
             if (!_camera)
                 _camera = GetComponent<Camera>();
 

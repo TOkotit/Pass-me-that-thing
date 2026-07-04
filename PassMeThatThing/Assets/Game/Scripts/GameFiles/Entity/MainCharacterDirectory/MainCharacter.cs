@@ -48,6 +48,7 @@ namespace Game.Entity
         private void RpcFall()
         {
             movement.LockUpMovement();
+            movement.DisableController();
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
@@ -60,14 +61,14 @@ namespace Game.Entity
                 ragdollHandler.DisableRagdoll();
                 view.EnableAnimator();
                 movement.UnlockMovement();
+                movement.EnableController();
                 if (mCamera) mCamera.IsCameraRotating = true;
             });
         }
 
         
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             _toughnessModel = new ToughnessModel();
         }
 
@@ -101,10 +102,12 @@ namespace Game.Entity
         // }
 
         public override void OnDeath()
-        {/*
+        {
+            /*
             verticalAlign.CmdSetConsciousness(0);
             verticalAlign.Consciousness = 0f;
             verticalAlign.LockConsciousness = true;*/
+            Fall();
             movement.LockUpMovement();
             mCamera.IsCameraRotating = false;
             

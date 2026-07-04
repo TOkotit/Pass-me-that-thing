@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 5475941992780067928}
   - component: {fileID: 1084716827342913949}
   - component: {fileID: 1790161040065319133}
+  - component: {fileID: 1970042707737797991}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -349,7 +350,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -357,6 +358,30 @@ CapsuleCollider:
   m_Height: 4.389294
   m_Direction: 1
   m_Center: {x: 0, y: 2.194647, z: -0.006663084}
+--- !u!114 &1970042707737797991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0c206e7c36465691727e5bce1c7c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  damage: 10
+  toughnessDamage: 1
+  useVelocityDamage: 0
+  velocityDamageMultiplier: 1
+  cooldown: 0.5
+  damageTypes:
+    _serializedList:
+    - Key: 0
+      Value: 1
 --- !u!1001 &8256282482685125458
 PrefabInstance:
   m_ObjectHideFlags: 0

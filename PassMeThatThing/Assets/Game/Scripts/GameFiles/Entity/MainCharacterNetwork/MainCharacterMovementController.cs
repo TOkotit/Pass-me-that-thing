@@ -30,8 +30,6 @@ namespace MainCharacterNetwork
         
         private void Awake()
         {
-            var gameplayScope = LifetimeScope.Find<GameplayScope>();
-            if (gameplayScope) gameplayScope.Container.Inject(this);
             _controllable = GetComponentInChildren<MainCharacterMovement>();
 
             if (!_controllable)

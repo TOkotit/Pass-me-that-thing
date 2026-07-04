@@ -26,6 +26,8 @@ public class MainCharacterMovement : NetworkBehaviour
     private Vector3 _moveDirection;
     private Vector3 _velocity;
     
+    public void DisableController() => characterController.enabled = false;
+    public void EnableController() => characterController.enabled = true;
     
     public Vector3 Velocity
     {

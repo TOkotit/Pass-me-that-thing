@@ -11,7 +11,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View
         [SerializeField] private Transform _parent;
         [SerializeField] private Transform _hipsBone;
         [SerializeField] private LayerMask groundMask;
-        private const string IdleClipName = "Idle";
+        private const string IdleClipName = "walk";
         private RigAdjusterForAnimation _rigAdjusterForReturnAnimation;
 
         public void Initialize()
