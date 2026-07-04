@@ -1,5 +1,6 @@
 using System.Collections;
 using DI;
+using Game.Scripts.Systems;
 using Systems;
 using UIRoot;
 using UnityEngine;
@@ -15,22 +16,25 @@ namespace Root
         private readonly ICoroutineRunner _coroutines;
         readonly IUIRootView _uiRoot;
         readonly GameManager _gameManager;
-        
-        public void Start()
-        {
-            _gameManager.SetState(GameState.Booting);
-            
-            // _coroutines.StartRoutine(InitialLoadRoutine());
-        }
+        private readonly OptionsManager _optionsManager;
         
         private EntryPoint(
             ICoroutineRunner coroutines,
             GameManager gameManager,
-            UIRootView uiRootPrefab)
+            UIRootView uiRootPrefab,
+            OptionsManager optionsManager)
         {
             _coroutines = coroutines;
             _gameManager = gameManager;
             _uiRoot = uiRootPrefab;
+            _optionsManager = optionsManager;
+        }
+        
+        public void Start()
+        {
+            // _gameManager.SetState(GameState.Booting);
+            _optionsManager.SetInitialSettings();
+            
         }
         
         

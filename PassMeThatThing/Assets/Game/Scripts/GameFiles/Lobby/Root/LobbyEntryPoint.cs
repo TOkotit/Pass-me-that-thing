@@ -38,17 +38,14 @@ namespace Game.Scripts.GameFiles.Lobby.Root
         {
             // Debug.Log($"InitUI Lobby");
         
-            // Создали UI для сцены (это было)
             var uiRoot = resolver.Resolve<UIRootView>();
             var uiSceneRootBinder = resolver
                 .Instantiate<LobbyUIRootBinder>(_sceneUIRootPrefab);
             uiRoot.AttachSceneUI(uiSceneRootBinder.gameObject);
         
-            // Запрашиваем рутовую вью модель и пихаем ее в баиндер, который создали
             var uiSceneRootViewModel = resolver.Resolve<LobbyUIRootViewModel>();
             uiSceneRootBinder.Bind(uiSceneRootViewModel);
         
-            // Открываем окно
             var uiManager = resolver.Resolve<LobbyUIManager>();
             uiManager.OpenScreenLobby();
         }

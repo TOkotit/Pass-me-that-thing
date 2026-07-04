@@ -1,7 +1,11 @@
-﻿using Ami.BroAudio;
+﻿using System;
+using Ami.BroAudio;
+using Game.Gameplay.View.UI;
 using Game.Scripts.Systems;
 using Game.UI;
 using Systems;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using Utils;
 using VContainer;
 
@@ -12,24 +16,48 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         public override string Id =>  "ScreenOptions";
         
         private readonly MainMenuUIManager _uiManager;
-        private readonly GameManager _gameManager;
-        private readonly ICoroutineRunner _coroutines;
+        private readonly GameplayUIManager _gameplayUIManager;
+        private readonly GameInputManager _gameInputManager;
         
         private readonly OptionsManager _optionsManager;
         
         
-        public ScreenOptionsViewModel(MainMenuUIManager uiManager, IObjectResolver container)
+        public ScreenOptionsViewModel(UIManager uiManager, IObjectResolver container)
         {
-            _uiManager = uiManager;
-            _gameManager =  container.Resolve<GameManager>();
-            _coroutines = container.Resolve<ICoroutineRunner>();
+            if (uiManager is MainMenuUIManager manager)
+                _uiManager = manager;
+            else if  (uiManager is GameplayUIManager gameplayUIManager)
+                _gameplayUIManager = gameplayUIManager;
             
             _optionsManager = container.Resolve<OptionsManager>();
+            
+            _gameInputManager = container.Resolve<GameInputManager>();
+            
+            _gameInputManager.GameInput.UI.PauseMenu.performed += PauseMenuOnPerformed;
         }
-        
-        public void RequestGoToScreenMainMenu()
+
+        public override void Dispose()
         {
-            _uiManager.OpenScreenMainMenu();
+            // Debug.Log("Disposing ScreenGameplayViewModel");
+            _gameInputManager.GameInput.UI.PauseMenu.performed -= PauseMenuOnPerformed;
+        }
+
+        private void PauseMenuOnPerformed(InputAction.CallbackContext c)
+        {
+            RequestGoToPrevScreen();
+        }
+
+
+        public void RequestGoToPrevScreen()
+        {
+            if (_uiManager == null)
+            {
+                _gameplayUIManager.OpenScreenPauseMenu();
+            }
+            else
+            {
+                _uiManager.OpenScreenMainMenu();
+            }
         }
         
         public void RequestSaveOptions()
@@ -37,9 +65,24 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _optionsManager.SaveSettings();
         }
 
+        public void RequestInitLoadOptions(Action<OptionsData, Resolution[]> update)
+        {
+            update(_optionsManager.OptionsData, _optionsManager.Resolutions);
+        }
+        
         public void RequestChangeAudioValueOptions(BroAudioType broAudioType, float value)
         {
             _optionsManager.SetAudioVolume(broAudioType, value);
+        }
+
+        public void RequestChangeResolution(int index)
+        {
+            _optionsManager.SetResolution(index);
+        }
+
+        public void RequestChangeFullscreen(bool isFullscreen)
+        {
+            _optionsManager.SetFullScreen(isFullscreen);
         }
     }
 }
