@@ -1125,7 +1125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 8935181529844188146}
   _parent: {fileID: 1761147164635753575}
-  _hipsBone: {fileID: 1893581831006513416}
+  _hipsBone: {fileID: 409760045234365241}
   groundMask:
     serializedVersion: 2
     m_Bits: 8
@@ -2149,6 +2149,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7485797966635820354}
   m_SourcePrefab: {fileID: 100100000, guid: a077d55f484821d419de6f209e364621, type: 3}
+--- !u!4 &409760045234365241 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6285490727817732774, guid: a077d55f484821d419de6f209e364621, type: 3}
+  m_PrefabInstance: {fileID: 3272623703090675299}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1635141885624205417 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4313182950431686154, guid: a077d55f484821d419de6f209e364621, type: 3}
@@ -2304,11 +2309,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!4 &1893581831006513416 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -5247279263119779989, guid: a077d55f484821d419de6f209e364621, type: 3}
-  m_PrefabInstance: {fileID: 3272623703090675299}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2049745572892942692 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5685625934203805945, guid: a077d55f484821d419de6f209e364621, type: 3}
