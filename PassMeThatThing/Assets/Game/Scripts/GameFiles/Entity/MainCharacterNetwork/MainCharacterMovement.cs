@@ -35,8 +35,17 @@ public class MainCharacterMovement : NetworkBehaviour
     private void Awake()
     {
         groundCheck.OnWaterTouched += OnWaterTouched;
+        groundCheck.OnRunningOnItem += OnRunningOnItem;
     }
 
+    private void OnRunningOnItem()
+    {
+        if (_isSprinting)
+        {
+            character.Fall(2);
+        }
+    }
+    
     public Vector3 Velocity
     {
         get => _velocity;

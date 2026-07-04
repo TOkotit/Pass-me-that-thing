@@ -10,6 +10,7 @@ using Game.Scripts.GameFiles.Items;
 using MainCharacter_old;
 using MainCharacterNetwork;
 using Mirror;
+using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -27,8 +28,9 @@ namespace Game.Entity
         [SerializeField] private PlayerInventory playerInventory;
         [SerializeField] private Animator animator;
         [SerializeField] private MainCharacterView view;
-        [SerializeField] private RagdollHandler ragdollHandler; 
-
+        [SerializeField] private RagdollHandler ragdollHandler;
+        [SerializeField] private float fallDelay = 5;
+        [SerializeField] private Collider characterCollider;
         public MainCharacterModel MainCharacterModel => _model;
 
         public override DamagableModel DamagableModel => _model;
@@ -38,6 +40,7 @@ namespace Game.Entity
             view.Initialize(); 
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
+            _damagableRegistry.Register(characterCollider.GameObject(), this);
         }
         
         [Server]
@@ -102,7 +105,7 @@ namespace Game.Entity
 
         public override void OnToughnessBreak()
         {
-            throw new System.NotImplementedException();
+            Fall(fallDelay);
         }
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)

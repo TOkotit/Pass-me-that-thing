@@ -379,7 +379,7 @@ GameObject:
   - component: {fileID: 268451159197701045}
   - component: {fileID: 5082337633237883009}
   - component: {fileID: 8483096957033251882}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: groundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -435,8 +435,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 0.2, z: 0.5}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.8, y: 0.2, z: 1}
+  m_Center: {x: 0, y: 0.05, z: 0.1}
 --- !u!54 &8483096957033251882
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -637,7 +637,7 @@ GameObject:
   - component: {fileID: 1761147164635753575}
   - component: {fileID: 5469461570505411041}
   - component: {fileID: 8655487425700664132}
-  - component: {fileID: 493968949161168927}
+  - component: {fileID: 2487466464721971729}
   - component: {fileID: 3471299420040406428}
   - component: {fileID: 7498316292668135758}
   - component: {fileID: 7690346167529634326}
@@ -734,7 +734,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &493968949161168927
+--- !u!136 &2487466464721971729
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -753,10 +753,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4
-  m_Height: 2.5
+  m_Radius: 0.5
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 0.55, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &3471299420040406428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -781,6 +781,8 @@ MonoBehaviour:
   animator: {fileID: 8935181529844188146}
   view: {fileID: 61961466200725570}
   ragdollHandler: {fileID: 8805327884920507483}
+  fallDelay: 5
+  characterCollider: {fileID: 2487466464721971729}
 --- !u!114 &7498316292668135758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -973,13 +975,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 3
+  m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &2101096475395174776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1026,7 +1028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 1761147164635753575}
