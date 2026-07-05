@@ -33,8 +33,6 @@ namespace Game.Entity
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private Collider characterCollider;
         [SerializeField] private PlayerStats stats;
-        [SerializeField] private Rigidbody rbToTransferForce;
-        [SerializeField] private Rigidbody rb;
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
         private bool _isAlive = true;
@@ -72,12 +70,13 @@ namespace Game.Entity
         [ClientRpc]
         private void RpcFall()
         {
-            rbToTransferForce.AddForce(rb.linearVelocity, ForceMode.Impulse);
+            
             movement.LockUpMovement();
             movement.DisableController();
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
+            ragdollHandler.Hit(movement.GetCurrentVelocity(), transform.position);
         }
         
         [Server]

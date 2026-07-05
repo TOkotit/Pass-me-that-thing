@@ -44,7 +44,12 @@ public class MainCharacterMovement : NetworkBehaviour
             character.Fall(2);
         }
     }
-
+    public Vector3 GetCurrentVelocity()
+    {
+        var velocity = _moveDirection * (_isSprinting ? _model.Speed * _model.SprintMultiplier : _model.Speed);
+        velocity.y = _velocity.y;
+        return velocity;
+    }
     public void SetMovementMultiplier(float weight)
     {
         var multiplier = _model.BaseCarry / weight;
