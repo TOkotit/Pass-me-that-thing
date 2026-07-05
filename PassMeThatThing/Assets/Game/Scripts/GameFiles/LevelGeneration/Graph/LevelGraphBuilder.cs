@@ -34,110 +34,49 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         public RoomNode BuildLevelSpine(LevelMacroData macroData, HashSet<(int x, int y)> occupiedPositions)
         {
-           _nodeIdCounter = 0; 
+            _nodeIdCounter = 0;
 
+            // 1. Создаем Hub
             var hubNode = new RoomNode(_nodeIdCounter++, RoomType.Hub, 0, 0);
             occupiedPositions.Add((0, 0));
-            
+
+            // Направления для хребта
+            var primaryDir = _directions[_random.Next(_directions.Length)];
+            (int x, int y) bendDir = (primaryDir.y, primaryDir.x);
+            if (_random.Next(2) == 0) bendDir = (-bendDir.x, -bendDir.y);
+
             var currentNode = hubNode;
 
-            for (var i = 0; i < macroData.DefenseRoomsCount; i++)
+            // 2. Строим Defense комнаты
+            // Изгиб происходит, если комнат защиты >= 4
+            int defenseCount = macroData.DefenseRoomsCount;
+            int bendAt = defenseCount >= 4 ? defenseCount / 2 : -1;
+
+            for (int i = 0; i < defenseCount; i++)
             {
-                var shuffledDirs = _directions.OrderBy(_ => _random.Next()).ToList();
-                (int x, int y) chosenDir = (0, 0);
-                var foundValidTile = false;
+                // Поворачиваем после середины списка Defense
+                var currentDir = (i >= bendAt && bendAt != -1) ? bendDir : primaryDir;
+        
+                var nextX = currentNode.X + currentDir.x;
+                var nextY = currentNode.Y + currentDir.y;
 
-                foreach (var dir in shuffledDirs)
-                {
-                    var testX = currentNode.X + dir.x;
-                    var testY = currentNode.Y + dir.y;
-
-                    if (!occupiedPositions.Contains((testX, testY)))
-                    {
-                        // ПРОВЕРКА ИЗОЛЯЦИИ: Считаем, скольких УЖЕ ПОСТРОЕННЫХ комнат коснется новая.
-                        // Должна касаться ТОЛЬКО одной (своей родительской currentNode).
-                        int neighborsCount = _directions.Count(d => occupiedPositions.Contains((testX + d.x, testY + d.y)));
-                        
-                        if (neighborsCount == 1)
-                        {
-                            chosenDir = dir;
-                            foundValidTile = true;
-                            break;
-                        }
-                    }
-                }
-                
-                // Фолбэк, если алгоритм загнал себя в угол (крайне редко, но нужно для страховки)
-                if (!foundValidTile)
-                {
-                    foreach (var dir in shuffledDirs)
-                    {
-                        var tx = currentNode.X + dir.x;
-                        var ty = currentNode.Y + dir.y;
-                        if (!occupiedPositions.Contains((tx, ty)))
-                        {
-                            // Хотя бы защищаем Хаб от касания при фолбэке
-                            bool touchesHub = Math.Abs(tx - hubNode.X) + Math.Abs(ty - hubNode.Y) == 1;
-                            if (i > 0 && touchesHub) continue; 
-                            
-                            chosenDir = dir;
-                            break;
-                        }
-                    }
-                }
-
-                var nextX = currentNode.X + chosenDir.x;
-                var nextY = currentNode.Y + chosenDir.y;
-                
                 var defenseNode = new RoomNode(_nodeIdCounter++, RoomType.Defense, nextX, nextY);
                 occupiedPositions.Add((nextX, nextY));
-                
+
                 currentNode.ConnectedNodes.Add(defenseNode);
                 defenseNode.ConnectedNodes.Add(currentNode);
-                
+
                 currentNode = defenseNode;
             }
 
-            // РАЗМЕЩЕНИЕ ВЫХОДА (с такой же проверкой изоляции)
-            var exitDirs = _directions.OrderBy(_ => _random.Next()).ToList();
-            var finalExitDir = _directions[_random.Next(_directions.Length)];
-            var foundExit = false;
+            var lastDir = (defenseCount > 0 && defenseCount >= bendAt && bendAt != -1) ? bendDir : primaryDir;
+    
+            var exitX = currentNode.X + lastDir.x;
+            var exitY = currentNode.Y + lastDir.y;
 
-            foreach (var dir in exitDirs)
-            {
-                var testX = currentNode.X + dir.x;
-                var testY = currentNode.Y + dir.y;
-                if (!occupiedPositions.Contains((testX, testY)))
-                {
-                    int neighborsCount = _directions.Count(d => occupiedPositions.Contains((testX + d.x, testY + d.y)));
-                    if (neighborsCount == 1)
-                    {
-                        finalExitDir = dir;
-                        foundExit = true;
-                        break;
-                    }
-                }
-            }
-
-            // Фолбэк для выхода
-            if (!foundExit)
-            {
-                foreach (var dir in exitDirs)
-                {
-                    if (!occupiedPositions.Contains((currentNode.X + dir.x, currentNode.Y + dir.y)))
-                    {
-                        finalExitDir = dir;
-                        break;
-                    }
-                }
-            }
-            
-            var exitX = currentNode.X + finalExitDir.x;
-            var exitY = currentNode.Y + finalExitDir.y;
-            
             var exitNode = new RoomNode(_nodeIdCounter++, RoomType.Exit, exitX, exitY);
             occupiedPositions.Add((exitX, exitY));
-            
+
             currentNode.ConnectedNodes.Add(exitNode);
             exitNode.ConnectedNodes.Add(currentNode);
 
@@ -147,26 +86,40 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         public List<RoomNode> GenerateSideRoomsPool(LevelMacroData macroData)
         {
             var totalSideRooms = macroData.TotalRoomsWithoutHub;
-            var targetEventCount = macroData.EventRoomsCount ?? 
-                                   (macroData.NormalRoomsCount.HasValue ? totalSideRooms - macroData.NormalRoomsCount.Value : _random.Next(macroData.MandatoryEvents.Count, totalSideRooms + 1));
-            targetEventCount = Math.Min(targetEventCount, totalSideRooms);
-
-            var purchasedEvents = new List<EventRoomDefinition>(macroData.MandatoryEvents);
+            var purchasedEvents = new List<EventRoomDefinition>();
+            
+            if (macroData.MandatoryEvents != null)
+            {
+                purchasedEvents.AddRange(macroData.MandatoryEvents);
+            }
+            
+            var minEvents = (int)Math.Ceiling(totalSideRooms * (1.0 / 6.0));
+            var maxEvents = (int)Math.Floor(totalSideRooms * (1.0 / 5.0));
+            
+            var targetEventCount = Math.Max(1, _random.Next(minEvents, maxEvents + 1));
+            
             var currentBudget = macroData.EventRoomsBudget;
-
+            
             while (purchasedEvents.Count < targetEventCount)
             {
-                var typeCounts = purchasedEvents.GroupBy(e => e.EventType).ToDictionary(g => g.Key, g => g.Count());
-                var limit50Percent = Math.Max(1, targetEventCount / 2);
-                var affordableEvents = macroData.AvailableEventsPool.Where(e => e.Cost <= currentBudget && (!typeCounts.ContainsKey(e.EventType) || typeCounts[e.EventType] < limit50Percent)).ToList();
+                var affordableEvents = macroData.AvailableEventsPool
+                    .Where(e => e.Cost <= currentBudget)
+                    .ToList();
+
                 if (affordableEvents.Count == 0) break;
+
                 var selectedEvent = affordableEvents[_random.Next(affordableEvents.Count)];
                 purchasedEvents.Add(selectedEvent);
                 currentBudget -= selectedEvent.Cost;
             }
 
             var sideRoomsPool = purchasedEvents.Select(ev => new RoomNode(_nodeIdCounter++, RoomType.Event, 0, 0, ev)).ToList();
-            while (sideRoomsPool.Count < totalSideRooms) sideRoomsPool.Add(new RoomNode(_nodeIdCounter++, RoomType.Regular, 0, 0));
+    
+            while (sideRoomsPool.Count < totalSideRooms) 
+            {
+                sideRoomsPool.Add(new RoomNode(_nodeIdCounter++, RoomType.Regular, 0, 0));
+            }
+    
             return sideRoomsPool;
         }
         
@@ -184,15 +137,37 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 visited.Add(node);
                 
                 if (node.Type == RoomType.Defense) defenseRooms.Add(node);
-                if (node.Type == RoomType.Exit) exitNode = node; // Находим комнату выхода для проверок
+                if (node.Type == RoomType.Exit) exitNode = node; 
                 
                 foreach (var conn in node.ConnectedNodes.Where(c => !visited.Contains(c))) queue.Enqueue(conn);
             }
 
-            var shuffledPool = sideRoomsPool.OrderBy(x => _random.Next()).ToList();
             var attachmentPoints = defenseRooms.Select(d => (Node: d, Depth: 0)).ToList();
-
-            foreach (var sideRoom in shuffledPool)
+            
+            var eventRooms = sideRoomsPool.Where(r => r.Type == RoomType.Event).ToList();
+            var regularRooms = sideRoomsPool.Where(r => r.Type == RoomType.Regular).ToList();
+            
+            var combinedPool = new List<RoomNode>();
+            
+            var total = sideRoomsPool.Count;
+            var eventCount = eventRooms.Count;
+            var step = Math.Max(1, total / Math.Max(1, eventCount));
+            
+            for (var i = 0; i < total; i++)
+            {
+                if ((i % step == 0 || regularRooms.Count == 0) && eventRooms.Count > 0)
+                {
+                    combinedPool.Add(eventRooms[0]);
+                    eventRooms.RemoveAt(0);
+                }
+                else if (regularRooms.Count > 0)
+                {
+                    combinedPool.Add(regularRooms[0]);
+                    regularRooms.RemoveAt(0);
+                }
+            }
+            
+            foreach (var sideRoom in combinedPool)
             {
                 var validPoints = attachmentPoints.Where(p => 
                     ((p.Depth == 0 && p.Node.ConnectedNodes.Count < 4) || 
@@ -202,20 +177,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                         var tx = p.Node.X + d.x;
                         var ty = p.Node.Y + d.y;
                         
-                        // Клетка должна быть свободна
                         if (occupiedPositions.Contains((tx, ty))) return false;
-                        
-                        // СТРОГАЯ ИЗОЛЯЦИЯ: не касаемся Хаба (Манхэттенское расстояние == 1)
                         if (Math.Abs(tx - hubNode.X) + Math.Abs(ty - hubNode.Y) == 1) return false;
-                        
-                        // СТРОГАЯ ИЗОЛЯЦИЯ: не касаемся Выхода
                         if (exitNode != null && Math.Abs(tx - exitNode.X) + Math.Abs(ty - exitNode.Y) == 1) return false;
                         
                         return true;
                     })
                 ).ToList();
 
-                if (validPoints.Count == 0) break; 
+                if (validPoints.Count == 0) continue; 
 
                 var targetPoint = validPoints[_random.Next(validPoints.Count)];
 
@@ -264,17 +234,16 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             {
                 var node = queue.Dequeue();
 
-                string nodeInfo = $"[ID: {node.NodeId} | {node.Type}]";
+                var nodeInfo = $"[ID: {node.NodeId} | {node.Type}]";
                 if (node.Type == RoomType.Event && node.EventData != null)
                 {
                     nodeInfo = $"[ID: {node.NodeId} | {node.Type} ({node.EventData.EventType})]";
                 }
 
-                // Добавляем инфу о координатах комнаты на сетке
-                string posInfo = $"Поз: ({node.X}, {node.Y})";
+                var posInfo = $"Поз: ({node.X}, {node.Y})";
 
                 var connectedIds = node.ConnectedNodes.Select(n => n.NodeId.ToString()).ToList();
-                string connectionsInfo = connectedIds.Count > 0 ? string.Join(", ", connectedIds) : "Нет связей";
+                var connectionsInfo = connectedIds.Count > 0 ? string.Join(", ", connectedIds) : "Нет связей";
 
                 sb.AppendLine($"{nodeInfo,-40} {posInfo,-15} --> Связи (ID): {connectionsInfo}");
 

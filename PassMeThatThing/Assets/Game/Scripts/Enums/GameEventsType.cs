@@ -9,7 +9,5 @@ namespace Game.Scripts.Enums
         //Отключение света
         BlackoutBlowFuse, //вышибло пробки
         BlackoutCutWires, //перерезанные провода
-        
-        OtherEvent
     }
 }
