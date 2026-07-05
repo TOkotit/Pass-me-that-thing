@@ -19,8 +19,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private PhysicalItem _heldItem;
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private float strength;
+        [SerializeField] private MainCharacterMovement movement;
         private HandsMovement _handsMovement;
-
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
         
@@ -78,6 +78,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void PhysicalPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
+            movement.SetMovementMultiplier(item.Rigidbody.mass);
             SetOwnerAndLayer(item);
             TargetPickUpItem(item);
             _handsMovement.GrabItem(item);
@@ -87,6 +88,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void TargetPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
+            movement.SetMovementMultiplier(item.Rigidbody.mass);
             SetOwnerAndLayer(item);
             if (_heldItem)
                 _handsMovement.GrabItem(_heldItem);
@@ -100,6 +102,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 RestoreLayerAndClear(_heldItem);
                 _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow);
                 _heldItem = null;
+                
+                movement.ResetMovementMultiplier();
                 TargetClearHeldItem();
             }
         }
@@ -111,6 +115,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             {
                 RestoreLayerAndClear(_heldItem);
                 _heldItem = null;
+                movement.ResetMovementMultiplier();
             }
             TargetClearHeldItem();
         }
@@ -123,6 +128,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 RestoreLayerAndClear(_heldItem);
                 _handsMovement.ReleaseItem(_heldItem, 0f, false);
                 _heldItem = null;
+                movement.ResetMovementMultiplier();
             }
         }
 

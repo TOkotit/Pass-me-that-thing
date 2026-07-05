@@ -16,11 +16,13 @@ namespace Game.Entity
         private float _sprintMultiplier = 1.5f;
         private float _jumpHeight = 2f;
         private float _gravity = 9.81f;
+        private float _baseCarry = 0.5f;
         
         public float Speed => _speed;
         public float SprintMultiplier => _sprintMultiplier;
         public float JumpHeight => _jumpHeight;
         public float Gravity => _gravity;
+        public float BaseCarry => _baseCarry;
 
         public void SetStats(PlayerStats stats)
         {
@@ -28,6 +30,7 @@ namespace Game.Entity
             _sprintMultiplier = stats.SprintMultiplier;
             _jumpHeight = stats.JumpHeight;
             _gravity = stats.Gravity;
+            _baseCarry = stats.BaseCarry;
         }
         
         public void SetPlayerInteraction(PlayerInteraction playerInteraction)

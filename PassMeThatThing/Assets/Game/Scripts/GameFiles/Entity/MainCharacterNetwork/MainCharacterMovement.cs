@@ -5,6 +5,7 @@ using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using MainCharacter_old;
 using Mirror;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -15,6 +16,8 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private MainCharacter character;
+    [SerializeField] private float maxHoldDistance = 2.0f; 
+    [SerializeField] private PhysicalItemInteractionController _itemController;
     
     private MainCharacterModel _model => character.MainCharacterModel;
     
@@ -24,6 +27,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private Vector3 _moveDirection;
     private Vector3 _velocity;
     private float _lastWaterDrop;
+    private float _movementMultiplier = 1.0f;
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
 
@@ -39,6 +43,17 @@ public class MainCharacterMovement : NetworkBehaviour
         {
             character.Fall(2);
         }
+    }
+
+    public void SetMovementMultiplier(float weight)
+    {
+        var multiplier = _model.BaseCarry / weight;
+        _movementMultiplier = Mathf.Min(1f, _model.BaseCarry / weight);
+    }
+
+    public void ResetMovementMultiplier()
+    {
+        _movementMultiplier = 1;   
     }
     
     public Vector3 Velocity
@@ -123,14 +138,33 @@ public class MainCharacterMovement : NetworkBehaviour
     
     private void MoveInternal()
     {
-        
         if (!isCharacterCanMove || !characterController.enabled) return;
-        
-        var currentSpeed = _model.Speed;
+
+        var desiredMove = _moveDirection; 
+
+        if (_itemController && _itemController.CurrentHeldItem)
+        {
+            var itemTransform = _itemController.CurrentHeldItem.transform;
+            var itemPos = itemTransform.position;
+            var charPos = transform.position;
+            var currentDist = Vector3.Distance(charPos, itemPos);
+
+            if (currentDist > maxHoldDistance)
+            {
+                var dirToItem = (itemPos - charPos).normalized;
+                if (Vector3.Dot(desiredMove, dirToItem) < 0)
+                {
+                    var projected = Vector3.ProjectOnPlane(desiredMove, dirToItem);
+                    desiredMove = projected.normalized * desiredMove.magnitude;
+                }
+            }
+        }
+
+        var currentSpeed = _model.Speed * _movementMultiplier;
         if (_isSprinting)
             currentSpeed *= _model.SprintMultiplier;
-        
-        characterController.Move(_moveDirection * (currentSpeed * Time.fixedDeltaTime));
+
+        characterController.Move(desiredMove * (currentSpeed * Time.fixedDeltaTime));
     }
     
     private void ApplyGravity()
