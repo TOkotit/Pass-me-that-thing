@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Game.Entity.Stats
 {
+    [CreateAssetMenu(fileName = "PlayerStats", menuName = "Stats/PlayerStats")]
     public class PlayerStats : ScriptableObject
     {
         [SerializeField] private float speed = 140f;
