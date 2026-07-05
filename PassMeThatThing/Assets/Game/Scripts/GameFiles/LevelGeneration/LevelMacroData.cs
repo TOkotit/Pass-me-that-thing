@@ -12,6 +12,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public int? EventRoomsCount { get; private set; }
 
         public int EventRoomsBudget { get; private set; }
+        
+        public int SideRoomDepth { get; private set; } = 2;
             
         public List<EventRoomDefinition> AvailableEventsPool { get; private set; }
         public List<EventRoomDefinition> MandatoryEvents { get; private set; }
@@ -24,7 +26,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             List<EventRoomDefinition> availableEventsPool,
             int? normalRoomsCount = null,
             int? eventRoomsCount = null,
-            List<EventRoomDefinition> mandatoryEvents = null)
+            List<EventRoomDefinition> mandatoryEvents = null,
+            int sideRoomDepth = 2)
         {
             TotalRoomsWithoutHub = totalRoomsWithoutHub;
             ExitsCount = exitsCount;
@@ -37,6 +40,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             EventRoomsCount = eventRoomsCount;
 
             MandatoryEvents = mandatoryEvents ?? new List<EventRoomDefinition>();
+            SideRoomDepth = sideRoomDepth;
             
         }
     }
