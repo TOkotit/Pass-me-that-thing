@@ -1,5 +1,6 @@
 ﻿ using System;
 using DI;
+using Game.Scripts.Enums;
 using Mirror;
 using Systems;
 using UnityEngine;
@@ -11,30 +12,44 @@ namespace MainCharacterNetwork
     [RequireComponent(typeof(Camera))]
     public class MainCharacterCamera : MonoBehaviour
     {
-        [SerializeField] private Camera _camera;
+        [SerializeField] private Camera mCamera;
         [SerializeField] private float sensitivity = 1f;
         [SerializeField] private float maxPitch = 80f;
         [SerializeField] private bool lockCursor = true;
         [SerializeField] private float tiltMultiplier = 0.2f;
+        [SerializeField] private float zoomDistance = 5f;
+        [SerializeField] private Transform cameraRoot;
+        [SerializeField] private Camera ragdollCamera;
+        
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
-
+        private CameraState _cameraState;
+            
         private Vector2 _rotation;
         private bool _initialized;
         private bool _isLocalPlayer;
         private bool _isCameraRotating = true;
+        private bool _isFirstPerson = true;
+        private Coroutine _zoomRoutine;
 
+        private void SwitchToRagdollCamera()
+        {
+            if (mCamera) mCamera.enabled = false;
+            if (ragdollCamera) ragdollCamera.enabled = true;
+        }
+
+        
         public bool IsCameraRotating
         {
             get => _isCameraRotating;
-            set => _isCameraRotating = value;
+            set  => _isCameraRotating = value;
         }
-
+        
         private void Awake()
         {
-            if (!_camera)
-                _camera = GetComponent<Camera>();
+            if (!mCamera)
+                mCamera = GetComponent<Camera>();
 
             _ownerIdentity = GetComponentInParent<NetworkIdentity>();
             _movementController = GetComponentInParent<MainCharacterMovementController>();
@@ -46,8 +61,8 @@ namespace MainCharacterNetwork
 
             if (!_isLocalPlayer)
             {
-                if (_camera)
-                    _camera.enabled = false;
+                if (mCamera)
+                    mCamera.enabled = false;
 
                 enabled = false;
                 return;
@@ -91,8 +106,8 @@ namespace MainCharacterNetwork
             _rotation.y += inputDelta.x * sensitivity * 0.01f;
 
             _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
-
-            transform.localRotation = Quaternion.Euler(_rotation.x, 0f, 0f);
+            
+            cameraRoot.localRotation = Quaternion.Euler(_rotation.x, 0f, 0f);
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
             _movementController.ControllerRotate(characterRotation);

@@ -33,8 +33,17 @@ namespace Game.Entity
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private Collider characterCollider;
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private Rigidbody rbToTransferForce;
+        [SerializeField] private Rigidbody rb;
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
+        private bool _isAlive = true;
+
+        public bool IsAlive
+        {
+            get => _isAlive;
+            set => _isAlive = value;
+        }
         
         private void Initialize()
         {
@@ -63,6 +72,7 @@ namespace Game.Entity
         [ClientRpc]
         private void RpcFall()
         {
+            rbToTransferForce.AddForce(rb.linearVelocity, ForceMode.Impulse);
             movement.LockUpMovement();
             movement.DisableController();
             if (mCamera) mCamera.IsCameraRotating = false;
@@ -73,6 +83,7 @@ namespace Game.Entity
         [Server]
         public void StandUp()
         {
+            if (!_isAlive) return;
             movement.UnlockMovement();               
             if (mCamera) mCamera.IsCameraRotating = true; 
             RpcStandUp();
@@ -140,7 +151,7 @@ namespace Game.Entity
             if (!isLocalPlayer) return;
             
             Debug.Log("[MainCharacter] OnDeath");
-            
+            _isAlive = false;
             _localModel.IsDead = true;
         }
 
