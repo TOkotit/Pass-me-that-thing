@@ -20,7 +20,7 @@ namespace MainCharacterNetwork
         [SerializeField] private float zoomDistance = 5f;
         [SerializeField] private Transform cameraRoot;
         [SerializeField] private Camera ragdollCamera;
-        
+        [SerializeField] private Transform spineBone;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -106,23 +106,20 @@ namespace MainCharacterNetwork
             _rotation.y += inputDelta.x * sensitivity * 0.01f;
 
             _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
-            
+
             cameraRoot.localRotation = Quaternion.Euler(_rotation.x, 0f, 0f);
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
             _movementController.ControllerRotate(characterRotation);
+
+            var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
             
-            /*var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
-            if (_ownerIdentity.isServer)
+            if (_isLocalPlayer)
             {
-                bodyVerticalAlign.SetTilt(targetTilt);
+                spineBone.localRotation =  Quaternion.Euler(targetTilt.x, 0f, targetTilt.y);;
             }
-            else
-            {
-                bodyVerticalAlign.CmdSetTilt(targetTilt);
-            }*/
         }
-        
+
         public void SetupInput(GameInput input)
         {
             _gameInput = input;
