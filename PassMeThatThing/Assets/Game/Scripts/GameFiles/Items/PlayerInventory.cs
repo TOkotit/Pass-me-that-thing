@@ -19,6 +19,7 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] private ItemDatabase itemDatabase;
     private ItemPoolManager _itemPoolManager;
     private PhysicalItemRegistry _physicalItemRegistry;
+    
 
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
     [SyncVar(hook = nameof(OnActiveSlotChanged))]

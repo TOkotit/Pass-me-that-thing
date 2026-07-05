@@ -70,7 +70,7 @@ namespace Game.Entity
         [ClientRpc]
         private void RpcFall()
         {
-            
+            playerInteraction.Drop();
             movement.LockUpMovement();
             movement.DisableController();
             if (mCamera) mCamera.IsCameraRotating = false;
