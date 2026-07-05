@@ -11,17 +11,12 @@ using VContainer.Unity;
 
 public class MainCharacterMovement : NetworkBehaviour
 {
-    [SerializeField] private float speed = 140f;
-    [SerializeField] private float sprintMultiplier = 1.5f;
-    
-    [SerializeField] private float jumpHeight = 2f;
-    [SerializeField] private float gravity = 9.81f;
-    
     [SerializeField] private GroundCheck groundCheck;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
-    
     [SerializeField] private MainCharacter character;
+    
+    private MainCharacterModel _model => character.MainCharacterModel;
     
     [SyncVar]
     private bool isCharacterCanMove = true;
@@ -107,7 +102,7 @@ public class MainCharacterMovement : NetworkBehaviour
         Debug.Log("Jump: " + groundCheck.IsGrounded);
         if (groundCheck.IsGrounded)
         {
-            _velocity.y = jumpHeight;
+            _velocity.y = _model.JumpHeight;
         }
     }
     
@@ -131,9 +126,9 @@ public class MainCharacterMovement : NetworkBehaviour
         
         if (!isCharacterCanMove || !characterController.enabled) return;
         
-        var currentSpeed = speed;
+        var currentSpeed = _model.Speed;
         if (_isSprinting)
-            currentSpeed *= sprintMultiplier;
+            currentSpeed *= _model.SprintMultiplier;
         
         characterController.Move(_moveDirection * (currentSpeed * Time.fixedDeltaTime));
     }
@@ -141,7 +136,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void ApplyGravity()
     {
         if (!isCharacterCanMove || !characterController.enabled) return;
-        _velocity += Vector3.down * (gravity * Time.fixedDeltaTime);
+        _velocity += Vector3.down * (_model.Gravity * Time.fixedDeltaTime);
         characterController.Move(_velocity * Time.fixedDeltaTime);
     }
 }

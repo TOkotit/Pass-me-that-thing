@@ -4,6 +4,7 @@ using System.Collections;
 using System.Runtime.InteropServices.ComTypes;
 using DI;
 using Entity;
+using Game.Entity.Stats;
 using Game.Scripts.GameFiles.Entity.GlobalView;
 using Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View;
 using Game.Scripts.GameFiles.Items;
@@ -31,15 +32,16 @@ namespace Game.Entity
         [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private Collider characterCollider;
+        [SerializeField] private PlayerStats stats;
         public MainCharacterModel MainCharacterModel => _model;
-
         public override DamagableModel DamagableModel => _model;
-
+        
         private void Initialize()
         {
             view.Initialize(); 
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
+            _model.SetStats(stats);
             _damagableRegistry.Register(characterCollider.GameObject(), this);
         }
         
