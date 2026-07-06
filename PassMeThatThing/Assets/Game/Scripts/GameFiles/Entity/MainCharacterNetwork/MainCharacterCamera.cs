@@ -20,7 +20,7 @@ namespace MainCharacterNetwork
         [SerializeField] private float zoomDistance = 5f;
         [SerializeField] private Transform cameraRoot;
         [SerializeField] private Camera ragdollCamera;
-        [SerializeField] private Transform spineBone;
+        [SerializeField] private Transform spinePivot;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -31,6 +31,7 @@ namespace MainCharacterNetwork
         private bool _isLocalPlayer;
         private bool _isCameraRotating = true;
         private bool _isFirstPerson = true;
+        private Quaternion _originalSpineLocalRotation;
         private Coroutine _zoomRoutine;
 
         private void SwitchToRagdollCamera()
@@ -116,7 +117,7 @@ namespace MainCharacterNetwork
             
             if (_isLocalPlayer)
             {
-                spineBone.localRotation =  Quaternion.Euler(targetTilt.x, 0f, targetTilt.y);;
+                spinePivot.localRotation = Quaternion.Euler(targetTilt);
             }
         }
 
