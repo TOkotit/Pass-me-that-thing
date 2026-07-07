@@ -118,15 +118,18 @@ namespace Game.Scripts.Systems
                 _rebindingOperation = inputAction.PerformInteractiveRebinding(targetIndex);
             }
             
+            inputAction.Disable();
+                
             _rebindingOperation
                 .WithControlsExcluding("Mouse")
                 .OnMatchWaitForAnother(0.1f)
-                .OnComplete(operation => RebindComplete(callback))
+                .OnComplete(operation => RebindComplete(inputAction, callback))
                 .Start();
         }
         
-        private void RebindComplete(Action callback=null)
+        private void RebindComplete(InputAction inputAction, Action callback=null)
         {
+            inputAction.Enable();
             _rebindingOperation.Dispose();
             if (callback != null)
                 callback();
