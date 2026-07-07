@@ -1,11 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ami.BroAudio;
 using AYellowpaper.SerializedCollections;
+using Enums;
+using Game.Scripts.GameFiles.MainMenu.View.UI.ScreenOptionsMenu;
 using Game.Scripts.Systems;
 using Game.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
+using Slider = UnityEngine.UI.Slider;
+using Toggle = UnityEngine.UI.Toggle;
 
 namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 {
@@ -24,6 +32,14 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         [SerializeField] private TMP_Dropdown resolutionsDropdown;
         [SerializeField] private Toggle fullscreenToggle;
         
+        [Header("Keyboard Settings")]
+        [SerializeField] private RebindObject rebindButtonPrefab;
+        [SerializeField] private GameObject rebindBackground;
+        [SerializeField] private GameObject scrollView;
+        private Dictionary<RebindObject, InputAction> _inputActionReferences = new();
+        private Dictionary<InputMapType,List<InputAction>>  _inputActions;
+        
+        
         private void Start()
         {
             ViewModel.RequestInitLoadOptions(InitUpdate);
@@ -35,15 +51,19 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             btnSettingsPages[SettingsPage.Keyboard].onClick.AddListener(OnBtnKeyboardSettingsPageClick);
             
             resolutionsDropdown.onValueChanged.AddListener(OnResolutionsDropdownValueChanged);
-            
             fullscreenToggle.onValueChanged.AddListener(OnFullscreenToggleValueChanged);
-            
-            btnClose?.onClick.AddListener(OnCloseButtonClicked);
-            btnSave?.onClick.AddListener(OnSaveButtonClicked);
             
             audioSliders[BroAudioType.None]?.onValueChanged.AddListener(OnAllSliderValueChanged);
             audioSliders[BroAudioType.Music]?.onValueChanged.AddListener(OnMusicSliderValueChanged);
             audioSliders[BroAudioType.SFX]?.onValueChanged.AddListener(OnSFXSliderValueChanged);
+
+            // foreach (var p in _inputActionReferences)
+            // {
+            //     p.Key?.onClick.AddListener(() => OnRebindStart(p.Value));
+            // }
+            
+            btnClose?.onClick.AddListener(OnCloseButtonClicked);
+            btnSave?.onClick.AddListener(OnSaveButtonClicked);
         }
         
         private void OnDestroy()
@@ -58,12 +78,17 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             
             fullscreenToggle.onValueChanged.RemoveListener(OnFullscreenToggleValueChanged);
             
-            btnClose?.onClick.RemoveListener(OnCloseButtonClicked);
-            btnSave?.onClick.RemoveListener(OnSaveButtonClicked);
-            
             audioSliders[BroAudioType.None]?.onValueChanged.RemoveListener(OnAllSliderValueChanged);
             audioSliders[BroAudioType.Music]?.onValueChanged.RemoveListener(OnMusicSliderValueChanged);
             audioSliders[BroAudioType.SFX]?.onValueChanged.RemoveListener(OnSFXSliderValueChanged);
+            
+            foreach (var p in _inputActionReferences)
+            {
+                p.Key?.button.onClick.RemoveAllListeners();
+            }
+            
+            btnClose?.onClick.RemoveListener(OnCloseButtonClicked);
+            btnSave?.onClick.RemoveListener(OnSaveButtonClicked);
         }
 
         private void OnBtnSettingsPageClick() => OpenSettingsPage(SettingsPage.Settings);
@@ -104,6 +129,61 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
             UpdateResolutions(resolutions, data.resolutionIndex);
             UpdateFullscreenToggle(data.isFullScreen);
+
+            _inputActions = ViewModel.RequestGetAllInputActions();
+            
+            foreach (var p in _inputActions)
+            {
+                if (p.Key == InputMapType.UI) continue; //TODO сделать отдельные вкладки для gameplay и ui кнопок
+                foreach (var a in p.Value)
+                {
+                    if (a.name == "MouseDrag") continue;
+                    if (a.type == InputActionType.Button)
+                    {
+                        var i = Instantiate(rebindButtonPrefab, scrollView.transform);
+                        _inputActionReferences.Add(i, a);
+                        i.BindingIndex = 0;
+                        
+                        i.button.onClick.AddListener(() => OnRebindStart(a));
+                        
+                    }
+                    else if (a.type == InputActionType.Value)
+                    {
+                        Debug.Log($"{a.name} : {string.Join(", ",a.bindings.ToList().Select(b => b.name).ToList())}");
+
+                        for (int b = 0; b < a.bindings.Count; b++)
+                        {
+                            if (a.bindings[b].isComposite) continue;
+                            
+                            var i = Instantiate(rebindButtonPrefab, scrollView.transform);
+                            _inputActionReferences.Add(i, a);
+                            i.BindingIndex = b;
+                            
+                            i.button.onClick.AddListener(() => OnRebindStart(a, i.BindingIndex));
+                        }
+                    }
+                }
+                UpdateAllKeysNames();
+            }
+        }
+
+        private void UpdateAllKeysNames()
+        {
+            foreach (var p in _inputActionReferences)
+            {
+                if (p.Value.type == InputActionType.Button)
+                {
+                    p.Key.text.text 
+                        = $"{p.Value.name} " +
+                         $"- {InputControlPath.ToHumanReadableString(p.Value.bindings[p.Key.BindingIndex].effectivePath)}";
+                }
+                else if (p.Value.type == InputActionType.Value)
+                {
+                    p.Key.text.text 
+                        = $"{p.Value.bindings[p.Key.BindingIndex].name} " +
+                         $"- {InputControlPath.ToHumanReadableString(p.Value.bindings[p.Key.BindingIndex].effectivePath)}";
+                }
+            }
         }
 
         private void UpdateSliderValue(BroAudioType type, float value)
@@ -159,5 +239,20 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         {
             ViewModel.RequestChangeFullscreen(value);
         }
+
+        private void OnRebindStart(InputAction inputAction, int targetIndex=-1)
+        {
+            // Debug.Log(targetIndex);
+            ViewModel.RequestStartKeyRebind(inputAction, targetIndex, OnRebindEnd);
+            
+            rebindBackground.SetActive(true);
+        }
+
+        private void OnRebindEnd()
+        {
+            rebindBackground.SetActive(false);
+            UpdateAllKeysNames();
+        }
+        
     }
 }

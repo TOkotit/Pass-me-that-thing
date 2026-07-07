@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ami.BroAudio;
+using Enums;
 using Game.Gameplay.View.UI;
 using Game.Scripts.Systems;
 using Game.UI;
@@ -80,9 +82,24 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _optionsManager.SetResolution(index);
         }
 
+        private void GetAllActionRefs()
+        {
+            _optionsManager.GetAllActions();
+        }
+
         public void RequestChangeFullscreen(bool isFullscreen)
         {
             _optionsManager.SetFullScreen(isFullscreen);
+        }
+
+        public void RequestStartKeyRebind(InputAction inputActionReference, int targetIndex=-1, Action callback=null)
+        {
+            _optionsManager.StartRebindKey(inputActionReference, targetIndex, callback);
+        }
+        
+        public Dictionary<InputMapType,List<InputAction>> RequestGetAllInputActions()
+        {
+            return _optionsManager.GetAllActions();
         }
     }
 }
