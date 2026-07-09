@@ -62,25 +62,18 @@ namespace MainCharacterNetwork
         
         public override void OnStartClient()
         {
-            if (isLocalPlayer) return; 
+            if (isLocalPlayer) return;
 
             var allRbs = GetComponentsInChildren<Rigidbody>();
             foreach (var rb in allRbs)
             {
-                rb.detectCollisions = false;
-                var hasNetTransform = rb.TryGetComponent<NetworkTransformReliable>(out var netTransform);
-                
-                if (hasNetTransform)
-                {
-                    rb.isKinematic = true; 
+                rb.detectCollisions = true;
+                rb.isKinematic = true;
+                if (rb.TryGetComponent<NetworkTransformReliable>(out _))
                     rb.interpolation = RigidbodyInterpolation.Interpolate;
-                }
                 else
-                {
-                    rb.isKinematic = false;
-                    rb.useGravity = true;
-                    rb.WakeUp();
-                }
+                    rb.interpolation = RigidbodyInterpolation.None;
+                rb.useGravity = false;
             }
         }
         

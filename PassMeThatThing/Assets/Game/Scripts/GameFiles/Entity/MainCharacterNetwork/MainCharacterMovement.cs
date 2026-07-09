@@ -47,7 +47,7 @@ public class MainCharacterMovement : NetworkBehaviour
     public Vector3 GetCurrentVelocity()
     {
         var velocity = _moveDirection * (_isSprinting ? _model.Speed * _model.SprintMultiplier : _model.Speed);
-        velocity.y = _velocity.y;
+        velocity.y = _velocity.y; 
         return velocity;
     }
     public void SetMovementMultiplier(float weight)
@@ -79,7 +79,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (!isLocalPlayer)
         {
-            characterController.enabled = false;
+            //characterController.enabled = false;
         }
     }
 
