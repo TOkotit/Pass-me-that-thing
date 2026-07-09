@@ -4,7 +4,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class SpiderWalk : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Walk;
         
         private EnemySpider _spider;
         
@@ -23,6 +22,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Enter()
         {
             base.Enter();
+            
+            _movementController.SetSpeed(_spider.Speed);
         }
 
         public override void LogicUpdate()
@@ -37,12 +38,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 if (_targetDetector.DistanceToTarget < _spider.ChaseDistance)
                 {
                     _movementController.StopNavigating();
-                    StateMachine.ChangeState(_spider.SpiderChase);
+                    StateMachine.ChangeState(_spider.SpiderPrepare);
                     return;
                 }
                 else
                 {
-                    _movementController.SetSpeed(_spider.Speed / 2);
+                    
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
                 
                 }

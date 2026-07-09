@@ -6,7 +6,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class ZombieKnockout : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Knockout;
         
         private EnemyZombie _zombie;
         

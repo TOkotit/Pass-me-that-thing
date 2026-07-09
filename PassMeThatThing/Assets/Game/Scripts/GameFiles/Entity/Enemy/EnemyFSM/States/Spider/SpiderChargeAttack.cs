@@ -6,9 +6,8 @@ using Time = UnityEngine.Time;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
-    public class SpiderAttack : EnemyState
+    public class SpiderChargeAttack : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Attack;
 
         private EnemySpider _spider;
         
@@ -18,7 +17,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private EnemyView _enemyView;
         
-        public SpiderAttack(EnemySpider enemy, 
+        public SpiderChargeAttack(EnemySpider enemy, 
             EnemyStateMachine stateMachine) 
                 : base(enemy, stateMachine)
         {
@@ -44,26 +43,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-            if (!_targetDetector.IsTargetVisible)
-            {
-                StateMachine.ChangeState(_spider.SpiderWalk);
-                return;
-            }
-
-            if (_targetDetector.DistanceToTarget > _spider.AttackDistance)
-            {
-                StateMachine.ChangeState(_spider.SpiderChase);
-                return;
-            }
             
-            _spider.elapsedAttack += Time.fixedDeltaTime;
-            if (_spider.elapsedAttack >= _spider.AttackCooldown)
-            {
-                _movementController.RotateTo(_targetDetector.DetectedTarget);
-                _attackController.AttackMelee(new Vector3(3f, 3f, 3f), _spider.Damage);
-                
-                _spider.elapsedAttack = 0f;
-            }
         }
         
         public override void Exit()

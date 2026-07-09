@@ -3,18 +3,23 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
-    public class ZombieChase : EnemyState
+    public class SpiderPrepare : EnemyState
     {
-        
-        private EnemyZombie _zombie;
+        private EnemySpider _spider;
         
         private TargetDetector _targetDetector;
         private EnemyMovementController  _movementController;
+
+        private Ray _ray;
+        private RaycastHit _hit;
+
+        private bool _isGoingUp;
+        private Vector3 _snapPosition;
         
-        public ZombieChase(EnemyZombie enemy, EnemyStateMachine stateMachine) 
+        public SpiderPrepare(EnemySpider enemy, EnemyStateMachine stateMachine) 
             : base(enemy, stateMachine)
         {
-            _zombie = enemy;
+            _spider = enemy;
             _targetDetector = enemy.TargetDetector;
             _movementController = enemy.MovementController;
         }
@@ -23,7 +28,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
-            _movementController.SetSpeed(_zombie.Speed);
+            
         }
 
         public override void LogicUpdate()
@@ -33,23 +38,24 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-            if (!_targetDetector.IsTargetVisible)
+            if (!_isGoingUp)
             {
-                StateMachine.ChangeState(_zombie.ZombieWalk);
-                return;
+                _ray = new Ray(_spider.transform.position, _spider.transform.up);
+                if (Physics.Raycast(_ray, out _hit, 30f, _spider.CeilingLayer))
+                {
+                    _snapPosition = _hit.point;
+                    _isGoingUp = true;
+                }
             }
-            
-            if (_targetDetector.DetectedTarget == null) return; 
-            
-            _movementController.NavigateTo(_targetDetector.DetectedTarget);
-            
-            if (_targetDetector.DistanceToTarget < _zombie.AttackDistance)
+            else
             {
-                _movementController.StopNavigating();
-                StateMachine.ChangeState(_zombie.ZombieAttack);
-                return;
+                
+                
+                if (true)
+                {
+                    _isGoingUp = false;
+                }
             }
-            
         }
         
         public override void Exit()

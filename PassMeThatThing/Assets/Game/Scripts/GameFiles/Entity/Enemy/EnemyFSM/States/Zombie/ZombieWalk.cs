@@ -4,7 +4,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class ZombieWalk : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Walk;
         
         private EnemyZombie _zombie;
         
@@ -23,6 +22,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Enter()
         {
             base.Enter();
+            
+            _movementController.SetSpeed(_zombie.Speed / 2);
         }
 
         public override void LogicUpdate()
@@ -42,7 +43,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 }
                 else
                 {
-                    _movementController.SetSpeed(_zombie.Speed / 2);
+                    
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
                 
                 }

@@ -3,16 +3,14 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
-    public class SpiderChase : EnemyState
+    public class SpiderFindPlace : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Chase;
-        
         private EnemySpider _spider;
         
         private TargetDetector _targetDetector;
         private EnemyMovementController  _movementController;
         
-        public SpiderChase(EnemySpider enemy, EnemyStateMachine stateMachine) 
+        public SpiderFindPlace(EnemySpider enemy, EnemyStateMachine stateMachine) 
             : base(enemy, stateMachine)
         {
             _spider = enemy;
@@ -34,23 +32,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-            if (!_targetDetector.IsTargetVisible)
-            {
-                StateMachine.ChangeState(_spider.SpiderWalk);
-                return;
-            }
-            
-            if (_targetDetector.DetectedTarget == null) return; 
-            
-            _movementController.SetSpeed(_spider.Speed);
-            _movementController.NavigateTo(_targetDetector.DetectedTarget);
-            
-            if (_targetDetector.DistanceToTarget < _spider.AttackDistance)
-            {
-                _movementController.StopNavigating();
-                StateMachine.ChangeState(_spider.SpiderAttack);
-                return;
-            }
             
         }
         

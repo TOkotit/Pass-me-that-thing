@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Enums;
 using Game.Entity;
 using Mirror;
 using UnityEngine;
@@ -10,6 +12,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
     public class TargetDetector : NetworkBehaviour
     {
         [SerializeField] private float detectionInterval = 0.5f;
+        
+        [Header("Типы для поиска")]
+        [SerializeField] private List<DamagableType> damagableTypes;
         
         [Header("Proximity settings")]
         [SerializeField] private Transform proximityAreaCenter;
@@ -70,6 +75,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             foreach (var d in _enemyTargetsRegistry.EnemyTargetObjects)
             {
+                if (!damagableTypes.Contains(d.Value.DamagableType)) continue;
+                
                 _tempDistance =  Vector3.Distance(d.Key.transform.position, transform.position);
                 if (_tempDistance > _maxDetectionRange) continue;
                 

@@ -6,12 +6,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public abstract class EnemyState
     {
-        protected abstract EnemyStates EnemyStateType { get; }
         protected EnemyStateMachine StateMachine;
         protected Enemy Enemy;
         
-        public event Action<EnemyStates> OnEnter;
-        public event Action<EnemyStates> OnExit;
+        public event Action OnEnter;
+        public event Action OnExit;
         
         public EnemyState(Enemy enemy, EnemyStateMachine stateMachine)
         {
@@ -21,7 +20,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public virtual void Enter()
         {
-            OnEnter?.Invoke(EnemyStateType);
+            OnEnter?.Invoke();
             // Debug.Log($"Enter {EnemyStateType}");
         }
         public virtual void LogicUpdate() { }
@@ -29,7 +28,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public virtual void Exit()
         {
-            OnExit?.Invoke(EnemyStateType);
+            OnExit?.Invoke();
         }
     }
 }

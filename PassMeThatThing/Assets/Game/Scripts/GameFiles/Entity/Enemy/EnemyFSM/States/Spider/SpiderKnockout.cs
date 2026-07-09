@@ -4,7 +4,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class SpiderKnockout : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Knockout;
         
         private EnemySpider _spider;
         

@@ -8,7 +8,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class ZombieAttack : EnemyState
     {
-        protected override EnemyStates EnemyStateType => EnemyStates.Attack;
 
         private EnemyZombie _zombie;
         
