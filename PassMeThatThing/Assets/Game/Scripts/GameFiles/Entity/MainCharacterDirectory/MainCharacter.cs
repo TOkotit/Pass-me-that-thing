@@ -53,11 +53,11 @@ namespace Game.Entity
         }
         
         [Server]
-        public void Fall(float delay)
+        public void Fall(float delay, Vector3 impulce = new Vector3())
         {
             movement.LockUpMovement();
             if (mCamera) mCamera.IsCameraRotating = false;
-            RpcFall();
+            RpcFall(impulce);
             StartCoroutine(GetUpAfterDelay(delay));
         }
         [Server]
@@ -67,12 +67,13 @@ namespace Game.Entity
             if(delay > 0) StandUp();
         }
         [Command]
-        public void CmdFall(float delay)
+        public void CmdFall(float delay, Vector3 impulse =  new Vector3())
         {
-            Fall(delay);
+            Fall(delay, impulse);
         }
+
         [ClientRpc]
-        private void RpcFall()
+        private void RpcFall(Vector3 additionalImpulse = new Vector3())
         {
             playerInteraction.Drop();
             movement.LockUpMovement();
@@ -80,7 +81,7 @@ namespace Game.Entity
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
-            ragdollHandler.Hit(movement.LastVelocity * 2, transform.position);
+            ragdollHandler.Hit(movement.LastVelocity * 2 + additionalImpulse, transform.position);
         }
         
         [Server]
