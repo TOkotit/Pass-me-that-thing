@@ -31,10 +31,10 @@ namespace Game.Entity
         [SerializeField] private MainCharacterView view;
         [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
-        [SerializeField] private Collider characterCollider;
         [SerializeField] private PlayerStats stats;
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
+        public MainCharacterMovement Movement => movement;
         private bool _isAlive = true;
 
         public bool IsAlive
@@ -49,7 +49,7 @@ namespace Game.Entity
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
             _model.SetStats(stats);
-            _damagableRegistry.Register(characterCollider.GameObject(), this);
+            _damagableRegistry.Register(this.GameObject(), this);
         }
         
         [Server]
@@ -66,7 +66,11 @@ namespace Game.Entity
             yield return new WaitForSeconds(delay);
             if(delay > 0) StandUp();
         }
-        
+        [Command]
+        public void CmdFall(float delay)
+        {
+            Fall(delay);
+        }
         [ClientRpc]
         private void RpcFall()
         {
@@ -76,7 +80,7 @@ namespace Game.Entity
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
-            ragdollHandler.Hit(movement.GetCurrentVelocity(), transform.position);
+            ragdollHandler.Hit(movement.LastVelocity * 2, transform.position);
         }
         
         [Server]
