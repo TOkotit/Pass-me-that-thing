@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using DI;
+using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using MainCharacter_old;
@@ -18,8 +19,10 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private MainCharacter character;
     [SerializeField] private float maxHoldDistance = 2.0f; 
     [SerializeField] private PhysicalItemInteractionController _itemController;
-    
+    [Inject] private DamagableRegistry _damagableRegistry;
     private MainCharacterModel _model => character.MainCharacterModel;
+    public Vector3 CurrentVelocity => characterController ? characterController.velocity : Vector3.zero;
+
     
     [SyncVar]
     private bool isCharacterCanMove = true;
@@ -28,6 +31,8 @@ public class MainCharacterMovement : NetworkBehaviour
     private Vector3 _velocity;
     private float _lastWaterDrop;
     private float _movementMultiplier = 1.0f;
+    private Vector3 _lastVelocity;
+    public Vector3 LastVelocity => _lastVelocity;
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
 
@@ -41,7 +46,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (_isSprinting)
         {
-            character.Fall(2);
+            character.CmdFall(2, new Vector3());
         }
     }
     public Vector3 GetCurrentVelocity()
@@ -73,9 +78,44 @@ public class MainCharacterMovement : NetworkBehaviour
         get => _moveDirection;
         set => _moveDirection = value;
     }
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (_damagableRegistry.TryGetDamagable(hit.gameObject, out var damagable) && damagable is MainCharacter otherCharacter)
+        {
+            
+            var relativeVelocity = otherCharacter.Movement.LastVelocity - LastVelocity;
+            var impactSpeed = Vector3.Dot(relativeVelocity, hit.normal);
+            Debug.LogError($"!Impact with {hit.gameObject.name}! {impactSpeed}");
+            if (impactSpeed > 10f)
+            {
+                var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
+                character.CmdFall(stunDuration, new Vector3());
+            }
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.LogError($"Impact with {collision.gameObject.name}");
+        var impactSpeed = 0f;
+        if (collision.rigidbody)
+        {
+            impactSpeed = Vector3.Dot(collision.relativeVelocity, collision.contacts[0].normal);
+        }
+        else
+        {
+            return;
+        }
 
-    
-    public override void OnStartClient()
+        Debug.LogError($"Impact speed: {impactSpeed} with {collision.gameObject.name}");
+
+        if (impactSpeed > 10f)
+        {
+            var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
+            character.CmdFall(stunDuration,new Vector3());
+        }
+    }
+
+   public override void OnStartClient()
     {
         if (!isLocalPlayer)
         {
@@ -93,7 +133,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (Time.time - _lastWaterDrop > 7f)
         {
-            character.Fall(3);
+            character.CmdFall(3, new Vector3());
             _lastWaterDrop = Time.time;
         }
     }
@@ -134,6 +174,10 @@ public class MainCharacterMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isLocalPlayer || !characterController.enabled) return;
+        var currentSpeed = _model.Speed * _movementMultiplier;
+        if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
+        var horizontalVelocity = _moveDirection.normalized * currentSpeed;
+        _lastVelocity = horizontalVelocity + Vector3.up * _velocity.y;
         
         MoveInternal();
         ApplyGravity();

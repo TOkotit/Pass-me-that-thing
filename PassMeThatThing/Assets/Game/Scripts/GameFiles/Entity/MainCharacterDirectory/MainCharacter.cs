@@ -31,10 +31,10 @@ namespace Game.Entity
         [SerializeField] private MainCharacterView view;
         [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
-        [SerializeField] private Collider characterCollider;
         [SerializeField] private PlayerStats stats;
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
+        public MainCharacterMovement Movement => movement;
         private bool _isAlive = true;
 
         public bool IsAlive
@@ -49,15 +49,15 @@ namespace Game.Entity
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
             _model.SetStats(stats);
-            _damagableRegistry.Register(characterCollider.GameObject(), this);
+            _damagableRegistry.Register(this.GameObject(), this);
         }
         
         [Server]
-        public void Fall(float delay)
+        public void Fall(float delay, Vector3 impulce = new Vector3())
         {
             movement.LockUpMovement();
             if (mCamera) mCamera.IsCameraRotating = false;
-            RpcFall();
+            RpcFall(impulce);
             StartCoroutine(GetUpAfterDelay(delay));
         }
         [Server]
@@ -66,9 +66,14 @@ namespace Game.Entity
             yield return new WaitForSeconds(delay);
             if(delay > 0) StandUp();
         }
-        
+        [Command]
+        public void CmdFall(float delay, Vector3 impulse)
+        {
+            Fall(delay, impulse);
+        }
+
         [ClientRpc]
-        private void RpcFall()
+        private void RpcFall(Vector3 additionalImpulse)
         {
             playerInteraction.Drop();
             movement.LockUpMovement();
@@ -76,7 +81,7 @@ namespace Game.Entity
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
-            ragdollHandler.Hit(movement.GetCurrentVelocity(), transform.position);
+            ragdollHandler.Hit(movement.LastVelocity * 2 + additionalImpulse, transform.position);
         }
         
         [Server]
