@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 3593213558545181655}
   - component: {fileID: 7207250266534300093}
   - component: {fileID: 2138010185210046695}
+  - component: {fileID: -4990713603865359710}
   - component: {fileID: 1716954208764301076}
   - component: {fileID: 637298468266342329}
+  - component: {fileID: 5235129960023423001}
   m_Layer: 0
   m_Name: SingleTurret
   m_TagString: Untagged
@@ -67,6 +69,21 @@ MonoBehaviour:
   type: 2
   targetDetector: {fileID: 1716954208764301076}
   turretAttackController: {fileID: 637298468266342329}
+--- !u!114 &-4990713603865359710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5751345894273795059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagable: {fileID: 2138010185210046695}
+  priority: 0
+  damagableType: 2
 --- !u!114 &1716954208764301076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +125,23 @@ MonoBehaviour:
     - Key: 1
       Value: 1
   lineRenderer: {fileID: 6552646445704832505}
+--- !u!114 &5235129960023423001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5751345894273795059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 2767712025
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &6286794996758443890
 GameObject:
   m_ObjectHideFlags: 0

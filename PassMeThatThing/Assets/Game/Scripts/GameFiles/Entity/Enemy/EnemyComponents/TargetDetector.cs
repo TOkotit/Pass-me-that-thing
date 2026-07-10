@@ -130,9 +130,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 }
             }
                 
-            if ((_inProximity || _inSight) 
-                && _tempDistance <= _minDistance
-                && d.Value.Priority >= _bestPriority)
+            if ((_inProximity || _inSight)
+                && (d.Value.Priority > _bestPriority 
+                    || d.Value.Priority == _bestPriority 
+                    && _tempDistance <= _minDistance))
             {
                 _bestTargetPos = d.Key.transform.position;
                 _bestTargetObject = d.Value;

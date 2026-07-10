@@ -112,7 +112,7 @@ namespace Game.Gameplay.View.UI
         
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
-            if (maxHealth <= 0) return;
+            //if (maxHealth <= 0) return;
             
             Debug.Log($"[UI] new hp {newValue}");
             healthImage.color = new Color(1f, 1f, 1f, (1 - (float)newValue / maxHealth) * 0.4f);

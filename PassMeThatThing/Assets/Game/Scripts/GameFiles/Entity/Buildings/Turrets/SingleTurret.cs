@@ -25,12 +25,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         private void FixedUpdate()
         {
             if (!targetDetector.IsTargetVisible) return;
+            if (!isServer) return;
+            
             
             _elapsedAttack += Time.fixedDeltaTime;
             if (_elapsedAttack >= (1 / AttackSpeed))
             {
                 turretAttackController.AttackRay(Damage, targetDetector.DetectedTargetObject);
-                
                 
                 _elapsedAttack = 0f;
             }

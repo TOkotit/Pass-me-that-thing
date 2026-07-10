@@ -115,9 +115,11 @@ namespace Game.Entity
         {
             base.Start();
             Initialize();
-            
+
             if (isServer)
-                ServerSetMaxHealth(100); //SO
+            {
+                ServerSetMaxHealth(100, true); //SO
+            }
         }
 
         public override void OnToughnessBreak()
