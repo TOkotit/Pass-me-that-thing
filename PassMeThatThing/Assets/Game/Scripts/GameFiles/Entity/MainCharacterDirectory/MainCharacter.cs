@@ -67,13 +67,13 @@ namespace Game.Entity
             if(delay > 0) StandUp();
         }
         [Command]
-        public void CmdFall(float delay, Vector3 impulse =  new Vector3())
+        public void CmdFall(float delay, Vector3 impulse)
         {
             Fall(delay, impulse);
         }
 
         [ClientRpc]
-        private void RpcFall(Vector3 additionalImpulse = new Vector3())
+        private void RpcFall(Vector3 additionalImpulse)
         {
             playerInteraction.Drop();
             movement.LockUpMovement();

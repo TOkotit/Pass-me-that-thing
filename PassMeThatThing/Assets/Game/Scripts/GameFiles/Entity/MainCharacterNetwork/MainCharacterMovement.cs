@@ -46,7 +46,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (_isSprinting)
         {
-            character.CmdFall(2);
+            character.CmdFall(2, new Vector3());
         }
     }
     public Vector3 GetCurrentVelocity()
@@ -89,7 +89,7 @@ public class MainCharacterMovement : NetworkBehaviour
             if (impactSpeed > 10f)
             {
                 var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
-                character.CmdFall(stunDuration);
+                character.CmdFall(stunDuration, new Vector3());
             }
         }
     }
@@ -111,7 +111,7 @@ public class MainCharacterMovement : NetworkBehaviour
         if (impactSpeed > 10f)
         {
             var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
-            character.CmdFall(stunDuration);
+            character.CmdFall(stunDuration,new Vector3());
         }
     }
 
@@ -133,7 +133,7 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (Time.time - _lastWaterDrop > 7f)
         {
-            character.CmdFall(3);
+            character.CmdFall(3, new Vector3());
             _lastWaterDrop = Time.time;
         }
     }
