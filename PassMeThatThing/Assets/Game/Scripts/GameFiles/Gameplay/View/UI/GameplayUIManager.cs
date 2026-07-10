@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Enums;
+using Game.Gameplay.View.UI.ScreenBuild;
 using Game.Gameplay.View.UI.ScreenMinigame;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
 using Game.MainMenu.View.UI.ScreenOptionsMenu;
@@ -33,8 +34,6 @@ namespace Game.Gameplay.View.UI
             
 
         }
-        
-        
 
         public ScreenGameplayViewModel OpenScreenGameplay()
         {
@@ -62,19 +61,6 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
         
-        // private void OnTogglePause(InputAction.CallbackContext c)
-        // {
-        //     if (rootUI.OpenedScreen.CurrentValue is ScreenGameplayViewModel)
-        //     {
-        //         OpenScreenPauseMenu();
-        //     }
-        //     else if (rootUI.OpenedScreen.CurrentValue is ScreenPauseMenuViewModel)
-        //     {
-        //         OpenScreenGameplay();
-        //     }
-        //     
-        // }
-        
         
         public ScreenPauseMenuViewModel OpenScreenPauseMenu()
         {
@@ -89,6 +75,22 @@ namespace Game.Gameplay.View.UI
 
             return viewModel;
         }
+        
+        public ScreenBuildViewModel OpenScreenBuild()
+        {
+            var viewModel = new ScreenBuildViewModel(this, Container);
+            
+            
+            // _mainCharacterMovement.LockUpMovement();
+            UnlockCursor();
+            // LockUpCamera();
+            rootUI.OpenScreen(viewModel);
+            _gameInputManager.ToggleMap(InputMapType.UI);
+
+            return viewModel;
+        }
+        
+        
         
         public ScreenOptionsViewModel OpenScreenOptions()
         {
