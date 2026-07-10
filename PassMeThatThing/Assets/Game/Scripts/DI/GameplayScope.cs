@@ -53,7 +53,7 @@ namespace DI
             var damagableRegistry = new DamagableRegistry();
             builder.RegisterInstance(damagableRegistry);
 
-            var enemyTargetsRegistry = new EnemyTargetsRegistry();
+            var enemyTargetsRegistry = new TargetsRegistry();
             builder.RegisterInstance(enemyTargetsRegistry);
             
             var interactableRegistry = new InteractableRegistry();

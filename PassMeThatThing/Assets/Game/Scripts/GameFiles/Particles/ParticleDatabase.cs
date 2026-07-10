@@ -7,9 +7,9 @@ namespace Game.Scripts.GameFiles.Items
     public class ParticleDatabase : ScriptableObject
     {
         [Header("Префабы партиклов")]
-        [SerializedDictionary] public SerializedDictionary<Particles, GameObject> particles;
+        [SerializedDictionary] public SerializedDictionary<Particles, ParticleHandler> particles;
         
-        public GameObject GetParticlePrefab(Particles type)
+        public ParticleHandler GetParticlePrefab(Particles type)
         {
             return particles[type];
         }

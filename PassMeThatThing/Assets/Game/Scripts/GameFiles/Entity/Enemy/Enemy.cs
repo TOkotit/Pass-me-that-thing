@@ -68,7 +68,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         #region ServerLogic
         public override void OnStartServer()
         {
-            LifetimeScope.Find<GameplayScope>().Container.Inject(this);
+            // LifetimeScope.Find<GameplayScope>().Container.Inject(this);
 
             stateMachine = new EnemyStateMachine();
             

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Enums;
 using Game.Entity;
+using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -26,7 +27,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] private LayerMask obstacleLayer;
 
         [Inject]
-        private EnemyTargetsRegistry _enemyTargetsRegistry;
+        private TargetsRegistry _targetsRegistry;
         
         //temp
         private float _timer;
@@ -34,7 +35,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private float _tempDistance;
         private float _minDistance;
         private int _bestPriority;
-        private Vector3 _bestTarget;
+        private Vector3 _bestTargetPos;
+        private TargetObject _bestTargetObject;
         private bool _bestTargetFound;
         private Vector3 _direction;
         private float _tempAngleToTargetDirection;
@@ -43,6 +45,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
 
         public Vector3 DetectedTarget { get; private set; }
+        public TargetObject DetectedTargetObject { get; private set; }
         public float DistanceToTarget { get; private set; } = -1f;
         public bool IsTargetVisible { get; private set; }
 
@@ -72,64 +75,72 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             _minDistance = float.MaxValue;
             _bestTargetFound = false;
-            
-            foreach (var d in _enemyTargetsRegistry.EnemyTargetObjects)
-            {
-                if (!damagableTypes.Contains(d.Value.DamagableType)) continue;
-                
-                _tempDistance =  Vector3.Distance(d.Key.transform.position, transform.position);
-                if (_tempDistance > _maxDetectionRange) continue;
-                
-                _direction = (d.Key.transform.position - transform.position).normalized;
 
-                _inProximity = false;
-                _inSight = false;
-                
-                if (_tempDistance <= proximityAreaRadius)
+            foreach (var searchType in damagableTypes)
+            {
+                foreach (var d in _targetsRegistry.EnemyTargetObjects[searchType])
                 {
-                    if (!Physics.Raycast(transform.position, _direction, _tempDistance, obstacleLayer))
-                    {
-                        _inProximity = true;
-                    }
-                }
-                else if (_tempDistance <= sightDistance)
-                {
-                    _tempAngleToTargetDirection = Vector3.Angle(transform.forward, _direction);
-                    if (_tempAngleToTargetDirection < sightAngle / 2f)
-                    {
-                        if (!Physics.Raycast(transform.position, _direction, _tempDistance, obstacleLayer))
-                        {
-                            _inSight = true;
-                        }
-                    }
-                }
-                
-                if ((_inProximity || _inSight) 
-                    && _tempDistance <= _minDistance
-                    && d.Value.Priority >= _bestPriority)
-                {
-                    _bestTarget = d.Key.transform.position;
-                    _bestTargetFound = true;
-                    _minDistance = _tempDistance;
-                    _bestPriority = d.Value.Priority;
+                    CalcOneTarget(d);
                 }
             }
             
             if (_bestTargetFound)
             {
-                OnDetectedTarget?.Invoke(_bestTarget);
-                DetectedTarget = _bestTarget;
+                OnDetectedTarget?.Invoke(_bestTargetPos);
+                DetectedTarget = _bestTargetPos;
+                DetectedTargetObject = _bestTargetObject;
                 DistanceToTarget = _minDistance;
                 IsTargetVisible = true;
             }
             else
             {
                 DetectedTarget = new Vector3();
+                DetectedTargetObject = null;
                 DistanceToTarget = -1f;
                 IsTargetVisible = false;
             }
         }
-        
+
+        private void CalcOneTarget(KeyValuePair<GameObject, TargetObject> d)
+        {
+            _tempDistance =  Vector3.Distance(d.Key.transform.position, transform.position);
+            if (_tempDistance > _maxDetectionRange) return;
+            
+            _direction = (d.Key.transform.position - transform.position).normalized;
+
+            _inProximity = false;
+            _inSight = false;
+                
+            if (_tempDistance <= proximityAreaRadius)
+            {
+                if (!Physics.Raycast(transform.position, _direction, _tempDistance, obstacleLayer))
+                {
+                    _inProximity = true;
+                }
+            }
+            else if (_tempDistance <= sightDistance)
+            {
+                _tempAngleToTargetDirection = Vector3.Angle(transform.forward, _direction);
+                if (_tempAngleToTargetDirection < sightAngle / 2f)
+                {
+                    if (!Physics.Raycast(transform.position, _direction, _tempDistance, obstacleLayer))
+                    {
+                        _inSight = true;
+                    }
+                }
+            }
+                
+            if ((_inProximity || _inSight) 
+                && _tempDistance <= _minDistance
+                && d.Value.Priority >= _bestPriority)
+            {
+                _bestTargetPos = d.Key.transform.position;
+                _bestTargetObject = d.Value;
+                _bestTargetFound = true;
+                _minDistance = _tempDistance;
+                _bestPriority = d.Value.Priority;
+            }
+        }
         
         // Отрисовка зон в редакторе
         private void OnDrawGizmosSelected()
