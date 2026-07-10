@@ -13,8 +13,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         public List<Transform> ZombieSpawnPositions => zombieSpawnPositions;
 
-        public int EnemyCount => _enemyCount;
-        
+        public int EnemyCount
+        {
+            get => _enemyCount;
+            set => _enemyCount = value;
+        }
+
 
         [Server]
         public void SpawnEnemy(Vector3 pos, EnemyData enemyData)
@@ -22,7 +26,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             var enemyInstance = Instantiate(enemyData.WorldPrefab, pos, Quaternion.identity);
             NetworkServer.Spawn(enemyInstance);
             var enemy = enemyInstance.GetComponent<Enemy>();
-            enemy.DamagableModel.OnDeath += OnEnemyDied;
+            
+            enemy.EnemySpawner = this;
+            
             _enemyCount++;
             Debug.Log($"Spawned enemy {enemyData.Id}");
         }
@@ -51,10 +57,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             }
         }
 
-        private void OnEnemyDied()
-        {
-            _enemyCount--;
-        }
+        
         
     }
 }

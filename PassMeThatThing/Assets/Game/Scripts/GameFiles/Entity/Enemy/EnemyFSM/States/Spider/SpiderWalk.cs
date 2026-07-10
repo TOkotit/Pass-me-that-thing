@@ -23,6 +23,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
+            _movementController.EnableNavAgent();
             _movementController.SetSpeed(_spider.Speed);
         }
 
@@ -43,9 +44,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 }
                 else
                 {
-                    
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
-                
                 }
             }
         }

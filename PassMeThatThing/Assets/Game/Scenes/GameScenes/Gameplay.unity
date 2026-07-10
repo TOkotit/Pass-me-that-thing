@@ -2060,7 +2060,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 2047
+    m_Bits: 201
   m_UseGeometry: 1
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -2979,7 +2979,7 @@ GameObject:
   - component: {fileID: 2065023264}
   - component: {fileID: 2065023263}
   - component: {fileID: 2065023262}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2995,7 +2995,7 @@ Transform:
   m_GameObject: {fileID: 2065023260}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.1381016, y: 61.96, z: 33.53509}
+  m_LocalPosition: {x: 6.1381016, y: 9, z: 33.53509}
   m_LocalScale: {x: 39.70653, y: 1.4313523, z: 64.24311}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3214,7 +3214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5933980639820510569, guid: 248f34778d106e84e95e36071198d38e, type: 3}
       propertyPath: enemyLimit
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5933980639820510569, guid: 248f34778d106e84e95e36071198d38e, type: 3}
       propertyPath: _zombieSpawnPoint

@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: spider
   enemyName: Spider
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 8090700475096468142, guid: 58d0c80be7eff2e41be1e3d1e09451c4, type: 3}
   enemyImage: {fileID: 21300000, guid: f89888c2a4f561d4e92bd0dc6ccf655b, type: 3}
   maxHealth: 10
+  maxToughness: 0
   speed: 8
   damage: 1
   attackCooldown: 3
-  chaseDistance: 5
-  attackDistance: 3
+  chaseDistance: 6
+  attackDistance: 5

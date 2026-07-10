@@ -40,6 +40,7 @@ namespace Game.Scripts.GameFiles.Entity
             }
             
             _damageSystem.TakeDamage(finalDamage, other.gameObject, damageTypes, toughnessDamage, OnServerTakeDamage);
+            Debug.Log($"{other.gameObject.name} collided with {finalDamage} damage");
             
             _lastDamageTime = Time.time;
         }
