@@ -49,7 +49,6 @@ namespace Game.Entity
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
             _model.SetStats(stats);
-            _damagableRegistry.Register(this.GameObject(), this);
         }
         
         [Server]
@@ -120,6 +119,11 @@ namespace Game.Entity
             {
                 ServerSetMaxHealth(100, true); //SO
             }
+
+            else if (isClient)
+            {
+                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, DamagableModel.HealthPool.MaxHealth);
+            }
         }
 
         public override void OnToughnessBreak()
@@ -168,10 +172,7 @@ namespace Game.Entity
             Debug.Log($"[MainCharacter] OnHealthChanged {currentHealth}");
             
             _localModel.Health = currentHealth;
-            if (DamagableModel != null && DamagableModel?.HealthPool != null)
-            {
-                _localModel.MaxHealth = DamagableModel.HealthPool.MaxHealth;
-            }
+            _localModel.MaxHealth = maxHealth;
         }
     }
 }

@@ -65,7 +65,6 @@ namespace Game.Gameplay.View.UI
 
         private void Start()
         {
-            // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
             ViewModel.InitHealthUI(UpdateCurrHealthUI);
             ViewModel.RequestSubHealthUI(UpdateCurrHealthUI);
             
@@ -88,7 +87,6 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
             
-            // _gameEventsConatainer.transform.DOScale(1f, 0.5f).From(0f).SetEase(Ease.OutBounce);
         }
 
         private void OnDestroy()

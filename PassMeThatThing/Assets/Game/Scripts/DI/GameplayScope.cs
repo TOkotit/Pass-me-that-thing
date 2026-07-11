@@ -31,6 +31,7 @@ namespace DI
         [SerializeField] private GameRandomEventManager eventManagerPrefab;
         [SerializeField] private GlobalStageManager globalStageManagerPrefab;
         [SerializeField] private EnemySpawner enemySpawnerPrefab;
+        [SerializeField] private BuildingManager buildingManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -47,6 +48,7 @@ namespace DI
             builder.RegisterComponent(eventManagerPrefab);
             builder.RegisterComponent(globalStageManagerPrefab);
             builder.RegisterComponent(enemySpawnerPrefab);
+            builder.RegisterComponent(buildingManagerPrefab);
             
             var damageSystem = new DamageSystem();
             builder.RegisterInstance(damageSystem);
@@ -73,6 +75,7 @@ namespace DI
             builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
             
             builder.Register<MCLocalModel>(Lifetime.Singleton);
+            builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
