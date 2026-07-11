@@ -94,8 +94,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 227837763217859650}
+  - component: {fileID: 1790161040065319133}
   - component: {fileID: 5686190622791376666}
   - component: {fileID: 6059272469753625803}
+  - component: {fileID: 858915913017742702}
   - component: {fileID: 1118780070767854037}
   - component: {fileID: 1833560880880073641}
   - component: {fileID: 2949989233195922033}
@@ -104,7 +106,6 @@ GameObject:
   - component: {fileID: 1931763817442211047}
   - component: {fileID: 5475941992780067928}
   - component: {fileID: 1084716827342913949}
-  - component: {fileID: 1790161040065319133}
   - component: {fileID: 1970042707737797991}
   m_Layer: 0
   m_Name: Zombie
@@ -130,6 +131,29 @@ Transform:
   - {fileID: 9086114221855915269}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1790161040065319133
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.47
+  m_Height: 4.389294
+  m_Direction: 1
+  m_Center: {x: 0, y: 2.194647, z: -0.006663084}
 --- !u!114 &5686190622791376666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +189,21 @@ MonoBehaviour:
   ragdollHandler: {fileID: 1976506774925312268}
   enemyView: {fileID: 1685545026476552139}
   elapsedAttack: 0
+--- !u!114 &858915913017742702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagable: {fileID: 6059272469753625803}
+  priority: 0
+  damagableType: 1
 --- !u!114 &1118780070767854037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,29 +375,6 @@ MonoBehaviour:
   radius: 2
   damagePerSecond: 10
   interval: 1
---- !u!136 &1790161040065319133
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8090700475096468142}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.47
-  m_Height: 4.389294
-  m_Direction: 1
-  m_Center: {x: 0, y: 2.194647, z: -0.006663084}
 --- !u!114 &1970042707737797991
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,9 +20,14 @@ namespace DI
     {
         public static IObjectResolver Resolver { get; private set; }
         
-        [SerializeField] ItemDatabase itemDatabase;
-        [SerializeField] GameEventsDatabase gameEventsDatabase;
+        [Header("Databases")]
+        [SerializeField] private ItemDatabase itemDatabase;
+        [SerializeField] private GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
+        [SerializeField] private BuildingsDatabase buildingDatabase;
+        [SerializeField] private TurretDatabase turretDatabase;
+        
+        [Header("Managers on gameplay scene")]
         [SerializeField] private GameRandomEventManager eventManagerPrefab;
         [SerializeField] private GlobalStageManager globalStageManagerPrefab;
         [SerializeField] private EnemySpawner enemySpawnerPrefab;
@@ -34,6 +39,8 @@ namespace DI
             builder.RegisterInstance(itemDatabase);
             builder.RegisterInstance(gameEventsDatabase);
             builder.RegisterInstance(enemyDatabase);
+            builder.RegisterInstance(buildingDatabase);
+            builder.RegisterInstance(turretDatabase);
 
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
@@ -53,7 +60,7 @@ namespace DI
             var damagableRegistry = new DamagableRegistry();
             builder.RegisterInstance(damagableRegistry);
 
-            var enemyTargetsRegistry = new EnemyTargetsRegistry();
+            var enemyTargetsRegistry = new TargetsRegistry();
             builder.RegisterInstance(enemyTargetsRegistry);
             
             var interactableRegistry = new InteractableRegistry();

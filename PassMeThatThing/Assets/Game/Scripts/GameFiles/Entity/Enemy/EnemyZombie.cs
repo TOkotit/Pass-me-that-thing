@@ -15,7 +15,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         private EnemyData _zombieData;
         
-        private bool hitRagdollCoroutine;
+        // private bool _hitRagdollCoroutine;
         
         public float elapsedAttack;
         public float AttackCooldown => _zombieData.AttackCooldown;

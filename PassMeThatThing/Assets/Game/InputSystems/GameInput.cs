@@ -208,6 +208,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""06a87eda-e191-4e63-9c9b-e57b65764df6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -397,6 +406,17 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""action"": ""Item3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""789b7ed3-660b-43c4-98d8-482fa7234478"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -446,6 +466,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Gameplay_Item1 = m_Gameplay.FindAction("Item1", throwIfNotFound: true);
         m_Gameplay_Item2 = m_Gameplay.FindAction("Item2", throwIfNotFound: true);
         m_Gameplay_Item3 = m_Gameplay.FindAction("Item3", throwIfNotFound: true);
+        m_Gameplay_BuildMenu = m_Gameplay.FindAction("BuildMenu", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -543,6 +564,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Item1;
     private readonly InputAction m_Gameplay_Item2;
     private readonly InputAction m_Gameplay_Item3;
+    private readonly InputAction m_Gameplay_BuildMenu;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -606,6 +628,10 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Item3".
         /// </summary>
         public InputAction @Item3 => m_Wrapper.m_Gameplay_Item3;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/BuildMenu".
+        /// </summary>
+        public InputAction @BuildMenu => m_Wrapper.m_Gameplay_BuildMenu;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -671,6 +697,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Item3.started += instance.OnItem3;
             @Item3.performed += instance.OnItem3;
             @Item3.canceled += instance.OnItem3;
+            @BuildMenu.started += instance.OnBuildMenu;
+            @BuildMenu.performed += instance.OnBuildMenu;
+            @BuildMenu.canceled += instance.OnBuildMenu;
         }
 
         /// <summary>
@@ -721,6 +750,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Item3.started -= instance.OnItem3;
             @Item3.performed -= instance.OnItem3;
             @Item3.canceled -= instance.OnItem3;
+            @BuildMenu.started -= instance.OnBuildMenu;
+            @BuildMenu.performed -= instance.OnBuildMenu;
+            @BuildMenu.canceled -= instance.OnBuildMenu;
         }
 
         /// <summary>
@@ -948,6 +980,13 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnItem3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BuildMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBuildMenu(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

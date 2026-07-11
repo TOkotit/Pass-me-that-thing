@@ -36,7 +36,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void AttackMelee(Vector3 halfExtents, float damage)
         {
-            if (DamagableRegistry.Instance == null) return;
 
             var size = Physics.OverlapBox(
                 attackCubeCenter.position,
@@ -52,6 +51,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             }
 
             OnAttackMelee?.Invoke();
+            
+            Debug.Log("Zombie AttackMelee");
         }
         
         private Damagable FindDamagableInHierarchy(GameObject obj)
