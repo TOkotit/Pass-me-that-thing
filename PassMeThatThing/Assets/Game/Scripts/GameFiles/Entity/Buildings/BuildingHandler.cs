@@ -9,6 +9,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
     {
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private GameObject buildingPreview;
+        [SerializeField] private Camera camera;
 
         [Inject] private LocalBuildingHandlerModel _handlerModel;
         [Inject] private BuildingManager _buildingManager;
@@ -43,8 +44,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
             if (_preview)
             {
-                var _ray = new Ray(transform.position, transform.forward);
-                if (Physics.Raycast(_ray, out var _hit, 50f, groundLayer))
+                var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                if (Physics.Raycast(ray, out var _hit, 50f, groundLayer))
                 {
                     buildingPreview.transform.position = _hit.point;
                 }
