@@ -13,15 +13,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         public List<RoomNode> ConnectedNodes = new List<RoomNode>();
         
-        public int X;
-        public int Y;
-        
-        public RoomNode(int nodeId, RoomType type, int x = 0, int y = 0, EventRoomDefinition eventData = null)
+        public RoomNode(int nodeId, RoomType type, EventRoomDefinition eventData = null)
         {
             NodeId = nodeId;
             Type = type;
-            X = x;
-            Y = y;
             EventData = eventData;
         }
     }
