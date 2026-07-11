@@ -24,9 +24,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
         
-        private bool _alignment = true; 
-        public void DisableAlignment() => _alignment = false;
-        public void EnableAlignment() => _alignment = true;
 
         public override void OnStartLocalPlayer()
         {
@@ -140,35 +137,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem.Rigidbody.MovePosition(position);
                 _heldItem.Rigidbody.MoveRotation(rotation);
             }
-        }
-        
-        private void FixedUpdate()
-        {
-            if (_heldItem && _heldItem.HasToBeAligned && _alignment)
-            {
-                var rb = _heldItem.Rigidbody;
-                var targetRotation = Pivot.rotation;
-                var desiredRotation = targetRotation;
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
-            }
-        }
-        [Command]
-        public void CmdApplySwingImpulse(Vector3 force, Vector3 torque, float duration)
-        {
-            if (_heldItem)
-            {
-                var rb = _heldItem.Rigidbody;
-                rb.AddForce(force, ForceMode.Impulse);
-                rb.AddTorque(torque, ForceMode.Impulse);
-                StartCoroutine(ServerTempDisableAlignment(duration));
-            }
-        }
-
-        private IEnumerator ServerTempDisableAlignment(float duration)
-        {
-            _alignment = false;
-            yield return new WaitForSeconds(duration);
-            _alignment = true;
         }
     }
 }

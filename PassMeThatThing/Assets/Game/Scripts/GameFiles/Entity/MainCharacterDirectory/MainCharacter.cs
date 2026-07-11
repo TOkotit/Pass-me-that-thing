@@ -7,6 +7,7 @@ using Entity;
 using Game.Entity.Stats;
 using Game.Scripts.GameFiles.Entity.GlobalView;
 using Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View;
+using Game.Scripts.GameFiles.Entity.MainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;
 using MainCharacter_old;
 using MainCharacterNetwork;
@@ -32,6 +33,7 @@ namespace Game.Entity
         [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private HandsMaskLayerController  maskLayerController;
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
         public MainCharacterMovement Movement => movement;
@@ -75,6 +77,7 @@ namespace Game.Entity
         [ClientRpc]
         private void RpcFall(Vector3 additionalImpulse)
         {
+            maskLayerController.EnableFullBodyAnimation();
             playerInteraction.Drop();
             movement.LockUpMovement();
             movement.DisableController();
@@ -99,6 +102,7 @@ namespace Game.Entity
             view.PlayStandingUp(() => 
             {
                 view.EnableAnimator();
+                maskLayerController.EnableBodyOnlyAnimation(); 
                 movement.UnlockMovement();
                 movement.EnableController();
                 if (mCamera) mCamera.IsCameraRotating = true;
