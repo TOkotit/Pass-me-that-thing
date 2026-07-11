@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 180583881734044310}
   - component: {fileID: 319741792640230851}
   - component: {fileID: 7828892963863885859}
-  - component: {fileID: 2641041129374949696}
+  - component: {fileID: 7410111715900507740}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -62,7 +62,7 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!114 &2641041129374949696
+--- !u!114 &7410111715900507740
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,7 +71,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4583043820459869596}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 433f1869031445488803927123aee0da, type: 3}
+  m_Script: {fileID: 11500000, guid: e8277e2ac56a4ace9ef8eeb48bda8208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomDatabase: {fileID: 11400000, guid: 18c0ed63c86a2cc4d8e423731aabf2b0, type: 2}
   levelGrid: {fileID: 319741792640230851}
+  levelContainer: {fileID: 180583881734044310}

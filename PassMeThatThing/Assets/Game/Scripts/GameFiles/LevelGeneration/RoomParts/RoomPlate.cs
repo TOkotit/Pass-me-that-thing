@@ -8,9 +8,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public Color roomColor =  new Color(0.2f, 0.8f, 0.2f, 0.4f);
         public Color doorColor =  Color.red;
         public Color gateColor = Color.blue;
-
-        [SerializeField]
-        public float lineLength = 10f;
         
         [SerializeField] private Grid parentGrid = null;
         public RoomsConnectionTypes ConnectionNorth;
@@ -47,7 +44,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 Gizmos.color = doorColor;
                 Gizmos.DrawLine(start, end);
-                Gizmos.DrawSphere(end, 0.1f);
+                Gizmos.DrawSphere(end, 0.3f);
             }
             else if (type == RoomsConnectionTypes.Gate)
             {

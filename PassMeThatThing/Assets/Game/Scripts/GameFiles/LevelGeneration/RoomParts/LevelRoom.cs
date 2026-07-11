@@ -9,12 +9,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] private RoomType roomType;
         [SerializeField] private GameEventsType eventType;
         [SerializeField] private RoomPlateData[] plates;
-        [SerializeField] private int totalConnections;
-        
+        [SerializeField] private int totalDoors;
+        [SerializeField] private int totalGates;
         
         public RoomType RoomType => roomType;
         public GameEventsType EventType => eventType;
-        public int TotalConnections => totalConnections;
+        public int TotalConnections => totalDoors;
+        public int TotalGates => totalGates;
         public RoomPlateData[] Plates => plates;
         
         
@@ -25,7 +26,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var childPlates = GetComponentsInChildren<RoomPlate>();
             plates = new RoomPlateData[childPlates.Length];
             
-            totalConnections = 0; 
+            totalDoors = 0; 
+            totalGates = 0;
 
             for (var i = 0; i < childPlates.Length; i++)
             {
@@ -39,10 +41,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     plate = currentPlate
                 };
 
-                if (currentPlate.ConnectionNorth != RoomsConnectionTypes.None) totalConnections++;
-                if (currentPlate.ConnectionEast != RoomsConnectionTypes.None) totalConnections++;
-                if (currentPlate.ConnectionSouth != RoomsConnectionTypes.None) totalConnections++;
-                if (currentPlate.ConnectionWest != RoomsConnectionTypes.None) totalConnections++;
+                if (currentPlate.ConnectionNorth == RoomsConnectionTypes.Door) totalDoors++;
+                else if (currentPlate.ConnectionNorth == RoomsConnectionTypes.Gate) totalGates++;
+
+                if (currentPlate.ConnectionEast == RoomsConnectionTypes.Door) totalDoors++;
+                else if (currentPlate.ConnectionEast == RoomsConnectionTypes.Gate) totalGates++;
+
+                if (currentPlate.ConnectionSouth == RoomsConnectionTypes.Door) totalDoors++;
+                else if (currentPlate.ConnectionSouth == RoomsConnectionTypes.Gate) totalGates++;
+
+                if (currentPlate.ConnectionWest == RoomsConnectionTypes.Door) totalDoors++;
+                else if (currentPlate.ConnectionWest == RoomsConnectionTypes.Gate) totalGates++;
             }
         }
     }
