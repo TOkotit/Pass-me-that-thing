@@ -79,7 +79,6 @@ namespace Game.Gameplay.View.UI
             var viewModel = new ScreenBuildViewModel(this, Container);
             
             UnlockCursor();
-            
             rootUI.OpenScreen(viewModel);
             _gameInputManager.ToggleMap(InputMapType.Gameplay);
 

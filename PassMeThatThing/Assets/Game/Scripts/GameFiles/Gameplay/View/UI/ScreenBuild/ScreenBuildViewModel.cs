@@ -27,7 +27,6 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         public ScreenBuildViewModel(GameplayUIManager uiManager, IObjectResolver container)
         {
             _uiManager = uiManager;
-            
             _buildingsDatabase =  container.Resolve<BuildingsDatabase>();
             _handlerModel = container.Resolve<LocalBuildingHandlerModel>();
             _gameInput = container.Resolve<GameInputManager>();
@@ -64,6 +63,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         {
             _handlerModel.StartBuildPreview(buildingIndex);
             OnBuildingChooseWheelEnabled?.Invoke(false);
+            _uiManager.LockUpCursor();
         }
 
         public void RequestConfirmBuilding()
@@ -76,6 +76,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         {
             _handlerModel.CancelBuildPreview();
             OnBuildingChooseWheelEnabled?.Invoke(true);
+            _uiManager.UnlockCursor();
         }
     }
 }
