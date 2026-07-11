@@ -40,7 +40,7 @@ public class SelectionWheel : MonoBehaviour, IPointerDownHandler
             _rotation = Quaternion.Euler(0f, 0f, (i+0.5f) * (360f / segmentsCount));
             _direction = _rotation * _rectTransform.right;
             _pos = _direction * CenterDistance + _rectTransform.position;
-            var imageInstance = Instantiate(selectionElementPrefab, _pos, _rotation, _parentRectTransform);
+            var imageInstance = Instantiate(selectionElementPrefab, _pos, _rotation, _rectTransform);
             
             _images.Add(imageInstance);
         }
