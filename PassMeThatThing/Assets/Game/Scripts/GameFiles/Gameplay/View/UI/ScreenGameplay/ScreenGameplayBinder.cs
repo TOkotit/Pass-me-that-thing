@@ -65,7 +65,6 @@ namespace Game.Gameplay.View.UI
 
         private void Start()
         {
-            // _btnGoToMainMenu?.onClick.AddListener(OnGoToMainMenuButtonClicked);
             ViewModel.InitHealthUI(UpdateCurrHealthUI);
             ViewModel.RequestSubHealthUI(UpdateCurrHealthUI);
             
@@ -88,7 +87,6 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
             
-            // _gameEventsConatainer.transform.DOScale(1f, 0.5f).From(0f).SetEase(Ease.OutBounce);
         }
 
         private void OnDestroy()
@@ -112,8 +110,6 @@ namespace Game.Gameplay.View.UI
         
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
-            if (maxHealth <= 0) return;
-            
             Debug.Log($"[UI] new hp {newValue}");
             healthImage.color = new Color(1f, 1f, 1f, (1 - (float)newValue / maxHealth) * 0.4f);
             HealthText.text = newValue.ToString();
@@ -154,12 +150,6 @@ namespace Game.Gameplay.View.UI
         
         private void UpdateGameGlobalStateTimer(float remainingSeconds)
         {
-            if (gameGlobalStateTimer == null)
-            {
-                Debug.LogError($"[ScreenGameplayBinder] Поле 'gameGlobalStateTimer' (TextMeshProUGUI) НЕ НАЗНАЧЕНО в инспекторе на объекте {gameObject.name}!", this);
-                return;
-            }
-            
             var minutes = Mathf.FloorToInt(remainingSeconds / 60f);
             var seconds = Mathf.FloorToInt(remainingSeconds % 60f);
             
@@ -185,12 +175,6 @@ namespace Game.Gameplay.View.UI
 
         private void SetItemImageSprite(int index, Sprite sprite)
         {
-            // if (sprite == null)
-            // {
-            //     _itemImages[index].color = _noImageColor;
-            //     
-            // }
-            
             _itemImages[index].color = sprite != null 
                 ? _imageColor : _noImageColor;
             

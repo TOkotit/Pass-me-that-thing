@@ -208,6 +208,33 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""06a87eda-e191-4e63-9c9b-e57b65764df6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CancelBuilding"",
+                    ""type"": ""Button"",
+                    ""id"": ""6747aa25-571f-4d7d-8d53-816edd2d2c8f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ConfirmBuilding"",
+                    ""type"": ""Button"",
+                    ""id"": ""0b8f0ba6-5d8c-489e-8e03-bb960693348d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -397,6 +424,39 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""action"": ""Item3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""789b7ed3-660b-43c4-98d8-482fa7234478"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2512aeb7-5d95-4a61-9f8d-6d72241ec7eb"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CancelBuilding"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""effe7064-188e-416f-9bbe-143c9758de24"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ConfirmBuilding"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -446,6 +506,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Gameplay_Item1 = m_Gameplay.FindAction("Item1", throwIfNotFound: true);
         m_Gameplay_Item2 = m_Gameplay.FindAction("Item2", throwIfNotFound: true);
         m_Gameplay_Item3 = m_Gameplay.FindAction("Item3", throwIfNotFound: true);
+        m_Gameplay_BuildMenu = m_Gameplay.FindAction("BuildMenu", throwIfNotFound: true);
+        m_Gameplay_CancelBuilding = m_Gameplay.FindAction("CancelBuilding", throwIfNotFound: true);
+        m_Gameplay_ConfirmBuilding = m_Gameplay.FindAction("ConfirmBuilding", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -543,6 +606,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Item1;
     private readonly InputAction m_Gameplay_Item2;
     private readonly InputAction m_Gameplay_Item3;
+    private readonly InputAction m_Gameplay_BuildMenu;
+    private readonly InputAction m_Gameplay_CancelBuilding;
+    private readonly InputAction m_Gameplay_ConfirmBuilding;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -606,6 +672,18 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Item3".
         /// </summary>
         public InputAction @Item3 => m_Wrapper.m_Gameplay_Item3;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/BuildMenu".
+        /// </summary>
+        public InputAction @BuildMenu => m_Wrapper.m_Gameplay_BuildMenu;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/CancelBuilding".
+        /// </summary>
+        public InputAction @CancelBuilding => m_Wrapper.m_Gameplay_CancelBuilding;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ConfirmBuilding".
+        /// </summary>
+        public InputAction @ConfirmBuilding => m_Wrapper.m_Gameplay_ConfirmBuilding;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -671,6 +749,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Item3.started += instance.OnItem3;
             @Item3.performed += instance.OnItem3;
             @Item3.canceled += instance.OnItem3;
+            @BuildMenu.started += instance.OnBuildMenu;
+            @BuildMenu.performed += instance.OnBuildMenu;
+            @BuildMenu.canceled += instance.OnBuildMenu;
+            @CancelBuilding.started += instance.OnCancelBuilding;
+            @CancelBuilding.performed += instance.OnCancelBuilding;
+            @CancelBuilding.canceled += instance.OnCancelBuilding;
+            @ConfirmBuilding.started += instance.OnConfirmBuilding;
+            @ConfirmBuilding.performed += instance.OnConfirmBuilding;
+            @ConfirmBuilding.canceled += instance.OnConfirmBuilding;
         }
 
         /// <summary>
@@ -721,6 +808,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Item3.started -= instance.OnItem3;
             @Item3.performed -= instance.OnItem3;
             @Item3.canceled -= instance.OnItem3;
+            @BuildMenu.started -= instance.OnBuildMenu;
+            @BuildMenu.performed -= instance.OnBuildMenu;
+            @BuildMenu.canceled -= instance.OnBuildMenu;
+            @CancelBuilding.started -= instance.OnCancelBuilding;
+            @CancelBuilding.performed -= instance.OnCancelBuilding;
+            @CancelBuilding.canceled -= instance.OnCancelBuilding;
+            @ConfirmBuilding.started -= instance.OnConfirmBuilding;
+            @ConfirmBuilding.performed -= instance.OnConfirmBuilding;
+            @ConfirmBuilding.canceled -= instance.OnConfirmBuilding;
         }
 
         /// <summary>
@@ -948,6 +1044,27 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnItem3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BuildMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBuildMenu(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CancelBuilding" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancelBuilding(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ConfirmBuilding" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnConfirmBuilding(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

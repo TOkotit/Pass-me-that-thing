@@ -47,10 +47,17 @@ MonoBehaviour:
   parentReference:
     TypeName: DI.RootScope
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   itemDatabase: {fileID: 11400000, guid: b22ce1c9f341e3643a3fe569948c0115, type: 2}
   gameEventsDatabase: {fileID: 11400000, guid: 2f73b15b6609d4f4097d27cb381f2dc3, type: 2}
   enemyDatabase: {fileID: 11400000, guid: 2f00ea7190d56db4eb38dc6a6f4b1b88, type: 2}
-  eventManagerPrefab: {fileID: 6790494442803279332, guid: 6b42a1cb35e28da418137bb4f8ec4d39, type: 3}
+  buildingDatabase: {fileID: 11400000, guid: a9bdf24b4b1b4a34bad785d141fcd614, type: 2}
+  turretDatabase: {fileID: 11400000, guid: a9fe5466967b7fb4cb4c53733b42b957, type: 2}
+  eventManagerPrefab: {fileID: 0}
   globalStageManagerPrefab: {fileID: 0}
   enemySpawnerPrefab: {fileID: 0}

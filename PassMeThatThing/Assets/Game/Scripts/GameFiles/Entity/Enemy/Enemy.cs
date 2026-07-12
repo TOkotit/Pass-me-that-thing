@@ -35,11 +35,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public TargetDetector TargetDetector => targetDetector;
         public EnemyMovementController MovementController => movementController;
         public EnemyAttackController AttackController => attackController;
-        
 
+        public EnemySpawner EnemySpawner {get; set;}
+        
         public override void OnDeath()
         {
-            
+            if (!isServer) return;
+            EnemySpawner.EnemyCount--;
         }
         
         public override void OnHealthChanged(int currentHealth, int maxHealth)
@@ -66,7 +68,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         #region ServerLogic
         public override void OnStartServer()
         {
-            LifetimeScope.Find<GameplayScope>().Container.Inject(this);
+            // LifetimeScope.Find<GameplayScope>().Container.Inject(this);
 
             stateMachine = new EnemyStateMachine();
             

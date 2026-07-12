@@ -8,16 +8,16 @@ using VContainer.Internal;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
-    public class EnemyTargetObject : MonoBehaviour
+    public class TargetObject : MonoBehaviour
     {
-        // [SerializeField] private Damagable _damagable;
-        [SerializeField] private int _priority;
+        [SerializeField] private Damagable damagable;
+        [SerializeField] private int priority;
         [SerializeField] private DamagableType damagableType;
         
         [Inject] 
-        private EnemyTargetsRegistry Registry { get; set; }
+        private TargetsRegistry Registry { get; set; }
         
-        public int Priority => _priority;
+        public int Priority => priority;
 
         public DamagableType DamagableType => damagableType;
 

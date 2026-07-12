@@ -29,11 +29,11 @@ namespace Game.Scripts.GameFiles.Items
             var particlePrefab = particleDatabase.GetParticlePrefab(type);
             var particleInstance = Instantiate(particlePrefab, transform.position, Quaternion.identity);
             //NetworkServer.Spawn(particleInstance);
-            var particle = particleInstance.GetComponent<ParticleHandler>();
-            particle.OnParticleEnd += ReturnParticleInPool;
+            
+            particleInstance.OnParticleEnd += ReturnParticleInPool;
             
             _totalParticlesCount[type]++;
-            _activeParticles[type].Push(particle);
+            _activeParticles[type].Push(particleInstance);
         }
         
         public bool GetFromPool(Particles type, out ParticleHandler particle)

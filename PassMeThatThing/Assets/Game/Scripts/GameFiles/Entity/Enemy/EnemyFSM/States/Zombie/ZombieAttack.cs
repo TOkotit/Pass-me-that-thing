@@ -1,3 +1,4 @@
+using System.Collections;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror.BouncyCastle.Asn1.X509;
@@ -17,6 +18,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private EnemyView _enemyView;
         
+        private float _attackProgress;
+
+        private Coroutine _attackCoroutine;
+        
+        
         public ZombieAttack(EnemyZombie enemy, 
             EnemyStateMachine stateMachine) 
                 : base(enemy, stateMachine)
@@ -34,6 +40,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
+            if (_attackCoroutine !=  null) _zombie.StopCoroutine(_attackCoroutine);
+            _attackCoroutine = _zombie.StartCoroutine(Attack());
         }
 
         public override void LogicUpdate()
@@ -43,36 +51,32 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void PhysicsUpdate()
         {
-            if (!_targetDetector.IsTargetVisible)
+            
+        }
+        
+        public IEnumerator Attack()
+        {
+            while (_attackProgress < _zombie.AttackCooldown)
             {
-                StateMachine.ChangeState(_zombie.ZombieWalk);
-                return;
-            }
-
-            if (_targetDetector.DistanceToTarget > _zombie.AttackDistance)
-            {
-                StateMachine.ChangeState(_zombie.ZombieChase);
-                return;
+                _attackProgress += Time.deltaTime;
+                yield return null;
             }
             
-            _zombie.elapsedAttack += Time.fixedDeltaTime;
-            if (_zombie.elapsedAttack >= _zombie.AttackCooldown)
-            {
-                _movementController.RotateTo(_targetDetector.DetectedTarget);
-                _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _zombie.Damage);
-                
-                var rand =  new System.Random();
-                // if (rand.Next(0, 2) == 0)
-                // {
-                //     _animator.SetTrigger("attack1");
-                // }
-                // else
-                // {
-                //     _animator.SetTrigger("attack2");
-                // }
-                
-                _zombie.elapsedAttack = 0f;
-            }
+            _movementController.RotateTo(_targetDetector.DetectedTarget);
+            _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _zombie.Damage);
+            
+            var rand =  new System.Random();
+            // if (rand.Next(0, 2) == 0)
+            // {
+            //     _animator.SetTrigger("attack1");
+            // }
+            // else
+            // {
+            //     _animator.SetTrigger("attack2");
+            // }
+            
+            _attackProgress = 0f;
+            StateMachine.ChangeState(_zombie.ZombieChase);
         }
         
         public override void Exit()

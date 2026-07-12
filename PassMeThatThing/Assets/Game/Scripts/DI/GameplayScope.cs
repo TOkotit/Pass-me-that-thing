@@ -20,12 +20,18 @@ namespace DI
     {
         public static IObjectResolver Resolver { get; private set; }
         
-        [SerializeField] ItemDatabase itemDatabase;
-        [SerializeField] GameEventsDatabase gameEventsDatabase;
+        [Header("Databases")]
+        [SerializeField] private ItemDatabase itemDatabase;
+        [SerializeField] private GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
+        [SerializeField] private BuildingsDatabase buildingDatabase;
+        [SerializeField] private TurretDatabase turretDatabase;
+        
+        [Header("Managers on gameplay scene")]
         [SerializeField] private GameRandomEventManager eventManagerPrefab;
         [SerializeField] private GlobalStageManager globalStageManagerPrefab;
         [SerializeField] private EnemySpawner enemySpawnerPrefab;
+        [SerializeField] private BuildingManager buildingManagerPrefab;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -34,12 +40,15 @@ namespace DI
             builder.RegisterInstance(itemDatabase);
             builder.RegisterInstance(gameEventsDatabase);
             builder.RegisterInstance(enemyDatabase);
+            builder.RegisterInstance(buildingDatabase);
+            builder.RegisterInstance(turretDatabase);
 
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
             builder.RegisterComponent(eventManagerPrefab);
             builder.RegisterComponent(globalStageManagerPrefab);
             builder.RegisterComponent(enemySpawnerPrefab);
+            builder.RegisterComponent(buildingManagerPrefab);
             
             var damageSystem = new DamageSystem();
             builder.RegisterInstance(damageSystem);
@@ -53,7 +62,7 @@ namespace DI
             var damagableRegistry = new DamagableRegistry();
             builder.RegisterInstance(damagableRegistry);
 
-            var enemyTargetsRegistry = new EnemyTargetsRegistry();
+            var enemyTargetsRegistry = new TargetsRegistry();
             builder.RegisterInstance(enemyTargetsRegistry);
             
             var interactableRegistry = new InteractableRegistry();
@@ -66,6 +75,7 @@ namespace DI
             builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
             
             builder.Register<MCLocalModel>(Lifetime.Singleton);
+            builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
