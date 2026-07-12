@@ -11,6 +11,7 @@ using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using Systems;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -48,6 +49,7 @@ namespace Game.Scripts.GameFiles.Items
 
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController PhysicalItemInteractionController => _physicalItemInteractionController;
+        
 
         [Inject]
         private void Construct(GameInputManager gameInputManager,
@@ -294,14 +296,14 @@ namespace Game.Scripts.GameFiles.Items
                 if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned && 
                     PhysicalItemInteractionController.CurrentHeldItem.DoActAndSwing)
                 {
-                    SwingAttackCoroutine();
+                    CmdSwing();
                 }
             }
             else
             {
                 if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
                 {
-                    SwingAttackCoroutine();
+                    CmdSwing();
                 }
             }
             
@@ -310,21 +312,24 @@ namespace Game.Scripts.GameFiles.Items
         private void onActCanceled(InputAction.CallbackContext context)
         {
         }
-
-        private void SwingAttackCoroutine()
+        [Command]
+        private void CmdSwing()
         {
-            if (Time.time - lastSwingTime < swingCooldown)
-                return;
-
-            lastSwingTime = Time.time;
-            var controller = _physicalItemInteractionController;
-            var item = controller.CurrentHeldItem;
+            var item = _physicalItemInteractionController.CurrentHeldItem;
+            item.transform.localScale = Vector3.one;
+            if (Time.time - lastSwingTime < swingCooldown) return;
             if (!item) return;
 
-            
-
-            //yield return new WaitForSeconds(swingDuration);
+            lastSwingTime = Time.time;
+            RpcSwing(item);
         }
+
+        [ClientRpc]
+        private void RpcSwing(PhysicalItem item)
+        {
+            _physicalItemInteractionController.TriggerSwing();
+        }
+
         
         private void SelectSlot(int index)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using DI;
 using Entity;
 using Game.Entity;
@@ -20,9 +21,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private float strength;
         [SerializeField] private MainCharacterMovement movement;
+        [SerializeField] private Animator pivotAnimator;
         private HandsMovement _handsMovement;
+        private float _swingDuration;
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
+        public Animator PivotAnimator => pivotAnimator;
         
 
         public override void OnStartLocalPlayer()
@@ -33,6 +37,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
+            var swingClip = pivotAnimator.runtimeAnimatorController.animationClips
+                .FirstOrDefault(clip => clip.name == "Swing");
+            if (swingClip)
+                _swingDuration = swingClip.length;
         }
 
         private void InjectSelf()
@@ -137,6 +145,20 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem.Rigidbody.MovePosition(position);
                 _heldItem.Rigidbody.MoveRotation(rotation);
             }
+        }
+        
+        public void TriggerSwing()
+        {
+            if (pivotAnimator)
+                pivotAnimator.SetTrigger("Swing");
+            HandsMovement.FixGrab();
+            StartCoroutine(StopHolding());
+        }
+        
+        private IEnumerator StopHolding()
+        {
+            yield return new WaitForSeconds(1);
+            HandsMovement.ReleaseGrab();
         }
     }
 }
