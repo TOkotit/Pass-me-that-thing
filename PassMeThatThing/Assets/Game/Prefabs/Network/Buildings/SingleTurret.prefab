@@ -9,13 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3593213558545181655}
+  - component: {fileID: 3572620399232027652}
   - component: {fileID: 7207250266534300093}
   - component: {fileID: 2138010185210046695}
   - component: {fileID: -4990713603865359710}
   - component: {fileID: 1716954208764301076}
   - component: {fileID: 637298468266342329}
   - component: {fileID: 5235129960023423001}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SingleTurret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,6 +39,27 @@ Transform:
   - {fileID: 4736058705384372991}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3572620399232027652
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5751345894273795059}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2.02, z: 1}
+  m_Center: {x: 0, y: 1.39, z: 0}
 --- !u!114 &7207250266534300093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4736058705384372991}
   - component: {fileID: 6552646445704832505}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: TurretView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -335,6 +357,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallTurret
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d0f8ea9abac5d184b9bdeae012c99d13, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -396,6 +422,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 01ba7a698f0934748963d090969f328e, type: 3}
       propertyPath: m_Name
       value: BottomTurret
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 01ba7a698f0934748963d090969f328e, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

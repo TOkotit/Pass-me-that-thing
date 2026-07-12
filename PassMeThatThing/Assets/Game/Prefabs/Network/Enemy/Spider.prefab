@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 1931763817442211047}
   - component: {fileID: 8780573388070845451}
   - component: {fileID: 5475941992780067928}
+  - component: {fileID: -7848420249468526302}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -339,6 +340,21 @@ MonoBehaviour:
   nonPhysicalMultiplier: 0.3
   nonPhysicalTresholdMultiplier: 20
   _damagable: {fileID: 1649528348939832622}
+--- !u!114 &-7848420249468526302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagable: {fileID: 1649528348939832622}
+  priority: 0
+  damagableType: 1
 --- !u!1001 &5479402048584124174
 PrefabInstance:
   m_ObjectHideFlags: 0

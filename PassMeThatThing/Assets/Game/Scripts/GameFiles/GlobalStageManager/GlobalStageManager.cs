@@ -60,7 +60,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             if (_currentGameStage == GlobalStagesType.Fight)
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
-                _enemySpawner.SpawnWave(1, _enemyDatabase.GetEnemy("zombie"));
+                _enemySpawner.SpawnWave(1, _enemyDatabase.GetEnemy("spider"));
             }
             else if (_currentGameStage == GlobalStagesType.Preparation)
             {

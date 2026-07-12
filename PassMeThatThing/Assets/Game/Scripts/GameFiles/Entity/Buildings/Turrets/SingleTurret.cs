@@ -45,7 +45,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            
+            Debug.Log($"[Single Turret] OnHealthChanged {currentHealth} / {maxHealth}");
         }
     }
 }
