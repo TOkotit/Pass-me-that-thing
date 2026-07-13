@@ -1,3 +1,4 @@
+using Game.Scripts.GameFiles.Items;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ItemData", menuName = "Scriptable Objects/ItemData")]
@@ -5,7 +6,7 @@ public class ItemData : ScriptableObject
 {
     [SerializeField] private string id; 
     [SerializeField] private string itemName;
-    [SerializeField] private GameObject worldPrefab; 
+    [SerializeField] private GameObject worldPrefab;
     [SerializeField] private Sprite itemImage;
     [SerializeField] private bool isStackable;
 

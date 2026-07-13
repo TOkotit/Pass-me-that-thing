@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using DI;
 using Entity;
 using Game.Entity;
@@ -20,13 +21,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private float strength;
         [SerializeField] private MainCharacterMovement movement;
+        [SerializeField] private Animator pivotAnimator;
         private HandsMovement _handsMovement;
+        private float _swingDuration;
         public Rigidbody Pivot => _handsMovement.Pivot;
         public HandsMovement HandsMovement => _handsMovement;
+        public Animator PivotAnimator => pivotAnimator;
         
-        private bool _alignment = true; 
-        public void DisableAlignment() => _alignment = false;
-        public void EnableAlignment() => _alignment = true;
 
         public override void OnStartLocalPlayer()
         {
@@ -36,6 +37,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
+            var swingClip = pivotAnimator.runtimeAnimatorController.animationClips
+                .FirstOrDefault(clip => clip.name == "Swing");
+            if (swingClip)
+                _swingDuration = swingClip.length;
         }
 
         private void InjectSelf()
@@ -142,33 +147,18 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
         
-        private void FixedUpdate()
+        public void TriggerSwing()
         {
-            if (_heldItem && _heldItem.HasToBeAligned && _alignment)
-            {
-                var rb = _heldItem.Rigidbody;
-                var targetRotation = Pivot.rotation;
-                var desiredRotation = targetRotation;
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, desiredRotation, 360f * Time.fixedDeltaTime));
-            }
+            if (pivotAnimator)
+                pivotAnimator.SetTrigger("Swing");
+            HandsMovement.FixGrab();
+            StartCoroutine(StopHolding());
         }
-        [Command]
-        public void CmdApplySwingImpulse(Vector3 force, Vector3 torque, float duration)
+        
+        private IEnumerator StopHolding()
         {
-            if (_heldItem)
-            {
-                var rb = _heldItem.Rigidbody;
-                rb.AddForce(force, ForceMode.Impulse);
-                rb.AddTorque(torque, ForceMode.Impulse);
-                StartCoroutine(ServerTempDisableAlignment(duration));
-            }
-        }
-
-        private IEnumerator ServerTempDisableAlignment(float duration)
-        {
-            _alignment = false;
-            yield return new WaitForSeconds(duration);
-            _alignment = true;
+            yield return new WaitForSeconds(1);
+            HandsMovement.ReleaseGrab();
         }
     }
 }

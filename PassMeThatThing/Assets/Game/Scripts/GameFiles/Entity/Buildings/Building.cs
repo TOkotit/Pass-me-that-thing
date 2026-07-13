@@ -18,6 +18,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             BuildingModel = new BuildingModel();
         }
 
+        public new void Start()
+        {
+            base.Start();
+            
+            if (isServer)
+            {
+                ServerSetMaxHealth(BuildingData.maxHealth, true); //SO
+            }
+        }
+
         public override void OnDeath()
         {
             

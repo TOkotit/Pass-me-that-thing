@@ -20,6 +20,12 @@ public static class LMBReactionFactory
             return createFunc(item);
         }
 
+        if (id.Contains("blueprint"))
+        {
+            var buildingId = id.Substring(id.IndexOf("_", StringComparison.Ordinal) + 1); 
+            return new LMBBlueprint(item, buildingId);
+        }
+        
         Debug.LogWarning($"no Reaction ID {id}");
         return null;
     }

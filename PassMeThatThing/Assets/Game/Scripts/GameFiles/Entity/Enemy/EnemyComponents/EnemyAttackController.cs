@@ -27,7 +27,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnStartServer();
             
-            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor");
+            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor", "Building");
             
             if (attackCubeCenter == null) 
                 attackCubeCenter = transform;

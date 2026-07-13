@@ -113,7 +113,7 @@ public class PlayerInventory : NetworkBehaviour
         _physicalСontroller.ServerClearHeldItem();
 
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
+        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId, value.instanceId);
 
         itemToDrop.transform.position = pointToSpawn;
         NetworkServer.Spawn(itemToDrop, connectionToClient);
@@ -249,7 +249,12 @@ public class PlayerInventory : NetworkBehaviour
 
         if (targetSlot == -1) return; 
 
-        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+        ServerInventory[targetSlot] = new ItemSlot
+        {
+            itemId = networkItem.itemId, 
+            instanceId =  networkItem.instanceId,
+            amount = 1
+        };
 
         if (_physicalСontroller.CurrentHeldItem)
         {

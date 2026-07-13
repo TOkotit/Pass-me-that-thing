@@ -11,5 +11,5 @@ public class BuildingData : ScriptableObject
     public Sprite buildingImage;
     
     [Header("Building Stats")]
-    public string maxHealth;
+    public int maxHealth;
 }

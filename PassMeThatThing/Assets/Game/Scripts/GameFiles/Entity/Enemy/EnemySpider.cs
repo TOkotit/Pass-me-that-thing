@@ -22,6 +22,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public float Speed => _spiderData.Speed;
         public float Damage => _spiderData.Damage;
         
+        public int MaxHealth => _spiderData.MaxHealth;
+        public int MaxToughness => _spiderData.MaxToughness;
+        
         public SpiderWalk SpiderWalk { get; private set; }
         
         public SpiderFindPlace SpiderFindPlace { get; private set; }
@@ -53,6 +56,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             SpiderKnockout =  new SpiderKnockout(this, stateMachine);
             
             stateMachine.Initialize(SpiderWalk);
+        }
+        public new void Start()
+        {
+            base.Start();
+            
+
+            if (isServer)
+            {
+                ServerSetMaxHealth(MaxHealth, true);
+                ServerSetMaxToughness(MaxToughness, true);
+            }
         }
 
         public override void OnDeath()

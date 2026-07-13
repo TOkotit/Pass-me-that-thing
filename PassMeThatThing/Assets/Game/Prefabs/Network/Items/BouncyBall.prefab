@@ -332,7 +332,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5031090718427985219}
   - component: {fileID: 4148584938486581542}
-  - component: {fileID: 8940521067843904004}
   m_Layer: 7
   m_Name: LeftPoint
   m_TagString: Untagged
@@ -378,26 +377,10 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!138 &8940521067843904004
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861903026031687481}
-  serializedVersion: 1
-  m_ConnectedBody: {fileID: 2895375629803461582}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1 &7947395732481399022
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,7 +391,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4239797923456393158}
   - component: {fileID: 2246748457532824167}
-  - component: {fileID: 72819795994787760}
   m_Layer: 7
   m_Name: RightPoint
   m_TagString: Untagged
@@ -454,26 +436,10 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!138 &72819795994787760
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7947395732481399022}
-  serializedVersion: 1
-  m_ConnectedBody: {fileID: 2895375629803461582}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1001 &3108936633465212395
 PrefabInstance:
   m_ObjectHideFlags: 0

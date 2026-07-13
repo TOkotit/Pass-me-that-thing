@@ -11,6 +11,7 @@ using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using Systems;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -39,15 +40,16 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1f;
         [Header("Swing Attack")]
-        [SerializeField] private float swingForce = 5f;
-        [SerializeField] private float swingTorque = 10f;
-        [SerializeField] private float swingDuration = 0.2f;
+        //[SerializeField] private float swingForce = 5f;
+        //[SerializeField] private float swingTorque = 10f;
+        //[SerializeField] private float swingDuration = 0.2f;
         [SerializeField] private float swingCooldown = 0.8f;
 
         private float lastSwingTime = -999f;
 
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController PhysicalItemInteractionController => _physicalItemInteractionController;
+        
 
         [Inject]
         private void Construct(GameInputManager gameInputManager,
@@ -294,14 +296,14 @@ namespace Game.Scripts.GameFiles.Items
                 if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned && 
                     PhysicalItemInteractionController.CurrentHeldItem.DoActAndSwing)
                 {
-                    StartCoroutine(SwingAttackCoroutine());
+                    CmdSwing();
                 }
             }
             else
             {
                 if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
                 {
-                    StartCoroutine(SwingAttackCoroutine());
+                    CmdSwing();
                 }
             }
             
@@ -310,31 +312,25 @@ namespace Game.Scripts.GameFiles.Items
         private void onActCanceled(InputAction.CallbackContext context)
         {
         }
-
-        private IEnumerator SwingAttackCoroutine()
+        [Command]
+        private void CmdSwing()
         {
-            if (Time.time - lastSwingTime < swingCooldown)
-                yield break;
+            var item = _physicalItemInteractionController.CurrentHeldItem;
+            item.transform.localScale = Vector3.one;
+            if (Time.time - lastSwingTime < swingCooldown) return;
+            if (!item) return;
 
             lastSwingTime = Time.time;
-
-            var controller = _physicalItemInteractionController;
-            var item = controller.CurrentHeldItem;
-            if (!item) yield break;
-
-            controller.DisableAlignment();
-
-            var forward = _camera.transform.forward;
-            var right = _camera.transform.right;
-            var force = forward * swingForce;
-            var torque = right * swingTorque;
-
-            controller.CmdApplySwingImpulse(force, torque, swingDuration);
-
-            yield return new WaitForSeconds(swingDuration);
-            controller.EnableAlignment();
+            RpcSwing(item);
         }
 
+        [ClientRpc]
+        private void RpcSwing(PhysicalItem item)
+        {
+            _physicalItemInteractionController.TriggerSwing();
+        }
+
+        
         private void SelectSlot(int index)
         {
             if (_physicalItemInteractionController.CurrentHeldItem && !_physicalItemInteractionController.CurrentHeldItem.CanBeOwned)

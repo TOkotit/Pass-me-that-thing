@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 886647946110226863}
   - component: {fileID: 7711383415956271931}
-  - component: {fileID: 6100516883498356398}
   m_Layer: 0
   m_Name: universalPoint
   m_TagString: Untagged
@@ -56,26 +55,10 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!138 &6100516883498356398
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6444915490733721969}
-  serializedVersion: 1
-  m_ConnectedBody: {fileID: 8017386652393745044}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1 &8955384447202622732
 GameObject:
   m_ObjectHideFlags: 0

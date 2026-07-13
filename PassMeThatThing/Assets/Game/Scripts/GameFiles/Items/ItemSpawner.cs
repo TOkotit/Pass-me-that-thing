@@ -32,7 +32,7 @@ namespace Game.Scripts.GameFiles.Items
             _physicalItemRegistry.Register(itemToDrop.GetComponent<PhysicalItem>());
             NetworkServer.Spawn(itemToDrop);
 
-            RpcInteractWithObject();
+            //RpcInteractWithObject();
         }
 
         [ClientRpc]
