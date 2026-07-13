@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Scripts.Enums;
 using UnityEngine;
 
@@ -23,65 +24,50 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var originalPos = originalPlates[i].localPosition;
                 var plateRef = originalPlates[i].plate;
 
-                var newPos = RotateGridPosition(originalPos, rotation);
+                var newPos = RotateVector(originalPos, rotation);
+                var doors = new List<VirtualDoor>();
 
-                var n = plateRef.ConnectionNorth;
-                var e = plateRef.ConnectionEast;
-                var s = plateRef.ConnectionSouth;
-                var w = plateRef.ConnectionWest;
-
-                RoomsConnectionTypes newN = n, newE = e, newS = s, newW = w;
-
-                switch (rotation)
-                {
-                    case RoomRotation.Deg90:
-                        newN = w; 
-                        newE = n; 
-                        newS = e; 
-                        newW = s;
-                        break;
+                if (plateRef.ConnectionNorth != RoomsConnectionTypes.None)
+                    doors.Add(CreateDoor(Vector3Int.forward, plateRef.ConnectionNorth, rotation));
                     
-                    case RoomRotation.Deg180:
-                        newN = s; 
-                        newE = w; 
-                        newS = n; 
-                        newW = e;
-                        break;
+                if (plateRef.ConnectionEast != RoomsConnectionTypes.None)
+                    doors.Add(CreateDoor(Vector3Int.right, plateRef.ConnectionEast, rotation));
                     
-                    case RoomRotation.Deg270:
-                        newN = e; 
-                        newE = s; 
-                        newS = w; 
-                        newW = n;
-                        break;
-                }
+                if (plateRef.ConnectionSouth != RoomsConnectionTypes.None)
+                    doors.Add(CreateDoor(Vector3Int.back, plateRef.ConnectionSouth, rotation));
+                    
+                if (plateRef.ConnectionWest != RoomsConnectionTypes.None)
+                    doors.Add(CreateDoor(Vector3Int.left, plateRef.ConnectionWest, rotation));
 
                 rotatedPlates[i] = new VirtualPlateData
                 {
                     LocalPosition = newPos,
-                    ConnectionNorth = newN,
-                    ConnectionEast = newE,
-                    ConnectionSouth = newS,
-                    ConnectionWest = newW
+                    Doors = doors
                 };
             }
 
             return rotatedPlates;
         }
         
-        private static Vector3Int RotateGridPosition(Vector3Int position, RoomRotation rotation)
+        private static VirtualDoor CreateDoor(Vector3Int localDir, RoomsConnectionTypes type, RoomRotation rotation)
+        {
+            return new VirtualDoor
+            {
+                LocalDirection = localDir,
+                GlobalDirection = RotateVector(localDir, rotation),
+                Type = type
+            };
+        }
+        
+        private static Vector3Int RotateVector(Vector3Int vector, RoomRotation rotation)
         {
             return rotation switch
             {
-                RoomRotation.Deg0 => position,
-                
-                RoomRotation.Deg90 => new Vector3Int(position.z, position.y, -position.x),
-                
-                RoomRotation.Deg180 => new Vector3Int(-position.x, position.y, -position.z),
-                
-                RoomRotation.Deg270 => new Vector3Int(-position.z, position.y, position.x),
-                
-                _ => position
+                RoomRotation.Deg0 => vector,
+                RoomRotation.Deg90 => new Vector3Int(vector.z, vector.y, -vector.x),
+                RoomRotation.Deg180 => new Vector3Int(-vector.x, vector.y, -vector.z),
+                RoomRotation.Deg270 => new Vector3Int(-vector.z, vector.y, vector.x),
+                _ => vector
             };
         }
     }

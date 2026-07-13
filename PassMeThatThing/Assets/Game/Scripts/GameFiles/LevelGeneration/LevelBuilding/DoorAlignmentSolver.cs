@@ -13,35 +13,25 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var rotation = (RoomRotation)i;
                 var rotatedPlates = RoomRotationHelper.GetRotatedPlates(newRoom, rotation);
-                
                 var targetPlate = rotatedPlates[newRoomPlateIndex];
                 
-                var plateDir = GetPlateDirection(targetPlate);
-
-                if (existingDirection + plateDir == Vector3Int.zero)
+                foreach (var door in targetPlate.Doors)
                 {
-                    var calculatedOrigin = targetConnectionPoint - targetPlate.LocalPosition;
-
-                    return new AlignmentResult
+                    if (existingDirection + door.GlobalDirection == Vector3Int.zero)
                     {
-                        Success = true,
-                        Rotation = rotation,
-                        Origin = calculatedOrigin
-                    };
+                        var calculatedOrigin = targetConnectionPoint - targetPlate.LocalPosition;
+
+                        return new AlignmentResult
+                        {
+                            Success = true,
+                            Rotation = rotation,
+                            Origin = calculatedOrigin
+                        };
+                    }
                 }
             }
 
             return new AlignmentResult { Success = false };
-        }
-        
-        private static Vector3Int GetPlateDirection(VirtualPlateData plate)
-        {
-            if (plate.ConnectionNorth != RoomsConnectionTypes.None) return Vector3Int.forward;
-            if (plate.ConnectionSouth != RoomsConnectionTypes.None) return Vector3Int.back;
-            if (plate.ConnectionEast != RoomsConnectionTypes.None) return Vector3Int.right;
-            if (plate.ConnectionWest != RoomsConnectionTypes.None) return Vector3Int.left;
-            
-            return Vector3Int.zero;
         }
     }
 }

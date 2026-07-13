@@ -84,7 +84,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
                     
                     worldPos.y -= cellSize.y * 0.5f; 
                     
-                    Gizmos.DrawCube(worldPos, cubeSize);
+                    Gizmos.DrawWireCube(worldPos, cubeSize);
                 }
             }
         }

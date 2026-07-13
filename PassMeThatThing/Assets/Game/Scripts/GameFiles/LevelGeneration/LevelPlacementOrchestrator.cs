@@ -17,151 +17,337 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     public class PlacedRoomData
     {
         public LevelRoom Instance;
-        public List<ConnectionPoint> FreeConnections = new List<ConnectionPoint>();
-        
-        // НОВОЕ: Запоминаем, какие клетки заняла комната, чтобы можно было её чисто удалить
-        public List<Vector3Int> OccupiedCells = new List<Vector3Int>();
+        public LevelRoom Prefab;
+        public List<ConnectionPoint> FreeConnections = new();
+        public List<Vector3Int> OccupiedCells = new();
     }
 
     public class LevelPlacementOrchestrator : MonoBehaviour
     {
-        [Header("Ссылки на компоненты")]
         [SerializeField] private RoomDatabase roomDatabase;
         [SerializeField] private LevelGrid levelGrid;
         [SerializeField] private Transform levelContainer;
 
-        private Dictionary<RoomNode, PlacedRoomData> _placedRooms = new Dictionary<RoomNode, PlacedRoomData>();
-        private System.Random _random = new System.Random();
+        private Dictionary<RoomNode, PlacedRoomData> _placedRooms = new();
+        private Dictionary<LevelRoom, int> _prefabUsage = new();
+        private System.Random _random = new();
+
+        // --------------------------------------------------
+        // Старт
+        // --------------------------------------------------
+
+
 
         public void GeneratePhysicalLevel(RoomNode hubNode)
         {
+            LogLogicalGraphStatistics(hubNode);
+            
             levelGrid.ClearGrid();
             _placedRooms.Clear();
+            _prefabUsage.Clear();
 
             if (levelContainer != null)
             {
-                foreach (Transform child in levelContainer) Destroy(child.gameObject);
+                for (var i = levelContainer.childCount - 1; i >= 0; i--)
+                {
+                    var child = levelContainer.GetChild(i).gameObject;
+                    if (Application.isPlaying) Destroy(child);
+                    else DestroyImmediate(child);
+                }
             }
 
-            PlaceHub(hubNode);
+            Debug.Log($"================ СТАРТ ГЕНЕРАЦИИ ================");
 
-            // Очередь теперь хранит пару: (Узел для размещения, Ожидаемый Родитель)
-            var queue = new Queue<(RoomNode Node, RoomNode Parent)>();
+            var spineOrder = GetSpineBuildOrder(hubNode);
+            Debug.Log($"[BuildOrder] Узлов хребта: {spineOrder.Count}");
+    
+            foreach (var step in spineOrder)
+            {
+                if (step.Node.Type == RoomType.Hub)
+                {
+                    if (!PlaceHub(step.Node)) 
+                    {
+                        Debug.LogError("[КРИТИЧЕСКИЙ СБОЙ] Не удалось разместить Hub.");
+                        return;
+                    }
+                    continue;
+                }
+
+                if (!ExecuteSpinePlacementPipeline(step.Node, step.Parent))
+                {
+                    Debug.LogError($"[КРИТИЧЕСКИЙ СБОЙ] Хребет разорван на узле ID {step.Node.NodeId}. Генерация прервана.");
+                    return; 
+                }
+            }
+
+            GenerateSideRooms(hubNode);
+
+            Debug.Log("<color=green>succses</color>");
+        }
+
+        private void LogLogicalGraphStatistics(RoomNode hubNode)
+        {
+            var allNodes = new List<RoomNode>();
+            var queue = new Queue<RoomNode>();
             var visited = new HashSet<RoomNode>();
-            
+
+            queue.Enqueue(hubNode);
             visited.Add(hubNode);
 
-            foreach (var child in hubNode.ConnectedNodes)
+            while (queue.Count > 0)
             {
-                queue.Enqueue((child, hubNode));
+                var current = queue.Dequeue();
+                allNodes.Add(current);
+                foreach (var conn in current.ConnectedNodes)
+                {
+                    if (visited.Add(conn)) queue.Enqueue(conn);
+                }
+            }
+
+            var eventNodes = allNodes.Where(n => n.Type == RoomType.Event).ToList();
+    
+            Debug.Log($"<color=red>[DIAGNOSTIC GRAPH] Логический граф: всего узлов {allNodes.Count}, ивентов {eventNodes.Count}");
+    
+            foreach (var ev in eventNodes)
+            {
+                var eventType = ev.EventData != null ? ev.EventData.EventType.ToString() : "NULL_DATA";
+                Debug.Log($"<color=red>[DIAGNOSTIC GRAPH] Event ID: {ev.NodeId} | Type: {eventType}");
+            }
+        }
+
+        // --------------------------------------------------
+        // Генерация хребта
+        // --------------------------------------------------
+
+
+
+        private List<(RoomNode Node, RoomNode Parent)> GetSpineBuildOrder(RoomNode hubNode)
+        {
+            var spineSequence = new List<(RoomNode Node, RoomNode Parent)>
+            {
+                (hubNode, null)
+            };
+            
+            var current = hubNode;
+
+            while (true)
+            {
+                var nextSpineNode = current.ConnectedNodes.FirstOrDefault(n => 
+                    (n.Type == RoomType.Defense || n.Type == RoomType.Exit) && 
+                    !spineSequence.Any(x => x.Node == n));
+
+                if (nextSpineNode == null) 
+                    break; 
+
+                spineSequence.Add((nextSpineNode, current));
+                current = nextSpineNode;
+            }
+
+            return spineSequence;
+        }
+
+        private bool PlaceHub(RoomNode hubNode)
+        {
+            var requiredDoors = hubNode.ConnectedNodes.Count;
+            var candidates = roomDatabase.GetSuitableRooms(hubNode.Type, requiredDoors, null, false);
+            
+            if (candidates == null || candidates.Count == 0)
+            {
+                Debug.LogError($"[КРИТИЧЕСКАЯ ОШИБКА] Не найдено подходящей комнаты для типа Hub. Требуется дверей: {requiredDoors}.");
+                return false;
+            }
+
+            var prefab = candidates[_random.Next(candidates.Count)];
+            InstantiateAndRegisterRoom(hubNode, prefab, Vector3Int.zero, RoomRotation.Deg0);
+            return true;
+        }
+
+        private bool ExecuteSpinePlacementPipeline(RoomNode nodeToPlace, RoomNode designatedParent)
+        {
+            if (!_placedRooms.ContainsKey(designatedParent)) return false;
+
+            var parentData = _placedRooms[designatedParent];
+            return TryPlaceRoom(nodeToPlace, parentData, false, true);
+        }
+
+
+
+        // --------------------------------------------------
+        // Генерация боковых комнат
+        // --------------------------------------------------
+
+
+
+        private void GenerateSideRooms(RoomNode hubNode)
+        {
+            var sideRoomsOrder = GetPrioritizedSideRoomsOrder(hubNode);
+            var postponedEvents = new List<RoomNode>();
+
+            foreach (var step in sideRoomsOrder)
+            {
+                var node = step.Node;
+                var parent = step.Parent;
+                bool isEvent = node.Type == RoomType.Event;
+                
+                if (!_placedRooms.ContainsKey(parent)) continue;
+
+                bool success = TryPlaceRoom(node, _placedRooms[parent], false, false);
+                
+                if (!success)
+                {
+                    if (isEvent)
+                    {
+                        Debug.LogWarning($"[SideRooms] Ивент ID {node.NodeId} отложен на конец.");
+                        postponedEvents.Add(node);
+                    }
+                    else
+                    {
+                        success = TryPlaceGlobal(node, false, false);
+                        if (!success) Debug.LogWarning($"[ПРОПУСК] Боковая комната ID {node.NodeId} отброшена.");
+                    }
+                }
+            }
+
+            foreach (var eventNode in postponedEvents)
+            {
+                if (TryPlaceGlobal(eventNode, true, false)) continue;
+
+                if (TryUpgradeRoomConnectionsAndPlace(eventNode)) continue;
+
+                Debug.LogError($"[КРИТИЧЕСКИЙ СБОЙ] Ивент ID {eventNode.NodeId} не удалось разместить даже после апгрейда комнат.");
+            }
+        }
+        
+        private List<(RoomNode Node, RoomNode Parent)> GetPrioritizedSideRoomsOrder(RoomNode hubNode)
+        {
+            var order = new List<(RoomNode Node, RoomNode Parent)>();
+            var visited = new HashSet<RoomNode>();
+            
+            var spine = GetSpineBuildOrder(hubNode);
+            foreach (var s in spine) visited.Add(s.Node);
+
+            var queue = new List<(RoomNode Node, RoomNode Parent)>();
+
+            foreach (var spineNode in spine.Select(s => s.Node))
+            {
+                foreach (var child in spineNode.ConnectedNodes)
+                {
+                    if (!visited.Contains(child)) queue.Add((child, spineNode));
+                }
             }
 
             while (queue.Count > 0)
             {
-                var item = queue.Dequeue();
-                var childNode = item.Node;
-                var parentNode = item.Parent;
+                queue = queue.OrderByDescending(q => HasEventInSubtree(q.Node, q.Parent)).ToList();
 
-                if (visited.Contains(childNode)) continue;
+                var current = queue[0];
+                queue.RemoveAt(0);
 
-                // Запускаем пайплайн размещения с системой спасения
-                bool success = ExecutePlacementPipeline(childNode, parentNode);
-
-                if (success)
+                if (visited.Add(current.Node))
                 {
-                    visited.Add(childNode);
-                    foreach (var nextChild in childNode.ConnectedNodes)
+                    order.Add(current);
+                    foreach (var child in current.Node.ConnectedNodes)
                     {
-                        if (!visited.Contains(nextChild)) queue.Enqueue((nextChild, childNode));
+                        if (!visited.Contains(child)) queue.Add((child, current.Node));
                     }
                 }
-                else
+            }
+
+            return order;
+        }
+        
+        private bool HasEventInSubtree(RoomNode startNode, RoomNode parent)
+        {
+            if (startNode.Type == RoomType.Event) return true;
+            foreach (var child in startNode.ConnectedNodes)
+            {
+                if (child == parent) continue;
+                if (HasEventInSubtree(child, startNode)) return true;
+            }
+            return false;
+        }
+
+        private bool TryUpgradeRoomConnectionsAndPlace(RoomNode eventNode)
+        {
+            var sacrificeCandidates = _placedRooms
+                .Where(kvp => kvp.Key.Type == RoomType.Regular || kvp.Key.Type == RoomType.Event)
+                .OrderBy(kvp => kvp.Value.FreeConnections.Count)
+                .ToList();
+
+            foreach (var sacrifice in sacrificeCandidates)
+            {
+                var sacrificedNode = sacrifice.Key;
+                int neededDoors = sacrifice.Value.Prefab.TotalDoors + 1; 
+
+                DestroyAndUnregisterRoom(sacrificedNode);
+
+                if (TryPlaceGlobal(sacrificedNode, false, false, neededDoors))
                 {
-                    Debug.LogError($"[КРИТИЧЕСКИЙ СБОЙ] Узел ID {childNode.NodeId} ({childNode.Type}) полностью отброшен. Места нет.");
+                    if (TryPlaceGlobal(eventNode, true, false))
+                    {
+                        Debug.Log($"[Upgrade] Успешно: Комната ID {sacrificedNode.NodeId} заменена на вариант с {neededDoors}+ дверьми. Ивент ID {eventNode.NodeId} размещен.");
+                        return true;
+                    }
+                }
+
+                if (!_placedRooms.ContainsKey(sacrificedNode))
+                {
+                    TryPlaceGlobal(sacrificedNode, true, false);
                 }
             }
+            return false;
         }
 
-        private void PlaceHub(RoomNode hubNode)
+
+
+        // --------------------------------------------------
+        // Остальное
+        // --------------------------------------------------
+
+
+
+        private bool TryPlaceRoom(RoomNode node, PlacedRoomData parentData, bool ignoreDoorCount, bool requireGate, int overrideRequiredDoors = -1)
         {
-            var candidates = roomDatabase.GetSuitableRooms(hubNode.Type, hubNode.ConnectedNodes.Count, null, false);
-            var prefab = candidates[_random.Next(candidates.Count)];
-            InstantiateAndRegisterRoom(hubNode, prefab, Vector3Int.zero, RoomRotation.Deg0);
-        }
-
-        // ==========================================
-        // ПАЙПЛАЙН РАЗМЕЩЕНИЯ И FALLBACK-СИСТЕМА
-        // ==========================================
-        private bool ExecutePlacementPipeline(RoomNode nodeToPlace, RoomNode designatedParent)
-        {
-            bool isEvent = nodeToPlace.Type == RoomType.Event;
-            var parentData = _placedRooms[designatedParent];
-
-            // 1. СТАНДАРТНАЯ ПОПЫТКА (Мягкий матчинг: >= дверей у назначенного родителя)
-            if (TryPlaceRoom(nodeToPlace, parentData, ignoreDoorCount: false)) 
-                return true;
-
-            // --- ЕСЛИ СТАНДАРТНЫЙ ПУТЬ НЕ СРАБОТАЛ ---
-
-            if (!isEvent)
-            {
-                // МЯГКИЙ FALLBACK ДЛЯ ОБЫЧНЫХ КОМНАТ
-                // Ищем ЛЮБУЮ свободную дверь на всем уровне, чтобы прицепить комнату
-                if (TryPlaceGlobal(nodeToPlace, ignoreDoorCount: false)) 
-                    return true;
-                
-                // Если места нет вообще нигде — сдаемся. Обычная комната не критична.
-                Debug.LogWarning($"Обычная комната ID {nodeToPlace.NodeId} пропущена. Нет места.");
-                return false;
-            }
-            else
-            {
-                // АГРЕССИВНЫЙ RESCUE-РЕЖИМ ДЛЯ ИВЕНТОВ
-                Debug.LogWarning($"Запуск Rescue-режима для Ивента ID {nodeToPlace.NodeId}");
-
-                // Шаг А: Дверная релаксация (Берем тупиковый ивент, игнорируем нужду в сквозном проходе)
-                if (TryPlaceRoom(nodeToPlace, parentData, ignoreDoorCount: true)) 
-                    return true;
-
-                // Шаг Б: Глобальный поиск с дверной релаксацией
-                if (TryPlaceGlobal(nodeToPlace, ignoreDoorCount: true)) 
-                    return true;
-
-                // Шаг В: Топологическая рокировка (Swap)
-                // Уничтожаем уже построенную обычную комнату и ставим на её место ивент
-                if (PerformTopologicalSwap(nodeToPlace))
-                    return true;
-
-                return false; // Фатальный сбой (встречается крайне редко)
-            }
-        }
-
-        // ==========================================
-        // ЯДРО РАЗМЕЩЕНИЯ (МАТЕМАТИКА)
-        // ==========================================
-        private bool TryPlaceRoom(RoomNode node, PlacedRoomData parentData, bool ignoreDoorCount)
-        {
-            GameEventsType? eventType = node.Type == RoomType.Event ? node.EventData?.EventType : null;
+            var eventType = node.Type == RoomType.Event ? node.EventData?.EventType : null;
             
-            // Если ignoreDoorCount = true, запрашиваем комнату с минимум 1 дверью (любую этого типа)
-            int requiredDoors = ignoreDoorCount ? 1 : node.ConnectedNodes.Count;
+            var requiredDoors = overrideRequiredDoors > 0 ? overrideRequiredDoors : (ignoreDoorCount ? 1 : node.ConnectedNodes.Count);
+            var candidates = roomDatabase.GetSuitableRooms(node.Type, requiredDoors, eventType, false);            
+            
+            if (candidates == null || candidates.Count == 0) return false;
 
-            var candidates = roomDatabase.GetSuitableRooms(node.Type, requiredDoors, eventType, false)
-                                         .OrderBy(x => _random.Next())
-                                         .ToList();
+            if (node.Type == RoomType.Defense)
+            {
+                candidates = candidates.Where(p => !_prefabUsage.TryGetValue(p, out var count) || count < 2).ToList();
+                if (candidates.Count == 0) return false;
+            }
+
+            candidates = candidates.OrderBy(x => (x.TotalDoors + x.TotalGates)).ToList();
+
+            int poolSize = candidates.Count < 4 ? candidates.Count : 4;
+            if (poolSize > 1)
+            {
+                var topPool = candidates.Take(poolSize).OrderBy(x => _random.Next()).ToList();
+                var remaining = candidates.Skip(poolSize);
+                candidates = topPool.Concat(remaining).ToList();
+            }
+
+            var availableConnections = parentData.FreeConnections;
+            if (requireGate)
+            {
+                availableConnections = availableConnections.Where(c => c.Type == RoomsConnectionTypes.Gate).ToList();
+            }
+
+            if (availableConnections.Count == 0) return false;
 
             foreach (var prefab in candidates)
             {
-                for (int pIndex = 0; pIndex < parentData.FreeConnections.Count; pIndex++)
+                foreach (var parentConn in availableConnections)
                 {
-                    var parentConn = parentData.FreeConnections[pIndex];
-
-                    for (int r = 0; r < 4; r++)
+                    for (var r = 0; r < 4; r++)
                     {
-                        RoomRotation currentRotation = (RoomRotation)r;
+                        var currentRotation = (RoomRotation)r;
                         var virtualPlates = RoomRotationHelper.GetRotatedPlates(prefab, currentRotation);
-
-                        var matchingConn = FindMatchingConnection(virtualPlates, parentConn);
+                        var matchingConn = FindMatchingConnection(virtualPlates, parentConn, requireGate);
 
                         if (matchingConn.HasValue)
                         {
@@ -171,7 +357,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             if (RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, currentRotation, calculatedOrigin))
                             {
                                 var newRoomData = InstantiateAndRegisterRoom(node, prefab, calculatedOrigin, currentRotation);
-                                parentData.FreeConnections.RemoveAt(pIndex);
+                                parentData.FreeConnections.Remove(parentConn);
                                 RemoveUsedConnection(newRoomData, targetGlobalCell, -parentConn.Direction);
                                 return true;
                             }
@@ -179,11 +365,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     }
                 }
             }
+            
             return false;
         }
 
-        // Глобальный поиск: перебирает все УЖЕ размещенные комнаты и пытается пристыковаться к ним
-        private bool TryPlaceGlobal(RoomNode nodeToPlace, bool ignoreDoorCount)
+        private bool TryPlaceGlobal(RoomNode nodeToPlace, bool ignoreDoorCount, bool requireGate, int overrideRequiredDoors = -1)
         {
             var allPlacedNodes = _placedRooms.Keys.OrderBy(x => _random.Next()).ToList();
             
@@ -192,46 +378,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var parentData = _placedRooms[potentialParent];
                 if (parentData.FreeConnections.Count == 0) continue;
 
-                if (TryPlaceRoom(nodeToPlace, parentData, ignoreDoorCount))
+                if (TryPlaceRoom(nodeToPlace, parentData, ignoreDoorCount, requireGate, overrideRequiredDoors))
                 {
-                    Debug.Log($"Узел ID {nodeToPlace.NodeId} пристыкован глобально к узлу ID {potentialParent.NodeId}");
                     return true;
-                }
-            }
-            return false;
-        }
-
-        // ==========================================
-        // ДЕСТРУКТИВНАЯ ЛОГИКА (SWAP)
-        // ==========================================
-        private bool PerformTopologicalSwap(RoomNode eventNodeToPlace)
-        {
-            // Ищем обычную комнату, которую не жалко удалить (предпочтительно тупиковую)
-            var sacrificeCandidates = _placedRooms
-                .Where(kvp => kvp.Key.Type == RoomType.Regular)
-                .OrderBy(kvp => kvp.Value.FreeConnections.Count) // Те, у кого много свободных дверей = тупики (меньше детей)
-                .ToList();
-
-            foreach (var sacrifice in sacrificeCandidates)
-            {
-                var sacrificedNode = sacrifice.Key;
-                var sacrificedData = sacrifice.Value;
-
-                // 1. Полностью удаляем жертву из физического мира и освобождаем сетку
-                DestroyAndUnregisterRoom(sacrificedNode);
-
-                // 2. Теперь место свободно. Пытаемся глобально воткнуть туда наш Ивент
-                // ignoreDoorCount = true, так как нам плевать сколько дверей, лишь бы влез
-                if (TryPlaceGlobal(eventNodeToPlace, ignoreDoorCount: true))
-                {
-                    Debug.LogWarning($"[SWAP] Обычная комната ID {sacrificedNode.NodeId} уничтожена. На её место встал Ивент ID {eventNodeToPlace.NodeId}.");
-                    return true;
-                }
-                else
-                {
-                    // Если даже после удаления ивент не влез (например, форма префаба другая), 
-                    // мы потеряли обычную комнату. Для надежности можно было бы делать бэкап, 
-                    // но так как это Regular комната - потеря не критична.
                 }
             }
             return false;
@@ -241,33 +390,39 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             if (!_placedRooms.TryGetValue(node, out var data)) return;
 
-            // Освобождаем сетку
             foreach (var cell in data.OccupiedCells)
             {
                 levelGrid.SetCellState(cell, false);
             }
 
-            // Уничтожаем объект
             if (data.Instance != null)
             {
                 Destroy(data.Instance.gameObject);
             }
 
+            if (data.Prefab != null && _prefabUsage.ContainsKey(data.Prefab))
+            {
+                _prefabUsage[data.Prefab]--;
+                if (_prefabUsage[data.Prefab] <= 0)
+                {
+                    _prefabUsage.Remove(data.Prefab);
+                }
+            }
+
             _placedRooms.Remove(node);
         }
 
-        // ==========================================
-        // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ (Остались без изменений, кроме OccupiedCells)
-        // ==========================================
         private PlacedRoomData InstantiateAndRegisterRoom(RoomNode node, LevelRoom prefab, Vector3Int origin, RoomRotation rotation)
         {
             var rotationQuaternion = GetRotationQuaternion(rotation);
-            var worldPos = levelGrid.UnityGrid.CellToWorld(origin);
+            var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(origin);
+            var baseWorldPos = levelGrid.UnityGrid.CellToWorld(origin);
+            var worldPos = new Vector3(centerWorldPos.x, baseWorldPos.y, centerWorldPos.z);
 
             var instance = Instantiate(prefab, worldPos, rotationQuaternion, levelContainer);
             instance.name = $"Room_{node.NodeId}_{node.Type}";
 
-            var placedData = new PlacedRoomData { Instance = instance };
+            var placedData = new PlacedRoomData { Instance = instance, Prefab = prefab };
             var virtualPlates = RoomRotationHelper.GetRotatedPlates(prefab, rotation);
 
             foreach (var plate in virtualPlates)
@@ -275,39 +430,58 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var globalPos = origin + plate.LocalPosition;
                 
                 levelGrid.SetCellState(globalPos, true);
-                placedData.OccupiedCells.Add(globalPos); // ЗАПОМИНАЕМ КЛЕТКУ
+                placedData.OccupiedCells.Add(globalPos);
 
                 ExtractConnections(placedData.FreeConnections, plate, globalPos);
             }
+
+            if (!_prefabUsage.ContainsKey(prefab))
+            {
+                _prefabUsage[prefab] = 0;
+            }
+            _prefabUsage[prefab]++;
 
             _placedRooms.Add(node, placedData);
             return placedData;
         }
 
-        private (Vector3Int LocalPosition, RoomsConnectionTypes Type)? FindMatchingConnection(VirtualPlateData[] plates, ConnectionPoint parentConn)
+        private (Vector3Int LocalPosition, RoomsConnectionTypes Type)? FindMatchingConnection(VirtualPlateData[] plates, ConnectionPoint parentConn, bool requireGate)
         {
             var targetDirection = -parentConn.Direction;
+            
             foreach (var plate in plates)
             {
-                if (targetDirection == Vector3Int.forward && plate.ConnectionNorth == parentConn.Type) return (plate.LocalPosition, plate.ConnectionNorth);
-                if (targetDirection == Vector3Int.right && plate.ConnectionEast == parentConn.Type) return (plate.LocalPosition, plate.ConnectionEast);
-                if (targetDirection == Vector3Int.back && plate.ConnectionSouth == parentConn.Type) return (plate.LocalPosition, plate.ConnectionSouth);
-                if (targetDirection == Vector3Int.left && plate.ConnectionWest == parentConn.Type) return (plate.LocalPosition, plate.ConnectionWest);
+                foreach (var door in plate.Doors)
+                {
+                    if (door.GlobalDirection == targetDirection && door.Type == parentConn.Type)
+                    {
+                        if (requireGate && door.Type != RoomsConnectionTypes.Gate)
+                        {
+                            continue;
+                        }
+                        return (plate.LocalPosition, door.Type);
+                    }
+                }
             }
             return null;
         }
 
         private void ExtractConnections(List<ConnectionPoint> list, VirtualPlateData plate, Vector3Int globalPos)
         {
-            if (plate.ConnectionNorth != RoomsConnectionTypes.None) list.Add(new ConnectionPoint { GlobalPosition = globalPos, Direction = Vector3Int.forward, Type = plate.ConnectionNorth });
-            if (plate.ConnectionEast != RoomsConnectionTypes.None) list.Add(new ConnectionPoint { GlobalPosition = globalPos, Direction = Vector3Int.right, Type = plate.ConnectionEast });
-            if (plate.ConnectionSouth != RoomsConnectionTypes.None) list.Add(new ConnectionPoint { GlobalPosition = globalPos, Direction = Vector3Int.back, Type = plate.ConnectionSouth });
-            if (plate.ConnectionWest != RoomsConnectionTypes.None) list.Add(new ConnectionPoint { GlobalPosition = globalPos, Direction = Vector3Int.left, Type = plate.ConnectionWest });
+            foreach (var door in plate.Doors)
+            {
+                list.Add(new ConnectionPoint 
+                { 
+                    GlobalPosition = globalPos, 
+                    Direction = door.GlobalDirection, 
+                    Type = door.Type 
+                });
+            }
         }
 
         private void RemoveUsedConnection(PlacedRoomData roomData, Vector3Int globalPos, Vector3Int direction)
         {
-            for (int i = 0; i < roomData.FreeConnections.Count; i++)
+            for (var i = 0; i < roomData.FreeConnections.Count; i++)
             {
                 var conn = roomData.FreeConnections[i];
                 if (conn.GlobalPosition == globalPos && conn.Direction == direction)

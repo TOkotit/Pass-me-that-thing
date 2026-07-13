@@ -14,7 +14,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         public RoomType RoomType => roomType;
         public GameEventsType EventType => eventType;
-        public int TotalConnections => totalDoors;
+        public int TotalDoors => totalDoors;
         public int TotalGates => totalGates;
         public RoomPlateData[] Plates => plates;
         

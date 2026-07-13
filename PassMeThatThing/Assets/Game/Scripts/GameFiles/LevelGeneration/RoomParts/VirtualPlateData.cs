@@ -1,15 +1,19 @@
+using System.Collections.Generic;
 using Game.Scripts.Enums;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
+    public struct VirtualDoor
+    {
+        public Vector3Int LocalDirection;  
+        public Vector3Int GlobalDirection; 
+        public RoomsConnectionTypes Type;
+    }
+
     public struct VirtualPlateData
     {
         public Vector3Int LocalPosition;
-        
-        public RoomsConnectionTypes ConnectionNorth;
-        public RoomsConnectionTypes ConnectionEast;
-        public RoomsConnectionTypes ConnectionSouth;
-        public RoomsConnectionTypes ConnectionWest;
+        public List<VirtualDoor> Doors;
     }
 }

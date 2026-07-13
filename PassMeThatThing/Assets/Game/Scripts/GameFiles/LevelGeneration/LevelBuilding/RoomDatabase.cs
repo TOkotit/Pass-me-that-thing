@@ -33,10 +33,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var room = targetList[i];
                 if (room == null) continue;
-
+                var totalRoomConnections = room.TotalDoors + room.TotalGates;
                 var connectionsMatch = exactMatch 
-                    ? room.TotalConnections == requiredConnections 
-                    : room.TotalConnections >= requiredConnections;
+                    ? totalRoomConnections == requiredConnections 
+                    : totalRoomConnections >= requiredConnections;
 
                 if (connectionsMatch)
                 {

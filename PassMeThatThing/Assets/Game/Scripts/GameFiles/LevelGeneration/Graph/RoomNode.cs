@@ -9,11 +9,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         public RoomType Type; 
         
-        public EventRoomDefinition EventData; 
+        public EventData EventData; 
         
         public List<RoomNode> ConnectedNodes = new List<RoomNode>();
         
-        public RoomNode(int nodeId, RoomType type, EventRoomDefinition eventData = null)
+        public RoomNode(int nodeId, RoomType type, EventData eventData = null)
         {
             NodeId = nodeId;
             Type = type;
