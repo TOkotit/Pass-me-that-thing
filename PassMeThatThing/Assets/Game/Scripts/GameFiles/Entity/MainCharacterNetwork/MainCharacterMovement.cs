@@ -105,9 +105,7 @@ public class MainCharacterMovement : NetworkBehaviour
         {
             return;
         }
-
-        Debug.LogError($"Impact speed: {impactSpeed} with {collision.gameObject.name}");
-
+        
         if (impactSpeed > 10f)
         {
             var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);

@@ -1,5 +1,6 @@
 
 using System.Collections;
+using AYellowpaper.SerializedCollections;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
@@ -26,7 +27,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private bool hasToBeAligned;
         [SyncVar]
         [SerializeField] private bool _isThrown;
-        
+        [SerializedDictionary] public SerializedDictionary<Resource,int> Resources; 
         private LMBReaction reaction;
         private Outline _outline;
         private CollisionDamageDealer  damageDealer;
