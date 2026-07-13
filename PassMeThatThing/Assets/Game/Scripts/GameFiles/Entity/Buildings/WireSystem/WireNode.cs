@@ -8,6 +8,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
     public class WireNode : Interactable
     {
+        [SerializeField] private LineRenderer lineRenderer;
+        
         [SerializeField] private bool isSplitter;
         [SerializeField] private int splitterConnLimit = 4;
         
@@ -36,6 +38,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         public bool IsSplitter => isSplitter;
         public int SplitterConnLimit => splitterConnLimit;
+
+        public LineRenderer LineRenderer => lineRenderer;
 
         private void Start()
         {

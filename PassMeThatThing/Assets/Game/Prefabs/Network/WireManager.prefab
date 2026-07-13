@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2230909074636060900}
   - component: {fileID: 1809313810766263847}
   - component: {fileID: -3655895077467793825}
+  - component: {fileID: 1892049728524308802}
   m_Layer: 0
   m_Name: WireManager
   m_TagString: Untagged
@@ -65,3 +66,17 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  wireVisualizer: {fileID: 1892049728524308802}
+--- !u!114 &1892049728524308802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152072028900636772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d227024cfc6543e29426d7535739970d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineRendererPrefab: {fileID: 2466102241137719825, guid: 3d347743e16a8e44a889a643e04d5b82, type: 3}

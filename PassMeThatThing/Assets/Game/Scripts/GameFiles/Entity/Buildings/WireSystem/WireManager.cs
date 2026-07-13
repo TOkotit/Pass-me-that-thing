@@ -12,6 +12,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private Dictionary<int, List<int>> nodeConnections = new ();
         
         private Dictionary<int, WireNetModel> wireNets = new ();
+
+        [SerializeField] private WireVisualizer wireVisualizer;
         
         private int _lastNodeIdCounter;
         private int _lastNetIdCounter;
@@ -75,7 +77,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
             else
             {
-                if (nodeConnections[firstNodeId].Count > 2)
+                if (nodeConnections[firstNodeId].Count > 1)
                 {
                     Debug.Log($"[W] LIMIT");
                     return;
@@ -92,7 +94,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
             else
             {
-                if (nodeConnections[secondNodeId].Count > 2)
+                if (nodeConnections[secondNodeId].Count > 1)
                 {
                     Debug.Log($"[W] LIMIT");
                     return;
@@ -107,6 +109,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             
             nodeConnections[firstNodeId].Add(secondNodeId);
             nodeConnections[secondNodeId].Add(firstNodeId);
+
+            RpcDrawNodeLines(firstNodeId, secondNodeId);
             
             if (firstNode.NetId == -1)
             {
@@ -123,7 +127,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 else
                 {
                     //1 to 2.netId
-                    
                     wireNets[secondNode.NetId].AddWireNode(firstNodeId);
                     
                     firstNode.NetId = secondNode.NetId;
@@ -134,7 +137,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 if (secondNode.NetId == -1)
                 {
                     //2 to 1.netId
-                    
                     wireNets[firstNode.NetId].AddWireNode(secondNodeId);
                     
                     secondNode.NetId = firstNode.NetId;
@@ -184,6 +186,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             
             node.NetId = -1;
             
+            RpcClearNodeLines(nodeId);
+            
             PrintDebugInfo();
         }
 
@@ -201,6 +205,20 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                     AttachConnectedToNewWireNet(newWireNetId, connected, nodeId);
             }
         }
+
+        [ClientRpc]
+        public void RpcDrawNodeLines(int firstNodeId, int secondNodeId)
+        {
+            wireVisualizer.DrawNodeLines(allNodes[firstNodeId], allNodes[secondNodeId]);
+        }
+        
+        [ClientRpc]
+        public void RpcClearNodeLines(int nodeId)
+        {
+            wireVisualizer.ClearNodeLines(allNodes[nodeId]);
+        }
+
+        
 
         private void PrintDebugInfo()
         {
