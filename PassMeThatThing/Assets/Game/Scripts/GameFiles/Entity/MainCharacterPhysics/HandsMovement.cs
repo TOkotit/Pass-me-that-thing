@@ -216,22 +216,26 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public void FixGrab()
         {
-            grabJoint.xMotion = ConfigurableJointMotion.Locked;
+            /*grabJoint.xMotion = ConfigurableJointMotion.Locked;
             grabJoint.yMotion = ConfigurableJointMotion.Locked;
             grabJoint.zMotion = ConfigurableJointMotion.Locked;
             grabJoint.angularXMotion = ConfigurableJointMotion.Locked;
             grabJoint.angularYMotion = ConfigurableJointMotion.Locked;
-            grabJoint.angularZMotion = ConfigurableJointMotion.Locked;
+            grabJoint.angularZMotion = ConfigurableJointMotion.Locked;*/
+            
+            pivot.transform.position = new Vector3(0,-0.6f, 0);
         }
 
         public void ReleaseGrab()
         {
+            /*AlignJointToPivot();
             grabJoint.xMotion = ConfigurableJointMotion.Free;
             grabJoint.yMotion = ConfigurableJointMotion.Free;
             grabJoint.zMotion = ConfigurableJointMotion.Free;
             grabJoint.angularXMotion = ConfigurableJointMotion.Free;
             grabJoint.angularYMotion = ConfigurableJointMotion.Free;
-            grabJoint.angularZMotion = ConfigurableJointMotion.Free;
+            grabJoint.angularZMotion = ConfigurableJointMotion.Free;*/
+            pivot.transform.position = new Vector3(0,-0.6f, 1);
         }
         public void ChargeThrow()
         {
