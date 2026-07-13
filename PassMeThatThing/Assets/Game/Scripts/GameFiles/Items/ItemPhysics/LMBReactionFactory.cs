@@ -11,6 +11,7 @@ public static class LMBReactionFactory
             { "wrench", item => new LMBWrench(item) },
             { "flashlight", item => new LMBFlashlight(item) },
             { "wirecutters", item => new LMBWireCutters(item) },
+            { "blueprint",  item => new LMBBlueprint(item) },
         };
 
     public static LMBReaction CreateReaction(string id, PhysicalItem item)
@@ -18,12 +19,6 @@ public static class LMBReactionFactory
         if (Registry.TryGetValue(id, out var createFunc))
         {
             return createFunc(item);
-        }
-
-        if (id.Contains("blueprint"))
-        {
-            var buildingId = id.Substring(id.IndexOf("_", StringComparison.Ordinal) + 1); 
-            return new LMBBlueprint(item, buildingId);
         }
         
         Debug.LogWarning($"no Reaction ID {id}");

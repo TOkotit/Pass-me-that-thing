@@ -35,7 +35,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private NetworkTransformReliable _networkTransform;
         
         private ParticlePoolManager _particlePool;
-        private LocalBuildingHandlerModel _localBuildingHandlerModel;
+
         
         public float Hardness => hardness;
         public int Durability {get => durability; set => durability = value; }
@@ -58,14 +58,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
 
-        public LocalBuildingHandlerModel LocalBuildingHandlerModel => _localBuildingHandlerModel;
+        
         
 
         [Inject]
-        private void Construct(NetworkManager networkManager, LocalBuildingHandlerModel localBuildingHandlerModel)
+        private void Construct(NetworkManager networkManager)
         {
             _particlePool = networkManager.GetComponent<ParticlePoolManager>();
-            _localBuildingHandlerModel = localBuildingHandlerModel;
         }
 
         private void Start()

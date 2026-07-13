@@ -1,21 +1,45 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
     public class LocalWireHandlerModel
     {
-        private WireNode _highlightedNode;
+        private Queue<int> _highlightedNodesId = new ();
 
-        public event Action<WireNode> OnWireNodeHighlighted;
+        public event Action<int> OnWireNodeHighlighted;
+        
+        public event Action<int, int> OnWireNodePairMatched;
+        public event Action<int> OnWireNodeCleared;
 
-        public WireNode CurrentNode
+        public Queue<int> HighlightedNodesId => _highlightedNodesId;
+
+
+        public void HighlightNode(int nodeId)
         {
-            get => _highlightedNode;
-            set
+            Debug.Log($"[W] highlighted node {nodeId}");
+            if (_highlightedNodesId.Contains(nodeId))
             {
-                if (_highlightedNode != value) OnWireNodeHighlighted?.Invoke(value);
-                _highlightedNode = value;
+                _highlightedNodesId.Clear();
+                OnWireNodeCleared?.Invoke(nodeId);
             }
+            else
+            {
+                _highlightedNodesId.Enqueue(nodeId);
+                OnWireNodeHighlighted?.Invoke(nodeId);
+                if (_highlightedNodesId.Count == 2)
+                {
+                    OnWireNodePairMatched?.Invoke(_highlightedNodesId.Dequeue(), _highlightedNodesId.Dequeue());
+                    Debug.Log($"[W] OnWireNodePairMatched?.Invoke");
+                }
+            }
+            
+        }
+
+        public void ClearNode(int nodeId)
+        {
+            OnWireNodeCleared?.Invoke(nodeId);
         }
     }
 }

@@ -13,14 +13,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         
         [Inject] private WireManager _wireManager;
         
-        private LocalWireHandlerModel _handlerModel;
-
-        private bool isHighlighted;
+        [Inject] private LocalWireHandlerModel _handlerModel;
         
         [SyncVar]
         private int _nodeId = -1;
         [SyncVar]
         private int _netId = -1;
+
+        private bool isHighlighted;
 
         public int NodeId
         {
@@ -37,9 +37,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public bool IsSplitter => isSplitter;
         public int SplitterConnLimit => splitterConnLimit;
 
-
         private void Start()
         {
+            _handlerModel.OnWireNodeHighlighted += CheckSelf;
             if (isServer)
             {
                 _wireManager.RegisterNode(this);
@@ -48,15 +48,30 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         private void OnDestroy()
         {
+            _handlerModel.OnWireNodeHighlighted -= CheckSelf;
             if (isServer)
             {
                 _wireManager.UnRegisterNode(NodeId);
             }
         }
 
+        private void CheckSelf(int nodeId)
+        {
+            isHighlighted = nodeId == NodeId;
+        }
+
         public override void Interact()
         {
+            //Debug.Log($"[W] wirenode interact");
             
+            // if (NetId != -1)
+            // {
+            //     _handlerModel.ClearNode(NodeId);
+            // }
+            // else
+            {
+                _handlerModel.HighlightNode(NodeId);
+            }
         }
 
         public override void SrbToggle()

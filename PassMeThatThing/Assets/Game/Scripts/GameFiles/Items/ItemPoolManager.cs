@@ -46,7 +46,7 @@ namespace Game.Scripts.GameFiles.Items
                 if (_poolDict.TryGetValue(networkItem.itemId, out var list))
                 {
                     if (!list.Contains(networkItem)) list.Add(networkItem);
-                    Debug.Log($"[IP] Убрано в пул: {networkItem.itemId} (Экземпляр: {networkItem.instanceId})");
+                    // Debug.Log($"[IP] Убрано в пул: {networkItem.itemId} (Экземпляр: {networkItem.instanceId})");
                 }
             }
         }
@@ -61,13 +61,13 @@ namespace Game.Scripts.GameFiles.Items
                 {
                     selectedObj = list.Find(obj 
                         => obj.instanceId == requiredInstanceId);
-                    Debug.Log($"[IP] GET {id} (Экземпляр: {requiredInstanceId}");
+                    // Debug.Log($"[IP] GET {id} (Экземпляр: {requiredInstanceId}");
                 }
 
                 if (selectedObj == null)
                 {
                     selectedObj = list[0];
-                    Debug.Log($"[IP] GET RANDOM {id}");
+                    // Debug.Log($"[IP] GET RANDOM {id}");
                 }
 
                 list.Remove(selectedObj); 
@@ -85,7 +85,7 @@ namespace Game.Scripts.GameFiles.Items
             {
                 netItem.instanceId = System.Guid.NewGuid().ToString();
             }
-            Debug.Log($"[IP] NEW {netItem.itemId} (Экземпляр: {netItem.instanceId}");
+            // Debug.Log($"[IP] NEW {netItem.itemId} (Экземпляр: {netItem.instanceId}");
             return newObj;
         }
     }
