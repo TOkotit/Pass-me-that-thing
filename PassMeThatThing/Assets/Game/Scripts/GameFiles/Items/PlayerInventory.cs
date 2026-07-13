@@ -85,6 +85,7 @@ public class PlayerInventory : NetworkBehaviour
         }
         _playerInventoryModel.ActiveSlotIndex = activeSlot; 
     }
+    
     [Command]
     public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
     {
@@ -113,7 +114,7 @@ public class PlayerInventory : NetworkBehaviour
         _physicalСontroller.ServerClearHeldItem();
 
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId);
+        var itemToDrop = _itemPoolManager.GetFromPool(value.itemModel.itemId);
 
         itemToDrop.transform.position = pointToSpawn;
         NetworkServer.Spawn(itemToDrop, connectionToClient);
@@ -133,7 +134,7 @@ public class PlayerInventory : NetworkBehaviour
     public void CmdDropItem(int index, float throwForce, bool canThrow)
     {
         var heldItem = _physicalСontroller.CurrentHeldItem;
-        if (heldItem && ServerInventory.TryGetValue(index, out var slot) && slot.itemId == heldItem.Network.itemId)
+        if (heldItem && ServerInventory.TryGetValue(index, out var slot) && slot.itemModel.itemId == heldItem.itemId)
         {
             Vector3 dropPos = heldItem.transform.position;
             Quaternion dropRot = heldItem.transform.rotation;
@@ -159,7 +160,7 @@ public class PlayerInventory : NetworkBehaviour
         int mySlot = -1;
         foreach (var kvp in ServerInventory)
         {
-            if (kvp.Value.itemId == item.Network.itemId)
+            if (kvp.Value.itemModel.itemId == item.itemId)
             {
                 mySlot = kvp.Key;
                 break;
@@ -186,7 +187,7 @@ public class PlayerInventory : NetworkBehaviour
 
         targetInventory.ServerInventory[targetSlot] = new ItemSlot
         {
-            itemId = item.Network.itemId,
+            itemModel = new ItemModel() {itemId = item.itemId},
             amount = 1
         };
 
@@ -202,8 +203,6 @@ public class PlayerInventory : NetworkBehaviour
     private void TryPickUpItemInternal(PhysicalItem physicalItem, int preferredSlot)
     {
         if (!physicalItem) return;
-        var networkItem = physicalItem.Network;
-        if (!networkItem) return;
 
         if (physicalItem.CanBeOwned && physicalItem.Owner)
         {
@@ -216,7 +215,7 @@ public class PlayerInventory : NetworkBehaviour
                 int slotToRemove = -1;
                 foreach (var kvp in oldInventory.ServerInventory)
                 {
-                    if (kvp.Value.itemId == networkItem.itemId)
+                    if (kvp.Value.itemModel.itemId == physicalItem.itemId)
                     {
                         slotToRemove = kvp.Key;
                         break;
@@ -249,7 +248,11 @@ public class PlayerInventory : NetworkBehaviour
 
         if (targetSlot == -1) return; 
 
-        ServerInventory[targetSlot] = new ItemSlot { itemId = networkItem.itemId, amount = 1 };
+        ServerInventory[targetSlot] = new ItemSlot
+        {
+            itemModel = new ItemModel() {itemId = physicalItem.itemId},
+            amount = 1
+        };
 
         if (_physicalСontroller.CurrentHeldItem)
         {

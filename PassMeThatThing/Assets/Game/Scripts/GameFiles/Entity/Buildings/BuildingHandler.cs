@@ -1,4 +1,5 @@
 using System;
+using Game.Gameplay.View.UI;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -13,15 +14,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         [Inject] private LocalBuildingHandlerModel _handlerModel;
         [Inject] private BuildingManager _buildingManager;
+        [Inject] private GameplayUIManager _gameplayUIManager;
         
         private int _currentBuildingIndex;
+        private string _currentBuildingId;
         private bool _preview;
 
         private void Start()
         {
             if (isLocalPlayer)
             {
-                _handlerModel.OnStartBuildPreview += StartBuildingPreview;
+                _handlerModel.OnStartBuildPreviewByIndex += StartBuildingPreviewByIndex;
+                _handlerModel.OnStartBuildPreviewById += StartBuildingPreviewById;
                 _handlerModel.OnConfirmBuildPreview += ConfirmBuilding;
                 _handlerModel.OnCancelBuildPreview += CancelBuildingPreview;
             }
@@ -31,7 +35,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             if (isLocalPlayer)
             {
-                _handlerModel.OnStartBuildPreview -= StartBuildingPreview;
+                _handlerModel.OnStartBuildPreviewByIndex -= StartBuildingPreviewByIndex;
+                _handlerModel.OnStartBuildPreviewById -= StartBuildingPreviewById;
                 _handlerModel.OnConfirmBuildPreview -= ConfirmBuilding;
                 _handlerModel.OnCancelBuildPreview -= CancelBuildingPreview;
             }
@@ -52,17 +57,40 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             }
         }
 
-        public void StartBuildingPreview(int buildingIndex)
+        public void OpenBuildingPreviewScreen()
+        {
+            _gameplayUIManager.OpenScreenBuild();
+        }
+        
+
+        public void StartBuildingPreviewByIndex(int buildingIndex)
         {
             _preview = true;
             enabled = true;
             _currentBuildingIndex = buildingIndex;
             buildingPreview.SetActive(true);
+            OpenBuildingPreviewScreen();
+        }
+        
+        public void StartBuildingPreviewById(string buildingId)
+        {
+            _preview = true;
+            enabled = true;
+            _currentBuildingId = buildingId;
+            buildingPreview.SetActive(true);
+            OpenBuildingPreviewScreen();
         }
 
         public void ConfirmBuilding()
         {
-            _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingIndex);
+            if (_currentBuildingId == "")
+            {
+                _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingIndex);
+            }
+            else
+            {
+                _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingId);
+            }
             CancelBuildingPreview();
         }
         
@@ -70,6 +98,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             _preview = false;
             enabled = false;
+            _currentBuildingId = "";
             buildingPreview.SetActive(false);
         }
         

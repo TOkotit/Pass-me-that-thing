@@ -11,6 +11,7 @@ public static class LMBReactionFactory
             { "wrench", item => new LMBWrench(item) },
             { "flashlight", item => new LMBFlashlight(item) },
             { "wirecutters", item => new LMBWireCutters(item) },
+            {"blueprint", item => new LMBBlueprint(item) },
         };
 
     public static LMBReaction CreateReaction(string id, PhysicalItem item)

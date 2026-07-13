@@ -3,6 +3,7 @@ using System.Collections;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
+using Game.Scripts.GameFiles.Entity.Buildings;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -22,16 +23,18 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private bool canBeOwned;
         [SerializeField] private bool doActAndSwing;
         [SerializeField] private Rigidbody rigidBody;
-        [SerializeField] private NetworkItem _network;
         [SerializeField] private bool hasToBeAligned;
         [SyncVar]
         [SerializeField] private bool _isThrown;
+        
+        [SyncVar] public string itemId;
         
         private LMBReaction reaction;
         private Outline _outline;
         private CollisionDamageDealer  damageDealer;
         private NetworkTransformReliable _networkTransform;
         
+        private LocalBuildingHandlerModel _localBuildingHandlerModel;
         private ParticlePoolManager _particlePool;
         
         public float Hardness => hardness;
@@ -50,28 +53,17 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
         public Rigidbody Rigidbody => rigidBody;
-        public NetworkItem Network => _network;
         public bool HasToBeAligned => hasToBeAligned;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
-        
-        
-        // private Coroutine _actingCoroutine;
-        // [SyncVar]
-        // private bool _isActing;
-        // public bool IsActing
-        // {
-        //     get => _isActing;
-        //     set => _isActing = value;
-        // }
-
-        
+        public LocalBuildingHandlerModel LocalBuildingHandlerModel => _localBuildingHandlerModel;
 
 
         [Inject]
-        private void Construct(NetworkManager networkManager)
+        private void Construct(NetworkManager networkManager, LocalBuildingHandlerModel localBuildingHandlerModel)
         {
             _particlePool = networkManager.GetComponent<ParticlePoolManager>();
+            _localBuildingHandlerModel = localBuildingHandlerModel;
         }
 
         private void Start()
@@ -79,7 +71,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
             
-            reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
+            reaction = LMBReactionFactory.CreateReaction(itemId, this);
             
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnServerTakeDamage += RpcPlayParticlesOnHit;
@@ -103,24 +95,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             _particlePool.GetAndPlayParticle(Particles.pow, transform.position);
             
         }
-
-        // [Command(requiresAuthority = false)]
-        // public void EnableActingMode(float duration)
-        // {
-        //     _isActing = true;
-        //     if (_actingCoroutine != null)
-        //     {
-        //         StopCoroutine(_actingCoroutine);
-        //     }
-        //     _actingCoroutine = StartCoroutine(ActingRoutine(duration));
-        // }
-        //
-        // private IEnumerator ActingRoutine(float duration)
-        // {
-        //     yield return new WaitForSeconds(duration);
-        //     _isActing = false;
-        //     _actingCoroutine = null;
-        // }
         
         public override void OnStartClient()
         {
