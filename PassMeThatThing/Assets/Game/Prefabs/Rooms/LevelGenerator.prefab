@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4946004208917216094
+--- !u!1 &4583043820459869596
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8002517234908520686}
-  - component: {fileID: 6477452435066633705}
+  - component: {fileID: 180583881734044310}
+  - component: {fileID: 319741792640230851}
+  - component: {fileID: 7828892963863885859}
+  - component: {fileID: 7410111715900507740}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -17,78 +19,61 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8002517234908520686
+--- !u!4 &180583881734044310
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946004208917216094}
+  m_GameObject: {fileID: 4583043820459869596}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.50528, y: 0, z: 6.7099}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6477452435066633705
+--- !u!114 &319741792640230851
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946004208917216094}
+  m_GameObject: {fileID: 4583043820459869596}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3c746d265ae47c9940bcd611019556e, type: 3}
+  m_Script: {fileID: 11500000, guid: df69ab0c166840ceafd118d5ed9e3b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomSizeMultiplier: 41
-  roomPrefabs:
-    _serializedList:
-    - Key: 0
-      Value:
-      - {fileID: 4701608484343012188, guid: 080990d2a1b07be42a79005d33649a67, type: 3}
-      - {fileID: 4701608484343012188, guid: 8931ab57a821f8648b878b9fa3fb97bd, type: 3}
-    - Key: 1
-      Value:
-      - {fileID: 7193117924640494330, guid: 4abf1a226789e644790a346d88d7f508, type: 3}
-      - {fileID: 7193117924640494330, guid: 7f1e07188dc71284f8a4c9edc21ee1a4, type: 3}
-    - Key: 2
-      Value:
-      - {fileID: 5585570996288446583, guid: c8c419a3bcaaf7e4d85936a2c77212a3, type: 3}
-      - {fileID: 5585570996288446583, guid: e11174ed53d0c3f4e8637db4c4fb4094, type: 3}
-      - {fileID: 5585570996288446583, guid: 42f2f2219192432498a5c1ac07c8f31f, type: 3}
-    - Key: 3
-      Value:
-      - {fileID: 9180188589594453379, guid: bd03a7ade50836249bb842c6a4c2ce62, type: 3}
-    - Key: 4
-      Value:
-      - {fileID: 4567916353080865509, guid: 75dcb0b99388c414ab78dfa831916a60, type: 3}
-      - {fileID: 4567916353080865509, guid: 1c81fff5c1fc1b141ad21cfbfc98344b, type: 3}
-      - {fileID: 4567916353080865509, guid: c85b0fca6edfb4945bfde446015ff2d2, type: 3}
-  eventPrefabs:
-    _serializedList:
-    - Key: 0
-      Value:
-      - {fileID: 1115236621892218802, guid: 418e88e198eb94d48825c6bde9e2ddd4, type: 3}
-      - {fileID: 1115236621892218802, guid: 3ab9a27bfae034c4db1d1d358db0965a, type: 3}
-      - {fileID: 1115236621892218802, guid: 9b7d8a2a502850848adb4f173ef1a26a, type: 3}
-    - Key: 1
-      Value:
-      - {fileID: 6437558844919366294, guid: ea7f2a6384842fa41946e438fb41c9fb, type: 3}
-      - {fileID: 6437558844919366294, guid: a96c91fdea9ec3a40aed1a5b50004756, type: 3}
-      - {fileID: 6437558844919366294, guid: 8cb46163af22cec4ab1e9db97166ca5e, type: 3}
-    - Key: 2
-      Value:
-      - {fileID: 9180188589594453379, guid: c5ca14bb9e4909a4aada56c69c1d974a, type: 3}
-      - {fileID: 9180188589594453379, guid: 9aa3f14cd5dff83459d27e588dcc9858, type: 3}
-      - {fileID: 9180188589594453379, guid: 4d091ef8d7b5a5c439ad869dca8cfe33, type: 3}
-    - Key: 3
-      Value:
-      - {fileID: 8203300905493250690, guid: d50b12769b151a8458e4b656c13a086f, type: 3}
-      - {fileID: 8203300905493250690, guid: a6521e2a5582d52479d285a6c9b87d1a, type: 3}
-      - {fileID: 8203300905493250690, guid: e05312fd7a4f10f44aebc8f0fe3791a0, type: 3}
-  solidWallPrefab: {fileID: 2831545057563719916, guid: a8ee0bfc2ad8dd2478bb63440e6351a3, type: 3}
-  doorWallPrefab: {fileID: 1446432965461080943, guid: dd45c9dee16231b49986b2feb4fbee0d, type: 3}
+  editorDrawRadius: 20
+  _grid: {fileID: 7828892963863885859}
+  emptyCellColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  occupiedCellColor: {r: 0, g: 1, b: 0, a: 1}
+--- !u!156049354 &7828892963863885859
+Grid:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583043820459869596}
+  m_Enabled: 1
+  m_CellSize: {x: 10, y: 1, z: 10}
+  m_CellGap: {x: 0, y: 0, z: 0}
+  m_CellLayout: 0
+  m_CellSwizzle: 0
+--- !u!114 &7410111715900507740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583043820459869596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8277e2ac56a4ace9ef8eeb48bda8208, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomDatabase: {fileID: 11400000, guid: 18c0ed63c86a2cc4d8e423731aabf2b0, type: 2}
+  levelGrid: {fileID: 319741792640230851}
+  levelContainer: {fileID: 180583881734044310}

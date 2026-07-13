@@ -9,19 +9,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         public RoomType Type; 
         
-        public EventRoomDefinition EventData; 
+        public EventData EventData; 
         
         public List<RoomNode> ConnectedNodes = new List<RoomNode>();
         
-        public int X;
-        public int Y;
-        
-        public RoomNode(int nodeId, RoomType type, int x = 0, int y = 0, EventRoomDefinition eventData = null)
+        public RoomNode(int nodeId, RoomType type, EventData eventData = null)
         {
             NodeId = nodeId;
             Type = type;
-            X = x;
-            Y = y;
             EventData = eventData;
         }
     }
