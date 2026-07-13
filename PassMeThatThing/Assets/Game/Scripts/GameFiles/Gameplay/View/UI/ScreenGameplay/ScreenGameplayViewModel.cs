@@ -57,19 +57,24 @@ namespace Game.Gameplay.View.UI
             _gameInputManager = container.Resolve<GameInputManager>();
             
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed += RequestOpenPause;
-            
+            _gameInputManager.GameInput.Gameplay.BuildMenu.performed += RequestOpenBuildMenu;
         }
         
         public override void Dispose()
         {
             // Debug.Log("Disposing ScreenGameplayViewModel");
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed -= RequestOpenPause;
-            
+            _gameInputManager.GameInput.Gameplay.BuildMenu.performed -= RequestOpenBuildMenu;
         }
 
         public void RequestOpenPause(InputAction.CallbackContext c)
         {
             _uiManager.OpenScreenPauseMenu();
+        }
+        
+        public void RequestOpenBuildMenu(InputAction.CallbackContext c)
+        {
+            _uiManager.OpenScreenBuild();
         }
 
         public void InitHealthUI(Action<int, int> f)
@@ -159,7 +164,7 @@ namespace Game.Gameplay.View.UI
             foreach (var p in _playerInventoryModel.Inventory)
             {
                 f(p.Key, _itemDatabase
-                    .GetItem(p.Value.itemModel.itemId).ItemImage);
+                    .GetItem(p.Value.itemId).ItemImage);
             }
         }
         
@@ -167,11 +172,11 @@ namespace Game.Gameplay.View.UI
         {
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveAdd()
                 .Subscribe(e
-                    => f(e.Value.Key, _itemDatabase.GetItem(e.Value.Value.itemModel.itemId).ItemImage)));
+                    => f(e.Value.Key, _itemDatabase.GetItem(e.Value.Value.itemId).ItemImage)));
             
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveReplace()
                 .Subscribe(e
-                    => f(e.NewValue.Key, _itemDatabase.GetItem(e.NewValue.Value.itemModel.itemId).ItemImage)));
+                    => f(e.NewValue.Key, _itemDatabase.GetItem(e.NewValue.Value.itemId).ItemImage)));
             
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveRemove()
                 .Subscribe(e
@@ -240,5 +245,12 @@ namespace Game.Gameplay.View.UI
         {
             _gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
         }
+
+        
+        
+        // public void RequestGoToMainMenu()
+        // {
+        //     _coroutines.StartRoutine(_gameManager.LoadMainMenu());
+        // }
     }
 }

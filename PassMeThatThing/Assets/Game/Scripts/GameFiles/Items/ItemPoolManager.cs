@@ -2,7 +2,6 @@ using VContainer;
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
-using Game.Scripts.GameFiles.Items.ItemPhysics;
 
 namespace Game.Scripts.GameFiles.Items
 {
@@ -43,7 +42,7 @@ namespace Game.Scripts.GameFiles.Items
         // Обработчик исчезновения
         public void UnspawnHandler(GameObject spawned)
         {
-            var id = spawned.GetComponent<PhysicalItem>().itemId;
+            var id = spawned.GetComponent<NetworkItem>().itemId;
             spawned.SetActive(false);
             _poolDict[id].Push(spawned);
         }
@@ -57,7 +56,7 @@ namespace Game.Scripts.GameFiles.Items
             
             var data = database.GetItem(id);
             var obj = Instantiate(data.WorldPrefab);
-            obj.GetComponent<PhysicalItem>().itemId = id;
+            obj.GetComponent<NetworkItem>().itemId = id;
             return obj;
         }
     }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -8057965060867532312}
   - component: {fileID: -5545228456256839850}
   - component: {fileID: 1133097560999102908}
+  - component: {fileID: 1686371426209873383}
   - component: {fileID: 5340831970347749924}
   - component: {fileID: 2742765135364868261}
   - component: {fileID: 7776855572588576369}
@@ -104,6 +105,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2679717, y: 2.490014, z: 0.7560446}
   m_Center: {x: 0.013393037, y: 0.06729245, z: -0.12690616}
+--- !u!114 &1686371426209873383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ae67d9c9ee84b2c8b846408fb2cf3ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  itemId: 
 --- !u!114 &5340831970347749924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,9 +181,9 @@ MonoBehaviour:
   canBeOwned: 1
   doActAndSwing: 1
   rigidBody: {fileID: -5545228456256839850}
+  _network: {fileID: 1686371426209873383}
   hasToBeAligned: 1
   _isThrown: 0
-  itemId: 
 --- !u!114 &4913154011383626854
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private LocalBuildingHandlerModel _handlerModel;
         private GameInputManager _gameInput;
 
+        public event Action<bool> OnBuildingChooseWheelEnabled;
         
         public override string Id => "ScreenBuild";
 
@@ -31,12 +32,14 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _gameInput = container.Resolve<GameInputManager>();
 
             
+            _gameInput.GameInput.Gameplay.BuildMenu.performed += OnPerformedBuildMenu;
             _gameInput.GameInput.Gameplay.ConfirmBuilding.performed += OnPerformedConfirmBuilding;
             _gameInput.GameInput.Gameplay.CancelBuilding.performed += OnPerformedCancelBuilding;
         }
 
         public override void Dispose()
         {
+            _gameInput.GameInput.Gameplay.BuildMenu.performed -= OnPerformedBuildMenu;
             _gameInput.GameInput.Gameplay.ConfirmBuilding.performed -= OnPerformedConfirmBuilding;
             _gameInput.GameInput.Gameplay.CancelBuilding.performed -= OnPerformedCancelBuilding;
         }
@@ -51,6 +54,18 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _uiManager.OpenScreenGameplay();
         }
 
+        public void RequestSetSprites(Action<List<Sprite>> c)
+        {
+            c(_buildingsDatabase.allBuildings.Select(b => b.buildingImage).ToList());
+        }
+
+        public void RequestStartPreviewBuilding(int buildingIndex)
+        {
+            _handlerModel.StartBuildPreview(buildingIndex);
+            OnBuildingChooseWheelEnabled?.Invoke(false);
+            _uiManager.LockUpCursor();
+        }
+
         public void RequestConfirmBuilding()
         {
             _handlerModel.ConfirmBuildPreview();
@@ -59,7 +74,9 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         
         public void RequestCancelBuilding()
         {
-            RequestGoToGameplay();
+            _handlerModel.CancelBuildPreview();
+            OnBuildingChooseWheelEnabled?.Invoke(true);
+            _uiManager.UnlockCursor();
         }
     }
 }
