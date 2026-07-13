@@ -6,6 +6,7 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SyncVar] public string itemId;
         
-        
+        public string instanceId;
+
     }
 }

@@ -4,6 +4,7 @@ using AYellowpaper.SerializedCollections;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
+using Game.Scripts.GameFiles.Entity.Buildings;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -34,6 +35,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private NetworkTransformReliable _networkTransform;
         
         private ParticlePoolManager _particlePool;
+        private LocalBuildingHandlerModel _localBuildingHandlerModel;
         
         public float Hardness => hardness;
         public int Durability {get => durability; set => durability = value; }
@@ -55,24 +57,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public bool HasToBeAligned => hasToBeAligned;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
-        
-        
-        // private Coroutine _actingCoroutine;
-        // [SyncVar]
-        // private bool _isActing;
-        // public bool IsActing
-        // {
-        //     get => _isActing;
-        //     set => _isActing = value;
-        // }
 
+        public LocalBuildingHandlerModel LocalBuildingHandlerModel => _localBuildingHandlerModel;
         
-
 
         [Inject]
-        private void Construct(NetworkManager networkManager)
+        private void Construct(NetworkManager networkManager, LocalBuildingHandlerModel localBuildingHandlerModel)
         {
             _particlePool = networkManager.GetComponent<ParticlePoolManager>();
+            _localBuildingHandlerModel = localBuildingHandlerModel;
         }
 
         private void Start()
