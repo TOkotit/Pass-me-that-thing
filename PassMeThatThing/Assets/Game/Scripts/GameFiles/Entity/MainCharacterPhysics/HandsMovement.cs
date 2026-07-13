@@ -113,25 +113,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 rightJoint.connectedBody = null;
             rightJoint.gameObject.SetActive(false);
         }
-        public void EnableHorizontalWeakDrive()
-        {
-            JointDrive weakXDrive = _originalXDrive;
-            weakXDrive.positionSpring = _originalXDrive.positionSpring/4;
-            JointDrive weakZDrive = _originalZDrive;
-            weakZDrive.positionSpring = _originalZDrive.positionSpring/4;
-            JointDrive weakYDrive = _originalYDrive;
-            weakZDrive.positionSpring = _originalZDrive.positionSpring/1;
-            grabJoint.xDrive = weakXDrive;
-            grabJoint.zDrive = weakZDrive;
-            grabJoint.yDrive = weakYDrive;
-        }
         
-        public void DisableHorizontalWeakDrive()
-        {
-            grabJoint.xDrive = _originalXDrive;
-            grabJoint.zDrive = _originalZDrive;
-            grabJoint.yDrive = _originalYDrive;
-        }
 
         [Server]
         public void GrabItem(PhysicalItem item)
