@@ -12,7 +12,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [SerializeField] private bool isSplitter;
         [SerializeField] private int splitterConnLimit = 4;
         
-        [Inject] private WireManager _wireManager;
+        [Inject] protected WireManager _wireManager;
         
         [Inject] private LocalWireHandlerModel _handlerModel;
         
@@ -20,9 +20,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private int _nodeId = -1;
         [SyncVar]
         private int _netId = -1;
-
-        private bool isHighlighted;
-
+        
         public int NodeId
         {
             get => _nodeId;
@@ -38,30 +36,22 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public bool IsSplitter => isSplitter;
         public int SplitterConnLimit => splitterConnLimit;
 
-
         public WireType WireType => wireType;
 
-        private void Start()
+        public virtual void Start()
         {
-            _handlerModel.OnWireNodeHighlighted += CheckSelf;
             if (isServer)
             {
                 _wireManager.RegisterNode(this);
             }
         }
 
-        private void OnDestroy()
+        public virtual void OnDestroy()
         {
-            _handlerModel.OnWireNodeHighlighted -= CheckSelf;
             if (isServer)
             {
                 _wireManager.UnRegisterNode(NodeId);
             }
-        }
-
-        private void CheckSelf(int nodeId)
-        {
-            isHighlighted = nodeId == NodeId;
         }
 
         public override void Interact()

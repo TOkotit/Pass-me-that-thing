@@ -91,6 +91,8 @@ MonoBehaviour:
   type: 2
   targetDetector: {fileID: 1716954208764301076}
   turretAttackController: {fileID: 637298468266342329}
+  inputPort: {fileID: 806358862158522439}
+  IsTurretWork: 0
 --- !u!114 &-4990713603865359710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,12 +444,27 @@ PrefabInstance:
       propertyPath: m_Name
       value: WireNodePort
       objectReference: {fileID: 0}
+    - target: {fileID: 7019257140765831107, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
+      propertyPath: requiredValue
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -5185724171136630408, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
+--- !u!114 &806358862158522439 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7019257140765831107, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
+  m_PrefabInstance: {fileID: 7663343376599271300}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e4c44d13fa34ddea4ea61b3cafc3784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6997812209951097241 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 811935546557072925, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
