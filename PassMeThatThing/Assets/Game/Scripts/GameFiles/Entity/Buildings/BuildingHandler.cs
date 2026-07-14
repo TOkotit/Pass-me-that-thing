@@ -16,7 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         [Inject] private BuildingManager _buildingManager;
         [Inject] private GameplayUIManager _gameplayUIManager;
         
-        private int _currentBuildingIndex;
+        // private int _currentBuildingIndex;
         private string _currentBuildingId;
         private bool _preview;
 
@@ -67,7 +67,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             _preview = true;
             enabled = true;
-            _currentBuildingIndex = buildingIndex;
+            // _currentBuildingIndex = buildingIndex;
             buildingPreview.SetActive(true);
             OpenBuildingPreviewScreen();
         }
@@ -83,15 +83,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         public void ConfirmBuilding()
         {
-            if (_currentBuildingId == "")
-            {
-                _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingIndex);
-            }
-            else
+            // if (_currentBuildingId == "")
+            // {
+            //     _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingIndex);
+            // }
+            // else
             {
                 _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingId);
             }
-            CancelBuildingPreview();
+            //CancelBuildingPreview();
         }
         
         public void CancelBuildingPreview()

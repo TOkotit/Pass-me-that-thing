@@ -8,8 +8,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
     public class WireNode : Interactable
     {
-        [SerializeField] private LineRenderer lineRenderer;
-        
+        [SerializeField] private WireType wireType;
         [SerializeField] private bool isSplitter;
         [SerializeField] private int splitterConnLimit = 4;
         
@@ -39,7 +38,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public bool IsSplitter => isSplitter;
         public int SplitterConnLimit => splitterConnLimit;
 
-        public LineRenderer LineRenderer => lineRenderer;
+
+        public WireType WireType => wireType;
 
         private void Start()
         {
@@ -68,14 +68,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         {
             //Debug.Log($"[W] wirenode interact");
             
-            // if (NetId != -1)
-            // {
-            //     _handlerModel.ClearNode(NodeId);
-            // }
-            // else
-            {
-                _handlerModel.HighlightNode(NodeId);
-            }
+            _handlerModel.HighlightNode(NodeId);
         }
 
         public override void SrbToggle()

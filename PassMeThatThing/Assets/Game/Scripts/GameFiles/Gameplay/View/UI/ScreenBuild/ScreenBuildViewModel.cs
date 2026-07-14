@@ -56,7 +56,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         public void RequestConfirmBuilding()
         {
             _handlerModel.ConfirmBuildPreview();
-            RequestGoToGameplay();
+            //RequestGoToGameplay();
         }
         
         public void RequestCancelBuilding()

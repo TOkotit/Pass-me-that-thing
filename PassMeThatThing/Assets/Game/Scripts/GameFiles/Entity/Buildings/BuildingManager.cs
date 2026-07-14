@@ -11,25 +11,25 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         
         
 
-        [Command(requiresAuthority =  false)]
-        public void CmdSpawnBuilding(Vector3 pos, int buildingIndex)
-        {
-            if (_buildingsDatabase.allBuildings.Count > buildingIndex)
-            {
-                var buildingData = _buildingsDatabase.allBuildings[buildingIndex];
-                if (true) // проверка на ресурсы
-                {
-
-                    SpawnBuilding(pos, buildingData);
-
-                }
-            }
-        }
+        // [Command(requiresAuthority =  false)]
+        // public void CmdSpawnBuilding(Vector3 pos, int buildingIndex)
+        // {
+        //     if (_buildingsDatabase.buildings.Count > buildingIndex)
+        //     {
+        //         var buildingData = _buildingsDatabase.buildings[buildingIndex];
+        //         if (true) // проверка на ресурсы
+        //         {
+        //
+        //             SpawnBuilding(pos, buildingData);
+        //
+        //         }
+        //     }
+        // }
         
         [Command(requiresAuthority =  false)]
         public void CmdSpawnBuilding(Vector3 pos, string buildingId)
         {
-            var buildingData = _buildingsDatabase.GetBuilding(buildingId);
+            var buildingData = _buildingsDatabase.GetBuildingFromAll(buildingId);
             if (true) // проверка на ресурсы
             {
                 SpawnBuilding(pos, buildingData);

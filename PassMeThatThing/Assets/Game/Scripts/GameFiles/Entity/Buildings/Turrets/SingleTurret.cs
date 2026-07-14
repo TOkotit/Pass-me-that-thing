@@ -18,7 +18,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         [Inject]
         public void Construct(BuildingsDatabase buildingsDatabase, TurretDatabase turretDatabas)
         {
-            BuildingData = buildingsDatabase.GetBuilding("singleTurret");
+            BuildingData = buildingsDatabase.GetBuildingFromAll("singleTurret");
             TurretData = turretDatabas.GetTurret("singleTurret");
         }
 

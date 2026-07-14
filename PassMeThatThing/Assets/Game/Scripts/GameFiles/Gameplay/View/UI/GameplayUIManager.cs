@@ -18,8 +18,6 @@ namespace Game.Gameplay.View.UI
 {
     public class GameplayUIManager : UIManager
     {
-        // private MainCharacterCamera _mainCharacterCamera;
-        // private MainCharacterMovement _mainCharacterMovement;
         private GameInputManager _gameInputManager;
 
         private GameplayUIRootViewModel rootUI;
@@ -28,22 +26,20 @@ namespace Game.Gameplay.View.UI
         {
             rootUI = Container.Resolve<GameplayUIRootViewModel>();
             
-            // _mainCharacterCamera = Container.Resolve<MainCharacterCamera>();
-            // _mainCharacterMovement = Container.Resolve<MainCharacterMovement>();
             _gameInputManager = Container.Resolve<GameInputManager>();
             
-
         }
 
         public ScreenGameplayViewModel OpenScreenGameplay()
         {
             var viewModel = new ScreenGameplayViewModel(this, Container);
             
-            LockUpCursor();
-            
-            rootUI.OpenScreen(viewModel);
+            LockCursor();
             
             _gameInputManager.ToggleMap(InputMapType.Gameplay);
+            _gameInputManager.EnableMouse();
+            
+            rootUI.OpenScreen(viewModel);
             
             return viewModel;
         }
@@ -53,10 +49,9 @@ namespace Game.Gameplay.View.UI
             var viewModel = new ScreenMinigameViewModel(this, Container, parameters);
 
             UnlockCursor();
+            _gameInputManager.ToggleMap(InputMapType.UI);
             
             rootUI.OpenScreen(viewModel);
-            
-            _gameInputManager.ToggleMap(InputMapType.UI);
             
             return viewModel;
         }
@@ -67,9 +62,24 @@ namespace Game.Gameplay.View.UI
             var viewModel = new ScreenPauseMenuViewModel(this, Container);
             
             UnlockCursor();
+            _gameInputManager.ToggleMap(InputMapType.UI);
             
             rootUI.OpenScreen(viewModel);
-            _gameInputManager.ToggleMap(InputMapType.UI);
+            
+            return viewModel;
+        }
+        
+        public ScreenWireMenuViewModel OpenScreenWireMenu()
+        {
+            var viewModel = new ScreenWireMenuViewModel(this, Container);
+            
+            UnlockCursor();
+            
+            _gameInputManager.ToggleMap(InputMapType.Gameplay);
+            _gameInputManager.DisableMouse();
+            
+            rootUI.OpenScreen(viewModel);
+            
 
             return viewModel;
         }
@@ -78,10 +88,13 @@ namespace Game.Gameplay.View.UI
         {
             var viewModel = new ScreenBuildViewModel(this, Container);
             
-            UnlockCursor();
-            rootUI.OpenScreen(viewModel);
+            LockCursor();
+            
             _gameInputManager.ToggleMap(InputMapType.Gameplay);
-
+            _gameInputManager.DisableMouse();
+            
+            rootUI.OpenScreen(viewModel);
+            
             return viewModel;
         }
         
@@ -92,15 +105,16 @@ namespace Game.Gameplay.View.UI
             var viewModel = new ScreenOptionsViewModel(this, Container);
             
             UnlockCursor();
+            _gameInputManager.ToggleMap(InputMapType.UI);
             
             rootUI.OpenScreen(viewModel);
-            _gameInputManager.ToggleMap(InputMapType.UI);
+            
 
             return viewModel;
         }
         
         // Блокировать или разблокировать курсор
-        public void LockUpCursor()
+        public void LockCursor()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

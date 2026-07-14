@@ -235,6 +235,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WireMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""9a3e1fce-471a-4de9-9766-ca470197e470"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -457,6 +466,17 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""action"": ""ConfirmBuilding"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""871aa67f-5045-4382-947b-ebda214de43f"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WireMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -509,6 +529,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Gameplay_BuildMenu = m_Gameplay.FindAction("BuildMenu", throwIfNotFound: true);
         m_Gameplay_CancelBuilding = m_Gameplay.FindAction("CancelBuilding", throwIfNotFound: true);
         m_Gameplay_ConfirmBuilding = m_Gameplay.FindAction("ConfirmBuilding", throwIfNotFound: true);
+        m_Gameplay_WireMenu = m_Gameplay.FindAction("WireMenu", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -609,6 +630,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_BuildMenu;
     private readonly InputAction m_Gameplay_CancelBuilding;
     private readonly InputAction m_Gameplay_ConfirmBuilding;
+    private readonly InputAction m_Gameplay_WireMenu;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -685,6 +707,10 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ConfirmBuilding => m_Wrapper.m_Gameplay_ConfirmBuilding;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/WireMenu".
+        /// </summary>
+        public InputAction @WireMenu => m_Wrapper.m_Gameplay_WireMenu;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -758,6 +784,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @ConfirmBuilding.started += instance.OnConfirmBuilding;
             @ConfirmBuilding.performed += instance.OnConfirmBuilding;
             @ConfirmBuilding.canceled += instance.OnConfirmBuilding;
+            @WireMenu.started += instance.OnWireMenu;
+            @WireMenu.performed += instance.OnWireMenu;
+            @WireMenu.canceled += instance.OnWireMenu;
         }
 
         /// <summary>
@@ -817,6 +846,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @ConfirmBuilding.started -= instance.OnConfirmBuilding;
             @ConfirmBuilding.performed -= instance.OnConfirmBuilding;
             @ConfirmBuilding.canceled -= instance.OnConfirmBuilding;
+            @WireMenu.started -= instance.OnWireMenu;
+            @WireMenu.performed -= instance.OnWireMenu;
+            @WireMenu.canceled -= instance.OnWireMenu;
         }
 
         /// <summary>
@@ -1065,6 +1097,13 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnConfirmBuilding(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "WireMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWireMenu(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

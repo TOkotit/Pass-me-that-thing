@@ -7,14 +7,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
     {
         [SerializeField] private PortType portType;
         
-        public override void Interact()
-        {
-            
-        }
-
-        public override void SrbToggle()
-        {
-            
-        }
+        
     }
 }

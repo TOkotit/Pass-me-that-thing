@@ -60,6 +60,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             var firstNode =  allNodes[firstNodeId];
             var secondNode =  allNodes[secondNodeId];
             
+            if (firstNode.WireType != secondNode.WireType) return;
+            
             if (nodeConnections[firstNodeId] == null)
                 nodeConnections[firstNodeId] = new List<int>();
 
@@ -175,7 +177,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             //перезапись образовавшихся веток кроме первой
             for (int i=0; i < nodeConnections[nodeId].Count; i++)
             {
-                if (i==0) continue;
+                if (nodeConnections[nodeConnections[nodeId][i]].Count == 0)
+                {
+                    allNodes[nodeConnections[nodeId][i]].NetId = -1;
+                    continue;
+                }
                 
                 var wireNetId = CreateWireNet();
                 AttachConnectedToNewWireNet(wireNetId, nodeConnections[nodeId][i], nodeId);
