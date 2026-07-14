@@ -1,7 +1,9 @@
 using System;
 using Game.Gameplay.View.UI;
 using Mirror;
+using Systems;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings
@@ -14,9 +16,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         [Inject] private LocalBuildingHandlerModel _handlerModel;
         [Inject] private BuildingManager _buildingManager;
+        [Inject] private GameInputManager  _inputManager;
         [Inject] private GameplayUIManager _gameplayUIManager;
         
-        // private int _currentBuildingIndex;
+        private float _maxDistance = 15f;
+        private float _minDistance = 3f;
+        private float _zoomstep = 0.5f;
+        
+        private float _previewDistance = 30f;
+        
         private string _currentBuildingId;
         private bool _preview;
 
@@ -28,8 +36,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _handlerModel.OnStartBuildPreviewById += StartBuildingPreviewById;
                 _handlerModel.OnConfirmBuildPreview += ConfirmBuilding;
                 _handlerModel.OnCancelBuildPreview += CancelBuildingPreview;
+                
+                // _inputManager.GameInput.Gameplay.Zoom.performed += ZoomOnperformed;
             }
         }
+
 
         private void OnDestroy()
         {
@@ -39,9 +50,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _handlerModel.OnStartBuildPreviewById -= StartBuildingPreviewById;
                 _handlerModel.OnConfirmBuildPreview -= ConfirmBuilding;
                 _handlerModel.OnCancelBuildPreview -= CancelBuildingPreview;
+                
+                // _inputManager.GameInput.Gameplay.Zoom.performed -= ZoomOnperformed;
             }
         }
 
+        
+        // private void ZoomOnperformed(InputAction.CallbackContext obj)
+        // {
+        //     _previewDistance = Mathf.Clamp(_previewDistance + _zoomstep * obj.ReadValue<Vector2>().y, _minDistance, _maxDistance);
+        // }
 
         private void FixedUpdate()
         {
@@ -50,10 +68,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             if (_preview)
             {
                 var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-                if (Physics.Raycast(ray, out var _hit, 50f, groundLayer))
+                
+                if (Physics.Raycast(ray, out var hit, _previewDistance, groundLayer))
                 {
-                    buildingPreview.transform.position = _hit.point;
+                    buildingPreview.transform.position = hit.point;
                 }
+                // else
+                // {
+                //     buildingPreview.transform.position = ray.origin + ray.direction * _previewDistance;
+                // }
             }
         }
 
@@ -83,15 +106,24 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         public void ConfirmBuilding()
         {
-            // if (_currentBuildingId == "")
-            // {
-            //     _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingIndex);
-            // }
-            // else
+            var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+
+            var rotation = Quaternion.identity;
+            var position = new Vector3();
+            
+            if (Physics.Raycast(ray, out var hit, _previewDistance, groundLayer))
             {
-                _buildingManager.CmdSpawnBuilding(buildingPreview.transform.position, _currentBuildingId);
+                position = hit.point;
+
+                rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
             }
-            //CancelBuildingPreview();
+            // else
+            // {
+            //     position = ray.origin + ray.direction * _previewDistance;
+            // }
+            
+            _buildingManager.CmdSpawnBuilding(position, rotation, _currentBuildingId);
+
         }
         
         public void CancelBuildingPreview()

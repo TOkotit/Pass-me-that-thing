@@ -82,8 +82,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
             // проверка  физики
             var direction = (firstNode.transform.position - secondNode.transform.position).normalized;
-            if (Physics.Raycast(transform.position, direction, float.MaxValue, obstacleLayer))
+            if (Physics.Raycast(secondNode.transform.position, direction, 
+                    Vector3.Distance(firstNode.transform.position, secondNode.transform.position), obstacleLayer))
+            {
+                Debug.Log($"[W] WALLS");
                 return;
+            }
             
             if (NodeConnections[firstNodeId] == null)
                 NodeConnections[firstNodeId] = new List<int>();

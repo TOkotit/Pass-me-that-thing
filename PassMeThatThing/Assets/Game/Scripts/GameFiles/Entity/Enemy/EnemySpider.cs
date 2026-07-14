@@ -68,6 +68,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 ServerSetMaxToughness(MaxToughness, true);
             }
         }
+        
+        public override void OnHealthChanged(int currentHealth, int maxHealth)
+        {
+            if (!isServer) return;
+            
+            Debug.Log($"[Spider] OnHealthChanged {currentHealth}/{maxHealth}");
+        }
+
+        public override void OnToughnessChanged(int currentToughness, int maxToughness)
+        {
+            Debug.Log($"[Spider] OnToughnessChanged {currentToughness}/{maxToughness}");
+        }
 
         public override void OnDeath()
         {

@@ -138,6 +138,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
                 foreach (var a in p.Value)
                 {
                     if (a.name == "MouseDrag") continue;
+                    if (a.name == "Zoom") continue;
                     if (a.type == InputActionType.Button)
                     {
                         var i = Instantiate(rebindButtonPrefab, scrollView.transform);
