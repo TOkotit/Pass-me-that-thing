@@ -70,18 +70,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private Color GetPlateColor()
         {
             if (parentRoom == null) 
-                return new Color(0.5f, 0.5f, 0.5f, 0.4f); // Серый дефолтный цвет, если плейт вне комнаты
+                return new Color(0.5f, 0.5f, 0.5f, 0.4f);
 
             switch (parentRoom.RoomType)
             {
                 case RoomType.Hub:
-                    return new Color(0.2f, 0.8f, 0.2f, 0.4f); // Зеленый
+                    return new Color(0.2f, 0.8f, 0.2f, 0.4f); 
                 case RoomType.Defense:
-                    return new Color(0.9f, 0.1f, 0.1f, 0.4f); // Красный
+                    return new Color(0.9f, 0.1f, 0.1f, 0.4f); 
                 case RoomType.Exit:
-                    return new Color(1f, 0.4f, 0.7f, 0.4f);   // Розовый
+                    return new Color(1f, 0.4f, 0.7f, 0.4f);   
                 case RoomType.Regular:
-                    return new Color(0.5f, 0.3f, 0.15f, 0.4f); // Коричневый
+                    return new Color(0.5f, 0.3f, 0.15f, 0.4f);
                 case RoomType.Event:
                     return GetEventColor(parentRoom.EventType);
                 default:

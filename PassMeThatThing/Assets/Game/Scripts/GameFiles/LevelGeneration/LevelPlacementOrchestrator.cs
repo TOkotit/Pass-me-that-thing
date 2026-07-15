@@ -32,11 +32,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private Dictionary<LevelRoom, int> _prefabUsage = new();
         private System.Random _random = new();
 
-        // --------------------------------------------------
-        // Старт
-        // --------------------------------------------------
-
-
 
         public void GeneratePhysicalLevel(RoomNode hubNode)
         {
@@ -115,11 +110,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
         }
 
-        // --------------------------------------------------
-        // Генерация хребта
-        // --------------------------------------------------
-
-
 
         private List<(RoomNode Node, RoomNode Parent)> GetSpineBuildOrder(RoomNode hubNode)
         {
@@ -169,13 +159,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var parentData = _placedRooms[designatedParent];
             return TryPlaceRoom(nodeToPlace, parentData, false, true);
         }
-
-
-
-        // --------------------------------------------------
-        // Генерация боковых комнат
-        // --------------------------------------------------
-
 
 
         private void GenerateSideRooms(RoomNode hubNode)
@@ -297,14 +280,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
             return false;
         }
-
-
-
-        // --------------------------------------------------
-        // Остальное
-        // --------------------------------------------------
-
-
+        
 
         private bool TryPlaceRoom(RoomNode node, PlacedRoomData parentData, bool ignoreDoorCount, bool requireGate, int overrideRequiredDoors = -1)
         {

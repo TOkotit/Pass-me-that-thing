@@ -30,7 +30,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 return;
             }
 
-            var graphBuilder = new LevelGraphBuilderNEWTEST();
+            var graphBuilder = new LevelGraphBuilder();
             var rootHubNode = graphBuilder.BuildGraph(levelSettings);
         
             placementOrchestrator.GeneratePhysicalLevel(rootHubNode);
