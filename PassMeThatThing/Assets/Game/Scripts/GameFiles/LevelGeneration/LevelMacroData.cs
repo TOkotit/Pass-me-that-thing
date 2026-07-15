@@ -13,8 +13,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     public class LevelMacroData
     {
-        public int MinTotalRoomsWithoutHub = 10;
-        public int MaxTotalRoomsWithoutHub = 20;
+        public int MinTotalRoomsWithoutHub = 15;
+        public int MaxTotalRoomsWithoutHub = 25;
 
         public int MinExitsCount = 1;
         public int MaxExitsCount = 2;
@@ -41,7 +41,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             { GameEventsType.FloodBrokenPump, 30 },
             { GameEventsType.FloodPipeBreak, 40 },
-            { GameEventsType.BlackoutBlowFuse, 25 },
+            { GameEventsType.BlackoutBlowFuse, 35 },
             { GameEventsType.BlackoutCutWires, 50 }
         };
         

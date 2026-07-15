@@ -121,6 +121,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3932500519787000299, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 6476001358337221688}
+    - target: {fileID: 3932500519787000299, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
       propertyPath: ConnectionEast
       value: 1
       objectReference: {fileID: 0}
@@ -164,6 +168,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Blackout Blow Fuse Variant 4
       objectReference: {fileID: 0}
+    - target: {fileID: 8532511126442797143, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 87241c077f1f0d24f971755da2123c05, type: 2}
     - target: {fileID: 8561808703302200721, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -236,6 +244,17 @@ Grid:
   m_CorrespondingSourceObject: {fileID: 7731117980661811066, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
   m_PrefabInstance: {fileID: 4301931126694607612}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6476001358337221688 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7092298040453684932, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+  m_PrefabInstance: {fileID: 4301931126694607612}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c892f23c0848ea94decc6474fa52b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4703225612842469444
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -288,6 +307,10 @@ PrefabInstance:
       propertyPath: parentGrid
       value: 
       objectReference: {fileID: 5834964476304588166}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 6476001358337221688}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionWest
       value: 1
