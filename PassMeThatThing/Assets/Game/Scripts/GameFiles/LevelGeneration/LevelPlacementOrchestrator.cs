@@ -98,16 +98,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     if (visited.Add(conn)) queue.Enqueue(conn);
                 }
             }
-
-            var eventNodes = allNodes.Where(n => n.Type == RoomType.Event).ToList();
-    
-            Debug.Log($"<color=red>[DIAGNOSTIC GRAPH] Логический граф: всего узлов {allNodes.Count}, ивентов {eventNodes.Count}");
-    
-            foreach (var ev in eventNodes)
-            {
-                var eventType = ev.EventData != null ? ev.EventData.EventType.ToString() : "NULL_DATA";
-                Debug.Log($"<color=red>[DIAGNOSTIC GRAPH] Event ID: {ev.NodeId} | Type: {eventType}");
-            }
         }
 
 

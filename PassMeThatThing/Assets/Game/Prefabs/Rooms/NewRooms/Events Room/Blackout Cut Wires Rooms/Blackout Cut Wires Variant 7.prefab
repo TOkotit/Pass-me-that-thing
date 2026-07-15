@@ -446,6 +446,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3932500519787000299, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 2625281203656287092}
+    - target: {fileID: 3932500519787000299, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
       propertyPath: ConnectionEast
       value: 1
       objectReference: {fileID: 0}
@@ -496,7 +500,7 @@ PrefabInstance:
     - target: {fileID: 8532511126442797143, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+      objectReference: {fileID: 2100000, guid: 0dbf7d3099e9e0c4a94e97dc2d37a09f, type: 2}
     - target: {fileID: 8561808703302200721, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -548,6 +552,17 @@ PrefabInstance:
       addedObject: {fileID: 6618079105002185984}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+--- !u!114 &2625281203656287092 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7092298040453684932, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+  m_PrefabInstance: {fileID: 5044656267746983344}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c892f23c0848ea94decc6474fa52b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!156049354 &3262940334563932874 stripped
 Grid:
   m_CorrespondingSourceObject: {fileID: 7731117980661811066, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
@@ -621,6 +636,10 @@ PrefabInstance:
       propertyPath: parentGrid
       value: 
       objectReference: {fileID: 3262940334563932874}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 2625281203656287092}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionEast
       value: 0

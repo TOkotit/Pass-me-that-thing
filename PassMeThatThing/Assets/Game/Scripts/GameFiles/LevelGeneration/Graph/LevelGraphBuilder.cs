@@ -110,9 +110,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
                     if (validCandidates.Count == 0) break; 
 
-                    validCandidates = validCandidates.OrderByDescending(kvp => kvp.Value).ToList();
-                    var poolSize = Math.Max(1, validCandidates.Count / 2);
-                    var selected = validCandidates[_random.Next(poolSize)];
+                    var selected = validCandidates[_random.Next(validCandidates.Count)];
 
                     purchasedEvents.Add(new EventData { EventType = selected.Key, Cost = selected.Value });
                     currentBudget -= selected.Value;

@@ -917,6 +917,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13986793073253374}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 655033228404900416}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionSouth
       value: 1
       objectReference: {fileID: 0}
@@ -924,6 +928,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BaseRoomPlane (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 8105721485745823919, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8178e9a4387d37e43b9dea30416c03f7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -997,6 +1005,10 @@ PrefabInstance:
       propertyPath: parentGrid
       value: 
       objectReference: {fileID: 13986793073253374}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 655033228404900416}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionWest
       value: 1
@@ -1087,6 +1099,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13986793073253374}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 655033228404900416}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionNorth
       value: 1
       objectReference: {fileID: 0}
@@ -1172,6 +1188,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13986793073253374}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 655033228404900416}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionSouth
       value: 0
       objectReference: {fileID: 0}
@@ -1256,6 +1276,10 @@ PrefabInstance:
       propertyPath: parentGrid
       value: 
       objectReference: {fileID: 13986793073253374}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 655033228404900416}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionEast
       value: 1
@@ -1346,6 +1370,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13986793073253374}
     - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: parentRoom
+      value: 
+      objectReference: {fileID: 655033228404900416}
+    - target: {fileID: 3496996132781832467, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
       propertyPath: ConnectionSouth
       value: 0
       objectReference: {fileID: 0}
@@ -1353,6 +1381,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BaseRoomPlane (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 8105721485745823919, guid: 04edf4cdae7ef284c9a321c8e1257325, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8178e9a4387d37e43b9dea30416c03f7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1547,6 +1579,17 @@ Grid:
   m_CorrespondingSourceObject: {fileID: 7731117980661811066, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
   m_PrefabInstance: {fileID: 7744997553880833156}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &655033228404900416 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7092298040453684932, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
+  m_PrefabInstance: {fileID: 7744997553880833156}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c892f23c0848ea94decc6474fa52b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2137632688100274453 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8561808703302200721, guid: 40ed11c7d60fc5843958ebbc092bf531, type: 3}
