@@ -11,7 +11,7 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
-        
+        public ItemData Item {get => item; set => item = value;}
         
         
         private ItemPoolManager _itemPoolManager; 

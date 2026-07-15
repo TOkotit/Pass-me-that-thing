@@ -32,6 +32,12 @@ public class ResourceStorage : NetworkBehaviour
         return true;
     }
 
+    public bool HasResource(Resource resource, int amount)
+    {
+        if (!storedResources.TryGetValue(resource, out int current)) return false;
+        return current - amount >= 0;
+    }
+
     private void PrintResources()
     {
         foreach (var pair in storedResources)
