@@ -13,30 +13,25 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     public class LevelMacroData
     {
-        [Header("Total Rooms Range")]
         public int MinTotalRoomsWithoutHub = 10;
         public int MaxTotalRoomsWithoutHub = 20;
 
-        [Header("Room Types Range")]
         public int MinExitsCount = 1;
         public int MaxExitsCount = 2;
         
         public int MinDefenseRoomsCount = 2;
         public int MaxDefenseRoomsCount = 5;
 
-        [Header("Graph Topology")]
         public int SideRoomDepth = 4;
         public int MaxHubConnections = 3;
         public int MaxDefenseConnections = 4;
         public int MaxSideRoomConnections = 5;
         
-        [Header("Events Configuration")]
         public int MinEventRoomsBudget = 100;
         public int MaxEventRoomsBudget = 200;
         
         public int MinEventRoomsCount = 2;
         
-        [Tooltip("Процент ивентовых комнат от общего числа комнат (0.0 - 1.0)")]
         [Range(0f, 1f)]
         public float EventRoomsPercentage = 0.3f;
         
