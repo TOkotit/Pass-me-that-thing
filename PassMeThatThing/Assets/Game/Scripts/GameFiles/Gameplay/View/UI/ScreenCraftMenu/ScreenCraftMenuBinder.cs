@@ -4,49 +4,79 @@ using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Game.Gameplay.View.UI.ScreenBuild
 {
     public class ScreenCraftMenuBinder : WindowBinder<ScreenCraftMenuViewModel>
     {
-        [SerializeField] private RecipeElement recipePrefab;
+        [SerializeField] private RecipeViewElement recipeViewPrefab;
         [SerializeField] private GameObject recipesContainer;
         
         
         [SerializeField] private Image resultImage;
         [SerializeField] private TextMeshProUGUI resultText;
+        [SerializeField] private Button craftButton;
         
-        private List<RecipeElement> _recipes = new();
+        private List<RecipeViewElement> _recipes = new();
+        
+        private RecipeViewElement _selectedRecipe;
         
         private void Start()
         {
-            
+            ViewModel.RequestUpdateRecipes(UpdateRecipes);
+            craftButton.onClick.AddListener(OnCraftClick);
         }
 
         private void OnDestroy()
         {
-            
+            foreach (var recipeViewElement in _recipes)
+            {
+                recipeViewElement.OnClick -= OnRecipeClick;
+            }
+            craftButton.onClick.RemoveListener(OnCraftClick);
         }
-
 
         public void UpdateRecipes(List<WorkbenchItemRecipe> recipes, ResourceDatabase resourceDatabase)
         {
             foreach (var r in recipes)
             {
-                var instance = Instantiate(recipePrefab, recipesContainer.transform);
-                _recipes.Add(instance);
+                var recipeViewElement = Instantiate(recipeViewPrefab, recipesContainer.transform);
                 
-                var resoursesData = new List<(Sprite, string)>();
+                recipeViewElement.OnClick += OnRecipeClick;
+                recipeViewElement.RecipeId = r.recipeId;
                 
+                _recipes.Add(recipeViewElement);
+                
+                var resourcesData = new List<(Sprite, string)>();
                 foreach (var rp in r.Resources)
                 {
                     var rData = resourceDatabase.GetResource(rp.resource);
-                    resoursesData.Add((rData.resourceImage, rData.resourceName));
+                    resourcesData.Add((rData.resourceImage, rData.resourceName));
                 }
                 
-                instance.SetData(r.Item.ItemImage, r.Item.Id, resoursesData);
+                recipeViewElement.SetData(r.Item.ItemImage, r.Item.Id, resourcesData);
             }
         }
+
+        public void UpdateResultInfo(RecipeViewElement recipeViewElement)
+        {
+            resultImage.sprite = recipeViewElement.ResultImage.sprite;
+            resultText.text = recipeViewElement.ResultText.text;
+        }
+
+        public void OnRecipeClick(RecipeViewElement recipeViewElement,PointerEventData data)
+        {
+            _selectedRecipe = recipeViewElement;
+            
+            UpdateResultInfo(_selectedRecipe);
+        }
+
+        public void OnCraftClick()
+        {
+            ViewModel.RequestCraft(_selectedRecipe.RecipeId);
+        }
+        
     }
 }

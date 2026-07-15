@@ -11,6 +11,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         [SerializeField] public List<WorkbenchItemRecipe> allRecipes = new ();
         
         public List<WorkbenchItemRecipe> AllRecipes => allRecipes;
+        
+        public WorkbenchItemRecipe GetRecipe(string id)
+        {
+            return allRecipes.Find(b => b.recipeId == id);
+        }
     }
 
 }

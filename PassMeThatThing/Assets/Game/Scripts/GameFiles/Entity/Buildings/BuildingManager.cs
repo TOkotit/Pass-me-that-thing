@@ -30,10 +30,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         public void CmdSpawnBuilding(Vector3 pos, Quaternion rotation, string buildingId)
         {
             var buildingData = _buildingsDatabase.GetBuildingFromAll(buildingId);
-            if (true) // проверка на ресурсы
-            {
-                SpawnBuilding(pos,rotation, buildingData);
-            }
+            
+            
+            SpawnBuilding(pos,rotation, buildingData);
+            
         }
         
         [Server]

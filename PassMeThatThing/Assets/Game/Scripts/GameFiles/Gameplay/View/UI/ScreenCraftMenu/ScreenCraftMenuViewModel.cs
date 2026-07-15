@@ -4,6 +4,7 @@ using System.Linq;
 using Enums;
 using Game.Scripts.GameFiles.Entity.Buildings;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
 using Game.UI;
 using Systems;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private GameInputManager _gameInput;
         private ResourceDatabase _resourceDatabase;
         private WorkbenchItemRecipeDatabase _recipeDatabase;
-
+        private LocalCraftModel _localCraftModel;
         
         public override string Id => "ScreenCraftMenu";
 
@@ -29,9 +30,12 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _uiManager = uiManager;
             
             _gameInput = container.Resolve<GameInputManager>();
+
+            _localCraftModel = container.Resolve<LocalCraftModel>();
             
             _resourceDatabase = container.Resolve<ResourceDatabase>();
             _recipeDatabase = container.Resolve<WorkbenchItemRecipeDatabase>();
+            
         }
 
         public override void Dispose()
@@ -41,7 +45,12 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe> , ResourceDatabase> f)
         {
-            
+            f(_recipeDatabase.AllRecipes, _resourceDatabase);
+        }
+
+        public void RequestCraft(string recipeId)
+        {
+            _localCraftModel.Craft(recipeId);
         }
         
     }

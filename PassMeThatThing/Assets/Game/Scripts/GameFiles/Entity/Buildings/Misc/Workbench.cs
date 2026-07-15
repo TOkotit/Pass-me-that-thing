@@ -6,8 +6,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
     public class Workbench : Interactable
     {
-        [SerializeField] WorkbenchItemRecipe recipe;
-        [SerializeField] ItemSpawner spawner;
+        [SerializeField] private WorkbenchItemRecipe recipe;
+        [SerializeField] private ItemSpawner spawner;
+
+        public ItemSpawner Spawner => spawner;
+
         public override void Interact()
         {
             Debug.Log($"Recipe: {recipe}, Resources: {recipe?.Resources != null}, Count: {recipe?.Resources?.Count ?? -1}");
@@ -25,8 +28,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             {
                 MainResourceStorage.Instance.RemoveResource(pair.resource, pair.amount);
             }
-            spawner.Item = recipe.Item;
-            spawner.Interact();
+            Spawner.Item = recipe.Item;
+            Spawner.Interact();
         }
         
         public override void SrbToggle()
