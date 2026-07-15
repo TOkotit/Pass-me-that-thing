@@ -151,7 +151,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (pivotAnimator)
                 pivotAnimator.SetTrigger("Swing");
-            HandsMovement.FixGrab();
+            HandsMovement.FixGrab(CurrentHeldItem.Rigidbody);
             StartCoroutine(StopHolding());
         }
         

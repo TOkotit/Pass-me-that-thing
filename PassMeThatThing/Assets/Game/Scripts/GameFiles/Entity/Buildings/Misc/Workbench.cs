@@ -10,6 +10,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         [SerializeField] ItemSpawner spawner;
         public override void Interact()
         {
+            Debug.Log($"Recipe: {recipe}, Resources: {recipe?.Resources != null}, Count: {recipe?.Resources?.Count ?? -1}");
+
             foreach (var pair in recipe.Resources)
             {
                 if (!MainResourceStorage.Instance.HasResource(pair.resource, pair.amount))
@@ -23,7 +25,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             {
                 MainResourceStorage.Instance.RemoveResource(pair.resource, pair.amount);
             }
-
             spawner.Item = recipe.Item;
             spawner.Interact();
         }
