@@ -15,12 +15,12 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             ViewModel.RequestSetSprites(SetSprites);
 
             selectionWheel.OnValueChanged += OnSelectionWheelChanged;
-            ViewModel.BeforeExitScreen += HideSelectionWheel;
+            ViewModel.BeforeExitScreen += BeforeExit;
             
             selectionWheel.transform.DOLocalMoveY(0f, 0.3f).From(selectionWheel.RectTransform.rect.height/5).SetEase(Ease.OutQuad);
         }
 
-        private void HideSelectionWheel(Action onComplete)
+        private void BeforeExit(Action onComplete)
         {
             selectionWheel.transform.DOLocalMoveY(selectionWheel.RectTransform.rect.height/5, 0.3f)
                 .From(0f).SetEase(Ease.OutQuad).OnComplete(() => onComplete());
@@ -29,7 +29,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private void OnDestroy()
         {
             selectionWheel.OnValueChanged -= OnSelectionWheelChanged;
-            ViewModel.BeforeExitScreen -= HideSelectionWheel;
+            ViewModel.BeforeExitScreen -= BeforeExit;
         }
 
         public void SetSprites(List<Sprite> sprites)
