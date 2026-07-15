@@ -21,6 +21,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private float throwForceGrow = 5f;
         [SerializeField] private float maxThrowForce = 15f;
         [SerializeField] private float minChargeTime = 0.3f;
+        [SerializeField] private Camera camera;
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
@@ -186,7 +187,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (canThrow)
             {
                 item.IsThrown = true;
-                Vector3 force = throwForce * pivot.transform.forward;
+                Vector3 force = throwForce * camera.transform.forward;
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
                 ClientApplyThrowForce(item, force);
             }
@@ -284,6 +285,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private void AlignJointToPivot()
         {
+
+            pivot.transform.position = Vector3.zero;
+            if(!grabJoint.connectedBody)return;
             var currentRelRot = Quaternion.Inverse(transform.rotation) * grabJoint.connectedBody.rotation;
             var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
             grabJoint.targetRotation = Quaternion.Inverse(currentRelRot) * desiredRelRot;

@@ -13,7 +13,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         [SerializeField] protected ResourceStorage storage;      
         [Inject] private PhysicalItemRegistry registry;
         private float lastTransfer;
-        private float transferInterval;
+        private float transferInterval = 0.5f;
         public void OnTriggerEnter(Collider other)
         {
             if (!isServer) return;
