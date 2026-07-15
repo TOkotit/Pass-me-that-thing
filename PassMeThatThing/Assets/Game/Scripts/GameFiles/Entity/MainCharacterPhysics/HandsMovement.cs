@@ -21,6 +21,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private float throwForceGrow = 5f;
         [SerializeField] private float maxThrowForce = 15f;
         [SerializeField] private float minChargeTime = 0.3f;
+        [SerializeField] private Camera camera;
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
@@ -186,7 +187,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (canThrow)
             {
                 item.IsThrown = true;
-                Vector3 force = throwForce * pivot.transform.forward;
+                Vector3 force = throwForce * camera.transform.forward;
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
                 ClientApplyThrowForce(item, force);
             }
@@ -214,27 +215,29 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.gameObject.SetActive(false);
         }
 
-        public void FixGrab()
+        public void FixGrab(Rigidbody body)
         {
-            /*grabJoint.xMotion = ConfigurableJointMotion.Locked;
+            grabJoint.connectedBody = null;
+            grabJoint.connectedBody = body;
+            grabJoint.xMotion = ConfigurableJointMotion.Locked;
             grabJoint.yMotion = ConfigurableJointMotion.Locked;
             grabJoint.zMotion = ConfigurableJointMotion.Locked;
             grabJoint.angularXMotion = ConfigurableJointMotion.Locked;
             grabJoint.angularYMotion = ConfigurableJointMotion.Locked;
-            grabJoint.angularZMotion = ConfigurableJointMotion.Locked;*/
+            grabJoint.angularZMotion = ConfigurableJointMotion.Locked;
             
-            pivot.transform.position = new Vector3(0,-0.6f, 0);
+            pivot.transform.position = new Vector3(0,-1f, 0);
         }
 
         public void ReleaseGrab()
         {
-            /*AlignJointToPivot();
+            AlignJointToPivot();
             grabJoint.xMotion = ConfigurableJointMotion.Free;
             grabJoint.yMotion = ConfigurableJointMotion.Free;
             grabJoint.zMotion = ConfigurableJointMotion.Free;
             grabJoint.angularXMotion = ConfigurableJointMotion.Free;
             grabJoint.angularYMotion = ConfigurableJointMotion.Free;
-            grabJoint.angularZMotion = ConfigurableJointMotion.Free;*/
+            grabJoint.angularZMotion = ConfigurableJointMotion.Free;
             pivot.transform.position = new Vector3(0,-0.6f, 1);
         }
         public void ChargeThrow()
@@ -282,6 +285,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private void AlignJointToPivot()
         {
+
+            pivot.transform.position = Vector3.zero;
+            if(!grabJoint.connectedBody)return;
             var currentRelRot = Quaternion.Inverse(transform.rotation) * grabJoint.connectedBody.rotation;
             var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
             grabJoint.targetRotation = Quaternion.Inverse(currentRelRot) * desiredRelRot;
