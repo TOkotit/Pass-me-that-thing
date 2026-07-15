@@ -623,14 +623,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2472626591355819156}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: -0.6, z: 1.2}
+  m_LocalRotation: {x: 0.5134618, y: 0.5134618, z: -0.48616555, w: 0.4861656}
+  m_LocalPosition: {x: 0, y: -0.8, z: 1.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5452809853429047121}
   m_Father: {fileID: 1756513627814750571}
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 86.872, y: 180, z: 90}
 --- !u!1 &2682288877409739554
 GameObject:
   m_ObjectHideFlags: 0
@@ -3587,19 +3587,19 @@ ConfigurableJoint:
   m_TargetVelocity: {x: 0, y: 0, z: 0}
   m_XDrive:
     serializedVersion: 4
-    positionSpring: 1200
+    positionSpring: 1700
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_YDrive:
     serializedVersion: 4
-    positionSpring: 1200
+    positionSpring: 1700
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_ZDrive:
     serializedVersion: 4
-    positionSpring: 1200
+    positionSpring: 1700
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -3608,13 +3608,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 1200
+    positionSpring: 700
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 1200
+    positionSpring: 700
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -3624,7 +3624,7 @@ ConfigurableJoint:
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
-  m_ProjectionMode: 0
+  m_ProjectionMode: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_ConfiguredInWorldSpace: 0

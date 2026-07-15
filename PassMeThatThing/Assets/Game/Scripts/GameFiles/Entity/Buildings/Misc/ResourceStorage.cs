@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Mirror;
 using Game.Scripts.Enums;
@@ -5,8 +6,10 @@ using UnityEngine;
 
 public class ResourceStorage : NetworkBehaviour
 {
+    private static Dictionary<GameObject, ResourceStorage> storages = new Dictionary<GameObject, ResourceStorage>();
     private readonly SyncDictionary<Resource, int> storedResources = new SyncDictionary<Resource, int>();
-
+    public static Dictionary<GameObject, ResourceStorage> Storages => storages;
+    public IReadOnlyDictionary<Resource, int> StoredResources => storedResources;
     [Server]
     public void AddResource(Resource resource, int amount)
     {
@@ -35,5 +38,10 @@ public class ResourceStorage : NetworkBehaviour
         {
             Debug.Log(pair.Key + ": " + pair.Value);
         }
+    }
+
+    private void Awake()
+    {
+        storages[transform.gameObject] = this;
     }
 }
