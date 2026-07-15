@@ -30,12 +30,22 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         }
 
 
-        public void UpdateRecipes(List<WorkbenchItemRecipe> recipes)
+        public void UpdateRecipes(List<WorkbenchItemRecipe> recipes, ResourceDatabase resourceDatabase)
         {
-            foreach (var recipe in recipes)
+            foreach (var r in recipes)
             {
                 var instance = Instantiate(recipePrefab, recipesContainer.transform);
                 _recipes.Add(instance);
+                
+                var resoursesData = new List<(Sprite, string)>();
+                
+                foreach (var rp in r.Resources)
+                {
+                    var rData = resourceDatabase.GetResource(rp.resource);
+                    resoursesData.Add((rData.resourceImage, rData.resourceName));
+                }
+                
+                instance.SetData(r.Item.ItemImage, r.Item.Id, resoursesData);
             }
         }
     }

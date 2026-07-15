@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Enums;
 using Game.Scripts.GameFiles.Entity.Buildings;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.UI;
 using Systems;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private GameplayUIManager _uiManager;
 
         private GameInputManager _gameInput;
+        private ResourceDatabase _resourceDatabase;
+        private WorkbenchItemRecipeDatabase _recipeDatabase;
 
         
         public override string Id => "ScreenCraftMenu";
@@ -25,7 +28,10 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         {
             _uiManager = uiManager;
             
+            _gameInput = container.Resolve<GameInputManager>();
             
+            _resourceDatabase = container.Resolve<ResourceDatabase>();
+            _recipeDatabase = container.Resolve<WorkbenchItemRecipeDatabase>();
         }
 
         public override void Dispose()
@@ -33,7 +39,10 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         }
 
-
+        public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe> , ResourceDatabase> f)
+        {
+            
+        }
         
     }
 }

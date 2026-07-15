@@ -21,9 +21,15 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         [SerializeField] private List<ResourceVisualElement> resources;
 
-        public void SetData(Image rImage, TextMeshProUGUI rText, List<ResourcePair> resourcePairs)
+        public void SetData(Sprite rSprite, string rText, List<(Sprite, string)> resourcePairs)
         {
-            
+            resultImage.sprite = rSprite;
+            resultText.text = rText;
+
+            for (int i=0; i < resourcePairs.Count && i < resources.Count; i++)
+            {
+                
+            }
         }
     }
 }
