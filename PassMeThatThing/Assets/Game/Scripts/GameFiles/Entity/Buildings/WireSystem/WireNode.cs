@@ -8,20 +8,19 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
     public class WireNode : Interactable
     {
+        [SerializeField] private WireType wireType;
         [SerializeField] private bool isSplitter;
         [SerializeField] private int splitterConnLimit = 4;
         
-        [Inject] private WireManager _wireManager;
+        [Inject] protected WireManager _wireManager;
         
-        private LocalWireHandlerModel _handlerModel;
-
-        private bool isHighlighted;
+        [Inject] private LocalWireHandlerModel _handlerModel;
         
         [SyncVar]
         private int _nodeId = -1;
         [SyncVar]
         private int _netId = -1;
-
+        
         public int NodeId
         {
             get => _nodeId;
@@ -37,8 +36,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public bool IsSplitter => isSplitter;
         public int SplitterConnLimit => splitterConnLimit;
 
+        public WireType WireType => wireType;
 
-        private void Start()
+        public virtual void Start()
         {
             if (isServer)
             {
@@ -46,7 +46,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
         }
 
-        private void OnDestroy()
+        public virtual void OnDestroy()
         {
             if (isServer)
             {
@@ -56,7 +56,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         public override void Interact()
         {
+            //Debug.Log($"[W] wirenode interact");
             
+            _handlerModel.HighlightNode(NodeId);
         }
 
         public override void SrbToggle()

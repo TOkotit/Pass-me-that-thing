@@ -11,35 +11,35 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         
         
 
-        [Command(requiresAuthority =  false)]
-        public void CmdSpawnBuilding(Vector3 pos, int buildingIndex)
-        {
-            if (_buildingsDatabase.allBuildings.Count > buildingIndex)
-            {
-                var buildingData = _buildingsDatabase.allBuildings[buildingIndex];
-                if (true) // проверка на ресурсы
-                {
-
-                    SpawnBuilding(pos, buildingData);
-
-                }
-            }
-        }
+        // [Command(requiresAuthority =  false)]
+        // public void CmdSpawnBuilding(Vector3 pos, int buildingIndex)
+        // {
+        //     if (_buildingsDatabase.buildings.Count > buildingIndex)
+        //     {
+        //         var buildingData = _buildingsDatabase.buildings[buildingIndex];
+        //         if (true) // проверка на ресурсы
+        //         {
+        //
+        //             SpawnBuilding(pos, buildingData);
+        //
+        //         }
+        //     }
+        // }
         
         [Command(requiresAuthority =  false)]
-        public void CmdSpawnBuilding(Vector3 pos, string buildingId)
+        public void CmdSpawnBuilding(Vector3 pos, Quaternion rotation, string buildingId)
         {
-            var buildingData = _buildingsDatabase.GetBuilding(buildingId);
+            var buildingData = _buildingsDatabase.GetBuildingFromAll(buildingId);
             if (true) // проверка на ресурсы
             {
-                SpawnBuilding(pos, buildingData);
+                SpawnBuilding(pos,rotation, buildingData);
             }
         }
         
         [Server]
-        public void SpawnBuilding(Vector3 pos, BuildingData buildingData)
+        public void SpawnBuilding(Vector3 pos, Quaternion rotation, BuildingData buildingData)
         {
-            var instance = Instantiate(buildingData.worldPrefab, pos, Quaternion.identity);
+            var instance = Instantiate(buildingData.worldPrefab, pos, rotation);
             NetworkServer.Spawn(instance);
             Debug.Log($"Spawned building {buildingData.id}");
         }

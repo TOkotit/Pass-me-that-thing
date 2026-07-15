@@ -57,19 +57,24 @@ namespace Game.Gameplay.View.UI
             _gameInputManager = container.Resolve<GameInputManager>();
             
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed += RequestOpenPause;
-
+            _gameInputManager.GameInput.Gameplay.WireMenu.performed += RequestOpenWireMenu;
         }
         
         public override void Dispose()
         {
             // Debug.Log("Disposing ScreenGameplayViewModel");
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed -= RequestOpenPause;
-
+            _gameInputManager.GameInput.Gameplay.WireMenu.performed -= RequestOpenWireMenu;
         }
 
         public void RequestOpenPause(InputAction.CallbackContext c)
         {
             _uiManager.OpenScreenPauseMenu();
+        }
+        
+        public void RequestOpenWireMenu(InputAction.CallbackContext c)
+        {
+            _uiManager.OpenScreenWireMenu();
         }
 
         public void InitHealthUI(Action<int, int> f)

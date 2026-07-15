@@ -5122,6 +5122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5828727303805172884}
   - component: {fileID: 5917041181165052920}
+  - component: {fileID: 6540347869492288861}
   m_Layer: 8
   m_Name: BuildingHandler
   m_TagString: Untagged
@@ -5165,6 +5166,21 @@ MonoBehaviour:
     m_Bits: 8
   buildingPreview: {fileID: 1440566225822830130}
   camera: {fileID: 3355288843335198720}
+--- !u!114 &6540347869492288861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8847557260216196345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d17c3174e3e84be8b78fa57729b5d6d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!1 &9007278481986223020
 GameObject:
   m_ObjectHideFlags: 0

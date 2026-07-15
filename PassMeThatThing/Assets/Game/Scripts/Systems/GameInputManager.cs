@@ -64,6 +64,33 @@ namespace Systems
                 GameInput.UI.Disable();
                 GameInput.Dispose();
                 Debug.Log("Global GameInput disposed safely");
-            }        }
+            }        
+        }
+
+
+        public void ToggleMouse()
+        {
+            if (GameInput.Gameplay.MouseDrag.enabled)
+            {
+                DisableMouse();
+            }
+            else
+            {
+                EnableMouse();
+            }
+        }
+
+        public void EnableMouse()
+        {
+            GameInput.Gameplay.LeftMouse.Enable();
+            GameInput.Gameplay.RightMouse.Enable();
+        }
+        
+        public void DisableMouse()
+        {
+            Debug.Log("DisableMouse");
+            GameInput.Gameplay.LeftMouse.Disable();
+            GameInput.Gameplay.RightMouse.Disable();
+        }
     }
 }

@@ -6,12 +6,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class LMBBlueprint : LMBReaction
     {
-        private PhysicalItem _blueprintItem;
+        private BlueprintItem _blueprintItem;
         private string _buildingId;
-        public LMBBlueprint(PhysicalItem item, string buildingId) : base(item)
+        
+        public LMBBlueprint(PhysicalItem item) : base(item)
         {
-            _blueprintItem = item;
-            _buildingId = buildingId;
+            if (item.TryGetComponent<BlueprintItem>(out _blueprintItem))
+            {
+                _buildingId = _blueprintItem.BuildingId;
+            }
         }
 
         public override void Act()

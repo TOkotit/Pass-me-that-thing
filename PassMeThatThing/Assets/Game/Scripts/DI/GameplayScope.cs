@@ -6,6 +6,7 @@ using VContainer.Unity;
 using UnityEngine;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Entity.Buildings;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
@@ -32,6 +33,7 @@ namespace DI
         [SerializeField] private GlobalStageManager globalStageManagerPrefab;
         [SerializeField] private EnemySpawner enemySpawnerPrefab;
         [SerializeField] private BuildingManager buildingManagerPrefab;
+        [SerializeField] private WireManager wireManager;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -49,6 +51,7 @@ namespace DI
             builder.RegisterComponent(globalStageManagerPrefab);
             builder.RegisterComponent(enemySpawnerPrefab);
             builder.RegisterComponent(buildingManagerPrefab);
+            builder.RegisterComponent(wireManager);
             
             var damageSystem = new DamageSystem();
             builder.RegisterInstance(damageSystem);
@@ -76,6 +79,7 @@ namespace DI
             
             builder.Register<MCLocalModel>(Lifetime.Singleton);
             builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
+            builder.Register<LocalWireHandlerModel>(Lifetime.Singleton);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);

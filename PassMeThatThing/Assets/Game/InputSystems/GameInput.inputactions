@@ -16,6 +16,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "0a3cc3b5-0de3-439a-8c01-3a78797847f7",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Movement",
                     "type": "Value",
                     "id": "2625d782-8b8c-4fae-94b0-6b395e2b160b",
@@ -145,6 +154,15 @@
                     "name": "ConfirmBuilding",
                     "type": "Button",
                     "id": "0b8f0ba6-5d8c-489e-8e03-bb960693348d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "WireMenu",
+                    "type": "Button",
+                    "id": "9a3e1fce-471a-4de9-9766-ca470197e470",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -369,6 +387,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ConfirmBuilding",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "871aa67f-5045-4382-947b-ebda214de43f",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WireMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "13eaf99e-c4a2-4467-bd47-fdf1ee6a9f46",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

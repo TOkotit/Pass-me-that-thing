@@ -16,12 +16,13 @@ GameObject:
   - component: {fileID: 5340831970347749924}
   - component: {fileID: 2742765135364868261}
   - component: {fileID: 7776855572588576369}
+  - component: {fileID: 5761795943132506895}
   - component: {fileID: 4913154011383626854}
   - component: {fileID: 6213635256034360291}
   - component: {fileID: 2873655632455000256}
   - component: {fileID: 6804494640289549333}
   m_Layer: 7
-  m_Name: blueprint_singleTurret
+  m_Name: blueprint
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120,6 +121,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   itemId: 
+  instanceId: 
 --- !u!114 &5340831970347749924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,6 +185,21 @@ MonoBehaviour:
   _network: {fileID: 1686371426209873383}
   hasToBeAligned: 1
   _isThrown: 0
+  Resources:
+    _serializedList: []
+--- !u!114 &5761795943132506895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 085425eea6904958b84a4a13e5f7362d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingId: singleTurret
 --- !u!114 &4913154011383626854
 MonoBehaviour:
   m_ObjectHideFlags: 0
