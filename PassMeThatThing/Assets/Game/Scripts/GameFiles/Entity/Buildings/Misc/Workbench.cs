@@ -2,6 +2,7 @@ using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -28,7 +29,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         {
             
         }
-        
+
+        public void InteractWithItem(PhysicalItem item)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();
