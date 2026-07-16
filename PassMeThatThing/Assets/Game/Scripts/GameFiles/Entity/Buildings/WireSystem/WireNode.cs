@@ -1,12 +1,13 @@
 using System;
 using Game.Scripts.GameFiles.InteractableObjects;
+using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
-    public class WireNode : Interactable
+    public class WireNode : NetworkBehaviour, Interactable
     {
         [SerializeField] private WireType wireType;
         [SerializeField] private bool isSplitter;
@@ -54,16 +55,22 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
         }
 
-        public override void Interact()
+        public void Interact()
         {
             //Debug.Log($"[W] wirenode interact");
             
             _handlerModel.HighlightNode(NodeId);
         }
 
-        public override void SrbToggle()
+        public void SrbToggle()
         {
             
+        }
+        
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            InteractableRegistry.Instance.Register(gameObject, this);
         }
     }
 }

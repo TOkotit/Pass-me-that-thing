@@ -1,11 +1,12 @@
 using System;
+using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 {
-    public class BunkerGates : Interactable
+    public class BunkerGates : NetworkBehaviour, Interactable
     {
         [Header("Movement")]
         [SerializeField] private Transform gateVisual;
@@ -30,7 +31,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         public override void OnStartClient()
         {
             base.OnStartClient();
-
+            InteractableRegistry.Instance.Register(gameObject, this);
             targetY = isOpen ? openY : closedY;
             targetYInitialized = true;
         }
@@ -49,7 +50,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             gateVisual.localPosition = position;
         }
 
-        public override void Interact()
+        public void Interact()
         {
             CmdToggleGate();
         }
@@ -58,7 +59,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         private void CmdToggleGate() => isOpen = !isOpen;
         
         [ServerCallback]
-        public override void SrbToggle() => isOpen = !isOpen;
+        public void SrbToggle() => isOpen = !isOpen;
 
         
         [Server]

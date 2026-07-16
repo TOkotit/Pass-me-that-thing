@@ -1,11 +1,12 @@
 using System.Collections;
+using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.Doors
 {
-    public class DoorInteract : Interactable
+    public class DoorInteract : NetworkBehaviour, Interactable
     {
         [Header("Movement")]
         [SerializeField] private float closedYRotation = 0f;
@@ -19,18 +20,18 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         private float targetRotationY;
         private bool initialized;
 
-        public override void OnStartServer()
+        
+        public void OnStartServer()
         {
-            base.OnStartServer();
             isOpen = false;
             targetRotationY = closedYRotation;
             initialized = true;
         }
 
-        public override void OnStartClient()
+        public void OnStartClient()
         {
             base.OnStartClient();
-
+            InteractableRegistry.Instance.Register(gameObject, this);
             targetRotationY = isOpen ? openYRotation : closedYRotation;
             initialized = true;
         }
@@ -49,7 +50,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
             transform.localEulerAngles = rotation;
         }
 
-        public override void Interact()
+        public void Interact()
         {
             Debug.Log("Interact with door");
             CmdToggleDoor();
@@ -69,7 +70,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         }
         
         [ServerCallback]
-        public override void SrbToggle() => isOpen = !isOpen;
+        public void SrbToggle() => isOpen = !isOpen;
 
         [Server]
         public void Open() => isOpen = true;

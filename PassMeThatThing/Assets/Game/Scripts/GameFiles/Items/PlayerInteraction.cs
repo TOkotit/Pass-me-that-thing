@@ -283,7 +283,7 @@ namespace Game.Scripts.GameFiles.Items
         private void TryOpen(Collider target)
         {
             var interactable = FindInteractable(target.gameObject);
-            if (!interactable) return;
+            if (interactable == null) return;
             interactable.Interact();
         }
 

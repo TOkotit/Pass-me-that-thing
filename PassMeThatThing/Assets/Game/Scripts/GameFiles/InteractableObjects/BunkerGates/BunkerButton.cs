@@ -1,12 +1,14 @@
+using Game.Scripts.GameFiles.Items;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 {
-    public class BunkerButton : Interactable
+    public class BunkerButton : NetworkBehaviour, Interactable
     {
         [SerializeField] private BunkerGates linkedGate;
 
-        public override void Interact()
+        public void Interact()
         {
             if (linkedGate)
             {
@@ -24,9 +26,15 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             if (linkedGate) linkedGate.Close();
         }
 
-        public override void SrbToggle()
+        public void SrbToggle()
         {
             if (linkedGate) linkedGate.SrbToggle();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            InteractableRegistry.Instance.Register(gameObject, this);
         }
     }
 }

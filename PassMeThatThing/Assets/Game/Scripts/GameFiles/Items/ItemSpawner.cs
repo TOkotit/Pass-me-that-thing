@@ -7,7 +7,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    public class ItemSpawner : Interactable
+    public class ItemSpawner : NetworkBehaviour ,Interactable
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
@@ -46,13 +46,19 @@ namespace Game.Scripts.GameFiles.Items
                 });
         }
         
-        public override void Interact()
+        public void Interact()
         {
             CmdInteractWithObject();
         }
-        public override void SrbToggle()
+        public void SrbToggle()
         {
             
+        }
+        
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            InteractableRegistry.Instance.Register(gameObject, this);
         }
     }
 }

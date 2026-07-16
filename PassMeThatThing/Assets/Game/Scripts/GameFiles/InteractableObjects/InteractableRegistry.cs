@@ -17,7 +17,7 @@ namespace Game.Scripts.GameFiles.Items
 
         public void Register(GameObject obj, Interactable interactable)
         {
-            if (!obj || !interactable)
+            if (!obj || interactable == null)
                 return;
 
             if (!_interactables.ContainsKey(obj))

@@ -1,17 +1,18 @@
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
-    public class Workbench : Interactable
+    public class Workbench : NetworkBehaviour, Interactable
     {
         [SerializeField] private WorkbenchItemRecipe recipe;
         [SerializeField] private ItemSpawner spawner;
 
         public ItemSpawner Spawner => spawner;
 
-        public override void Interact()
+        public void Interact()
         {
             Debug.Log($"Recipe: {recipe}, Resources: {recipe?.Resources != null}, Count: {recipe?.Resources?.Count ?? -1}");
 
@@ -32,7 +33,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             Spawner.Interact();
         }
         
-        public override void SrbToggle()
+        public void SrbToggle()
         {
             
         }

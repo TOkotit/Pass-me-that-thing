@@ -1,23 +1,24 @@
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.InteractableObjects;
+using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Events.FloodEvent
 {
-    public class TestEventStartInteracting : Interactable
+    public class TestEventStartInteracting : NetworkBehaviour, Interactable
     {
         
         [SerializeField] private FloodEvent floodEvent;
 
-        public override void Interact()
+        public void Interact()
         {
             CmdTest();
             CmdTest2();
         }
 
-        public override void SrbToggle()
+        public void SrbToggle()
         {
             throw new System.NotImplementedException();
         }
@@ -33,6 +34,12 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         private void CmdTest2()
         {
             GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            InteractableRegistry.Instance.Register(gameObject, this);
         }
     }
 }
