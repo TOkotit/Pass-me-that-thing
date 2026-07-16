@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abb977fc6a3d459c9cdbd593b2b7caab, type: 3}
-  m_Name: WrenchRecipe
+  m_Script: {fileID: 11500000, guid: 04476f882e6f4fc98ab6d7e0acca6351, type: 3}
+  m_Name: MainItemRecipeDatabase
   m_EditorClassIdentifier: 
-  recipeId: wrench
-  resources:
-  - amount: 2
-    resource: 0
-  item: {fileID: 11400000, guid: 25c345c1f71bbd146831c6431eabc2cf, type: 2}
+  allRecipes:
+  - {fileID: 11400000, guid: cf284a7f752d10847a5cdd1a461961e6, type: 2}

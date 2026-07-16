@@ -31,11 +31,12 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         private void OnDestroy()
         {
+            craftButton.onClick.RemoveListener(OnCraftClick);
+            
             foreach (var recipeViewElement in _recipes)
             {
                 recipeViewElement.OnClick -= OnRecipeClick;
             }
-            craftButton.onClick.RemoveListener(OnCraftClick);
         }
 
         public void UpdateRecipes(List<WorkbenchItemRecipe> recipes, ResourceDatabase resourceDatabase)
@@ -53,7 +54,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
                 foreach (var rp in r.Resources)
                 {
                     var rData = resourceDatabase.GetResource(rp.resource);
-                    resourcesData.Add((rData.resourceImage, rData.resourceName));
+                    resourcesData.Add((rData.resourceImage, rp.amount.ToString()));
                 }
                 
                 recipeViewElement.SetData(r.Item.ItemImage, r.Item.Id, resourcesData);
@@ -66,7 +67,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             resultText.text = recipeViewElement.ResultText.text;
         }
 
-        public void OnRecipeClick(RecipeViewElement recipeViewElement,PointerEventData data)
+        public void OnRecipeClick(RecipeViewElement recipeViewElement, PointerEventData data)
         {
             _selectedRecipe = recipeViewElement;
             

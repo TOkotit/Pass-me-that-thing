@@ -20,5 +20,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft
         {
             _workbench = workbench;
         }
+
+        public void Clear()
+        {
+            _selectedRecipeId = null;
+            _workbench = null;
+        }
     }
 }
