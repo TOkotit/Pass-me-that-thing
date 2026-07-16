@@ -35,12 +35,22 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             
             _resourceDatabase = container.Resolve<ResourceDatabase>();
             _recipeDatabase = container.Resolve<WorkbenchItemRecipeDatabase>();
-            
+
+
+            _gameInput.GameInput.UI.PauseMenu.performed += OnPauseClicked;
         }
 
         public override void Dispose()
         {
+            _gameInput.GameInput.UI.PauseMenu.performed -= OnPauseClicked;
+        }
 
+        public void OnPauseClicked(InputAction.CallbackContext c) => RequestGoToGameplay();
+
+        public void RequestGoToGameplay()
+        {
+            _localCraftModel.Clear();
+            _uiManager.OpenScreenGameplay();
         }
 
         public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe> , ResourceDatabase> f)

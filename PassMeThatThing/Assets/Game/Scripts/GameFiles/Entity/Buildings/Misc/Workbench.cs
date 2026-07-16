@@ -1,41 +1,38 @@
+using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
     public class Workbench : NetworkBehaviour, Interactable
     {
-        [SerializeField] private WorkbenchItemRecipe recipe;
+        // [SerializeField] private WorkbenchItemRecipe recipe;
         [SerializeField] private ItemSpawner spawner;
+        
+        [Inject] private LocalCraftModel _craftModel;
+        [Inject] private GameplayUIManager _uiManager;
 
         public ItemSpawner Spawner => spawner;
 
         public void Interact()
         {
-            Debug.Log($"Recipe: {recipe}, Resources: {recipe?.Resources != null}, Count: {recipe?.Resources?.Count ?? -1}");
-
-            foreach (var pair in recipe.Resources)
-            {
-                if (!MainResourceStorage.Instance.HasResource(pair.resource, pair.amount))
-                {
-                    Debug.Log("Not enough resources!");
-                    return;
-                }
-            }
-
-            foreach (var pair in recipe.Resources)
-            {
-                MainResourceStorage.Instance.RemoveResource(pair.resource, pair.amount);
-            }
-            Spawner.Item = recipe.Item;
-            Spawner.Interact();
+            _craftModel.SetWorkbench(this);
+            _uiManager.OpenScreenCraft();
         }
         
         public void SrbToggle()
         {
             
+        }
+        
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            InteractableRegistry.Instance.Register(gameObject, this);
         }
     }
 }

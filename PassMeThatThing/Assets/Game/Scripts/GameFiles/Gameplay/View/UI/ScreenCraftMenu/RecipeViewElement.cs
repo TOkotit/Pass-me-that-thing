@@ -11,22 +11,20 @@ namespace Game.Gameplay.View.UI.ScreenBuild
     [Serializable]
     public class ResourceViewElement
     {
-        [SerializeField] private Image resImage;
-        [SerializeField] private TextMeshProUGUI resText;
+        public Image resImage;
+        public TextMeshProUGUI resText;
     }
     
     public class RecipeViewElement : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private Image resultImage;
-        [SerializeField] private Text resultText;
+        [SerializeField] private TextMeshProUGUI resultText;
 
         [SerializeField] private List<ResourceViewElement> resources;
-        
-        
 
         public Image ResultImage => resultImage;
 
-        public Text ResultText => resultText;
+        public TextMeshProUGUI ResultText => resultText;
         
         public string RecipeId { get; set; }
         
@@ -42,7 +40,8 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
             for (int i=0; i < resourcePairs.Count && i < resources.Count; i++)
             {
-                
+                resources[i].resImage.sprite = resourcePairs[i].Item1;
+                resources[i].resText.text = resourcePairs[i].Item2;
             }
         }
 

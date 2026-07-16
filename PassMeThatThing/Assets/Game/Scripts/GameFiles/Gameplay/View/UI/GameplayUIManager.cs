@@ -98,7 +98,17 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
         
-        
+        public ScreenCraftMenuViewModel OpenScreenCraft()
+        {
+            var viewModel = new ScreenCraftMenuViewModel(this, Container);
+            
+            UnlockCursor();
+            _gameInputManager.ToggleMap(InputMapType.UI);
+            
+            rootUI.OpenScreen(viewModel);
+            
+            return viewModel;
+        }
         
         public ScreenOptionsViewModel OpenScreenOptions()
         {

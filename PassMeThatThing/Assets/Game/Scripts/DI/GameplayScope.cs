@@ -6,6 +6,8 @@ using VContainer.Unity;
 using UnityEngine;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Entity.Buildings;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
@@ -28,12 +30,16 @@ namespace DI
         [SerializeField] private BuildingsDatabase buildingDatabase;
         [SerializeField] private TurretDatabase turretDatabase;
         
+        [SerializeField] private ResourceDatabase resourceDatabase;
+        [SerializeField] private WorkbenchItemRecipeDatabase recipeDatabase;
+        
         [Header("Managers on gameplay scene")]
         [SerializeField] private GameRandomEventManager eventManagerPrefab;
         [SerializeField] private GlobalStageManager globalStageManagerPrefab;
         [SerializeField] private EnemySpawner enemySpawnerPrefab;
         [SerializeField] private BuildingManager buildingManagerPrefab;
         [SerializeField] private WireManager wireManager;
+        [SerializeField] private CraftManager craftManager;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -44,6 +50,8 @@ namespace DI
             builder.RegisterInstance(enemyDatabase);
             builder.RegisterInstance(buildingDatabase);
             builder.RegisterInstance(turretDatabase);
+            builder.RegisterInstance(resourceDatabase);
+            builder.RegisterInstance(recipeDatabase);
 
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
@@ -52,6 +60,7 @@ namespace DI
             builder.RegisterComponent(enemySpawnerPrefab);
             builder.RegisterComponent(buildingManagerPrefab);
             builder.RegisterComponent(wireManager);
+            builder.RegisterComponent(craftManager);
             
             var damageSystem = new DamageSystem();
             builder.RegisterInstance(damageSystem);
@@ -80,6 +89,7 @@ namespace DI
             builder.Register<MCLocalModel>(Lifetime.Singleton);
             builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalWireHandlerModel>(Lifetime.Singleton);
+            builder.Register<LocalCraftModel>(Lifetime.Singleton);
             
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
