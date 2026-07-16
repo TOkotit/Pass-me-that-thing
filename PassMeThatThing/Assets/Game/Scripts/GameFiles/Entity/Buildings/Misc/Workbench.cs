@@ -1,5 +1,6 @@
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 
@@ -34,6 +35,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         }
         
         public void SrbToggle()
+        {
+            
+        }
+
+        public void InteractWithItem(PhysicalItem item)
         {
             
         }

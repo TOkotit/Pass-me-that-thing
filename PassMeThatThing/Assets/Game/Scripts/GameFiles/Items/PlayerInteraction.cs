@@ -228,6 +228,16 @@ namespace Game.Scripts.GameFiles.Items
                     {
                         TryPickUp(hit.collider);
                     }
+                    else if (hit.collider.gameObject.CompareTag("InteractableItem"))
+                    {
+                        var item = _physicalItemInteractionController.CurrentHeldItem;
+                        if (item)
+                        {
+                            if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject, out var interactable))
+                                interactable.InteractWithItem(item);
+                        }
+                        else { TryPickUp(hit.collider); }
+                    }
                     else if (hit.collider.gameObject.CompareTag("Player"))
                     {
                         _damagableRegistry.TryGetDamagable(hit.collider.gameObject, out var damagable);

@@ -1,5 +1,6 @@
 using System;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
@@ -61,7 +62,11 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         [ServerCallback]
         public void SrbToggle() => isOpen = !isOpen;
 
-        
+        public void InteractWithItem(PhysicalItem item)
+        {
+            
+        }
+
         [Server]
         public void Open() => isOpen = true;
         

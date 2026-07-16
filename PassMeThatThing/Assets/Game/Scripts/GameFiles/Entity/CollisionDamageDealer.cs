@@ -44,16 +44,5 @@ namespace Game.Scripts.GameFiles.Entity
             
             _lastDamageTime = Time.time;
         }
-        private Damagable FindDamagableInHierarchy(GameObject obj)
-        {
-            var t = obj.transform;
-            while (t)
-            {
-                if (DamagableRegistry.Instance.TryGetDamagable(t.gameObject, out var damagable))
-                    return damagable;
-                t = t.parent;
-            }
-            return null;
-        }
     }
 }

@@ -18,39 +18,39 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         {
             if (!isServer) return;
             Debug.Log("В приемник что-то попало");
-            if (!other.CompareTag("Item")) return;
-
-            if (!registry.TryGetItem(other.gameObject, out var item)) return;
-
-            if (item.Resources.Count > 0)
+            if (other.CompareTag("Item"))
             {
-                if (item.Owner)
+                if (!registry.TryGetItem(other.gameObject, out var item)) return;
+
+                if (item.Resources.Count > 0)
                 {
-                    var playerInventory = item.Owner.MainCharacterModel.PlayerInventory;
-                    if (playerInventory)
+                    if (item.Owner)
                     {
-                        var slotToRemove = -1;
-                        foreach (var kvp in playerInventory.ServerInventory)
-                        {
-                            if (kvp.Value.itemId == item.Network.itemId)
-                            {
-                                slotToRemove = kvp.Key;
-                                break;
-                            }
-                        }
-                        if (slotToRemove != -1)
-                            playerInventory.ServerInventory.Remove(slotToRemove);
+                        var inv = item.Owner.MainCharacterModel.PlayerInventory;
+                        if (inv) inv.ServerRemoveItemFromOwner(item);
+                    }
+
+                    foreach (var resourcePair in item.Resources)
+                    {
+                        storage.AddResource(resourcePair.Key, resourcePair.Value);
+                    }
+
+                    item.Owner?.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController.ReleaseCurrentItem(0f, false);
+                    NetworkServer.UnSpawn(other.gameObject);
+                }  
+            }
+            if (other.CompareTag("InteractableItem"))
+            {
+                var isABox = DropBox.Boxes.TryGetValue(other.gameObject, out var box);
+                if (isABox)
+                {
+                    foreach (var item in box.Resources)
+                    {
+                        storage.AddResource(item.Key, item.Value);
                     }
                 }
-
-                foreach (var resourcePair in item.Resources)
-                {
-                    storage.AddResource(resourcePair.Key, resourcePair.Value);
-                }
-
-                item.Owner.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController.ReleaseCurrentItem(0f, false);
-                NetworkServer.UnSpawn(other.gameObject);
             }
+            
         }
 
         private void OnTriggerStay(Collider other)

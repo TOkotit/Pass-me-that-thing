@@ -1,5 +1,6 @@
 using System.Collections;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -71,6 +72,11 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         
         [ServerCallback]
         public void SrbToggle() => isOpen = !isOpen;
+
+        public void InteractWithItem(PhysicalItem item)
+        {
+            
+        }
 
         [Server]
         public void Open() => isOpen = true;

@@ -76,7 +76,7 @@ namespace DI
             
             builder.Register<MainCharacterModel>(Lifetime.Transient);
             builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
-            
+            builder.Register<DamagableModel>(Lifetime.Transient);
             builder.Register<MCLocalModel>(Lifetime.Singleton);
             builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalWireHandlerModel>(Lifetime.Singleton);

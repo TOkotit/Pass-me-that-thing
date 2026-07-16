@@ -1,6 +1,7 @@
 using System;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -66,7 +67,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         {
             
         }
-        
+
+        public void InteractWithItem(PhysicalItem item)
+        {
+            
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();

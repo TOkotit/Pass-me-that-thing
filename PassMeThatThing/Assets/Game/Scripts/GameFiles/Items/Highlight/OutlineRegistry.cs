@@ -50,6 +50,7 @@ namespace Game.Scripts.GameFiles.Items.Highlight
         
         public void DisableOutline(Outline outline)
         {
+            if (!outline) return;
             outline.enabled = false;
             EnabledOutlines.Remove(outline);
         }

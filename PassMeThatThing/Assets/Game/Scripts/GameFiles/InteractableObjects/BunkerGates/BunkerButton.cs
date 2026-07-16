@@ -1,4 +1,5 @@
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 
@@ -30,6 +31,12 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         {
             if (linkedGate) linkedGate.SrbToggle();
         }
+
+        public void InteractWithItem(PhysicalItem item)
+        {
+            
+        }
+
 
         public override void OnStartClient()
         {

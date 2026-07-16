@@ -26,6 +26,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Rigidbody rigidBody;
         [SerializeField] private NetworkItem _network;
         [SerializeField] private bool hasToBeAligned;
+        [SerializeField] private Collider collider;
         [SyncVar]
         [SerializeField] private bool _isThrown;
         [SerializedDictionary] public SerializedDictionary<Resource,int> Resources; 
@@ -55,11 +56,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Rigidbody Rigidbody => rigidBody;
         public NetworkItem Network => _network;
         public bool HasToBeAligned => hasToBeAligned;
+        public Collider Collider => collider;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
-
-        
-        
 
         [Inject]
         private void Construct(NetworkManager networkManager)

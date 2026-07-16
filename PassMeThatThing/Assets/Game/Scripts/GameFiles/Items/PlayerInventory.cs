@@ -207,29 +207,8 @@ public class PlayerInventory : NetworkBehaviour
 
         if (physicalItem.CanBeOwned && physicalItem.Owner)
         {
-            var oldOwner = physicalItem.Owner;
-            var oldInventory = oldOwner.MainCharacterModel.PlayerInventory;
-            var oldController = oldOwner.MainCharacterModel.PlayerInteraction.PhysicalItemInteractionController;
-
-            if (oldInventory)
-            {
-                int slotToRemove = -1;
-                foreach (var kvp in oldInventory.ServerInventory)
-                {
-                    if (kvp.Value.itemId == networkItem.itemId)
-                    {
-                        slotToRemove = kvp.Key;
-                        break;
-                    }
-                }
-                if (slotToRemove != -1)
-                    oldInventory.ServerInventory.Remove(slotToRemove);
-            }
-
-            if (oldController)
-            {
-                oldController.ReleaseCurrentItem(0f, false);
-            }
+            var oldInventory = physicalItem.Owner.MainCharacterModel.PlayerInventory;
+            if (oldInventory) oldInventory.ServerRemoveItemFromOwner(physicalItem);
         }
 
         int targetSlot = -1;
@@ -264,5 +243,28 @@ public class PlayerInventory : NetworkBehaviour
 
         _physicalСontroller.PhysicalPickUpItem(physicalItem);
         activeSlot = targetSlot;
+    }
+    
+    [Server]
+    public void ServerRemoveItemFromOwner(PhysicalItem item)
+    {
+        if (!item || !item.Network) return;
+
+        var slotToRemove = -1;
+        foreach (var kvp in ServerInventory)
+        {
+            if (kvp.Value.itemId == item.Network.itemId)
+            {
+                slotToRemove = kvp.Key;
+                break;
+            }
+        }
+        if (slotToRemove != -1)
+            ServerInventory.Remove(slotToRemove);
+
+        if (_physicalСontroller)
+        {
+            _physicalСontroller.ReleaseCurrentItem(0f, false);
+        }
     }
 }

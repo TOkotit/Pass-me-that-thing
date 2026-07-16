@@ -53,7 +53,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (grabJoint)
                 grabJoint.gameObject.SetActive(false);
             if (pivot)
-                _pivotDefaultLocalPos = pivot.transform.localPosition;
+                _pivotDefaultLocalPos = pivot.transform.parent.localPosition;
         }
 
 
@@ -280,7 +280,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void AlignPivotForItem(PhysicalItem item)
         {
             if (!item) return;
-            pivot.transform.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
+            pivot.transform.parent.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
         }
         
         private void AlignJointToPivot()

@@ -29,7 +29,9 @@ namespace Game.Scripts.GameFiles.Items
             var itemToDrop = _itemPoolManager.GetFromPool(item.Id);
             itemToDrop.transform.position = pointToSpawn.position;
             itemToDrop.SetActive(true);
-            _physicalItemRegistry.Register(itemToDrop.GetComponent<PhysicalItem>());
+            var physItem = itemToDrop.GetComponent<PhysicalItem>();
+            physItem.Network.ItemData = item;
+            _physicalItemRegistry.Register(physItem);
             NetworkServer.Spawn(itemToDrop);
 
             //RpcInteractWithObject();
@@ -41,7 +43,6 @@ namespace Game.Scripts.GameFiles.Items
             gameObject.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce)
                 .OnComplete(() =>
                 {
-                    
                     gameObject.SetActive(false);
                 });
         }
@@ -54,7 +55,12 @@ namespace Game.Scripts.GameFiles.Items
         {
             
         }
-        
+
+        public void InteractWithItem(PhysicalItem item)
+        {
+            
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();

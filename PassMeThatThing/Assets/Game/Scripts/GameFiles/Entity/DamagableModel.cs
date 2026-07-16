@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Entity
 {
-    public abstract class DamagableModel
+    public class DamagableModel
     {
         public HealthPool HealthPool { get; set; }
 

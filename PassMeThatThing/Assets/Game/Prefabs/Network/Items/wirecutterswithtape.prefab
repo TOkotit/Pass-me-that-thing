@@ -178,6 +178,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   itemId: 
+  instanceId: 
 --- !u!114 &3700039327772116068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,7 +257,10 @@ MonoBehaviour:
   rigidBody: {fileID: 8017386652393745044}
   _network: {fileID: 7096747882219086433}
   hasToBeAligned: 1
+  collider: {fileID: 1548522528971783998}
   _isThrown: 0
+  Resources:
+    _serializedList: []
 --- !u!114 &219373079575563197
 MonoBehaviour:
   m_ObjectHideFlags: 0

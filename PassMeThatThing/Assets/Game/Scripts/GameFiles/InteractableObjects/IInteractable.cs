@@ -1,4 +1,5 @@
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 
 namespace Game.Scripts.GameFiles.InteractableObjects
@@ -7,5 +8,8 @@ namespace Game.Scripts.GameFiles.InteractableObjects
     {
         public void Interact();
         public void SrbToggle();
+        public void InteractWithItem(PhysicalItem item);
+
+        public void OnStartClient();
     }
 }

@@ -1,6 +1,7 @@
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -22,7 +23,12 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         {
             throw new System.NotImplementedException();
         }
-        
+
+        public void InteractWithItem(PhysicalItem item)
+        {
+            
+        }
+
         [Command(requiresAuthority = false)]
         private void CmdTest()
         {
