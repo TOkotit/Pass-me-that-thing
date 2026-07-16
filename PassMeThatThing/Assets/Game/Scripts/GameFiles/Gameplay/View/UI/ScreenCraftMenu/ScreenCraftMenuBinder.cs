@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.UI;
 using TMPro;
@@ -14,10 +15,12 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         [SerializeField] private RecipeViewElement recipeViewPrefab;
         [SerializeField] private GameObject recipesContainer;
         
-        
         [SerializeField] private Image resultImage;
         [SerializeField] private TextMeshProUGUI resultText;
         [SerializeField] private Button craftButton;
+        
+        [SerializeField] private ResourceViewElement resourceViewPrefab;
+        [SerializeField] private GameObject resourceContainer;
         
         private List<RecipeViewElement> _recipes = new();
         
@@ -26,6 +29,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private void Start()
         {
             ViewModel.RequestUpdateRecipes(UpdateRecipes);
+            ViewModel.RequestAvailableResources(UpdateResources);
             craftButton.onClick.AddListener(OnCraftClick);
         }
 
@@ -36,6 +40,21 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             foreach (var recipeViewElement in _recipes)
             {
                 recipeViewElement.OnClick -= OnRecipeClick;
+            }
+        }
+
+        public void UpdateResources(IReadOnlyDictionary<Resource,int> resources, ResourceDatabase resourceDatabase)
+        {
+            foreach (var r in resources)
+            {
+                var res = Instantiate(resourceViewPrefab, resourceContainer.transform);
+                
+                var rData = resourceDatabase.GetResource(r.Key);
+
+
+                res.resImage.sprite = rData.resourceImage;
+                res.resNameText.text = rData.resourceType.ToString();
+                res.resAmountText.text = r.Value.ToString();
             }
         }
 

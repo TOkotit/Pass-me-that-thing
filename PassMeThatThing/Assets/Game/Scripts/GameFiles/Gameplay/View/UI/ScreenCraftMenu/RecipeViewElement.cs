@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Game.Gameplay.View.UI.ScreenBuild
 {
     [Serializable]
-    public class ResourceViewElement
+    public class ResourceViewData
     {
         public Image resImage;
         public TextMeshProUGUI resText;
@@ -20,7 +20,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         [SerializeField] private Image resultImage;
         [SerializeField] private TextMeshProUGUI resultText;
 
-        [SerializeField] private List<ResourceViewElement> resources;
+        [SerializeField] private List<ResourceViewData> resources;
 
         public Image ResultImage => resultImage;
 

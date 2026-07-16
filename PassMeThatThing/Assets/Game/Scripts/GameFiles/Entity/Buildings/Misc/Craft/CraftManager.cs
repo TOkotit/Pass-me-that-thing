@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Game.Scripts.Enums;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -36,6 +38,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft
             }
             workbench.Spawner.Item = recipe.Item;
             workbench.Spawner.Interact();
+        }
+
+        public IReadOnlyDictionary<Resource,int> GetStoredResources()
+        {
+            return MainResourceStorage.Instance.StoredResources;
         }
     }
 }

@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7072e496562c4cc082e5fc1828a96e96, type: 3}
-  m_Name: High Strength Alloy
+  m_Script: {fileID: 11500000, guid: abb977fc6a3d459c9cdbd593b2b7caab, type: 3}
+  m_Name: wirecutters
   m_EditorClassIdentifier: 
-  resourceType: 11
-  resourceName: High Strength Alloy
-  resourceImage: {fileID: 21300000, guid: 6b7cd48323dbf8c4497875ad99c8c929, type: 3}
+  recipeId: wirecutters
+  resources:
+  - amount: 1
+    resource: 2
+  item: {fileID: 11400000, guid: 6eb81cb6357ab0747b1aa5a7efa887a6, type: 2}

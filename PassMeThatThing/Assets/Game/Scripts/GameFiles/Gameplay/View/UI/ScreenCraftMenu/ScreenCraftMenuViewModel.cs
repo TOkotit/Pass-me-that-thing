@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Enums;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
@@ -22,6 +23,8 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private WorkbenchItemRecipeDatabase _recipeDatabase;
         private LocalCraftModel _localCraftModel;
         
+        private CraftManager _craftManager;
+        
         public override string Id => "ScreenCraftMenu";
 
 
@@ -38,6 +41,8 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
 
             _gameInput.GameInput.UI.PauseMenu.performed += OnPauseClicked;
+            
+            _craftManager = container.Resolve<CraftManager>();
         }
 
         public override void Dispose()
@@ -61,6 +66,11 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         public void RequestCraft(string recipeId)
         {
             _localCraftModel.Craft(recipeId);
+        }
+
+        public void RequestAvailableResources(Action<IReadOnlyDictionary<Resource,int>, ResourceDatabase> f)
+        {
+            f(_craftManager.GetStoredResources(), _resourceDatabase);
         }
         
     }
