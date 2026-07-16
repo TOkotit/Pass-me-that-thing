@@ -226,7 +226,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.angularYMotion = ConfigurableJointMotion.Locked;
             grabJoint.angularZMotion = ConfigurableJointMotion.Locked;
             
-            pivot.transform.position = new Vector3(0,-1f, 0);
+            pivot.transform.localPosition = new Vector3(0,-1f, 0);
         }
 
         public void ReleaseGrab()
@@ -238,7 +238,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.angularXMotion = ConfigurableJointMotion.Free;
             grabJoint.angularYMotion = ConfigurableJointMotion.Free;
             grabJoint.angularZMotion = ConfigurableJointMotion.Free;
-            pivot.transform.position = new Vector3(0,-0.6f, 1);
+            pivot.transform.localPosition = Vector3.zero;
         }
         public void ChargeThrow()
         {
@@ -286,7 +286,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void AlignJointToPivot()
         {
 
-            pivot.transform.position = Vector3.zero;
+            pivot.transform.localPosition = Vector3.zero;
             if(!grabJoint.connectedBody)return;
             var currentRelRot = Quaternion.Inverse(transform.rotation) * grabJoint.connectedBody.rotation;
             var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
