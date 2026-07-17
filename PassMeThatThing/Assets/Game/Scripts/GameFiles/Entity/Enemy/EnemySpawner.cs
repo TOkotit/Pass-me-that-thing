@@ -56,8 +56,5 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 }
             }
         }
-
-        
-        
     }
 }

@@ -5,82 +5,119 @@ using Game.Scripts.GameFiles.Events;
 using Game.Scripts.Utils;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.GlobalStageManager
 {
-    
     public class GlobalStageManager : NetworkBehaviour
     {
         [SyncVar(hook = nameof(OnStageChanged))]
         private GlobalStagesType _currentGameStage;
         public GlobalStagesType CurrentGameStage => _currentGameStage;
 
-        [Inject] private GameRandomEventManager  _gameRandomEventManager;
+        [Inject] private GameRandomEventManager _gameRandomEventManager;
         [Inject] private EnemyDatabase _enemyDatabase;
-        [Inject] private EnemySpawner  _enemySpawner;
-        private NetworkTimer _timer;
+        [Inject] private EnemySpawner _enemySpawner;
+        [Inject] private PlayerReadyManager _playerReadyManager;  // <-- теперь через DI
 
+        [Header("Timers")]
         [SerializeField] private float preparationStageDuration = 200f;
         [SerializeField] private float fightStageDuration = 300f;
-        
+
+        private NetworkTimer _timer;
+        private bool _inOvertime;
+        private bool _fightEnded;
+
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime;
-        
+
         public event Action<float> OnTimerChangedUI;
         public event Action<GlobalStagesType> OnStageChangedUI;
 
+        public static GlobalStageManager Instance { get; private set; }
+
         private void Awake()
         {
+            Instance = this;
             _timer = new NetworkTimer(this, OnTimerTick);
             _timer.TimeIsOver += OnTimerFinished;
         }
-        
+
         public override void OnStartServer()
         {
             base.OnStartServer();
+            _playerReadyManager.OnAllPlayersReady += () => TrySkipPreparationStage();
             StartStage(GlobalStagesType.Preparation);
         }
-        
+
+        private void Update()
+        {
+            if (!isServer) return;
+
+            if (_currentGameStage == GlobalStagesType.Fight && !_inOvertime && !_fightEnded)
+            {
+                if (_enemySpawner.EnemyCount == 0)
+                    EndFight();
+            }
+
+            if (_inOvertime && !_fightEnded)
+            {
+                if (_enemySpawner.EnemyCount == 0)
+                    EndFight();
+            }
+        }
+
         [Server]
         private void StartStage(GlobalStagesType newStage)
         {
             _timer.Stop();
-
+            _inOvertime = false;
+            _fightEnded = false;
             _currentGameStage = newStage;
 
-            var duration = _currentGameStage switch
+            float duration = _currentGameStage switch
             {
                 GlobalStagesType.Preparation => preparationStageDuration,
                 GlobalStagesType.Fight => fightStageDuration,
                 _ => 0f
             };
 
-            if (_currentGameStage == GlobalStagesType.Fight)
+            if (_currentGameStage == GlobalStagesType.Preparation)
+            {
+                _playerReadyManager.ResetReady();
+                _gameRandomEventManager.TryTriggerRandomEvents();
+            }
+            else if (_currentGameStage == GlobalStagesType.Fight)
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
                 _enemySpawner.SpawnWave(1, _enemyDatabase.GetEnemy("spider"));
             }
-            else if (_currentGameStage == GlobalStagesType.Preparation)
-            {
-                _gameRandomEventManager.TryTriggerRandomEvents();
-            }
-            StartTimer(duration);
+
+            if (duration > 0)
+                StartTimer(duration);
+            else
+                _syncRemainingTime = 0f;
         }
-        
+
         [Server]
         public void TrySkipPreparationStage()
         {
-            if (_currentGameStage != GlobalStagesType.Preparation)
-            {
-                Debug.LogWarning("[Server] Попытка пропустить стадию, но сейчас идет не подготовка!");
-                return;
-            }
-            
+            if (_currentGameStage != GlobalStagesType.Preparation) return;
             StartStage(GlobalStagesType.Fight);
         }
-        
+
+        [Command(requiresAuthority = false)]
+        public void CmdSkipPreparation(NetworkIdentity playerIdentity)
+        {
+            _playerReadyManager.SetReady(playerIdentity);
+        }
+
+        [Server]
+        public void RegisterPlayer(NetworkIdentity player)
+        {
+            _playerReadyManager.Register(player);
+        }
+
         [Server]
         public void StartTimer(float duration)
         {
@@ -95,13 +132,40 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         private void OnTimerFinished()
         {
-            var nextStage = _currentGameStage == GlobalStagesType.Preparation 
-                ? GlobalStagesType.Fight 
-                : GlobalStagesType.Preparation;
-
-            StartStage(nextStage);
+            if (_currentGameStage == GlobalStagesType.Preparation)
+            {
+                StartStage(GlobalStagesType.Fight);
+            }
+            else if (_currentGameStage == GlobalStagesType.Fight)
+            {
+                if (_enemySpawner.EnemyCount > 0)
+                {
+                    _inOvertime = true;
+                    _syncRemainingTime = 0f;
+                    RpcStartOvertime();
+                }
+                else
+                {
+                    EndFight();
+                }
+            }
         }
-        
+
+        [Server]
+        private void EndFight()
+        {
+            if (_fightEnded) return;
+            _fightEnded = true;
+            _inOvertime = false;
+            StartStage(GlobalStagesType.Preparation);
+        }
+
+        [ClientRpc]
+        private void RpcStartOvertime()
+        {
+            Debug.Log("Овертайм! Убейте оставшихся врагов.");
+        }
+
         private void OnDestroy()
         {
             if (_timer != null)
@@ -109,19 +173,13 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 _timer.TimeIsOver -= OnTimerFinished;
                 _timer.Stop();
             }
+            if (Instance == this)
+                Instance = null;
         }
-        
+
         private void OnTimeChanged(float oldTime, float newTime)
         {
-            var secondsVisual = Mathf.CeilToInt(newTime);
-            
-            // if (OnTimerChangedUI == null)
-            // {
-            //     Debug.LogWarning("[GlobalStageManager] OnTimerChangedUI is null");
-            //     return;
-            // }
-
-            OnTimerChangedUI?.Invoke(secondsVisual);
+            OnTimerChangedUI?.Invoke(Mathf.CeilToInt(newTime));
         }
 
         private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage)
