@@ -108,6 +108,7 @@ namespace Game.Entity
                 maskLayerController.EnableBodyOnlyAnimation();
                 movement.UnlockMovement();
                 movement.EnableController();
+                view.DisableAnimator();
                 if (mCamera) mCamera.IsCameraRotating = true;
             });
         }

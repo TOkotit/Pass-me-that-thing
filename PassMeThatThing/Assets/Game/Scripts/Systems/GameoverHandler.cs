@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.Entity;
 using Mirror;
+using Systems;
 using Unity.VisualScripting;
 using UnityEngine;
 using Utils;
@@ -11,6 +12,7 @@ namespace Game.Scripts.Systems
 {
     public class GameoverHandler
     {
+        [Inject] GameManager gameManager;
         [Inject] private ICoroutineRunner coroutineRunner;
         private int deathTimer = 10;
         private List<MainCharacter> players = new List<MainCharacter>();
@@ -47,6 +49,8 @@ namespace Game.Scripts.Systems
             {
                 Debug.Log("Game over!");
                 // конец игры
+                gameManager.SetState(GameState.GameOver);
+                //сделать ui или выход со сцены
             }
         }
     }
