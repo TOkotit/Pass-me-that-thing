@@ -253,6 +253,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkipWave"",
+                    ""type"": ""Button"",
+                    ""id"": ""efe70aaf-5c6f-4f31-b732-0f4321133100"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -497,6 +506,17 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aea00a35-d1a6-4273-8cf6-fb1084d73f3d"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkipWave"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -551,6 +571,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Gameplay_CancelBuilding = m_Gameplay.FindAction("CancelBuilding", throwIfNotFound: true);
         m_Gameplay_ConfirmBuilding = m_Gameplay.FindAction("ConfirmBuilding", throwIfNotFound: true);
         m_Gameplay_WireMenu = m_Gameplay.FindAction("WireMenu", throwIfNotFound: true);
+        m_Gameplay_SkipWave = m_Gameplay.FindAction("SkipWave", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -653,6 +674,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_CancelBuilding;
     private readonly InputAction m_Gameplay_ConfirmBuilding;
     private readonly InputAction m_Gameplay_WireMenu;
+    private readonly InputAction m_Gameplay_SkipWave;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -737,6 +759,10 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @WireMenu => m_Wrapper.m_Gameplay_WireMenu;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/SkipWave".
+        /// </summary>
+        public InputAction @SkipWave => m_Wrapper.m_Gameplay_SkipWave;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -816,6 +842,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @WireMenu.started += instance.OnWireMenu;
             @WireMenu.performed += instance.OnWireMenu;
             @WireMenu.canceled += instance.OnWireMenu;
+            @SkipWave.started += instance.OnSkipWave;
+            @SkipWave.performed += instance.OnSkipWave;
+            @SkipWave.canceled += instance.OnSkipWave;
         }
 
         /// <summary>
@@ -881,6 +910,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @WireMenu.started -= instance.OnWireMenu;
             @WireMenu.performed -= instance.OnWireMenu;
             @WireMenu.canceled -= instance.OnWireMenu;
+            @SkipWave.started -= instance.OnSkipWave;
+            @SkipWave.performed -= instance.OnSkipWave;
+            @SkipWave.canceled -= instance.OnSkipWave;
         }
 
         /// <summary>
@@ -1143,6 +1175,13 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnWireMenu(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkipWave" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkipWave(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

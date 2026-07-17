@@ -22,7 +22,6 @@ namespace Game.Scripts.GameFiles.Items
 
     public class PlayerInteraction : NetworkBehaviour
     {
-        
         private PlayerInventory inventory;
         private GameInput _gameInput;
         private PlayerInventoryModel _playerInventoryModel;
@@ -134,6 +133,18 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
             _gameInput.Gameplay.Item3.performed += Select3;
+            _gameInput.Gameplay.SkipWave.performed += SkipWave;
+        }
+
+        private void SkipWave(InputAction.CallbackContext context)
+        {
+            CmdRequestSkipPreparation();
+        }
+
+        [Command]
+        private void CmdRequestSkipPreparation()
+        {
+            GlobalStageManager.GlobalStageManager.Instance?.CmdSkipPreparation(netIdentity);
         }
 
         private void TryUnsubscribe()
@@ -152,6 +163,7 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
                 _gameInput.Gameplay.Item3.performed -= Select3;
+                _gameInput.Gameplay.SkipWave.performed -= SkipWave;
             }
             catch (Exception ex)
             {
