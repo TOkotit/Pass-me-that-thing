@@ -5,6 +5,7 @@ using Game.Entity.Stats;
 using Game.Scripts.GameFiles.Entity.GlobalView;
 using Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View;
 using Game.Scripts.GameFiles.Entity.MainCharacterPhysics;
+using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.Systems;
 using MainCharacterNetwork;
@@ -171,6 +172,11 @@ namespace Game.Entity
             Debug.Log($"[MainCharacter] OnHealthChanged {currentHealth}");
             _localModel.Health = currentHealth;
             _localModel.MaxHealth = maxHealth;
+        }
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            GlobalStageManager.Instance?.RegisterPlayer(netIdentity);
         }
     }
 }

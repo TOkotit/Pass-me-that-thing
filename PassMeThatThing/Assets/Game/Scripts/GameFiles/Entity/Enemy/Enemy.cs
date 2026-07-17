@@ -35,13 +35,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public TargetDetector TargetDetector => targetDetector;
         public EnemyMovementController MovementController => movementController;
         public EnemyAttackController AttackController => attackController;
+        private bool isAlive = true;
 
         public EnemySpawner EnemySpawner {get; set;}
         
         public override void OnDeath()
         {
             if (!isServer) return;
+            if (!isAlive) return;
             EnemySpawner.EnemyCount--;
+            isAlive = false;
         }
         
         public override void OnHealthChanged(int currentHealth, int maxHealth)

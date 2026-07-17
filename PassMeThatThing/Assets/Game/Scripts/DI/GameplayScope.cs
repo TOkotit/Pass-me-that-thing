@@ -94,7 +94,7 @@ namespace DI
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
-            
+            builder.Register<PlayerReadyManager>(Lifetime.Singleton);
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);
         }

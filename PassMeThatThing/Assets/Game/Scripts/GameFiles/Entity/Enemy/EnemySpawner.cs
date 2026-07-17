@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
@@ -30,7 +31,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             enemy.EnemySpawner = this;
             
             _enemyCount++;
-            Debug.Log($"Spawned enemy {enemyData.Id}");
+            Debug.Log($"Spawned enemy {enemyData.Id} + {_enemyCount}");
         }
 
         [Server]
@@ -55,6 +56,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                     Debug.Log($"Enemy limit {_enemyCount}/{enemyLimit}");
                 }
             }
+        }
+
+        private void Update()
+        {
+            Debug.Log(_enemyCount);
         }
     }
 }
