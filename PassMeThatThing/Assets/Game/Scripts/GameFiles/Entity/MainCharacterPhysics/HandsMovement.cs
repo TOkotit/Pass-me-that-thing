@@ -35,10 +35,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Header("Grabbing")] 
         //[SerializeField] private FixedJoint baseJoint;
         [SerializeField] private ConfigurableJoint grabJoint;   
-        [SerializeField] private Rigidbody pivot;
+        [SerializeField] private Transform animatorTransform;
 
         [Inject] private PlayerInventoryModel _playerInventoryModel;
-        public Rigidbody Pivot => pivot;
+        public Transform AnimatorTransform => animatorTransform;
         public float CurrentThrowForce => _throwForce;
 
         private void Awake()
@@ -52,8 +52,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _originalAngularYZDrive = grabJoint.angularYZDrive;
             if (grabJoint)
                 grabJoint.gameObject.SetActive(false);
-            if (pivot)
-                _pivotDefaultLocalPos = pivot.transform.parent.localPosition;
+            if (animatorTransform)
+                _pivotDefaultLocalPos = animatorTransform.parent.localPosition;
         }
 
 
@@ -226,7 +226,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.angularYMotion = ConfigurableJointMotion.Locked;
             grabJoint.angularZMotion = ConfigurableJointMotion.Locked;
             
-            pivot.transform.localPosition = new Vector3(0,-1f, 0);
+            animatorTransform.localPosition = new Vector3(0,-1f, 0);
         }
 
         public void ReleaseGrab()
@@ -238,7 +238,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.angularXMotion = ConfigurableJointMotion.Free;
             grabJoint.angularYMotion = ConfigurableJointMotion.Free;
             grabJoint.angularZMotion = ConfigurableJointMotion.Free;
-            pivot.transform.localPosition = Vector3.zero;
+            animatorTransform.localPosition = Vector3.zero;
         }
         public void ChargeThrow()
         {
@@ -274,22 +274,22 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         public void ResetPivot()
         {
-            pivot.transform.localPosition = _pivotDefaultLocalPos;
+            animatorTransform.localPosition = _pivotDefaultLocalPos;
         }
 
         public void AlignPivotForItem(PhysicalItem item)
         {
             if (!item) return;
-            pivot.transform.parent.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
+            animatorTransform.parent.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
         }
         
         private void AlignJointToPivot()
         {
 
-            pivot.transform.localPosition = Vector3.zero;
+            animatorTransform.localPosition = Vector3.zero;
             if(!grabJoint.connectedBody)return;
             var currentRelRot = Quaternion.Inverse(transform.rotation) * grabJoint.connectedBody.rotation;
-            var desiredRelRot = Quaternion.Inverse(transform.rotation) * pivot.rotation;
+            var desiredRelRot = Quaternion.Inverse(transform.rotation) * animatorTransform.rotation;
             grabJoint.targetRotation = Quaternion.Inverse(currentRelRot) * desiredRelRot;
         }
     }

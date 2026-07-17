@@ -24,7 +24,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private Animator pivotAnimator;
         private HandsMovement _handsMovement;
         private float _swingDuration;
-        public Rigidbody Pivot => _handsMovement.Pivot;
+        public Transform AnimatorTransform => _handsMovement.AnimatorTransform;
         public HandsMovement HandsMovement => _handsMovement;
         public Animator PivotAnimator => pivotAnimator;
         

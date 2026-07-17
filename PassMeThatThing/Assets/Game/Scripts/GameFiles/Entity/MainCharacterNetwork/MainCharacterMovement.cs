@@ -86,7 +86,7 @@ public class MainCharacterMovement : NetworkBehaviour
             var relativeVelocity = otherCharacter.Movement.LastVelocity - LastVelocity;
             var impactSpeed = Vector3.Dot(relativeVelocity, hit.normal);
             Debug.LogError($"!Impact with {hit.gameObject.name}! {impactSpeed}");
-            if (impactSpeed > 10f)
+            if (impactSpeed > 25f)
             {
                 var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
                 character.CmdFall(stunDuration, new Vector3());

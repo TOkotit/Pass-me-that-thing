@@ -233,8 +233,9 @@ namespace Game.Scripts.GameFiles.Items
                         var item = _physicalItemInteractionController.CurrentHeldItem;
                         if (item)
                         {
-                            if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject, out var interactable))
-                                interactable.InteractWithItem(item);
+                            if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject,
+                                    out var interactable))
+                                CmdInteractWithItem(hit.collider.gameObject, item);
                         }
                         else { TryPickUp(hit.collider); }
                     }
@@ -356,7 +357,15 @@ namespace Game.Scripts.GameFiles.Items
             else
             {
                 _playerInventoryModel.ActiveSlotIndex = index;
-                inventory.CmdDrawItem(index, _physicalItemInteractionController.Pivot.position);
+                inventory.CmdDrawItem(index, _physicalItemInteractionController.AnimatorTransform.position);
+            }
+        }
+        [Command]
+        private void CmdInteractWithItem(GameObject interactableObject, PhysicalItem item)
+        {
+            if (InteractableRegistry.Instance.TryGetInteractable(interactableObject, out var interactable))
+            {
+                interactable.InteractWithItem(item);
             }
         }
     }
