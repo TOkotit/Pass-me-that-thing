@@ -101,6 +101,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public void SelfDestroy()
         {
             // RpcPlayParticles();
+            Destroy(gameObject);
         }
         
         // [ClientRpc]

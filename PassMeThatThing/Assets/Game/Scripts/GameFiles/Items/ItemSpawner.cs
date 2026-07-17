@@ -14,21 +14,16 @@ namespace Game.Scripts.GameFiles.Items
         public ItemData Item {get => item; set => item = value;}
         
         
-        private ItemPoolManager _itemPoolManager; 
-        private PhysicalItemRegistry _physicalItemRegistry;
-        [Inject]
-        private void Construct(NetworkManager networkManager, PhysicalItemRegistry itemRegistry)
-        {
-            _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
-            _physicalItemRegistry = itemRegistry;
-        }
+        [Inject] private ItemPoolManager _itemPoolManager; 
+        [Inject] private PhysicalItemRegistry _physicalItemRegistry;
+        
         
         [Command(requiresAuthority = false)] 
         private void CmdInteractWithObject()
         {
-            var itemToDrop = _itemPoolManager.GetFromPool(item.Id);
+            var itemToDrop = _itemPoolManager.CreateNewObject(item.Id);
             itemToDrop.transform.position = pointToSpawn.position;
-            itemToDrop.SetActive(true);
+
             var physItem = itemToDrop.GetComponent<PhysicalItem>();
             physItem.Network.ItemData = item;
             _physicalItemRegistry.Register(physItem);

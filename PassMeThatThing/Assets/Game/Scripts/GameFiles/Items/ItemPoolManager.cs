@@ -5,88 +5,82 @@ using System.Collections.Generic;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    public class ItemPoolManager : MonoBehaviour
+    public class ItemPoolManager : NetworkBehaviour
     {
         [SerializeField] private ItemDatabase database;
         
-        private Dictionary<string, List<NetworkItem>> _poolDict = new ();
+        private Dictionary<string, NetworkItem> _poolDict = new ();
 
         public void Start()
         {
             InitializePool();
         }
 
+        
         public void InitializePool()
         {
             foreach (var item in database.allItems)
             {
-                if (!_poolDict.ContainsKey(item.Id))
-                    _poolDict[item.Id] = new List<NetworkItem>();
-
-                NetworkClient.RegisterPrefab(item.WorldPrefab, 
-                    (msg) => SpawnHandler(msg, item.Id), 
-                    UnspawnHandler);
-            }
-        }
-
-        public GameObject SpawnHandler(SpawnMessage msg, string itemId)
-        {
-            var obj = GetFromPool(itemId); 
-            obj.transform.position = msg.position;
-            obj.transform.rotation = msg.rotation;
-            obj.SetActive(true);
-            return obj;
-        }
-
-        public void UnspawnHandler(GameObject spawned)
-        {
-            spawned.SetActive(false);
-            if (spawned.TryGetComponent<NetworkItem>(out var networkItem))
-            {
-                if (_poolDict.TryGetValue(networkItem.itemId, out var list))
-                {
-                    if (!list.Contains(networkItem)) list.Add(networkItem);
-                    // Debug.Log($"[IP] Убрано в пул: {networkItem.itemId} (Экземпляр: {networkItem.instanceId})");
-                }
+                NetworkClient.RegisterPrefab(item.WorldPrefab);
+                
+                if (isServer)
+                    _poolDict = new Dictionary<string, NetworkItem>();
             }
         }
         
-        public GameObject GetFromPool(string id, string requiredInstanceId = null)
+        [Server]
+        public GameObject CreateNewObject(string id, Vector3 position = new())
         {
-            if (_poolDict.TryGetValue(id, out var list) && list.Count > 0)
-            {
-                NetworkItem selectedObj = null;
-
-                if (!string.IsNullOrEmpty(requiredInstanceId))
-                {
-                    selectedObj = list.Find(obj 
-                        => obj.instanceId == requiredInstanceId);
-                    // Debug.Log($"[IP] GET {id} (Экземпляр: {requiredInstanceId}");
-                }
-
-                if (selectedObj == null)
-                {
-                    selectedObj = list[0];
-                    // Debug.Log($"[IP] GET RANDOM {id}");
-                }
-
-                list.Remove(selectedObj); 
-                
-                return selectedObj.gameObject;
-            }
-            
             var data = database.GetItem(id);
-            var newObj = Instantiate(data.WorldPrefab);
+            var newObj = Instantiate(data.WorldPrefab, position, Quaternion.identity);
             
             var netItem = newObj.GetComponent<NetworkItem>();
-            netItem.itemId = id;
             
-            if (string.IsNullOrEmpty(netItem.instanceId))
-            {
-                netItem.instanceId = System.Guid.NewGuid().ToString();
-            }
-            // Debug.Log($"[IP] NEW {netItem.itemId} (Экземпляр: {netItem.instanceId}");
+            netItem.itemId = id;
+            netItem.instanceId = Guid.NewGuid().ToString();
+            
+            NetworkServer.Spawn(newObj);
+            
+            Debug.Log($"[IP] CreateNewObject {netItem.itemId} instanceId: {netItem.instanceId}");
             return newObj;
         }
+        
+        [Server]
+        public GameObject GetFromPool(string requiredInstanceId)
+        {
+            if (!string.IsNullOrEmpty(requiredInstanceId)
+                && _poolDict.Remove(requiredInstanceId, out var selectedObj))
+            {
+                RpcActivateItem(selectedObj);
+                
+                Debug.Log($"[IP] GetFromPool {selectedObj.itemId} instanceId: {selectedObj.instanceId}");
+                return selectedObj.gameObject;
+            }
+
+            return null;
+        }
+
+        [Server]
+        public void ReturnToPool(NetworkItem networkItem)
+        {
+            _poolDict.TryAdd(networkItem.instanceId, networkItem);
+            
+            RpcDeactivateItem(networkItem);
+            
+            Debug.Log($"[IP] ReturnToPool {networkItem.itemId} instanceId: {networkItem.instanceId}");
+        }
+
+        [ClientRpc]
+        public void RpcDeactivateItem(NetworkItem item)
+        {
+            item.gameObject.SetActive(false);
+        }
+        
+        [ClientRpc]
+        public void RpcActivateItem(NetworkItem item)
+        {
+            item.gameObject.SetActive(true);
+        }
+        
     }
 }

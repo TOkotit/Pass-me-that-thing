@@ -9,8 +9,14 @@ public class ParticleHandler : MonoBehaviour
     public Particles Id {get; set;}
     
     public event Action<Particles, ParticleHandler> OnParticleEnd;
+    
     private void OnParticleSystemStopped()
     {
         OnParticleEnd?.Invoke(Id, this);
+    }
+
+    private void OnDestroy()
+    {
+        OnParticleEnd = null;
     }
 }

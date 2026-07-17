@@ -12,6 +12,7 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private ParticleDatabase particleDatabase;
         
         [SerializeField] private int maxParticleCount = 10;
+        
         private Dictionary<Particles, int> _totalParticlesCount = new ();
         private Dictionary<Particles, Stack<ParticleHandler>> _activeParticles = new ();
 
@@ -24,11 +25,10 @@ namespace Game.Scripts.GameFiles.Items
             }
         }
         
-        public void CreateParticle(Particles type)
+        private void CreateParticle(Particles type)
         {
             var particlePrefab = particleDatabase.GetParticlePrefab(type);
             var particleInstance = Instantiate(particlePrefab, transform.position, Quaternion.identity);
-            //NetworkServer.Spawn(particleInstance);
             
             particleInstance.OnParticleEnd += ReturnParticleInPool;
             

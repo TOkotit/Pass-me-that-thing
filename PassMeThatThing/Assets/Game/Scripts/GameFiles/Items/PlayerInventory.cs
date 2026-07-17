@@ -17,20 +17,14 @@ public class PlayerInventory : NetworkBehaviour
     private int size = 3;
     [Inject] PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
-    private ItemPoolManager _itemPoolManager;
-    private PhysicalItemRegistry _physicalItemRegistry;
+    [Inject] private ItemPoolManager _itemPoolManager;
+    [Inject] private PhysicalItemRegistry _physicalItemRegistry;
     
 
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
     [SyncVar(hook = nameof(OnActiveSlotChanged))]
     public int activeSlot;
     
-    [Inject]
-    private void Construct(NetworkManager networkManager, PhysicalItemRegistry physicalItemRegistry)
-    {
-        _itemPoolManager = networkManager.GetComponent<ItemPoolManager>();
-        _physicalItemRegistry = physicalItemRegistry;
-    }
     protected virtual void Awake()
     {
         var gameplayScope = LifetimeScope.Find<GameplayScope>();
@@ -97,7 +91,8 @@ public class PlayerInventory : NetworkBehaviour
     {
         if (_physicalСontroller.CurrentHeldItem)
         {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            //NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
         }
         _physicalСontroller.ServerClearHeldItem();
     }
@@ -108,17 +103,18 @@ public class PlayerInventory : NetworkBehaviour
     {
         if (_physicalСontroller.CurrentHeldItem)
         {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            // NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
         }
         _physicalСontroller.ServerClearHeldItem();
 
         if (!ServerInventory.TryGetValue(index, out var value)) return;
-        var itemToDrop = _itemPoolManager.GetFromPool(value.itemId, value.instanceId);
+        var itemToDrop = _itemPoolManager.GetFromPool(value.instanceId);
 
         itemToDrop.transform.position = pointToSpawn;
-        NetworkServer.Spawn(itemToDrop, connectionToClient);
+        // NetworkServer.Spawn(itemToDrop, connectionToClient);
+        // itemToDrop.SetActive(true);
         
-        itemToDrop.SetActive(true);
         var physicalItem = _physicalItemRegistry.GetItem(itemToDrop.gameObject);
         if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
         if (physicalItem)
@@ -187,7 +183,7 @@ public class PlayerInventory : NetworkBehaviour
         targetInventory.ServerInventory[targetSlot] = new ItemSlot
         {
             itemId = item.Network.itemId,
-            amount = 1
+            instanceId = item.Network.instanceId
         };
 
         targetController.PhysicalPickUpItem(item);
@@ -232,12 +228,12 @@ public class PlayerInventory : NetworkBehaviour
         {
             itemId = networkItem.itemId, 
             instanceId =  networkItem.instanceId,
-            amount = 1
         };
 
         if (_physicalСontroller.CurrentHeldItem)
         {
-            NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            // NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
+            _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
             _physicalСontroller.ReleaseCurrentItem(0f, false);
         }
 

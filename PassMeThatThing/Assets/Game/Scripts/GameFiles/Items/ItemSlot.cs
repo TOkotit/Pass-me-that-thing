@@ -4,6 +4,6 @@ namespace Game.Scripts.GameFiles.Items
     {
         public string itemId;
         public string instanceId;
-        public int amount;
+
     }
 }

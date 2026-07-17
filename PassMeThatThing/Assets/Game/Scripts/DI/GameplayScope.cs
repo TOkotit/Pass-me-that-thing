@@ -16,6 +16,7 @@ using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Game.Scripts.Systems;
+using UnityEngine.Serialization;
 
 namespace DI
 {
@@ -33,18 +34,22 @@ namespace DI
         [SerializeField] private ResourceDatabase resourceDatabase;
         [SerializeField] private WorkbenchItemRecipeDatabase recipeDatabase;
         
+        
         [Header("Managers on gameplay scene")]
-        [SerializeField] private GameRandomEventManager eventManagerPrefab;
-        [SerializeField] private GlobalStageManager globalStageManagerPrefab;
-        [SerializeField] private EnemySpawner enemySpawnerPrefab;
-        [SerializeField] private BuildingManager buildingManagerPrefab;
+        [SerializeField] private GameRandomEventManager eventManager;
+        [SerializeField] private GlobalStageManager globalStageManager;
+        [SerializeField] private ItemPoolManager itemPoolManager;
+        [SerializeField] private EnemySpawner enemySpawner;
+        [SerializeField] private BuildingManager buildingManager;
         [SerializeField] private WireManager wireManager;
         [SerializeField] private CraftManager craftManager;
+        [SerializeField] private ParticlePoolManager particlePoolManager;
         
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("GameplayScope.Configure called");
             
+            //databases
             builder.RegisterInstance(itemDatabase);
             builder.RegisterInstance(gameEventsDatabase);
             builder.RegisterInstance(enemyDatabase);
@@ -52,19 +57,20 @@ namespace DI
             builder.RegisterInstance(turretDatabase);
             builder.RegisterInstance(resourceDatabase);
             builder.RegisterInstance(recipeDatabase);
-
-            builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             
-            builder.RegisterComponent(eventManagerPrefab);
-            builder.RegisterComponent(globalStageManagerPrefab);
-            builder.RegisterComponent(enemySpawnerPrefab);
-            builder.RegisterComponent(buildingManagerPrefab);
+            //managers
+            builder.RegisterComponent(eventManager);
+            builder.RegisterComponent(globalStageManager);
+            builder.RegisterComponent(itemPoolManager);
+            builder.RegisterComponent(enemySpawner);
+            builder.RegisterComponent(buildingManager);
             builder.RegisterComponent(wireManager);
             builder.RegisterComponent(craftManager);
+            builder.RegisterComponent(particlePoolManager);
             
-            var damageSystem = new DamageSystem();
-            builder.RegisterInstance(damageSystem);
+            builder.Register<DamageSystem>(Lifetime.Singleton);
             
+            //registries with static instance
             var physicalItemRegistry = new PhysicalItemRegistry();
             builder.RegisterInstance(physicalItemRegistry);
             
@@ -86,17 +92,20 @@ namespace DI
             builder.Register<MainCharacterModel>(Lifetime.Transient);
             builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
             builder.Register<DamagableModel>(Lifetime.Transient);
+            
+            builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             builder.Register<MCLocalModel>(Lifetime.Singleton);
             builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalWireHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalCraftModel>(Lifetime.Singleton);
             
-            builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
-            builder.Register<GameplayUIManager>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
             builder.Register<PlayerReadyManager>(Lifetime.Singleton);
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);
+            
+            builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
+            builder.Register<GameplayUIManager>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
         }
         
         private void Awake()

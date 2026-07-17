@@ -58,9 +58,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             }
         }
 
-        private void Update()
-        {
-            Debug.Log(_enemyCount);
-        }
+        // private void Update()
+        // {
+        //     Debug.Log(_enemyCount);
+        // }
     }
 }

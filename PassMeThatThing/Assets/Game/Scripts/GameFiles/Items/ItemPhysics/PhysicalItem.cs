@@ -35,7 +35,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private CollisionDamageDealer  damageDealer;
         private NetworkTransformReliable _networkTransform;
         
-        private ParticlePoolManager _particlePool;
+        [Inject] private ParticlePoolManager _particlePool;
 
         
         public float Hardness => hardness;
@@ -59,12 +59,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Collider Collider => collider;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
-
-        [Inject]
-        private void Construct(NetworkManager networkManager)
-        {
-            _particlePool = networkManager.GetComponent<ParticlePoolManager>();
-        }
 
         private void Start()
         {
