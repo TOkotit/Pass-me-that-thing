@@ -59,6 +59,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public void MoveHands( PhysicalItem item)
         {
+            leftJoint.transform.localPosition = Vector3.zero;
+            rightJoint.transform.localPosition = Vector3.zero;
             Debug.Log("Moving hands");
             if (item.HandleType == HandleType.OneHanded)
             {
