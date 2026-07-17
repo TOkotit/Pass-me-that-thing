@@ -1,7 +1,4 @@
-// Game.Entity.MainCharacter
-
 using System.Collections;
-using System.Runtime.InteropServices.ComTypes;
 using DI;
 using Entity;
 using Game.Entity.Stats;
@@ -9,10 +6,9 @@ using Game.Scripts.GameFiles.Entity.GlobalView;
 using Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View;
 using Game.Scripts.GameFiles.Entity.MainCharacterPhysics;
 using Game.Scripts.GameFiles.Items;
-using MainCharacter_old;
+using Game.Scripts.Systems;
 using MainCharacterNetwork;
 using Mirror;
-using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -24,6 +20,8 @@ namespace Game.Entity
         [Inject] private DamagableRegistry _damagableRegistry;
         [Inject] private MainCharacterModel _model;
         [Inject] private MCLocalModel _localModel;
+        [Inject] private GameoverHandler _gameoverHandler;
+
         [SerializeField] private MainCharacterMovement movement;
         [SerializeField] private MainCharacterCamera mCamera;
         [SerializeField] private PlayerInteraction playerInteraction;
@@ -33,10 +31,13 @@ namespace Game.Entity
         [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
-        [SerializeField] private HandsMaskLayerController  maskLayerController;
+        [SerializeField] private HandsMaskLayerController maskLayerController;
+
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
         public MainCharacterMovement Movement => movement;
+
+        [SyncVar(hook = nameof(OnIsAliveChanged))]
         private bool _isAlive = true;
 
         public bool IsAlive
@@ -44,29 +45,31 @@ namespace Game.Entity
             get => _isAlive;
             set => _isAlive = value;
         }
-        
+
         private void Initialize()
         {
-            view.Initialize(); 
+            view.Initialize();
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
             _model.SetStats(stats);
         }
-        
+
         [Server]
-        public void Fall(float delay, Vector3 impulce = new Vector3())
+        public void Fall(float delay, Vector3 impulse = new Vector3())
         {
             movement.LockUpMovement();
             if (mCamera) mCamera.IsCameraRotating = false;
-            RpcFall(impulce);
+            RpcFall(impulse);
             StartCoroutine(GetUpAfterDelay(delay));
         }
+
         [Server]
         private IEnumerator GetUpAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
-            if(delay > 0) StandUp();
+            if (delay > 0) StandUp();
         }
+
         [Command]
         public void CmdFall(float delay, Vector3 impulse)
         {
@@ -85,30 +88,30 @@ namespace Game.Entity
             ragdollHandler.EnableRagdoll();
             ragdollHandler.Hit(movement.LastVelocity * 2 + additionalImpulse, transform.position);
         }
-        
+
         [Server]
         public void StandUp()
         {
             if (!_isAlive) return;
-            movement.UnlockMovement();               
-            if (mCamera) mCamera.IsCameraRotating = true; 
+            movement.UnlockMovement();
+            if (mCamera) mCamera.IsCameraRotating = true;
             RpcStandUp();
         }
+
         [ClientRpc]
         private void RpcStandUp()
         {
             ragdollHandler.DisableRagdoll();
-            view.PlayStandingUp(() => 
+            view.PlayStandingUp(() =>
             {
                 view.EnableAnimator();
-                maskLayerController.EnableBodyOnlyAnimation(); 
+                maskLayerController.EnableBodyOnlyAnimation();
                 movement.UnlockMovement();
                 movement.EnableController();
                 if (mCamera) mCamera.IsCameraRotating = true;
             });
         }
 
-        
         protected void Awake()
         {
             _toughnessModel = new ToughnessModel();
@@ -116,14 +119,14 @@ namespace Game.Entity
 
         public new void Start()
         {
+            _gameoverHandler.RegisterPlayer(this);
             base.Start();
             Initialize();
 
             if (isServer)
             {
-                ServerSetMaxHealth(100, true); //SO
+                ServerSetMaxHealth(100, true);
             }
-
             else if (isClient)
             {
                 OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, DamagableModel.HealthPool.MaxHealth);
@@ -140,41 +143,31 @@ namespace Game.Entity
             throw new System.NotImplementedException();
         }
 
-        // public override void OnStartClient()
-        // {
-        //     Initialize();
-        // }
-        // public override void OnStartServer()
-        // {
-        //     Initialize();
-        //     _damagableRegistry.Register(this);
-        // }
-
         public override void OnDeath()
         {
-            /*
-            verticalAlign.CmdSetConsciousness(0);
-            verticalAlign.Consciousness = 0f;
-            verticalAlign.LockConsciousness = true;
-            */
+            if (!isServer) return;
+
+            _isAlive = false;
+
+            _gameoverHandler.CheckForGameOver();
+
             Fall(0);
             movement.LockUpMovement();
-            mCamera.IsCameraRotating = false;
-            
-            
-            if (!isLocalPlayer) return;
-            
-            Debug.Log("[MainCharacter] OnDeath");
-            _isAlive = false;
-            _localModel.IsDead = true;
+            if (mCamera) mCamera.IsCameraRotating = false;
+        }
+
+        private void OnIsAliveChanged(bool oldValue, bool newValue)
+        {
+            if (!newValue && isLocalPlayer) {
+                _localModel.IsDead = true;
+                Debug.Log("[MainCharacter] OnDeath (local)");
+            }
         }
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
             if (!isLocalPlayer) return;
-            
             Debug.Log($"[MainCharacter] OnHealthChanged {currentHealth}");
-            
             _localModel.Health = currentHealth;
             _localModel.MaxHealth = maxHealth;
         }
