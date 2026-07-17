@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Enums;
 using Game.Gameplay.View.UI.ScreenBuild;
+using Game.Gameplay.View.UI.ScreenDefeat;
 using Game.Gameplay.View.UI.ScreenMinigame;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
 using Game.MainMenu.View.UI.ScreenOptionsMenu;
@@ -109,6 +110,20 @@ namespace Game.Gameplay.View.UI
             
             return viewModel;
         }
+        
+        public ScreenDefeatViewModel OpenScreenDefeat()
+        {
+            var viewModel = new ScreenDefeatViewModel(this, Container);
+            
+            UnlockCursor();
+            _gameInputManager.ToggleMap(InputMapType.UI);
+            
+            rootUI.OpenScreen(viewModel);
+            
+            return viewModel;
+        }
+        
+        
         
         public ScreenOptionsViewModel OpenScreenOptions()
         {

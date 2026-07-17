@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Game.Entity;
+using Game.Gameplay.View.UI;
 using Mirror;
 using Systems;
 using Unity.VisualScripting;
@@ -14,6 +15,7 @@ namespace Game.Scripts.Systems
     {
         [Inject] GameManager gameManager;
         [Inject] private ICoroutineRunner coroutineRunner;
+        [Inject] private GameplayUIManager _gameplayUIManager;
         private int deathTimer = 10;
         private List<MainCharacter> players = new List<MainCharacter>();
 
@@ -51,6 +53,7 @@ namespace Game.Scripts.Systems
                 // конец игры
                 gameManager.SetState(GameState.GameOver);
                 //сделать ui или выход со сцены
+                _gameplayUIManager.OpenScreenDefeat();
             }
         }
     }
