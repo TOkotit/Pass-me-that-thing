@@ -15,7 +15,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public float availableQuantity;
         public float requiredQuantity;
 
-        public bool IsNetWorking => availableQuantity >= requiredQuantity;
+        public bool IsNetWorking => availableQuantity >= requiredQuantity &&  availableQuantity != 0;
         
         public WireNetModel(int id, WireManager wireManager)
         {
@@ -51,9 +51,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             foreach (var wireNode in portsId)
             {
                 var port = _wireManager.PortNodes[wireNode];
-
-                availableQuantity += port.AvailableValue;
-                requiredQuantity += port.RequiredValue;
+                if (port.IsOn)
+                {
+                    availableQuantity += port.AvailableValue;
+                    requiredQuantity += port.RequiredValue;
+                }
             }
 
             foreach (var wireNode in portsId)

@@ -1,3 +1,4 @@
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -6,11 +7,13 @@ namespace Game.Scripts.GameFiles.Events.Blackout
 {
     public class BlackoutCutWiresTerminal : EventTerminal
     {
-        [SyncVar]
+        [SyncVar(hook = nameof(UpdatePort))]
         public bool _isFixed = true;
         
         [SerializeField] private BlackoutCutWiresEvent _cutWiresEvent;
         [SerializeField] private ParticleSystem _particleSystem;
+        
+        [SerializeField] private WireNodePort port;
         
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
@@ -66,6 +69,12 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             {
                 _cutWiresEvent.PlayerFixedPower();
             }
+        }
+        
+        public void UpdatePort(bool oldValue, bool newValue)
+        {
+            if (isServer)
+                port.IsOn = _isFixed;
         }
     }
 }

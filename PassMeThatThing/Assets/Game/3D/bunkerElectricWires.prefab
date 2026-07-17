@@ -303,6 +303,7 @@ MonoBehaviour:
   _isFixed: 1
   _cutWiresEvent: {fileID: 675757373354076937}
   _particleSystem: {fileID: 7333508516541753060}
+  port: {fileID: 3153475394603739045}
 --- !u!1 &4502694684145809152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1140,6 +1141,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
+--- !u!114 &3153475394603739045 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7019257140765831107, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
+  m_PrefabInstance: {fileID: 5380125932561549414}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e4c44d13fa34ddea4ea61b3cafc3784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4750909566114254459 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 811935546557072925, guid: 201e92473d679e048af3cb4f068344cd, type: 3}
