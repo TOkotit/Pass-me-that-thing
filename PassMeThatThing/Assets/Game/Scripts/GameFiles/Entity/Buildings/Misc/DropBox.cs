@@ -83,5 +83,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             NetworkServer.UnSpawn(gameObject);
             Boxes.Remove(gameObject);
         }
+
+        private void OnEnable()
+        {
+            _model.SetHealth(_model.HealthPool.MaxHealth);
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Game.Scripts.GameFiles.Items.Highlight
 
         private void OnDestroy()
         {
-            if (_outline != null)
+            if (_outline)
             {
                 _outlineRegistry.DisableOutline(_outline);
                 OutlineRegistry.Instance.Unregister(_outline);
