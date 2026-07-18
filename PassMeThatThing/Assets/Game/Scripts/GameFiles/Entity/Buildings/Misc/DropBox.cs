@@ -18,7 +18,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
     {
         static public Dictionary<GameObject, DropBox> Boxes = new Dictionary<GameObject, DropBox>();
         [SerializeField] private ItemSpawner spawner;
+        [SerializeField] private NetworkItem networkItem;
         [Inject] private DamagableModel _model;  
+        [Inject] private ItemPoolManager _itemPoolManager; 
         public override DamagableModel DamagableModel => _model;
         private List<ItemData> items = new List<ItemData>();
         private Dictionary<Resource, int> _resources = new Dictionary<Resource, int>();
@@ -44,7 +46,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             {
                 _resources[resource.Key] = resource.Value;
             }
-            NetworkServer.UnSpawn(item.gameObject);
+            _itemPoolManager.ReturnToPool(item.Network);
         }
         public override void OnDeath()
         {
@@ -52,10 +54,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             foreach (var item in items)
             {
                 spawner.Item = item;
-                Debug.Log("Попытка достать предмет из коробки " +spawner.Item);
                 spawner.Interact();
             }
-            //NetworkServer.UnSpawn(gameObject);
             StartCoroutine(DelayedUnspawn());
             Boxes.Remove(gameObject);
         }
@@ -80,7 +80,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         private IEnumerator DelayedUnspawn()
         {
             yield return new WaitForEndOfFrame();   
-            NetworkServer.UnSpawn(gameObject);
+            _itemPoolManager.DeleteAndDestroyObject(networkItem); 
             Boxes.Remove(gameObject);
         }
 

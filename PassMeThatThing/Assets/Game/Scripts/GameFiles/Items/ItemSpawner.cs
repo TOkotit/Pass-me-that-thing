@@ -25,7 +25,6 @@ namespace Game.Scripts.GameFiles.Items
             itemToDrop.transform.position = pointToSpawn.position;
 
             var physItem = itemToDrop.GetComponent<PhysicalItem>();
-            // physItem.Network.ItemData = item;
             _physicalItemRegistry.Register(physItem);
 
             //RpcInteractWithObject();

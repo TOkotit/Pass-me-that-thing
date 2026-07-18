@@ -21,6 +21,7 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] private ItemPoolManager _itemPoolManager;
     [Inject] private PhysicalItemRegistry _physicalItemRegistry;
     [Inject] private GlobalInventoryManager  _globalInventoryManager;
+    
 
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
     [SyncVar(hook = nameof(OnActiveSlotChanged))]
@@ -100,7 +101,6 @@ public class PlayerInventory : NetworkBehaviour
     {
         if (_physicalСontroller.CurrentHeldItem)
         {
-            //NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
             _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
         }
         _physicalСontroller.ServerClearHeldItem();
@@ -112,7 +112,6 @@ public class PlayerInventory : NetworkBehaviour
     {
         if (_physicalСontroller.CurrentHeldItem)
         {
-            // NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
             _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
         }
         _physicalСontroller.ServerClearHeldItem();
@@ -121,9 +120,7 @@ public class PlayerInventory : NetworkBehaviour
         var itemToDrop = _itemPoolManager.GetFromPool(value.instanceId);
 
         itemToDrop.transform.position = pointToSpawn;
-        // NetworkServer.Spawn(itemToDrop, connectionToClient);
         itemToDrop.GetComponent<NetworkIdentity>()?.AssignClientAuthority(connectionToClient);
-        // itemToDrop.SetActive(true);
         
         var physicalItem = _physicalItemRegistry.GetItem(itemToDrop.gameObject);
         if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
@@ -242,7 +239,6 @@ public class PlayerInventory : NetworkBehaviour
 
         if (_physicalСontroller.CurrentHeldItem)
         {
-            // NetworkServer.UnSpawn(_physicalСontroller.CurrentHeldItem.gameObject);
             _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
             _physicalСontroller.ReleaseCurrentItem(0f, false);
         }
@@ -286,13 +282,12 @@ public class PlayerInventory : NetworkBehaviour
 
         if (ServerInventory.TryGetValue(slotIndex, out var slot))
         {
-            //текущий предмет / не в пуле
             if (heldItem && slot.instanceId == heldItem.Network.instanceId)
             {
                 _physicalСontroller.ServerClearHeldItem();
                 _itemPoolManager.DeleteAndDestroyObject(heldItem.Network);
             }
-            else // в инвентаре / в пуле
+            else 
             {
                 _itemPoolManager.DeleteAndDestroyObject(_itemPoolManager.GetFromPool(slot.instanceId));
             }
