@@ -7,7 +7,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    public class ItemSpawner : NetworkBehaviour ,Interactable
+    public class ItemSpawner : NetworkBehaviour, Interactable
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
@@ -25,9 +25,8 @@ namespace Game.Scripts.GameFiles.Items
             itemToDrop.transform.position = pointToSpawn.position;
 
             var physItem = itemToDrop.GetComponent<PhysicalItem>();
-            physItem.Network.ItemData = item;
+            // physItem.Network.ItemData = item;
             _physicalItemRegistry.Register(physItem);
-            NetworkServer.Spawn(itemToDrop);
 
             //RpcInteractWithObject();
         }

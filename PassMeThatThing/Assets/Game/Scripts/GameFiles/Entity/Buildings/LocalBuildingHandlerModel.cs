@@ -6,21 +6,17 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 {
     public class LocalBuildingHandlerModel
     {
+        public string InstanceId { get; private set; }
         
-        public event Action<int> OnStartBuildPreviewByIndex;
         public event Action<string> OnStartBuildPreviewById;
         public event Action OnCancelBuildPreview;
         public event Action OnConfirmBuildPreview;
-
-        public void StartBuildPreview(int buildingIndex)
-        {
-            Debug.Log($"Starting building preview {buildingIndex}");
-            OnStartBuildPreviewByIndex?.Invoke(buildingIndex);
-        }
         
-        public void StartBuildPreview(string buildingId)
+        public void StartBuildPreview(string buildingId, string instanceId=null)
         {
             Debug.Log($"Starting building preview {buildingId}");
+            
+            InstanceId = instanceId;
             OnStartBuildPreviewById?.Invoke(buildingId);
         }
 

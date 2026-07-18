@@ -50,20 +50,16 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         public void RequestGoToGameplay()
         {
             _handlerModel.CancelBuildPreview();
-            _uiManager.OpenScreenGameplay();
         }
 
         public void RequestConfirmBuilding()
         {
             _handlerModel.ConfirmBuildPreview();
-            //RequestGoToGameplay();
         }
         
         public void RequestCancelBuilding()
         {
-            RequestGoToGameplay();
-
-
+            _handlerModel.CancelBuildPreview();
         }
     }
 }

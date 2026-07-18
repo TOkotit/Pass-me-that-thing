@@ -38,15 +38,25 @@ namespace Game.Scripts.GameFiles.Items
             
             netItem.itemId = id;
             netItem.instanceId = Guid.NewGuid().ToString();
+            netItem.ItemData = data;
             
             NetworkServer.Spawn(newObj);
             
             Debug.Log($"[IP] CreateNewObject {netItem.itemId} instanceId: {netItem.instanceId}");
             return newObj;
         }
+
+        [Server]
+        public void DeleteAndDestroyObject(NetworkItem networkItem)
+        {
+            _poolDict.Remove(networkItem.instanceId);
+            Debug.Log($"[IP] DeleteAndDestroyObject {networkItem.itemId} instanceId: {networkItem.instanceId}");
+            NetworkServer.Destroy(networkItem.gameObject);
+        }
+        
         
         [Server]
-        public GameObject GetFromPool(string requiredInstanceId)
+        public NetworkItem GetFromPool(string requiredInstanceId)
         {
             if (!string.IsNullOrEmpty(requiredInstanceId)
                 && _poolDict.Remove(requiredInstanceId, out var selectedObj))
@@ -54,7 +64,7 @@ namespace Game.Scripts.GameFiles.Items
                 RpcActivateItem(selectedObj);
                 
                 Debug.Log($"[IP] GetFromPool {selectedObj.itemId} instanceId: {selectedObj.instanceId}");
-                return selectedObj.gameObject;
+                return selectedObj;
             }
 
             return null;

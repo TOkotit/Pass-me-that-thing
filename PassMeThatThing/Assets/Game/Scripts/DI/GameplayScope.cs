@@ -43,6 +43,7 @@ namespace DI
         [SerializeField] private BuildingManager buildingManager;
         [SerializeField] private WireManager wireManager;
         [SerializeField] private CraftManager craftManager;
+        [SerializeField] private GlobalInventoryManager globalInventoryManager;
         [SerializeField] private ParticlePoolManager particlePoolManager;
         
         protected override void Configure(IContainerBuilder builder)
@@ -66,6 +67,7 @@ namespace DI
             builder.RegisterComponent(buildingManager);
             builder.RegisterComponent(wireManager);
             builder.RegisterComponent(craftManager);
+            builder.RegisterComponent(globalInventoryManager);
             builder.RegisterComponent(particlePoolManager);
             
             builder.Register<DamageSystem>(Lifetime.Singleton);

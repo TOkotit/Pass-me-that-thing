@@ -92,6 +92,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [TargetRpc]
         private void TargetPickUpItem(PhysicalItem item)
         {
+            Debug.Log($"[PC] TargetPickUpItem {item}");
             _heldItem = item;
             movement.SetMovementMultiplier(item.Rigidbody.mass);
             SetOwnerAndLayer(item);
@@ -152,6 +153,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             //pivotAnimator.enabled = true;
             if (pivotAnimator)
                 pivotAnimator.SetTrigger("Swing");
+            Debug.Log($"TriggerSwing {HandsMovement == null} {CurrentHeldItem == null}");
             HandsMovement.FixGrab(CurrentHeldItem.Rigidbody);
             StartCoroutine(StopHolding());
         }
