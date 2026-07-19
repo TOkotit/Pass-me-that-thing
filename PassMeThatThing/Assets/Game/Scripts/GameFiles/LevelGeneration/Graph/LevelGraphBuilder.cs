@@ -10,6 +10,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
     {
         private int _nodeIdCounter = 0;
         private Random _random = new();
+        public int MaxDepth { get; private set; }
 
         public RoomNode BuildGraph(LevelMacroData macroData)
         {
@@ -154,6 +155,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                     if (visited.Add(conn))
                     {
                         depthMap[conn] = depth + 1;
+                        if (depth + 1 > MaxDepth) { MaxDepth = depth + 1;}
                         queue.Enqueue(conn);
                     }
                 }
@@ -175,6 +177,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
                 var targetPoint = validPoints[_random.Next(validPoints.Count)];
                 sideRoom.DepthFromHub = targetPoint.Depth + 1;
+                if (sideRoom.DepthFromHub > MaxDepth)
+                    MaxDepth = sideRoom.DepthFromHub;
                 targetPoint.Node.ConnectedNodes.Add(sideRoom);
                 sideRoom.ConnectedNodes.Add(targetPoint.Node);
                 attachmentPoints.Add((sideRoom, targetPoint.Depth + 1));
