@@ -158,6 +158,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                     }
                 }
             }
+            
+            foreach (var kvp in depthMap)
+            {
+                kvp.Key.DepthFromHub = kvp.Value;
+            }
 
             foreach (var sideRoom in sideRoomsPool)
             {
@@ -169,6 +174,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 if (validPoints.Count == 0) break; 
 
                 var targetPoint = validPoints[_random.Next(validPoints.Count)];
+                sideRoom.DepthFromHub = targetPoint.Depth + 1;
                 targetPoint.Node.ConnectedNodes.Add(sideRoom);
                 sideRoom.ConnectedNodes.Add(targetPoint.Node);
                 attachmentPoints.Add((sideRoom, targetPoint.Depth + 1));
