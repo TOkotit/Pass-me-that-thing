@@ -48,14 +48,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void LogicUpdate()
         {
-            // if (!_targetDetector.IsTargetVisible
-            //     || _targetDetector.DistanceToTarget > _spider.ChaseDistance)
-            // {
-            //     if (_goUpCor != null) _spider.StopCoroutine(_goUpCor);
-            //     StateMachine.ChangeState(_spider.SpiderWalk);
-            //     return;
-            // }
-
+            if (!_isUp && !_isGoingUp)
+            {
+                if (!_targetDetector.IsTargetVisible
+                    || _targetDetector.DistanceToTarget > _spider.ChaseDistance)
+                {
+                    if (_goUpCor != null) _spider.StopCoroutine(_goUpCor);
+                    StateMachine.ChangeState(_spider.SpiderWalk);
+                    return;
+                }
+            }
+            
             if (_isUp)
             {
                 if (_targetDetector.IsTargetVisible)
@@ -77,6 +80,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _goUpCor = _spider.StartCoroutine(GoUp());
                 }
             }
+            
+            
         }
 
         public override void PhysicsUpdate()

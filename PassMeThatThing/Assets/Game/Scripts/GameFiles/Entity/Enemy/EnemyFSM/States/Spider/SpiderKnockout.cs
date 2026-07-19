@@ -10,16 +10,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private float _atkCooldown;
         private bool _isAtkCooldown;
-        
+        private EnemyMovementController _movementController;
         
         public SpiderKnockout(EnemySpider enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
         {
+            _spider = enemy;
+            _movementController = enemy.MovementController;
         }
 
         public override void Enter()
         {
             base.Enter();
             _isAtkCooldown = true;
+            _atkCooldown = 0f;
+            _movementController.EnableNavAgent();
         }
 
         public override void LogicUpdate()
