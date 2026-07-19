@@ -12,6 +12,7 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
         public ItemData Item {get => item; set => item = value;}
+        public Transform PointToSpawn {get => pointToSpawn; set => pointToSpawn = value;}
         
         
         [Inject] private ItemPoolManager _itemPoolManager; 
