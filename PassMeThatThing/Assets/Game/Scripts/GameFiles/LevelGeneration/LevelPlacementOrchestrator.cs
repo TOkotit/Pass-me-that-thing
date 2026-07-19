@@ -387,7 +387,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var instance = Instantiate(prefab, worldPos, rotationQuaternion, levelContainer);
             instance.name = $"Room_{node.NodeId}_{node.Type}";
-
+            instance.DepthFromHub = node.DepthFromHub;
+            
             var placedData = new PlacedRoomData { Instance = instance, Prefab = prefab };
             var virtualPlates = RoomRotationHelper.GetRotatedPlates(prefab, rotation);
 
