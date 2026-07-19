@@ -13,6 +13,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         public List<RoomNode> ConnectedNodes = new List<RoomNode>();
         
+        public int DepthFromHub { get; set; }
+        
         public RoomNode(int nodeId, RoomType type, EventData eventData = null)
         {
             NodeId = nodeId;

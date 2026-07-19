@@ -17,7 +17,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public int TotalDoors => totalDoors;
         public int TotalGates => totalGates;
         public RoomPlateData[] Plates => plates;
-        
+        public int DepthFromHub { get; set; }
         
         [ContextMenu("Compile Room")]
         public void CompileRoom()
