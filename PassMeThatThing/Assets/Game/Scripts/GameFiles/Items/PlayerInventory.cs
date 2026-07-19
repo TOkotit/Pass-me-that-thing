@@ -271,7 +271,7 @@ public class PlayerInventory : NetworkBehaviour
     }
     
     [Server]
-    public void DeleteItem(string instanceId)
+    public void ServerDeleteItem(string instanceId)
     {
         if (string.IsNullOrEmpty(instanceId)) return;
     
@@ -287,9 +287,9 @@ public class PlayerInventory : NetworkBehaviour
                 _physicalСontroller.ServerClearHeldItem();
                 _itemPoolManager.DeleteAndDestroyObject(heldItem.Network);
             }
-            else 
+            else
             {
-                _itemPoolManager.DeleteAndDestroyObject(_itemPoolManager.GetFromPool(slot.instanceId));
+                _itemPoolManager.DeleteAndDestroyObject(_itemPoolManager.PoolDict[slot.instanceId]);
             }
             
             ServerInventory.Remove(slotIndex);

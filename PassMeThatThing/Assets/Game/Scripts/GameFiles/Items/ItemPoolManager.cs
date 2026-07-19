@@ -11,6 +11,8 @@ namespace Game.Scripts.GameFiles.Items
         
         private Dictionary<string, NetworkItem> _poolDict = new ();
 
+        public Dictionary<string, NetworkItem> PoolDict => _poolDict;
+
         public void Start()
         {
             InitializePool();
@@ -49,7 +51,7 @@ namespace Game.Scripts.GameFiles.Items
         [Server]
         public void DeleteAndDestroyObject(NetworkItem networkItem)
         {
-            _poolDict.Remove(networkItem.instanceId);
+            PoolDict.Remove(networkItem.instanceId);
             Debug.Log($"[IP] DeleteAndDestroyObject {networkItem.itemId} instanceId: {networkItem.instanceId}");
             NetworkServer.Destroy(networkItem.gameObject);
         }
@@ -59,7 +61,7 @@ namespace Game.Scripts.GameFiles.Items
         public NetworkItem GetFromPool(string requiredInstanceId)
         {
             if (!string.IsNullOrEmpty(requiredInstanceId)
-                && _poolDict.Remove(requiredInstanceId, out var selectedObj))
+                && PoolDict.Remove(requiredInstanceId, out var selectedObj))
             {
                 RpcActivateItem(selectedObj);
                 
@@ -73,7 +75,7 @@ namespace Game.Scripts.GameFiles.Items
         [Server]
         public void ReturnToPool(NetworkItem networkItem)
         {
-            _poolDict.TryAdd(networkItem.instanceId, networkItem);
+            PoolDict.TryAdd(networkItem.instanceId, networkItem);
             
             RpcDeactivateItem(networkItem);
             

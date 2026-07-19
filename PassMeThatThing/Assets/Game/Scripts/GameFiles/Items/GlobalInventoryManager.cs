@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [Server]
         public void DeleteFromInventory(string instanceId, NetworkConnectionToClient connection)
         {
-            allInventories[connection].DeleteItem(instanceId);
+            allInventories[connection].ServerDeleteItem(instanceId);
         }
         
         
