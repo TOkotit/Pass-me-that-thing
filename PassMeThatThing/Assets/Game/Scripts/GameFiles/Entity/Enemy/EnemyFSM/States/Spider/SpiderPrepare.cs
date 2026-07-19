@@ -17,6 +17,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         private float _timeToGoUp = 0.5f;
         private bool _isGoingUp;
+        private bool _isUp;
 
         private Vector3 _positionStart;
         private Vector3 _positionEnd;
@@ -24,6 +25,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private Quaternion _rotationEnd;
         private float _progress;
         private Coroutine _goUpCor;
+        
+
         
         public SpiderPrepare(EnemySpider enemy, EnemyStateMachine stateMachine) 
             : base(enemy, stateMachine)
@@ -37,24 +40,30 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
+            _isGoingUp = false;
+            _isUp =  false;
+            
             _movementController.DisableNavAgent();
         }
 
         public override void LogicUpdate()
         {
-            
-        }
+            // if (!_targetDetector.IsTargetVisible
+            //     || _targetDetector.DistanceToTarget > _spider.ChaseDistance)
+            // {
+            //     if (_goUpCor != null) _spider.StopCoroutine(_goUpCor);
+            //     StateMachine.ChangeState(_spider.SpiderWalk);
+            //     return;
+            // }
 
-        public override void PhysicsUpdate()
-        {
-            if (!_targetDetector.IsTargetVisible
-                || _targetDetector.DistanceToTarget > _spider.AttackDistance)
+            if (_isUp)
             {
-                StateMachine.ChangeState(_spider.SpiderWalk);
-                return;
+                if (_targetDetector.IsTargetVisible)
+                {
+                    StateMachine.ChangeState(_spider.SpiderChargeAttack);
+                }
             }
-            
-            if (!_isGoingUp)
+            else if (!_isGoingUp)
             {
                 _ray = new Ray(_spider.transform.position, _spider.transform.up);
                 if (Physics.Raycast(_ray, out _hit, float.MaxValue, _spider.CeilingLayer))
@@ -64,17 +73,22 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _rotationStart = _spider.transform.rotation;
                     _rotationEnd = _spider.transform.rotation * Quaternion.Euler(0, 0, 180);
                     
-                    _progress = 0f;
-                    _isGoingUp = true;
-                    
                     if (_goUpCor != null) _spider.StopCoroutine(_goUpCor);
                     _goUpCor = _spider.StartCoroutine(GoUp());
                 }
             }
         }
 
+        public override void PhysicsUpdate()
+        {
+
+        }
+
         public IEnumerator GoUp()
         {
+            _progress = 0f;
+            _isGoingUp = true;
+            
             while (_progress < _timeToGoUp)
             {
                 _progress += Time.deltaTime;
@@ -85,10 +99,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 yield return null;
             }
             _isGoingUp = false;
-            _progress = 0f;
-            StateMachine.ChangeState(_spider.SpiderChargeAttack);
+            _isUp = true;
         }
-        
         
         
         public override void Exit()

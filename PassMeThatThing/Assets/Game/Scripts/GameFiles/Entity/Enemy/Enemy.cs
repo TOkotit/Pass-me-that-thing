@@ -23,8 +23,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         
         [Inject] private DamagableRegistry _damagableRegistry;
-        private float SMTimer;
-        private float SMInterval = 0.1f;
+        private float SMLogicTimer;
+        private float SMLogicInterval = 0.1f;
         
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
@@ -47,20 +47,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             isAlive = false;
         }
         
-        public override void OnHealthChanged(int currentHealth, int maxHealth)
-        {
-            
-        }
+        public override void OnHealthChanged(int currentHealth, int maxHealth) { }
         
-        public override void OnToughnessBreak()
-        {
-            
-        }
+        public override void OnToughnessBreak() { }
 
-        public override void OnToughnessChanged(int currentToughness, int maxToughness)
-        {
-            
-        }
+        public override void OnToughnessChanged(int currentToughness, int maxToughness) { }
         
         protected virtual void Awake()
         {
@@ -71,8 +62,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         #region ServerLogic
         public override void OnStartServer()
         {
-            // LifetimeScope.Find<GameplayScope>().Container.Inject(this);
-
             stateMachine = new EnemyStateMachine();
             
             _damagableRegistry.Register(this);
@@ -81,20 +70,21 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         protected void Update()
         {
             if(!isServer) return;
-            stateMachine.CurrentState.LogicUpdate();
+            
+            SMLogicTimer += Time.deltaTime;
+
+            if (SMLogicTimer >= SMLogicInterval)
+            {
+                stateMachine.CurrentState.LogicUpdate();
+                SMLogicTimer = 0f;
+            }
         }
 
         protected void FixedUpdate()
         {
             if(!isServer) return;
             
-            SMTimer += Time.fixedDeltaTime;
-
-            if (SMTimer >= SMInterval)
-            {
-                stateMachine.CurrentState.PhysicsUpdate();
-                SMTimer = 0f;
-            }
+            stateMachine.CurrentState.PhysicsUpdate();
         }
         #endregion
 

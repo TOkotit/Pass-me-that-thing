@@ -29,14 +29,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void LogicUpdate()
         {
-            base.LogicUpdate();
-        }
-
-        public override void PhysicsUpdate()
-        {
             if (_targetDetector.IsTargetVisible)
             {
-                if (_targetDetector.DistanceToTarget < _spider.ChaseDistance)
+                if (_targetDetector.DistanceToTarget <= _spider.ChaseDistance)
                 {
                     _movementController.StopNavigating();
                     StateMachine.ChangeState(_spider.SpiderPrepare);
@@ -47,6 +42,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
                 }
             }
+        }
+
+        public override void PhysicsUpdate()
+        {
+            
         }
         
         public override void Exit()

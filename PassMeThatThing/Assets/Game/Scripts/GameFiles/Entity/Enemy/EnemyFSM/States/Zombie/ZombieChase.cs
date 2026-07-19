@@ -28,11 +28,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void LogicUpdate()
         {
-            
-        }
-
-        public override void PhysicsUpdate()
-        {
             if (!_targetDetector.IsTargetVisible)
             {
                 StateMachine.ChangeState(_zombie.ZombieWalk);
@@ -49,6 +44,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 StateMachine.ChangeState(_zombie.ZombieAttack);
                 return;
             }
+
+        }
+
+        public override void PhysicsUpdate()
+        {
             
         }
         

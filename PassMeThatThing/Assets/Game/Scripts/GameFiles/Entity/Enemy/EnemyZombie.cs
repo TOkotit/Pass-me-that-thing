@@ -119,7 +119,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            if (!isServer) return;
+            // if (!isServer) return;
             
             Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
         }
