@@ -15,6 +15,7 @@ using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
+using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Systems;
 using UnityEngine.Serialization;
@@ -106,7 +107,7 @@ namespace DI
             builder.Register<PlayerReadyManager>(Lifetime.Singleton);
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);
-            
+            builder.Register<LevelGraphBuilder>(Lifetime.Singleton);
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
