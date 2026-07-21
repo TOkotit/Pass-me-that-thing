@@ -8,24 +8,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
     public class RoomDatabaseNew : ScriptableObject
     {
-        public List<LevelRoom> commandCenterRooms = new();
-        public List<LevelRoom> generatorRooms = new();
-        public List<LevelRoom> warehouseRooms = new();
-        public List<LevelRoom> livingBlockRooms = new();
-        public List<LevelRoom> medicalBlockRooms = new();
-        public List<LevelRoom> recoveryHangarRooms = new();
-        public List<LevelRoom> technicalTunnelsRooms = new();
+        public List<LevelRoomNew> commandCenterRooms = new();
+        public List<LevelRoomNew> generatorRooms = new();
+        public List<LevelRoomNew> warehouseRooms = new();
+        public List<LevelRoomNew> livingBlockRooms = new();
+        public List<LevelRoomNew> medicalBlockRooms = new();
+        public List<LevelRoomNew> recoveryHangarRooms = new();
+        public List<LevelRoomNew> technicalTunnelsRooms = new();
         
-        public List<LevelRoom> laboratoryRooms = new();
-        public List<LevelRoom> workshopRooms = new();
-        public List<LevelRoom> serverRooms = new();
-        public List<LevelRoom> waterPurificationRooms = new();
-        public List<LevelRoom> armoryRooms = new();
+        public List<LevelRoomNew> laboratoryRooms = new();
+        public List<LevelRoomNew> workshopRooms = new();
+        public List<LevelRoomNew> serverRooms = new();
+        public List<LevelRoomNew> waterPurificationRooms = new();
+        public List<LevelRoomNew> armoryRooms = new();
         
-        public List<LevelRoom> GetSuitableRooms(RoomTypeNew type, int requiredConnections, bool exactMatch = true)
+        public List<LevelRoomNew> GetSuitableRooms(RoomTypeNew type, int requiredConnections, bool exactMatch = true)
         {
             var targetList = GetTargetList(type);
-            var suitableRooms = new List<LevelRoom>();
+            var suitableRooms = new List<LevelRoomNew>();
 
             if (targetList == null || targetList.Count == 0)
                 return suitableRooms;
@@ -46,7 +46,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             return suitableRooms;
         }
-        private List<LevelRoom> GetTargetList(RoomTypeNew type)
+        private List<LevelRoomNew> GetTargetList(RoomTypeNew type)
         {
             return type switch
             {

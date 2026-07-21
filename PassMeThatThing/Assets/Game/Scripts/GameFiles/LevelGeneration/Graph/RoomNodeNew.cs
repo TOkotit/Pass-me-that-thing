@@ -6,6 +6,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
     public class RoomNodeNew
     {
         public int NodeId; 
+        public int DepthFromHub;
         
         public RoomTypeNew Type; 
         

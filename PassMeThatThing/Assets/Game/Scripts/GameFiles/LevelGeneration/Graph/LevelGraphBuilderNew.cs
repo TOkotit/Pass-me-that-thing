@@ -32,7 +32,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             _nextNodeId = 0;
             
             var root = BuildCore();
-            var slotsForPool = _targetRoomCount - 5;
+            var slotsForPool = _targetRoomCount - 4;
+            if (slotsForPool < 1) slotsForPool = 1;
             
             
             var roomPool = BuildRoomPool(slotsForPool);
@@ -61,22 +62,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         private RoomNodeNew BuildCore()
         {
             var commandCenter = CreateNode(RoomTypeNew.CommandCenter);
-
-            var warehouse = CreateNode(RoomTypeNew.Warehouse);
             var generator = CreateNode(RoomTypeNew.Generator);
-            var livingBlock = CreateNode(RoomTypeNew.LivingBlock);
+            var medicalBlock = CreateNode(RoomTypeNew.MedicalBlock);
 
-            commandCenter.Connect(warehouse);
             commandCenter.Connect(generator);
-            commandCenter.Connect(livingBlock);
+            commandCenter.Connect(medicalBlock);
             
-            _parents[warehouse] = commandCenter;
             _parents[generator] = commandCenter;
-            _parents[livingBlock] = commandCenter;
+            _parents[medicalBlock] = commandCenter;
             
             OpenNodes.Add(generator);
-            OpenNodes.Add(warehouse);
-            OpenNodes.Add(livingBlock);
+            OpenNodes.Add(medicalBlock);
             
             return commandCenter;
         }
@@ -92,34 +88,45 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         private List<RoomTypeNew> BuildRoomPool(int slotsLeft)
         {
-            var pool = new List<RoomTypeNew>
-            {
-                RoomTypeNew.MedicalBlock,
-            };
+            var pool = new List<RoomTypeNew>();
 
-            slotsLeft -= 1;
+            pool.Add(RoomTypeNew.Warehouse);
+            pool.Add(RoomTypeNew.LivingBlock);
+            pool.Add(RoomTypeNew.TechnicalTunnels);
+            slotsLeft -= 3;
 
-            var optionalTypes = new List<RoomTypeNew>
+            var optionalSingles = new List<RoomTypeNew>
             {
                 RoomTypeNew.Laboratory,
                 RoomTypeNew.Workshop,
-                RoomTypeNew.Server,
+                RoomTypeNew.Server
+            };
+            ShuffleList(optionalSingles);
+
+            var multiples = new List<RoomTypeNew>
+            {
+                RoomTypeNew.Warehouse,
+                RoomTypeNew.LivingBlock,
+                RoomTypeNew.TechnicalTunnels,
                 RoomTypeNew.WaterPurification,
                 RoomTypeNew.Armory
             };
 
-            ShuffleList(optionalTypes);
-
-            var index = 0;
             while (slotsLeft > 0)
             {
-                pool.Add(optionalTypes[index % optionalTypes.Count]);
-                index++;
+                if (optionalSingles.Count > 0 && _random.Next(100) < 30) 
+                {
+                    pool.Add(optionalSingles[0]);
+                    optionalSingles.RemoveAt(0);
+                }
+                else
+                {
+                    pool.Add(multiples[_random.Next(multiples.Count)]);
+                }
                 slotsLeft--;
             }
 
             ShuffleList(pool);
-
             return pool;
         }
 
@@ -132,6 +139,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
             parentNode.Connect(newNode);
             _parents[newNode] = parentNode;
+            
             if (parentNode.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom)
             {
                 OpenNodes.Remove(parentNode);
@@ -172,8 +180,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             }
 
             ShuffleList(candidatePairs);
-
-            var targetExtraEdges = _targetRoomCount / 2;
+            var targetExtraEdges = _targetRoomCount / 3;
 
             foreach (var (a, b) in candidatePairs)
             {
@@ -181,7 +188,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
                 if (a.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom ||
                     b.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom) continue;
-                a.Connect(b);
+
+                var tunnel = CreateNode(RoomTypeNew.TechnicalTunnels);
+                a.Connect(tunnel);
+                tunnel.Connect(b);
+                
                 targetExtraEdges--;
             }
 
