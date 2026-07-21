@@ -8,7 +8,7 @@ namespace Game.Gameplay.View.UI.ScreenDefeat
     public class ScreenDefeatViewModel : WindowViewModel
     {
         private readonly GameplayUIManager _uiManager;
-        private NetworkManager  _networkRoomManager;
+        private NetworkRoomManager  _networkRoomManager;
         private GlobalStageManager  _globalStageManager;
         public override string Id => "ScreenDefeat";
         
@@ -16,21 +16,24 @@ namespace Game.Gameplay.View.UI.ScreenDefeat
         {
             _uiManager = uiManager;
             
-            _networkRoomManager = container.Resolve<NetworkManager>();
+            if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
+            {
+                _networkRoomManager = roomManager;
+            }
             _globalStageManager = container.Resolve<GlobalStageManager>();
         }
 
         public void RequestGoOffline()
         {
-            if (_globalStageManager.isClient && _globalStageManager.isServer)
+            //TODO добавить кнопку готовности для выхода назад в лобби
+            if (_globalStageManager.isServer)
             {
-                _networkRoomManager.StopHost();
+                _networkRoomManager.ServerChangeScene(_networkRoomManager.RoomScene);
             }
             else if (_globalStageManager.isClient)
             {
                 _networkRoomManager.StopClient();
             }
-            
         }
     }
 }
