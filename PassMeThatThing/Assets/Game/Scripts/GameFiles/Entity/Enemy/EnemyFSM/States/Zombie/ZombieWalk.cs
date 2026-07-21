@@ -28,11 +28,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public override void LogicUpdate()
         {
-            base.LogicUpdate();
-        }
-
-        public override void PhysicsUpdate()
-        {
             if (_targetDetector.IsTargetVisible)
             {
                 if (_targetDetector.DistanceToTarget < _zombie.ChaseDistance)
@@ -43,11 +38,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 }
                 else
                 {
-                    
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
-                
                 }
             }
+        }
+
+        public override void PhysicsUpdate()
+        {
+            
         }
         
         public override void Exit()

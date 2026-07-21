@@ -62,6 +62,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             }
             else
             {
+                if (_waitCoroutine!=null) _spider.StopCoroutine(_waitCoroutine);
+                if (_dashCoroutine!=null) _spider.StopCoroutine(_dashCoroutine);
                 StateMachine.ChangeState(_spider.SpiderWalk);
             }
         }
@@ -78,6 +80,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public IEnumerator WaitFor()
         {
+            _progress = 0f;
+            
             while (_progress < _timeToCharge)
             {
                 _progress += Time.deltaTime;
@@ -86,25 +90,29 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             
             if (_dashCoroutine!=null) _spider.StopCoroutine(_dashCoroutine);
             _dashCoroutine = _spider.StartCoroutine(DashAttack());
-            _progress = 0f;
+            
         }
         
         public IEnumerator DashAttack()
         {
-            _positionEnd = _targetDetector.DetectedTarget;
-            
-            while (_dashProgress < _timeToDash)
-            {
-                _dashProgress += Time.deltaTime;
-                var progressInPercantage = _dashProgress / _timeToDash;
-
-                _spider.transform.position = Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage);
-                _spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
-                yield return null;
-            }
-
             _dashProgress = 0f;
-            StateMachine.ChangeState(_spider.SpiderWalk);
+            if (_targetDetector.IsTargetVisible)
+            {
+                _positionEnd = _targetDetector.DetectedTarget;
+            
+                while (_dashProgress < _timeToDash)
+                {
+                    _dashProgress += Time.deltaTime;
+                    var progressInPercantage = _dashProgress / _timeToDash;
+
+                    _spider.transform.position = Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage);
+                    _spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
+                    yield return null;
+                }
+            }
+            _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _spider.Damage);
+            
+            StateMachine.ChangeState(_spider.SpiderKnockout);
         }
         
         public override void Exit()

@@ -23,7 +23,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             OnEnter?.Invoke();
             // Debug.Log($"Enter {EnemyStateType}");
         }
+        
+        /// <summary>
+        /// Вызывается раз в SMInterval
+        /// </summary>
         public virtual void LogicUpdate() { }
+        
+        /// <summary>
+        /// Вызывается каждый FixedUpdate
+        /// </summary>
         public virtual void PhysicsUpdate() { }
 
         public virtual void Exit()

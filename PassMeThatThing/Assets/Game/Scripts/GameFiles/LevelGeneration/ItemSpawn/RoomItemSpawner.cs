@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Scripts.GameFiles.Items;
@@ -5,6 +6,7 @@ using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using Game.Scripts.Utils;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
 {
@@ -14,8 +16,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
         [SerializeField] private ItemSpawner itemSpawner;
         [SerializeField] private float spawnRate = 0.7f;          
         [SerializeField] private float spawnGrowthRate = 0.6f;
-        [SerializeField] private LevelGraphBuilder graphBuilder;
-        [Inject] ItemRarityDatabase _rarityDatabase;
+        [SerializeField] private LevelRoom room;
+        [SerializeField] ItemRarityDatabase _rarityDatabase;
+        private LevelGraphBuilder graphBuilder;
+        
 
         private int _maxItemCount;
         private float[] _weights;      
@@ -26,6 +30,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
             _maxItemCount = spawnPositions.Count;
             if (_maxItemCount > 0)
                 CacheWeights();
+            graphBuilder = LevelBootstrapper.GraphBuilder;
+        }
+
+        private void Start()
+        {
+            SpawnItems(room.DepthFromHub);
         }
 
         private void CacheWeights()
@@ -56,7 +66,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
             {
                 itemSpawner.Item = itemsToSpawn[i];
                 itemSpawner.PointToSpawn = spawnPositions[i];
-                itemSpawner.Interact();
+                
+                Debug.Log($"Spawning item: {itemSpawner.Item} in {room}");
+                itemSpawner.SpawnItem();
             }
             
         }

@@ -10,6 +10,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController  _movementController;
         
+        
+        
         public SpiderFindPlace(EnemySpider enemy, EnemyStateMachine stateMachine) 
             : base(enemy, stateMachine)
         {

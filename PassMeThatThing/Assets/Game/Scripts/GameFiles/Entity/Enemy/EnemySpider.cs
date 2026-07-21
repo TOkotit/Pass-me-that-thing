@@ -14,7 +14,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         private EnemyData _spiderData;
         
-        public float elapsedAttack;
+        public float ElapsedAttack {get; set;}
         public float AttackCooldown => _spiderData.AttackCooldown;
         public float ChaseDistance => _spiderData.ChaseDistance;
         public float AttackDistance => _spiderData.AttackDistance;
@@ -71,7 +71,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            if (!isServer) return;
+            // if (!isServer) return;
             
             Debug.Log($"[Spider] OnHealthChanged {currentHealth}/{maxHealth}");
         }

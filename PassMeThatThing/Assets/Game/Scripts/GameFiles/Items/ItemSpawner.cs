@@ -11,6 +11,7 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
+        [SerializeField] private ItemPoolManager reserveItemPoolManager; //удалить потом
         public ItemData Item {get => item; set => item = value;}
         public Transform PointToSpawn {get => pointToSpawn; set => pointToSpawn = value;}
         
@@ -40,7 +41,22 @@ namespace Game.Scripts.GameFiles.Items
                     gameObject.SetActive(false);
                 });
         }
-        
+        public void SpawnItem() //код для тестовой сцены, не работает. потом удалить
+        {
+            if (!_itemPoolManager || _physicalItemRegistry == null)
+            {
+                _itemPoolManager = reserveItemPoolManager;
+                _physicalItemRegistry = PhysicalItemRegistry.Instance;
+            }
+
+            var itemToDrop = _itemPoolManager.CreateNewObject(item.Id);
+            if (!itemToDrop) return;
+            itemToDrop.transform.position = pointToSpawn.position;
+            itemToDrop.SetActive(true);
+            var physItem = itemToDrop.GetComponent<PhysicalItem>();
+            if (physItem)
+                _physicalItemRegistry.Register(physItem);
+        }
         public void Interact()
         {
             CmdInteractWithObject();
