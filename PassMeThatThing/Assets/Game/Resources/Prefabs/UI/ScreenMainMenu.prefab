@@ -626,6 +626,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7823577188012614959}
   - component: {fileID: 1472526846892530646}
+  - component: {fileID: 7996422951994517071}
   m_Layer: 5
   m_Name: ScreenMainMenu
   m_TagString: Untagged
@@ -676,6 +677,25 @@ MonoBehaviour:
   _btnOptions: {fileID: 5053155497782731949}
   _btnExit: {fileID: 1474276251835882743}
   _ipText: {fileID: 5797998482888054898}
+--- !u!114 &7996422951994517071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4123561396038533146}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 6eee5d3a61264434b8e6984aad3569ea, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 7582a34ade39435498d33b783f4f4343, type: 3}
+  m_SortingOrder: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
 --- !u!1 &4506276713620640253
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 ﻿using Game.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,9 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
     {
         [SerializeField] private Button goOfflineBtn;
 
-
+        [SerializeField] private LobbyPlayerViewElement lobbyPlayerViewElementPrefab;
+        [SerializeField] private GameObject lobbyPlayerViewContainer;
+        
         private void Start()
         {
             goOfflineBtn.onClick.AddListener(OnGoOffline);
@@ -19,10 +22,11 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             goOfflineBtn.onClick.RemoveListener(OnGoOffline);
         }
 
-
         public void OnGoOffline()
         {
             ViewModel.RequestGoOffline();
         }
+        
+        
     }
 }
