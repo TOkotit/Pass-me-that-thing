@@ -1,66 +1,76 @@
-﻿using Game.UI;
+﻿using System;
+using Game.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
-using Button = UnityEngine.UI.Button;
 
 namespace Game.MainMenu.View.UI.ScreenMainMenu
 {
     public class ScreenMainMenuBinder : WindowBinder<ScreenMainMenuViewModel>
     {
-        [SerializeField] private Button _btnHost;
-        [SerializeField] private Button _btnJoin;
-        [SerializeField] private Button _btnOptions;
-        [SerializeField] private Button _btnExit;
-        
-        [SerializeField] private TMP_InputField _ipText;
+        [SerializeField] private UIDocument uiDocument;
 
+        private VisualElement _root;
+        private Button _hostBtn;
+        private Button _joinBtn;
+        private Button _optionsBtn;
+        private Button _exitBtn;
+        private TextField _ipInput;
+        
+        private void Awake()
+        {
+            _root = uiDocument.rootVisualElement;
+            _hostBtn = _root.Q("HostBtn") as Button;
+            _joinBtn = _root.Q("JoinBtn") as Button;
+            _optionsBtn = _root.Q("OptionsBtn") as Button;
+            _exitBtn = _root.Q("ExitBtn") as Button;
+            _ipInput = _root.Q("IpInput") as TextField;
+        }
 
         private void Start()
         {
-            _btnHost?.onClick.AddListener(OnHostButtonClicked);
-            _btnJoin?.onClick.AddListener(OnJoinButtonClicked);
-            _btnOptions?.onClick.AddListener(OnOptionsButtonClicked);
-            _btnExit?.onClick.AddListener(OnExitButtonClicked);
+            _hostBtn.RegisterCallback<ClickEvent>(OnHostButtonClicked);
+            _joinBtn.RegisterCallback<ClickEvent>(OnJoinButtonClicked);
+            _optionsBtn.RegisterCallback<ClickEvent>(OnOptionsButtonClicked);
+            _exitBtn.RegisterCallback<ClickEvent>(OnExitButtonClicked);
             
-            _ipText?.onValueChanged.AddListener(OnIpTextChanged);
+            _ipInput.RegisterCallback<ChangeEvent<string>>(OnIpTextChanged);
         }
         
         private void OnDestroy()
         {
-            _btnHost?.onClick.RemoveListener(OnHostButtonClicked);
-            _btnJoin?.onClick.RemoveListener(OnJoinButtonClicked);
-            _btnOptions?.onClick.RemoveListener(OnOptionsButtonClicked);
-            _btnExit?.onClick.RemoveListener(OnExitButtonClicked);
+            _hostBtn.UnregisterCallback<ClickEvent>(OnHostButtonClicked);
+            _joinBtn.UnregisterCallback<ClickEvent>(OnJoinButtonClicked);
+            _optionsBtn.UnregisterCallback<ClickEvent>(OnOptionsButtonClicked);
+            _exitBtn.UnregisterCallback<ClickEvent>(OnExitButtonClicked);
             
-            _ipText?.onValueChanged.RemoveListener(OnIpTextChanged);
+            _ipInput.UnregisterCallback<ChangeEvent<string>>(OnIpTextChanged);
         }
 
-        private void OnHostButtonClicked()
+        private void OnHostButtonClicked(ClickEvent e)
         {
             ViewModel.RequestHost();
         }
         
-        private void OnJoinButtonClicked()
+        private void OnJoinButtonClicked(ClickEvent e)
         {
             ViewModel.RequestJoin();
         }
 
-        private void OnOptionsButtonClicked()
+        private void OnOptionsButtonClicked(ClickEvent e)
         {
             ViewModel.RequestGoToScreenOptions();
         }
 
         
-        private void OnExitButtonClicked()
+        private void OnExitButtonClicked(ClickEvent e)
         {
             Debug.Log("OnExitButtonClicked");
         }
 
-        private void OnIpTextChanged(string value)
+        private void OnIpTextChanged(ChangeEvent<string> e)
         {
-            ViewModel.RequestIpAddress(value);
+            ViewModel.RequestIpAddress(e.newValue);
         }
         
     }

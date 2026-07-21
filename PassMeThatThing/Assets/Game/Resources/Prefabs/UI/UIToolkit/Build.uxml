@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 40, 166, 0.37); justify-content: flex-end;">
+        <ui:GroupBox style="height: 257px; width: 461px; align-self: center;">
+            <ui:GroupBox style="flex-direction: row; justify-content: center;">
+                <ui:Label text="Confirm" name="ConfirmLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+                <ui:Label text="[X]" name="ConfirmBindLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+            </ui:GroupBox>
+            <ui:GroupBox style="flex-direction: row; justify-content: center;">
+                <ui:Label text="Cancel" name="CancelLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+                <ui:Label text="[C]" name="CancelBindLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+            </ui:GroupBox>
+        </ui:GroupBox>
+    </ui:VisualElement>
+</ui:UXML>
