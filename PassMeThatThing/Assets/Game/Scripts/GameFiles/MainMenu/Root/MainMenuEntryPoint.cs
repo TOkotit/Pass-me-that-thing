@@ -2,6 +2,7 @@ using System.Collections;
 using Game;
 using Game.Gameplay.View.UI;
 using Game.MainMenu.View.UI;
+using Mirror;
 using R3;
 using Root;
 using Systems;
@@ -17,7 +18,7 @@ public class MainMenuEntryPoint : IStartable
 {
     private MainMenuUIRootBinder _sceneUIRootPrefab;
     
-    readonly GameManager _gameManager;
+    private readonly GameManager _gameManager;
     
     public void Start()
     {
@@ -32,8 +33,8 @@ public class MainMenuEntryPoint : IStartable
         _sceneUIRootPrefab = Resources.Load<MainMenuUIRootBinder>("Prefabs/UI/Root/MainMenuUI");
         _gameManager =  resolver.Resolve<GameManager>();
         
-        InitUI(resolver);
         
+        InitUI(resolver);
     }
     
     private void InitUI(IObjectResolver resolver)
