@@ -23,5 +23,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             return true;
         }
+        
+        public static bool IsPlacementValid(LevelGrid grid, LevelRoomNew room, RoomRotation rotation, Vector3Int origin)
+        {
+            if (grid == null || room == null) return false;
+
+            var rotatedPlates = RoomRotationHelper.GetRotatedPlates(room, rotation);
+
+            for (var i = 0; i < rotatedPlates.Length; i++)
+            {
+                var globalCellPos = origin + rotatedPlates[i].LocalPosition;
+
+                if (grid.IsCellOccupied(globalCellPos))
+                {
+                    return false; 
+                }
+            }
+
+            return true;
+        }
     }
 }

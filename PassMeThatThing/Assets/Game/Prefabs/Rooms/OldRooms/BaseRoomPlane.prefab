@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1030438510083966919}
   - component: {fileID: 8105721485745823919}
   - component: {fileID: 2798728803220025382}
-  - component: {fileID: 966810484912029312}
+  - component: {fileID: 3496996132781832467}
   m_Layer: 0
   m_Name: BaseRoomPlane
   m_TagString: Untagged
@@ -110,7 +110,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &966810484912029312
+--- !u!114 &3496996132781832467
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,12 +119,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6186359206794226225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc182c9f7a0344698f2b4123db96205f, type: 3}
+  m_Script: {fileID: 11500000, guid: 03910ffd384c49c1890392beb3ebb51e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomColor: {r: 0.2, g: 0.8, b: 0.2, a: 0.4}
   doorColor: {r: 1, g: 0, b: 0, a: 1}
+  gateColor: {r: 0, g: 0, b: 1, a: 1}
+  lineLength: 10
   parentGrid: {fileID: 0}
-  parentRoom: {fileID: 0}
   ConnectionNorth: 0
   ConnectionEast: 0
   ConnectionSouth: 0
