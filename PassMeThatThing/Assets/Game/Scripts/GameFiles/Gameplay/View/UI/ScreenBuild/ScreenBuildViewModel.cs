@@ -61,5 +61,15 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         {
             _handlerModel.CancelBuildPreview();
         }
+
+        public (string, string) RequestLoadBuildBindings()
+        {
+            return ("[" + InputControlPath.ToHumanReadableString(
+                    _gameInput.GameInput.Gameplay.ConfirmBuilding.bindings[0].effectivePath, 
+                    InputControlPath.HumanReadableStringOptions.OmitDevice) + "]",
+                "[" + InputControlPath.ToHumanReadableString(
+                    _gameInput.GameInput.Gameplay.CancelBuilding.bindings[0].effectivePath,
+                    InputControlPath.HumanReadableStringOptions.OmitDevice) + "]");
+        }
     }
 }

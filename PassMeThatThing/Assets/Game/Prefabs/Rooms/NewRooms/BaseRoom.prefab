@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8561808703302200721}
   - component: {fileID: 7731117980661811066}
-  - component: {fileID: 7092298040453684932}
   - component: {fileID: -4513696885992193877}
+  - component: {fileID: 5931013953064351819}
   m_Layer: 0
   m_Name: BaseRoom
   m_TagString: Untagged
@@ -47,23 +47,6 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!114 &7092298040453684932
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7099438886666654703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c892f23c0848ea94decc6474fa52b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roomType: 0
-  eventType: 0
-  plates: []
-  totalDoors: 0
-  totalGates: 0
 --- !u!23 &-4513696885992193877
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -109,6 +92,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5931013953064351819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7099438886666654703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomType: 1
+  plates: []
+  totalDoors: 0
 --- !u!1001 &438220354772617464
 PrefabInstance:
   m_ObjectHideFlags: 0

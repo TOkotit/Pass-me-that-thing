@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.57); justify-content: center;">
+        <ui:GroupBox style="align-self: center; height: 650px; width: 591px; position: relative; top: 0; left: auto; right: auto; bottom: 213px; flex-shrink: 0; background-color: rgba(101, 101, 101, 0.53); justify-content: space-evenly;">
+            <ui:Button text="Continue" name="ContinueBtn" style="height: 128px; font-size: 74px; margin-left: 90px; margin-right: 90px;" />
+            <ui:Button text="Options" name="OptionsBtn" style="height: 128px; font-size: 74px; margin-left: 90px; margin-right: 90px;" />
+            <ui:Button text="Exit" name="ExitBtn" style="height: 128px; font-size: 74px; margin-left: 90px; margin-right: 90px;" />
+        </ui:GroupBox>
+    </ui:VisualElement>
+</ui:UXML>

@@ -138,8 +138,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             
             NodeConnections[firstNodeId].Add(secondNodeId);
             NodeConnections[secondNodeId].Add(firstNodeId);
-
-            RpcDrawNodeLines(firstNodeId, secondNodeId);
             
             if (firstNode.NetId == -1)
             {
@@ -181,7 +179,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                     }
                 }
             }
-
+            
+            RpcDrawNodeLines(firstNodeId, secondNodeId);
+            
             PrintDebugInfo();
         }
 

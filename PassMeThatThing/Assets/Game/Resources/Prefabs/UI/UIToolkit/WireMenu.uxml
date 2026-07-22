@@ -1,0 +1,7 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SelectionWheel.uss?fileID=7433441132597879392&amp;guid=63362d36396d7504dbbc22facc3a9072&amp;type=3#SelectionWheel" />
+    <Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild.SelectionWheel name="SelectionWheel" style="height: 100%; background-image: resource(&apos;Sprites/BuildingSprites/build_wheel&apos;); -unity-background-scale-mode: scale-to-fit; width: auto; align-items: stretch; justify-content: flex-start;">
+        <ui:VisualElement name="VisualElement" style="flex-grow: 1; position: absolute; height: 104px; width: 112px; align-self: auto; top: 548px; left: 952px;" />
+        <ui:VisualElement class="selection-wheel__segment--selected selection-wheel__segment" style="flex-grow: 1; position: absolute; height: 200px; width: 200px; background-image: resource(&apos;Sprites/ItemSprites/ball&apos;); top: 232px; left: 220px;" />
+    </Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild.SelectionWheel>
+</ui:UXML>
