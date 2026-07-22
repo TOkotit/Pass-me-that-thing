@@ -347,7 +347,7 @@ namespace Game.Scripts.GameFiles.Items
             RpcSwing(item);
         }
 
-        [ClientRpc]
+        [TargetRpc]
         private void RpcSwing(PhysicalItem item)
         {
             _physicalItemInteractionController.TriggerSwing();

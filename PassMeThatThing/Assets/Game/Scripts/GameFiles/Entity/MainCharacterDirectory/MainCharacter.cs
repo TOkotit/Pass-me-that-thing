@@ -87,7 +87,7 @@ namespace Game.Entity
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
-            ragdollHandler.Hit(movement.LastVelocity * 2 + additionalImpulse, transform.position);
+            ragdollHandler.Hit(10f* Vector3.forward, transform.position);
         }
 
         [Server]

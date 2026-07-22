@@ -14,7 +14,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected ZombieView enemyView;
         
         private EnemyData _zombieData;
-        
+        //
         // private bool _hitRagdollCoroutine;
         
         public float elapsedAttack;
