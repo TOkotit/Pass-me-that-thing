@@ -1,44 +1,55 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild;
 using Game.UI;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Game.Gameplay.View.UI.ScreenBuild
 {
     public class ScreenWireMenuBinder : WindowBinder<ScreenWireMenuViewModel>
     {
-        [SerializeField] private SelectionWheel selectionWheel;
+        [SerializeField] private UIDocument uiDocument;
         
+        private VisualElement _root;
+        private SelectionWheel _selectionWheel;
+
+        private void Awake()
+        {
+            _root = uiDocument.rootVisualElement;
+            
+            _selectionWheel =  _root.Q<SelectionWheel>("SelectionWheel");
+        }
+
         private void Start()
         {
             ViewModel.RequestSetSprites(SetSprites);
 
-            selectionWheel.OnValueChanged += OnSelectionWheelChanged;
+            _selectionWheel.OnValueChanged += OnSelectionWheelChanged;
             ViewModel.BeforeExitScreen += BeforeExit;
-            
-            selectionWheel.transform.DOLocalMoveY(0f, 0.3f).From(selectionWheel.RectTransform.rect.height/5).SetEase(Ease.OutQuad);
         }
 
         private void BeforeExit(Action onComplete)
         {
-            selectionWheel.transform.DOLocalMoveY(selectionWheel.RectTransform.rect.height/5, 0.3f)
-                .From(0f).SetEase(Ease.OutQuad).OnComplete(() => onComplete());
+            onComplete();
         }
 
         private void OnDestroy()
         {
-            selectionWheel.OnValueChanged -= OnSelectionWheelChanged;
+            _selectionWheel.OnValueChanged -= OnSelectionWheelChanged;
             ViewModel.BeforeExitScreen -= BeforeExit;
         }
 
         public void SetSprites(List<Sprite> sprites)
         {
-            selectionWheel.SetImageSprites(sprites);
+            _selectionWheel.SetImageSprites(sprites);
+            
         }
 
         public void OnSelectionWheelChanged(int index, int lastIndex)
         {
+            Debug.Log($"OnSelectionWheelChanged {index} / {lastIndex}");
             ViewModel.RequestBuildingChosen(index);
         }
         
