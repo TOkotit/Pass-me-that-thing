@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:GroupBox style="justify-content: space-between; flex-direction: row; align-content: flex-start; align-self: stretch; align-items: stretch; height: 100%;">
+        <ui:ListView name="RecipesContainer" style="width: 979px; background-color: rgb(231, 231, 231);" />
+        <ui:VisualElement style="flex-grow: 1; background-color: rgb(178, 178, 178); justify-content: space-around; align-items: center; align-self: auto; flex-wrap: nowrap; flex-direction: column; flex-shrink: 1; align-content: center; width: 82px;">
+            <ui:VisualElement name="CurrentResultIm" style="background-color: rgb(178, 178, 178); width: 393px; position: relative; height: 393px; border-top-width: 12px; border-right-width: 12px; border-bottom-width: 12px; border-left-width: 12px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-left-radius: 33px; border-top-right-radius: 33px; border-bottom-right-radius: 33px; border-bottom-left-radius: 33px; align-self: center; align-content: flex-start; flex-grow: 0;" />
+            <ui:Label text="Label" name="CurrentResultLb" style="height: 105px; width: 271px; font-size: 69px; -unity-text-align: middle-center; white-space: normal; text-overflow: ellipsis;" />
+            <ui:Button text="Craft&#10;" name="CraftBtn" style="height: 164px; width: 364px; font-size: 117px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ResContainer" style="flex-grow: 1; background-color: rgb(142, 142, 142);" />
+    </ui:GroupBox>
+</ui:UXML>
