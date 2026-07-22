@@ -62,17 +62,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var newPos = RotateVector(originalPos, rotation);
                 var doors = new List<VirtualDoor>();
 
-                if (plateRef.ConnectionNorth != RoomsConnectionTypes.None)
-                    doors.Add(CreateDoor(Vector3Int.forward, plateRef.ConnectionNorth, rotation));
+                if (plateRef.HasDoorNorth)
+                    doors.Add(CreateDoor(Vector3Int.forward, rotation));
                     
-                if (plateRef.ConnectionEast != RoomsConnectionTypes.None)
-                    doors.Add(CreateDoor(Vector3Int.right, plateRef.ConnectionEast, rotation));
+                if (plateRef.HasDoorEast)
+                    doors.Add(CreateDoor(Vector3Int.right, rotation));
                     
-                if (plateRef.ConnectionSouth != RoomsConnectionTypes.None)
-                    doors.Add(CreateDoor(Vector3Int.back, plateRef.ConnectionSouth, rotation));
+                if (plateRef.HasDoorSouth)
+                    doors.Add(CreateDoor(Vector3Int.back, rotation));
                     
-                if (plateRef.ConnectionWest != RoomsConnectionTypes.None)
-                    doors.Add(CreateDoor(Vector3Int.left, plateRef.ConnectionWest, rotation));
+                if (plateRef.HasDoorWest)
+                    doors.Add(CreateDoor(Vector3Int.left, rotation));
 
                 rotatedPlates[i] = new VirtualPlateData
                 {
@@ -93,6 +93,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 Type = type
             };
         }
+        private static VirtualDoor CreateDoor(Vector3Int localDir, RoomRotation rotation)
+        {
+            return new VirtualDoor
+            {
+                LocalDirection = localDir,
+                GlobalDirection = RotateVector(localDir, rotation)
+            };
+        }
+        
         
         private static Vector3Int RotateVector(Vector3Int vector, RoomRotation rotation)
         {

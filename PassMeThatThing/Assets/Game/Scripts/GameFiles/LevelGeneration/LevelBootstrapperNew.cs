@@ -6,7 +6,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     public class LevelBootstrapperNew : MonoBehaviour
     {
         [SerializeField] private LevelPlacementOrchestratorNew orchestrator;
-        [SerializeField] private LevelGraphConfig graphConfig;
+        [SerializeField] private LevelGraphConfig graphConfig = new LevelGraphConfig();
 
         [ContextMenu("Generate Level")]
         public void Generate()

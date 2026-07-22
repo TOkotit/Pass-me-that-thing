@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
+    
+    [RequireComponent(typeof(Grid))]
     public class LevelRoomNew : MonoBehaviour
     {
         [SerializeField] private RoomTypeNew roomType;
@@ -14,6 +16,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public int TotalDoors => totalDoors;
         public RoomPlateDataNew[] Plates => plates;
 
+        [ContextMenu("Compile Room")]
         public void CompileRoom()
         {
             var grid = GetComponent<Grid>();
@@ -34,10 +37,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     plate = currentPlate
                 };
 
-                if (currentPlate.ConnectionNorth == RoomsConnectionTypes.Door) totalDoors++;
-                if (currentPlate.ConnectionEast == RoomsConnectionTypes.Door) totalDoors++;
-                if (currentPlate.ConnectionSouth == RoomsConnectionTypes.Door) totalDoors++;
-                if (currentPlate.ConnectionWest == RoomsConnectionTypes.Door) totalDoors++;
+                if (currentPlate.HasDoorNorth) totalDoors++;
+                if (currentPlate.HasDoorEast) totalDoors++;
+                if (currentPlate.HasDoorSouth) totalDoors++;
+                if (currentPlate.HasDoorWest) totalDoors++;
             }
         }
     }

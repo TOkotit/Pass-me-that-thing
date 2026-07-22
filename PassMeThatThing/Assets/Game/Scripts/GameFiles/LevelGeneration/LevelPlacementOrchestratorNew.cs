@@ -55,7 +55,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var queue = new Queue<(RoomNodeNew Node, RoomNodeNew Parent)>();
             var visited = new HashSet<RoomNodeNew> { hubNode };
-
+            var cycleEdges = new List<(RoomNodeNew from, RoomNodeNew to)>();
             foreach (var child in hubNode.ConnectedNodes)
             {
                 queue.Enqueue((child, hubNode));
@@ -70,9 +70,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     foreach (var child in current.ConnectedNodes)
                     {
+                        if (child == parent) continue;
+
                         if (visited.Add(child))
                         {
                             queue.Enqueue((child, current));
+                        }
+                        else
+                        {
+                            cycleEdges.Add((current, child));
                         }
                     }
                 }
@@ -80,6 +86,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     Debug.LogWarning($"[ПРОПУСК] Не удалось разместить узел ID {current.NodeId}");
                 }
+            }
+            foreach (var edge in cycleEdges)
+            {
+                TryClosePhysicalCycle(edge.from, edge.to);
             }
         }
 
@@ -201,12 +211,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         continue;
                     }
 
-                    var rawConn = new ConnectionPointNew { GlobalPosition = globalPos, Direction = door.GlobalDirection, Type = door.Type };
-                    
-                    if (!TryAttachTunnel(rawConn, data))
-                    {
-                        data.FreeConnections.Add(rawConn);
-                    }
+                    data.FreeConnections.Add(new ConnectionPointNew 
+                    { 
+                        GlobalPosition = globalPos, 
+                        Direction = door.GlobalDirection, 
+                        Type = door.Type 
+                    });
                 }
             }
 
@@ -214,58 +224,97 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 _placedRooms.Add(node, data);
             }
-
+            TryConnectAdjacentDoors(data);
             return data;
         }
-
-        private bool TryAttachTunnel(ConnectionPointNew roomDoor, PlacedRoomDataNew roomData)
+        
+        private void TryConnectAdjacentDoors(PlacedRoomDataNew newRoomData)
         {
-            var tunnels = roomDatabase.GetSuitableRooms(RoomTypeNew.TechnicalTunnels, 1, false)
-                .OrderBy(x => _random.Next()).ToList();
-
-            foreach (var tunnelPrefab in tunnels)
+            foreach (var otherRoom in _placedRooms.Values)
             {
-                for (var r = 0; r < 4; r++)
+                if (otherRoom == newRoomData) continue;
+
+                foreach (var connA in newRoomData.FreeConnections.ToList())
                 {
-                    var rot = (RoomRotation)r;
-                    var virtualPlates = RoomRotationHelper.GetRotatedPlates(tunnelPrefab, rot);
-                    var match = FindMatchingConnection(virtualPlates, roomDoor);
-
-                    if (match.HasValue)
+                    foreach (var connB in otherRoom.FreeConnections.ToList())
                     {
-                        var targetCell = roomDoor.GlobalPosition + roomDoor.Direction;
-                        var origin = targetCell - match.Value.LocalPosition;
-
-                        if (RoomCollisionValidator.IsPlacementValid(levelGrid, tunnelPrefab, rot, origin))
+                        if (connA.GlobalPosition + connA.Direction == connB.GlobalPosition &&
+                            connB.Direction == -connA.Direction)
                         {
-                            var tunnelInstance = InstantiateRoom(tunnelPrefab, origin, rot, "TechnicalTunnel");
-                            roomData.AttachedTunnels.Add(tunnelInstance);
-
-                            foreach (var plate in virtualPlates)
-                            {
-                                var globalPos = origin + plate.LocalPosition;
-                                levelGrid.SetCellState(globalPos, true);
-                                roomData.OccupiedCells.Add(globalPos);
-
-                                foreach (var door in plate.Doors)
-                                {
-                                    if (globalPos == targetCell && door.GlobalDirection == -roomDoor.Direction)
-                                        continue;
-
-                                    roomData.FreeConnections.Add(new ConnectionPointNew
-                                    {
-                                        GlobalPosition = globalPos,
-                                        Direction = door.GlobalDirection,
-                                        Type = door.Type
-                                    });
-                                }
-                            }
-                            return true;
+                            newRoomData.FreeConnections.Remove(connA);
+                            otherRoom.FreeConnections.Remove(connB);
+                            break;
                         }
                     }
                 }
             }
-            return false;
+        }
+
+        private void TryClosePhysicalCycle(RoomNodeNew fromNode, RoomNodeNew toNode)
+        {
+            if (!_placedRooms.TryGetValue(fromNode, out var fromData)) return;
+            if (!_placedRooms.TryGetValue(toNode, out var toData)) return;
+
+            var tunnelPrefabs = roomDatabase.GetSuitableRooms(RoomTypeNew.TechnicalTunnels, 1, false)
+                .OrderBy(x => _random.Next()).ToList();
+
+            if (tunnelPrefabs.Count == 0) return;
+
+            foreach (var fromConn in fromData.FreeConnections.ToList())
+            {
+                foreach (var toConn in toData.FreeConnections.ToList())
+                {
+                    foreach (var prefab in tunnelPrefabs)
+                    {
+                        for (int r = 0; r < 4; r++)
+                        {
+                            var rot = (RoomRotation)r;
+                            var plates = RoomRotationHelper.GetRotatedPlates(prefab, rot);
+                            
+                            var matchFrom = FindMatchingConnection(plates, fromConn);
+                            if (matchFrom.HasValue)
+                            {
+                                var targetCell = fromConn.GlobalPosition + fromConn.Direction;
+                                var origin = targetCell - matchFrom.Value.LocalPosition;
+
+                                // Проверяем: совпадает ли ДРУГОЙ конец этого туннеля с дверью целевой комнаты?
+                                bool bridgesGap = false;
+                                foreach (var p in plates)
+                                {
+                                    var globalPos = origin + p.LocalPosition;
+                                    foreach (var d in p.Doors)
+                                    {
+                                        if (globalPos == toConn.GlobalPosition + toConn.Direction && 
+                                            d.GlobalDirection == -toConn.Direction)
+                                        {
+                                            bridgesGap = true;
+                                            break;
+                                        }
+                                    }
+                                    if (bridgesGap) break;
+                                }
+
+                                if (bridgesGap && RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin))
+                                {
+                                    // Бинго! Туннель идеально встает между двумя комнатами
+                                    var tunnelInstance = InstantiateRoom(prefab, origin, rot, "CycleRingTunnel");
+                                    fromData.AttachedTunnels.Add(tunnelInstance);
+                                    
+                                    foreach (var p in plates)
+                                    {
+                                        levelGrid.SetCellState(origin + p.LocalPosition, true);
+                                    }
+
+                                    // Удаляем занятые двери из пула свободных выходов
+                                    fromData.FreeConnections.Remove(fromConn);
+                                    toData.FreeConnections.Remove(toConn);
+                                    return; 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private LevelRoomNew InstantiateRoom(LevelRoomNew prefab, Vector3Int origin, RoomRotation rotation, string roomName)
