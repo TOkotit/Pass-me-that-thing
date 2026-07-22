@@ -287,7 +287,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         private void AlignJointToPivot()
         {
-
             animatorTransform.localPosition = Vector3.zero;
             if(!grabJoint.connectedBody)return;
             var currentRelRot = Quaternion.Inverse(transform.rotation) * grabJoint.connectedBody.rotation;

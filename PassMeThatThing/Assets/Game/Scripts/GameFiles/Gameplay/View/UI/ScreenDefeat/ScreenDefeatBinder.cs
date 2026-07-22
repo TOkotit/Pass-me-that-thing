@@ -1,25 +1,35 @@
 using System;
 using Game.UI;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+
 
 namespace Game.Gameplay.View.UI.ScreenDefeat
 {
     public class ScreenDefeatBinder : WindowBinder<ScreenDefeatViewModel>
     {
-        [SerializeField]  private Button leaveButton;
+        [SerializeField] private UIDocument uiDocument;
+
+        private VisualElement _root;
+        private Button _leaveBtn;
+
+        private void Awake()
+        {
+            _root = uiDocument.rootVisualElement;
+            _leaveBtn = _root.Q<Button>("LeaveBtn");
+        }
 
         private void Start()
         {
-            leaveButton.onClick.AddListener(Leave);
+            _leaveBtn.RegisterCallback<ClickEvent>(Leave);
         }
 
         private void OnDestroy()
         {
-            leaveButton.onClick.RemoveListener(Leave);
+            _leaveBtn.UnregisterCallback<ClickEvent>(Leave);
         }
 
-        public void Leave()
+        public void Leave(ClickEvent e)
         {
             ViewModel.RequestGoOffline();
         }

@@ -1,108 +1,144 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
-public class SelectionWheel : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler
+namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
 {
-    [SerializeField] private Image selectionElementPrefab;
-    [SerializeField] private int segmentsCount = 3;
-    
-    private List<Image> _images = new();
-    
-    private RectTransform _rectTransform;
-    private RectTransform _parentRectTransform;
-    private Vector2 _lastMousePos;
-    
-
-    private Quaternion _rotation;
-    private Vector3 _direction;
-    private Vector3 _pos;
-    
-    private int _hoveringElemIndex;
-    private float _normalScale=1f;
-    private float _selectScale=1.4f;
-
-    public float CenterDistance => RectTransform.rect.height / 3;
-
-    public RectTransform RectTransform => _rectTransform;
-
-    public RectTransform ParentRectTransform => _parentRectTransform;
-
-    public event Action<int, int> OnValueChanged;
-        
-    void Awake()
+    [UxmlElement("SelectionWheel")]
+    public partial class SelectionWheel : VisualElement
     {
-        _rectTransform = GetComponent<RectTransform>();
-        _parentRectTransform = transform.parent as RectTransform;
-
-        UpdateImages();
-    }
-
-    private void UpdateImages()
-    {
-        _images.Clear();
+        private readonly List<VisualElement> _segmentElements = new();
+    
+        private int _segmentsCount = 3;
+        private float _radius = 100f;
+        private int _hoveringElemIndex = -1;
         
-        for (var i = 0; i < segmentsCount; i++)
+        private List<Sprite> _segmentSprites = new();
+
+        public event Action<int, int> OnValueChanged;
+
+        public const string SegmentClassName = "selection-wheel__segment";
+        public const string SelectedSegmentClassName = "selection-wheel__segment--selected";
+        
+
+        public SelectionWheel()
         {
-            _rotation = Quaternion.Euler(0f, 0f, (i+0.5f) * (360f / segmentsCount));
-            _direction = _rotation * RectTransform.right;
-            _pos = _direction * CenterDistance + RectTransform.position;
-            var imageInstance = Instantiate(selectionElementPrefab, _pos, Quaternion.identity, RectTransform);
+            pickingMode = PickingMode.Position;
+
+            RegisterCallback<PointerDownEvent>(OnPointerDown);
+            RegisterCallback<PointerMoveEvent>(OnPointerMove);
+            RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
             
-            _images.Add(imageInstance);
+            RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
         }
-    }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        _lastMousePos = GetMousePosRelativeToCenter(eventData);
-        var angleDelta = Vector2.SignedAngle(RectTransform.right, _lastMousePos);
-        
-        var positiveAngleDelta = (360 + angleDelta) % 360;
-        var wheelPartIndex = (int)positiveAngleDelta / (360 / segmentsCount);
-        
-        //Debug.Log($"{angleDelta} {wheelPartIndex}/{segmentsCount-1}");
-        OnValueChanged?.Invoke(wheelPartIndex, segmentsCount-1);
-    }
-        
-    private Vector2 GetMousePosRelativeToCenter(PointerEventData eventData)
-    {
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            ParentRectTransform, 
-            eventData.position, 
-            eventData.pressEventCamera, 
-            out var localPoint
-        );
-
-        return localPoint - (Vector2)RectTransform.localPosition;
-    }
-
-    public void SetImageSprites(List<Sprite> sprites)
-    {
-        for (int i = 0; i < _images.Count && i < sprites.Count; i++)
+        public void OnGeometryChanged(GeometryChangedEvent e)
         {
-            _images[i].sprite = sprites[i];
+            RefreshWheel();
         }
-    }
-
-    public void OnPointerMove(PointerEventData eventData)
-    {
-        var hoveringMousePos = GetMousePosRelativeToCenter(eventData);
-        var angleDelta = Vector2.SignedAngle(RectTransform.right, hoveringMousePos);
         
-        var positiveAngleDelta = (360 + angleDelta) % 360;
-        var wheelPartIndex = (int)positiveAngleDelta / (360 / segmentsCount);
-
-        if (_hoveringElemIndex != wheelPartIndex)
+        public void SetImageSprites(List<Sprite> sprites)
         {
-            _images[_hoveringElemIndex].transform.DOScale(_normalScale, 0.2f)
-                .From(_selectScale).SetEase(Ease.OutQuad);
-            _hoveringElemIndex = wheelPartIndex;
-            _images[_hoveringElemIndex].transform.DOScale(_selectScale, 0.2f)
-                .From(_normalScale).SetEase(Ease.OutQuad);
+            _segmentsCount = sprites.Count;
+            _segmentSprites = sprites;
+            
+            RefreshWheel();
+        }
+
+        public void RefreshWheel()
+        {
+            Debug.Log("RefreshWheel");
+            Clear();
+            _segmentElements.Clear();
+            _hoveringElemIndex = -1;
+
+            if (_segmentsCount <= 0) return;
+
+            _radius = contentRect.width / 8;
+            
+            var stepAngle = 360f / _segmentsCount;
+
+            for (int i = 0; i < _segmentsCount; i++)
+            {
+                var segment = new VisualElement();
+                segment.AddToClassList(SegmentClassName);
+                
+                segment.style.position = Position.Absolute;
+                
+                var angleDeg = (i + 0.5f) * stepAngle;
+                var angleRad = angleDeg * Mathf.Deg2Rad;
+
+                var x = contentRect.width / 2 
+                        + Mathf.Cos(angleRad) * _radius;
+                var y = contentRect.height / 2 
+                        - Mathf.Sin(angleRad) * _radius;
+
+                segment.style.left = x;
+                segment.style.top = y;
+                
+                Add(segment);
+                _segmentElements.Add(segment);
+            }
+
+            if (_segmentSprites.Count > 0)
+            {
+                for (int i = 0; i < _segmentElements.Count && i < _segmentSprites.Count; i++)
+                {
+                    _segmentElements[i].style.backgroundImage = new StyleBackground(_segmentSprites[i]);
+                }
+            }
+        }
+
+        private void OnPointerDown(PointerDownEvent evt)
+        {
+            int index = CalculateSegmentIndex(evt.localPosition);
+            if (index >= 0)
+            {
+                OnValueChanged?.Invoke(index, _segmentsCount - 1);
+            }
+        }
+
+        private void OnPointerMove(PointerMoveEvent evt)
+        {
+            int wheelPartIndex = CalculateSegmentIndex(evt.localPosition);
+
+            if (wheelPartIndex != _hoveringElemIndex)
+            {
+                if (_hoveringElemIndex >= 0 && _hoveringElemIndex < _segmentElements.Count)
+                {
+                    _segmentElements[_hoveringElemIndex].RemoveFromClassList(SelectedSegmentClassName);
+                }
+
+                _hoveringElemIndex = wheelPartIndex;
+
+                if (_hoveringElemIndex >= 0 && _hoveringElemIndex < _segmentElements.Count)
+                {
+                    _segmentElements[_hoveringElemIndex].AddToClassList(SelectedSegmentClassName);
+                }
+            }
+        }
+
+        private void OnPointerLeave(PointerLeaveEvent evt)
+        {
+            if (_hoveringElemIndex >= 0 && _hoveringElemIndex < _segmentElements.Count)
+            {
+                _segmentElements[_hoveringElemIndex].RemoveFromClassList(SelectedSegmentClassName);
+                _hoveringElemIndex = -1;
+            }
+        }
+        
+        private int CalculateSegmentIndex(Vector2 localMousePos)
+        {
+            if (_segmentsCount <= 0) return -1;
+            
+            var center = contentRect.size / 2f;
+            var dir = localMousePos - center;
+            
+            var angleDelta = Vector2.SignedAngle(Vector2.right, new Vector2(dir.x, -dir.y));
+            var positiveAngleDelta = (360f + angleDelta) % 360f;
+
+            return (int)(positiveAngleDelta / (360f / _segmentsCount));
         }
     }
 }

@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/Recipe.uss?fileID=7433441132597879392&amp;guid=a78a071af2499bc41a0e778d39b4651f&amp;type=3#Recipe" />
+    <ui:VisualElement style="flex-grow: 1; background-color: rgb(67, 67, 67); flex-direction: row; justify-content: space-between; height: 150px; min-height: 100px;">
+        <ui:GroupBox name="RecipeResContainer" style="justify-content: space-between; width: 78px; padding-top: 0; padding-left: 0; padding-bottom: 0; align-content: stretch; align-self: center; align-items: stretch;" />
+        <ui:GroupBox style="justify-content: center; width: 114px;">
+            <ui:VisualElement name="ResultIm" style="flex-grow: 0; width: auto; height: 101px; background-color: rgba(255, 255, 255, 0.52); -unity-background-scale-mode: scale-to-fit;" />
+            <ui:Label text="Label" name="ResultLb" style="-unity-text-align: upper-center;" />
+        </ui:GroupBox>
+    </ui:VisualElement>
+</ui:UXML>

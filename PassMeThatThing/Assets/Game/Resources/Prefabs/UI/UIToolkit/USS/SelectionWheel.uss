@@ -1,0 +1,15 @@
+.selection-wheel__segment {
+    width: 150px;
+    height: 150px;
+    scale: 1 1;
+    translate: -50% -50%;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.selection-wheel__segment--selected {
+    scale: 1.4 1.4;
+    transition-duration: 0.3s;
+    transition-property: scale;
+    transition-timing-function: ease;
+}
