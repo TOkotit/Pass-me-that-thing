@@ -6,7 +6,7 @@ namespace Game.Entity
 {
     public class DamagableImpactReceiver : MonoBehaviour
     {
-        [SerializeField] private float treshold = 2f;                 // базовый порог для объектов с массой = baseMass
+        [SerializeField] private float treshold = 2f;                 //базовый порог для объектов с массой = baseMass
         [SerializeField] private float damageMultiplier = 1f;
         [SerializeField] private float baseMass = 5f;                 // эталонная масса для нормализации
         [SerializeField] private float nonPhysicalMultiplier = 0.3f;  // множитель урона для стен/нефизических объектов
