@@ -117,7 +117,6 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             };
             
             _recipeContainer.itemsSource = _recipesData;
-            _recipeContainer.fixedItemHeight = 200;
         }
         
         public void UpdateRecipes(List<WorkbenchItemRecipe> recipes, ResourceDatabase resourceDatabase)
