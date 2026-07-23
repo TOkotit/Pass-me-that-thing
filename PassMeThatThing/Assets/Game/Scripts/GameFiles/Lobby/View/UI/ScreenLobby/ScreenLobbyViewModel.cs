@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Game.Gameplay.View.UI;
 using Game.UI;
 using Mirror;
+using ObservableCollections;
 using R3;
 using Root;
 using Systems;
@@ -22,7 +24,10 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         
         private readonly NetworkRoomManager _networkRoomManager;
         private readonly NetworkIdentity _networkIdentity;
+
+        private readonly RoomViewHandler _roomViewHandler;
         
+        private readonly CompositeDisposable _subscriptions = new();
 
         public ScreenLobbyViewModel(LobbyUIManager uiManager, IObjectResolver container)
         {
@@ -35,6 +40,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
                 _networkRoomManager = roomManager;
             }
             _networkIdentity = container.Resolve<NetworkIdentity>();
+            _roomViewHandler = container.Resolve<RoomViewHandler>();
         }
         
         public void RequestGoOffline()
@@ -48,6 +54,22 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
                 _networkRoomManager.StopClient();
             }
         }
+
+        public void RequestSetReadyState()
+        {
+            _roomViewHandler.LocalReadyState = !_roomViewHandler.LocalReadyState;
+        }
         
+        public void RequestSubPlayerView(Action<List<CustomRoomPlayer>> f)
+        {
+            f(_roomViewHandler.players);
+            
+            _roomViewHandler.OnPlayersViewDataChanged += f;
+        }
+        
+        public void RequestUnsubPlayerView(Action<List<CustomRoomPlayer>> f)
+        {
+            _roomViewHandler.OnPlayersViewDataChanged -= f;
+        }
     }
 }
