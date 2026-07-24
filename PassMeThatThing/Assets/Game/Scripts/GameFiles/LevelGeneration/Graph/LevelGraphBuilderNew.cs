@@ -43,13 +43,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 AttachRoomToGraph(roomType);
             }
             
-            CreateCycles();
-            AddExtraTechnicalTunnels();
+            //CreateCycles();
+            //AddExtraTechnicalTunnels();
             
             var farthestPoint = FindFarthestNode(root);
             var hangar = CreateNode(RoomTypeNew.RecoveryHangar);
-            farthestPoint.Connect(hangar);
-            _parents[hangar] = farthestPoint;
+            var branchId = _nodeBranchIds.GetValueOrDefault(farthestPoint, 0);
+            
+            AttachNodeWithOptionalTunnel(farthestPoint, hangar, branchId, false);
             
             return new LevelGraphResult
             {
@@ -59,8 +60,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 IsValid = true
             };
         }
-        
-        
+
+
         private RoomNodeNew BuildCore()
         {
             var commandCenter = CreateNode(RoomTypeNew.CommandCenter);
@@ -70,18 +71,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             var warehouse = CreateNode(RoomTypeNew.Warehouse);
             var livingBlock = CreateNode(RoomTypeNew.LivingBlock);
 
-            commandCenter.Connect(generator);
-            commandCenter.Connect(warehouse);
-            commandCenter.Connect(livingBlock);
+            AttachCoreRoom(commandCenter, generator, 1);
+            AttachCoreRoom(commandCenter, warehouse, 2);
+            AttachCoreRoom(commandCenter, livingBlock, 3);
 
-            _parents[generator] = commandCenter;
-            _parents[warehouse] = commandCenter;
-            _parents[livingBlock] = commandCenter;
-
-            _nodeBranchIds[generator] = 1;
-            _nodeBranchIds[warehouse] = 2;
-            _nodeBranchIds[livingBlock] = 3;
-            
             OpenNodes.Add(generator);
             OpenNodes.Add(warehouse);
             OpenNodes.Add(livingBlock);
@@ -92,8 +85,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             }
 
             return commandCenter;
+
         }
-        
+        private void AttachCoreRoom(RoomNodeNew hub, RoomNodeNew room, int branchId)
+        {
+            AttachNodeWithOptionalTunnel(hub, room, branchId, false);
+        }
 
         private RoomNodeNew CreateNode(RoomTypeNew type)
         {
@@ -101,6 +98,43 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             AllNodes.Add(newNode);
             return newNode;
         } 
+        
+        private void AttachNodeWithOptionalTunnel(RoomNodeNew parent, RoomNodeNew child, int branchId, bool updateOpenNodes)
+        {
+            if (_random.Next(100) < 15)
+            {
+                var tunnel = CreateNode(RoomTypeNew.TechnicalTunnels);
+                
+                parent.Connect(tunnel);
+                tunnel.Connect(child);
+
+                _parents[tunnel] = parent;
+                _parents[child] = tunnel;
+
+                _nodeBranchIds[tunnel] = branchId;
+                _nodeBranchIds[child] = branchId;
+
+                if (updateOpenNodes)
+                {
+                    if (parent.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom)
+                        OpenNodes.Remove(parent);
+                    OpenNodes.Add(child);
+                }
+            }
+            else
+            {
+                parent.Connect(child);
+                _parents[child] = parent;
+                _nodeBranchIds[child] = branchId;
+
+                if (updateOpenNodes)
+                {
+                    if (parent.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom)
+                        OpenNodes.Remove(parent);
+                    OpenNodes.Add(child);
+                }
+            }
+        }
         
         
         private List<RoomTypeNew> BuildRoomPool(int slotsLeft)
@@ -149,6 +183,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         {
             if (OpenNodes.Count == 0) return;
             var candidates = OpenNodes;
+            
             if (roomType is RoomTypeNew.Armory or RoomTypeNew.Warehouse)
             {
                 var usedBranches = AllNodes
@@ -166,40 +201,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                     candidates = separatedCandidates;
                 }
             }
-            var parentNode = OpenNodes[_random.Next(OpenNodes.Count)];
+            var parentNode = candidates[_random.Next(candidates.Count)];
             var newNode = CreateNode(roomType);
-                
             var parentBranch = _nodeBranchIds.GetValueOrDefault(parentNode, 0);
             
-            if (_random.Next(100) < 15)
-            {
-                var tunnelNode = CreateNode(RoomTypeNew.TechnicalTunnels);
-                
-                parentNode.Connect(tunnelNode);
-                tunnelNode.Connect(newNode);
-
-                _parents[tunnelNode] = parentNode;
-                _parents[newNode] = tunnelNode;
-                _nodeBranchIds[tunnelNode] = parentBranch;
-                _nodeBranchIds[newNode] = parentBranch;
-
-                if (parentNode.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom)
-                    OpenNodes.Remove(parentNode);
-
-                OpenNodes.Add(newNode);
-            }
-            else
-            {
-                parentNode.Connect(newNode);
-                _parents[newNode] = parentNode;
-                _nodeBranchIds[newNode] = parentBranch;
-
-                if (parentNode.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom)
-                    OpenNodes.Remove(parentNode);
-
-                OpenNodes.Add(newNode);
-            }
+            AttachNodeWithOptionalTunnel(parentNode, newNode, parentBranch, true);
         }
+        
+        
         private RoomNodeNew SelectParentWeightedByCapacity(List<RoomNodeNew> nodes)
         {
             var weightedList = new List<RoomNodeNew>();
@@ -293,7 +302,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 var current = queue.Dequeue();
                 var currentDist = distances[current];
                 
-                if (currentDist > maxDistance)
+                if (current.Type != RoomTypeNew.TechnicalTunnels && currentDist > maxDistance)
                 {
                     maxDistance = currentDist;
                     farthestNode = current;
