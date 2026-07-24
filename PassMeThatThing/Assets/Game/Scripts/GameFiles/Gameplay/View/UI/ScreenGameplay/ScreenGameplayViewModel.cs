@@ -116,6 +116,8 @@ namespace Game.Gameplay.View.UI
         
         public void RequestSubGlobalStateTimer(Action<float> f)
         {
+            f(_globalStageManager.SyncRemainingTime);
+            
             _globalStageManager.OnTimerChangedUI += f;
         }
         

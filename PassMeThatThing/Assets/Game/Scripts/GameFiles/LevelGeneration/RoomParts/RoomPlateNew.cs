@@ -9,10 +9,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         [SerializeField] private Grid parentGrid = null;
         [SerializeField] private LevelRoomNew parentRoom = null;
-        public RoomsConnectionTypes ConnectionNorth;
-        public RoomsConnectionTypes ConnectionEast;  
-        public RoomsConnectionTypes ConnectionSouth; 
-        public RoomsConnectionTypes ConnectionWest;   
+        public bool HasDoorNorth;
+        public bool HasDoorEast;  
+        public bool HasDoorSouth; 
+        public bool HasDoorWest; 
         
         private void OnDrawGizmosSelected()
         {
@@ -31,17 +31,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var lineLength = cellSize * 0.5f;
             
-            DrawConnection(Vector3.forward * lineLength, ConnectionNorth);
-            DrawConnection(Vector3.right * lineLength, ConnectionEast);
-            DrawConnection(Vector3.back * lineLength, ConnectionSouth);
-            DrawConnection(Vector3.left * lineLength, ConnectionWest);
+            DrawConnection(Vector3.forward * lineLength, HasDoorNorth);
+            DrawConnection(Vector3.right * lineLength, HasDoorEast);
+            DrawConnection(Vector3.back * lineLength, HasDoorSouth);
+            DrawConnection(Vector3.left * lineLength, HasDoorWest);
             
             Gizmos.matrix = oldMatrix;
         }
         
-        private void DrawConnection(Vector3 direction, RoomsConnectionTypes type)
+        private void DrawConnection(Vector3 direction, bool hasDoor)
         {
-            if (type != RoomsConnectionTypes.Door) return;
+            if (!hasDoor) return;
 
             var start = Vector3.zero;
             var end = start + direction;

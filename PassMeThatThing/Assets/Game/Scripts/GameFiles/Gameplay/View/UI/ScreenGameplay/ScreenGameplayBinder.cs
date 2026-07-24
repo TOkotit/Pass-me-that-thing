@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using DG.Tweening;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
@@ -9,58 +10,51 @@ using Mirror;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
+
+using UnityEngine.UIElements;
+
 
 namespace Game.Gameplay.View.UI
 {
     public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
     {
-        [SerializeField] private Color selectedColor = Color.cornflowerBlue;
-        [SerializeField] private Color noSelectionColor = Color.dimGray;
-        
-        // [SerializeField] private Button _btnGoToMainMenu;
-        
-        [SerializeField] private TextMeshProUGUI _healthText;
-        [SerializeField] private Image healthImage;
-        
-        [SerializeField] private Image deathImage;
-        
-        [SerializeField] private TextMeshProUGUI _staminaText;
-        
-        [SerializeField] private TextMeshProUGUI _throwChargeText;
-        
-        [SerializeField] private Image[] _itemSlots;
-        [SerializeField] private Image[] _itemImages;
-        [SerializeField] private GameObject _gameEventsConatainer;
-        [SerializeField] private GameEventUIElement _gameEventPrefab;
-        [SerializeField] private TextMeshProUGUI gameGlobalState;
-        [SerializeField] private TextMeshProUGUI gameGlobalStateTimer;
-        [SerializeField] private GameObject _interactionText;
-        
-        private Color _imageColor = new Color(1f, 1f, 1f, 1f);
-        private Color _noImageColor = new Color(1f, 1f, 1f, 0f);
+        private Color selectedColor = Color.cornflowerBlue;
+        private Color noSelectionColor = new Color(1f, 1f, 1f, 0f);
         
         private int _activeSlotIndex = -1;
-        private Dictionary<int, GameEventUIElement> _gameEvents = new ();
+
+        private Dictionary<int, TemplateContainer> _gameEvents = new ();
         
         private GameEventsDatabase _gameEventsDatabase;
+        
+        [SerializeField] private UIDocument uiDocument;
+        [SerializeField] private VisualTreeAsset gameEventPrefab;
+        
+        
+        private VisualElement _root;
 
-        public TextMeshProUGUI HealthText
-        {
-            get => _healthText;
-            set => _healthText = value;
-        }
+        private Label _healthText;
+        private VisualElement _healthImage;
+        private VisualElement _deathImage;
+        private Label _throwChargeText;
+        private List<VisualElement> _itemImages;
+        private GroupBox _gameEventsContainer;
+        private Label _gameGlobalStateText;
+        private Label _gameGlobalStateTimerText;
 
-        public TextMeshProUGUI StaminaText
+        private void Awake()
         {
-            get => _staminaText;
-            set => _staminaText = value;
-        }
+            _root = uiDocument.rootVisualElement;
 
-        public TextMeshProUGUI ThrowChargeText
-        {
-            get => _throwChargeText;
-            set => _throwChargeText = value;
+            _healthText = _root.Q<Label>("HealthLb");
+            _healthImage = _root.Q<VisualElement>("HealthVisualImg");
+            _deathImage = _root.Q<VisualElement>("DeathVisualImg");
+            _throwChargeText = _root.Q<Label>("ThrowLb");
+            _itemImages = _root.Q<GroupBox>("InventoryContainer").Children().ToList();
+            _gameEventsContainer = _root.Q<GroupBox>("EventsContainer");
+            _gameGlobalStateText = _root.Q<Label>("PhaseLb");
+            _gameGlobalStateTimerText = _root.Q<Label>("RemainingTimeLb");
+            
         }
 
         private void Start()
@@ -76,7 +70,6 @@ namespace Game.Gameplay.View.UI
             ViewModel.InitImage(SetItemImageSprite);
             
             ViewModel.RequestSubImage(SetItemImageSprite);
-            ViewModel.RequestSubInteractionText(ChangeInteractionTextVisibility);
 
             ViewModel.InitGameEvent(Clear, AddGameEvent);
             ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
@@ -91,16 +84,14 @@ namespace Game.Gameplay.View.UI
 
         private void OnDestroy()
         {
-            // _btnGoToMainMenu?.onClick.RemoveListener(OnGoToMainMenuButtonClicked);
             ViewModel.RequestUnsubHealthUI(UpdateCurrHealthUI);
-            // ViewModel.RequestUnsubStaminaText(UpdateStaminaText);
             
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
 
             ViewModel.UnInitGameEventToClient(ReceiveEvents);
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
-            ViewModel.RequestUnsubInteractionText(ChangeInteractionTextVisibility);
+
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
@@ -111,8 +102,9 @@ namespace Game.Gameplay.View.UI
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
             Debug.Log($"[UI] new hp {newValue}");
-            healthImage.color = new Color(1f, 1f, 1f, (1 - (float)newValue / maxHealth) * 0.4f);
-            HealthText.text = newValue.ToString();
+
+            _healthImage.style.opacity = (1 - (float)newValue / maxHealth) * 0.4f;
+            _healthText.text = newValue.ToString();
         }
         
         private void UpdateDeathUI(bool isDead)
@@ -120,27 +112,30 @@ namespace Game.Gameplay.View.UI
             Debug.Log($"[UI] death {isDead}");
             if (isDead)
             {
-                deathImage.DOFade(0.8f, 0.4f).From(0f);
+                DOTween.To(
+                    () => _deathImage.style.opacity.value,
+                    x => _deathImage.style.opacity = x,
+                    0.8f, 0.4f
+                ).SetEase(Ease.OutQuad);
             }
             else
             {
-                deathImage.DOFade(0f, 0.2f).From(0.8f);
+                DOTween.To(
+                    () => _deathImage.style.opacity.value,
+                    x => _deathImage.style.opacity = x,
+                    0f, 0.4f
+                ).SetEase(Ease.OutQuad);
             }
         }
 
         private void UpdateThrowChargeText(int newValue)
         {
-            ThrowChargeText.text = newValue == 0 ? "" : $"{newValue.ToString()}%";
-        }
-        
-        private void ChangeInteractionTextVisibility(bool isVisible)
-        {
-            _interactionText.SetActive(isVisible);
+            _throwChargeText.text = newValue == 0 ? "" : $"{newValue.ToString()}%";
         }
 
         private void UpdateGameGlobalState(GlobalStagesType newValue)
         {
-            gameGlobalState.text = newValue switch
+            _gameGlobalStateText.text = newValue switch
             {
                 GlobalStagesType.Fight => "Фаза обороны",
                 GlobalStagesType.Preparation => "Фаза подготовки",
@@ -153,32 +148,29 @@ namespace Game.Gameplay.View.UI
             var minutes = Mathf.FloorToInt(remainingSeconds / 60f);
             var seconds = Mathf.FloorToInt(remainingSeconds % 60f);
             
-            gameGlobalStateTimer.text = $"{minutes:00}:{seconds:00}";
+            _gameGlobalStateTimerText.text = $"{minutes:00}:{seconds:00}";
         }
 
         private void SetActiveItemSlot(int index)
         {
             if (_activeSlotIndex != -1)
             {
-                _itemSlots[_activeSlotIndex].color = noSelectionColor;
-                _itemSlots[_activeSlotIndex].transform.DOScale(1f, 0.3f);
+                _itemImages[_activeSlotIndex].style.backgroundColor = noSelectionColor;
+                _itemImages[_activeSlotIndex].DOScale(1f, 0.3f);
             }
             
             _activeSlotIndex = index;
             
             if (_activeSlotIndex != -1)
             {
-                _itemSlots[_activeSlotIndex].color = selectedColor;
-                _itemSlots[_activeSlotIndex].transform.DOScale(1.2f, 0.3f);
+                _itemImages[_activeSlotIndex].style.backgroundColor = selectedColor;
+                _itemImages[_activeSlotIndex].DOScale(1.2f, 0.3f);
             }
         }
 
         private void SetItemImageSprite(int index, Sprite sprite)
         {
-            _itemImages[index].color = sprite != null 
-                ? _imageColor : _noImageColor;
-            
-            _itemImages[index].sprite = sprite;
+            _itemImages[index].style.backgroundImage = new StyleBackground(sprite);
         }
 
         private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
@@ -203,47 +195,54 @@ namespace Game.Gameplay.View.UI
         private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
         {
             if (_gameEvents.ContainsKey(eventId)) return;
+            //
+            // var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform, false);
+            //
+            // gameEvent.Icon.sprite = icon;
+            // gameEvent.Text.text = $"R-{roomNumber}";
+            //
+            // _gameEvents.Add(eventId, gameEvent);
+            //
+            // if (_gameEventsConatainer.TryGetComponent<RectTransform>(out var containerRect))
+            // {
+            //     LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
+            // }
+            //
+            // gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
             
-            var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform, false);
+            var gameEvent = gameEventPrefab.Instantiate();
             
-            gameEvent.Icon.sprite = icon;
-            gameEvent.Text.text = $"R-{roomNumber}";
-            
+            _gameEventsContainer.Add(gameEvent);
             _gameEvents.Add(eventId, gameEvent);
             
-            if (_gameEventsConatainer.TryGetComponent<RectTransform>(out var containerRect))
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
-            }
-            
-            gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
+            gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+            gameEvent.Q<Label>("EventLb").text = $"R-{roomNumber}";
+
+            gameEvent.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
         }
         
         private void UpdateGameEvent(int eventId, Sprite icon, int roomNumber)
         {
             if (_gameEvents.TryGetValue(eventId, out var gameEvent) && gameEvent != null)
             {
-                gameEvent.Icon.sprite = icon;
-                gameEvent.Text.text = $"R-{roomNumber}";
+                gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+                gameEvent.Q<Label>("EventLb").text = $"R-{roomNumber}";
             }
         }
 
         private void RemoveGameEvent(int eventId)
         {
             if (_gameEvents.TryGetValue(eventId, out var gameEvent) && gameEvent != null)
-                gameEvent.transform.DOScale(0f, 0.2f)
-                    .From(1f).SetEase(Ease.InOutBack)
+            {
+                gameEvent.DOScale(0f, 0.2f)
+                    .From(new Vector2(1f, 1f)).SetEase(Ease.InOutBack)
                     .OnComplete(() =>
                     {
-                        Destroy(gameEvent.gameObject);
+                        _gameEventsContainer.Remove(gameEvent);
                         _gameEvents.Remove(eventId);
                     });
+            }
+                
         }
-        
-        // private void OnGoToMainMenuButtonClicked()
-        // {
-        //     ViewModel.RequestGoToMainMenu();
-        // }
-        
     }
 }
