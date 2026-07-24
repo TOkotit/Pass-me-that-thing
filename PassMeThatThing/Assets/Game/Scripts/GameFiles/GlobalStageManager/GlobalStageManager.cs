@@ -15,6 +15,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private GlobalStagesType _currentGameStage;
         public GlobalStagesType CurrentGameStage => _currentGameStage;
 
+        public int SyncRemainingTime => Mathf.CeilToInt(_syncRemainingTime);
+
         [Inject] private GameRandomEventManager _gameRandomEventManager;
         [Inject] private EnemyDatabase _enemyDatabase;
         [Inject] private EnemySpawner _enemySpawner;

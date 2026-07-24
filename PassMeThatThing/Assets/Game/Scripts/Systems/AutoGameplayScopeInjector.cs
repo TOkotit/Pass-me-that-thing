@@ -6,7 +6,6 @@ namespace Game.Scripts.GameFiles.Items
 {
     public class AutoGameplayScopeInjector : MonoBehaviour
     {
-        // Используем Start вместо Awake, чтобы дать Mirror время настроить объект
         private void Awake()
         {
             var scope = LifetimeScope.Find<GameplayScope>();
@@ -32,13 +31,10 @@ namespace Game.Scripts.GameFiles.Items
 
         private void InjectAllComponents(LifetimeScope scope)
         {
-            // Находим абсолютно все компоненты (включая NetworkBehaviour), 
-            // даже если они на дочерних объектах
             var components = GetComponentsInChildren<MonoBehaviour>(true);
             
             foreach (var component in components)
             {
-                // Пропускаем сам инжектор
                 if (component == this) continue; 
                 
                 scope.Container.Inject(component);
