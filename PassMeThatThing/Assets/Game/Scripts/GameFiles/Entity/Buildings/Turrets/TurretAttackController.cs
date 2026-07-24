@@ -33,7 +33,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             if (_endDrawRayCoroutine != null) StopCoroutine(_endDrawRayCoroutine);
             StartCoroutine(EndDrawRayCoroutine());
             
-            _damageSystem.TakeDamage(damage, target.gameObject, damageTypes);
+            _damageSystem.TakeDamage(damage, target.gameObject, damageTypes,gameObject);
         }
 
         private IEnumerator EndDrawRayCoroutine()
