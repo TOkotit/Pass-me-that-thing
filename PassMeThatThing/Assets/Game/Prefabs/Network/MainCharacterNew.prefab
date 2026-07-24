@@ -4789,13 +4789,16 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  leftJoint: {fileID: 6186713367683430940}
-  rightJoint: {fileID: 6759388885409534181}
+  baseHoldForce: 500
+  holdDamping: 20
+  maxHoldDistance: 2
+  rotationSpring: 1000
+  rotationDamping: 100
+  maxRotationTorque: 200
   throwForceGrow: 5
   maxThrowForce: 15
   minChargeTime: 0.3
   camera: {fileID: 3355288843335198720}
-  grabJoint: {fileID: 1323866539399521512}
   animatorTransform: {fileID: 5452809853429047121}
 --- !u!114 &4478196668402527849
 MonoBehaviour:
@@ -5193,9 +5196,9 @@ ConfigurableJoint:
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
-  m_XMotion: 1
-  m_YMotion: 1
-  m_ZMotion: 1
+  m_XMotion: 2
+  m_YMotion: 2
+  m_ZMotion: 2
   m_AngularXMotion: 2
   m_AngularYMotion: 2
   m_AngularZMotion: 2
@@ -5203,7 +5206,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LinearLimit:
-    limit: 0.1
+    limit: 10
     bounciness: 0
     contactDistance: 0.15
   m_AngularXLimitSpring:
@@ -5233,21 +5236,21 @@ ConfigurableJoint:
   m_XDrive:
     serializedVersion: 4
     positionSpring: 1700
-    positionDamper: 10
+    positionDamper: 0
     maximumForce: 3.4028233e+38
-    useAcceleration: 1
+    useAcceleration: 0
   m_YDrive:
     serializedVersion: 4
     positionSpring: 1700
-    positionDamper: 10
+    positionDamper: 0
     maximumForce: 3.4028233e+38
-    useAcceleration: 1
+    useAcceleration: 0
   m_ZDrive:
     serializedVersion: 4
     positionSpring: 1700
-    positionDamper: 10
+    positionDamper: 0
     maximumForce: 3.4028233e+38
-    useAcceleration: 1
+    useAcceleration: 0
   m_TargetRotation: {x: 0, y: 0, z: 0, w: 1}
   m_TargetAngularVelocity: {x: 0, y: 0, z: 0}
   m_RotationDriveMode: 0
