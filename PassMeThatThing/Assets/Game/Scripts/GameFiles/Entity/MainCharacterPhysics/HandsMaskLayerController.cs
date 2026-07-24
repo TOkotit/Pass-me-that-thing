@@ -10,35 +10,63 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private Animator animator;
         [SerializeField] private MainCharacterView mainCharacterView;
         [SerializeField] private List<Rigidbody> handsRBs;
+
         private int fullBodyLayerIndex;
         private int bodyOnlyLayerIndex;
-        
+
+        [SyncVar(hook = nameof(OnFullBodyActiveChanged))]
+        private bool fullBodyActive;
+
         private void Start()
         {
             fullBodyLayerIndex = animator.GetLayerIndex("FullBody");
             bodyOnlyLayerIndex = animator.GetLayerIndex("BodyOnly");
-            EnableBodyOnlyAnimation();
+            
+            if (isServer)
+                SetBodyOnlyActive();
+            else
+                EnableBodyOnlyAnimation(); 
         }
-        
+
         public void EnableFullBodyAnimation()
         {
-            if (!isLocalPlayer) return;
-            animator.SetLayerWeight(fullBodyLayerIndex, 1f);
-            animator.SetLayerWeight(bodyOnlyLayerIndex, 0f);
-            foreach (Rigidbody rb in handsRBs)
-            {
-                rb.isKinematic = true;
-            }
+            if (isServer)
+                SetFullBodyActive();
         }
 
         public void EnableBodyOnlyAnimation()
         {
-            if (!isLocalPlayer) return;
-            animator.SetLayerWeight(bodyOnlyLayerIndex, 1f);
-            animator.SetLayerWeight(fullBodyLayerIndex, 0f);
-            foreach (Rigidbody rb in handsRBs)
+            if (isServer)
+                SetBodyOnlyActive();
+        }
+
+        [Server]
+        private void SetFullBodyActive()
+        {
+            fullBodyActive = true;
+        }
+
+        [Server]
+        private void SetBodyOnlyActive()
+        {
+            fullBodyActive = false;
+        }
+
+        private void OnFullBodyActiveChanged(bool oldValue, bool newValue)
+        {
+            if (newValue)
             {
-                rb.isKinematic =  false;
+                animator.SetLayerWeight(fullBodyLayerIndex, 1f);
+                animator.SetLayerWeight(bodyOnlyLayerIndex, 0f);
+                foreach (Rigidbody rb in handsRBs)
+                    rb.isKinematic = true;
+            }
+            else
+            {
+                animator.SetLayerWeight(bodyOnlyLayerIndex, 1f);
+                animator.SetLayerWeight(fullBodyLayerIndex, 0f);
+                foreach (Rigidbody rb in handsRBs)
+                    rb.isKinematic = false;
             }
         }
     }

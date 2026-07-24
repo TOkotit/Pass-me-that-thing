@@ -150,10 +150,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         public void TriggerSwing()
         {
-            //pivotAnimator.enabled = true;
             if (pivotAnimator)
                 pivotAnimator.SetTrigger("Swing");
-            Debug.Log($"TriggerSwing {HandsMovement == null} {CurrentHeldItem == null}");
+            Debug.Log($"TriggerSwing {!HandsMovement} {!CurrentHeldItem}");
             HandsMovement.FixGrab(CurrentHeldItem.Rigidbody);
             StartCoroutine(StopHolding());
         }
