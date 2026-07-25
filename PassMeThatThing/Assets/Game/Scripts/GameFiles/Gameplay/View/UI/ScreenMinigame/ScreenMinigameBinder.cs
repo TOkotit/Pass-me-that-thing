@@ -1,81 +1,248 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using AYellowpaper.SerializedCollections;
 using DG.Tweening;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace Game.Gameplay.View.UI.ScreenMinigame
 {
-    [Serializable]
-    public class EventTypeToMinigameUI
-    {
-        public GameEventsType eventType;
-        public MinigameUI miniGameUI;
-    }
-    
     public class ScreenMinigameBinder : WindowBinder<ScreenMinigameViewModel>
     {
-        [SerializeField] private Button closeBtn;
-        
-        [SerializeField] private TextMeshProUGUI timeLeft;
+        [SerializeField] private UIDocument uiDocument;
+        [SerializeField] private SerializedDictionary<GameEventsType, VisualTreeAsset> minigames;
 
-        [SerializeField] private Image successImage;
+        [SerializeField] private Sprite redIndicator;
+        [SerializeField] private Sprite greenIndicator;
         
-        [SerializeField] private List<EventTypeToMinigameUI> minigames;
+        //ui refs
+        private VisualElement _root;
+        private Button _closeBtn;
+        private VisualElement _successImg;
+        private GroupBox _minigameContentContainer;
+        private TemplateContainer _currentMinigame;
+        
+        
+        //floodPipeBreak
+        private VisualElement _rotationWheel;
+        private ProgressBar _wheelProgressBar;
+        private bool _isHolding;
 
-        private MinigameUI currentMinigame;
+        private Vector2 _wheelCenter;
+        private float _lastAngle;
+        private float _currentAngle;
+        private float _progressSpeed = 0.1f;
         
+        //blackoutBlowFuse
+        private VisualElement _p30Img;
+        private VisualElement _p60Img;
+        private VisualElement _p100Img;
+        private List<CustomToggle> _customToggles;
+
+        private int _turnedToggles;
+        
+        //blackoutCutWires
+
+        private void Awake()
+        {
+            _root = uiDocument.rootVisualElement;
+            _closeBtn = _root.Q<Button>("CloseBtn");
+            _successImg = _root.Q<VisualElement>("SuccessImg");
+            _successImg.visible = false;
+            _minigameContentContainer = _root.Q<GroupBox>("MinigameContentContainer");
+        }
         
         private void Start()
         {
             EnableMinigameByType(ViewModel.Parameters);
             
-            closeBtn.onClick.AddListener(CloseMinigame);
+            _closeBtn.RegisterCallback<ClickEvent>(CloseMinigame);
         }
 
         private void OnDestroy()
         {
-            closeBtn.onClick.RemoveListener(CloseMinigame);
+            _closeBtn.UnregisterCallback<ClickEvent>(CloseMinigame);
+
+            DisableMinigames();
         }
         
         public void EnableMinigameByType(MinigameParameters parameters)
         {
-            foreach (var m in minigames)
+            _currentMinigame = minigames[parameters.eventType].Instantiate();
+            _minigameContentContainer.Add(_currentMinigame);
+
+            switch (parameters.eventType)
             {
-                m.miniGameUI.gameObject.SetActive(false);
+                case GameEventsType.FloodBrokenPump:
+                    EnterFloodPipeBreakMinigame(_currentMinigame);
+                    break;
+                case GameEventsType.FloodPipeBreak:
+                    break;
+                case GameEventsType.BlackoutBlowFuse:
+                    EnterBlackoutBlowFuseMinigame(_currentMinigame);
+                    break;
+                case GameEventsType.BlackoutCutWires:
+                    EnterBlackoutCutWiresMinigame(_currentMinigame);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            
-            currentMinigame = minigames.Find(x => x.eventType == parameters.eventType)
-                .miniGameUI;
-            currentMinigame.gameObject.SetActive(true);
-            
-            currentMinigame.gameObject.transform.DOScale(1f, 0.5f).From(0f).SetEase(Ease.OutBounce);
+        }
+        
+        public void DisableMinigames()
+        {
+            _minigameContentContainer.Clear();
         }
 
+        
+        
+        public void EnterBlackoutBlowFuseMinigame(TemplateContainer templateContainer)
+        {
+            _p30Img = templateContainer.Q<VisualElement>("P30Img");
+            _p60Img = templateContainer.Q<VisualElement>("P60Img");
+            _p100Img = templateContainer.Q<VisualElement>("P100Img");
+
+            _customToggles = templateContainer.Q<GroupBox>("TogglesContainer")
+                .Children()
+                .Select(x => x.Children())
+                .SelectMany(x => x)
+                .Select(x => (CustomToggle)x).ToList();
+
+            foreach (var t in _customToggles)
+            {
+                t.RegisterValueChangedCallback(CheckToggles);
+            }
+        }
+
+        public void CheckToggles(ChangeEvent<bool> e)
+        {
+            _turnedToggles = 0;
+            foreach (var t in _customToggles)
+            {
+                _turnedToggles += t.value ? 1:0;
+            }
+
+            UpdateIndicators();
+            
+            Debug.Log($"OnToggleClicked {_turnedToggles}");
+            if (_turnedToggles >= _customToggles.Count)
+            {
+                CompleteMinigame();
+            }
+        }
+
+        public void UpdateIndicators()
+        {
+            var percent = _turnedToggles / (float)_customToggles.Count;
+
+            _p30Img.style.backgroundImage = new StyleBackground(redIndicator);
+            _p60Img.style.backgroundImage = new StyleBackground(redIndicator);
+            _p100Img.style.backgroundImage = new StyleBackground(redIndicator);
+            
+            if (percent >= 0.3f) 
+                _p30Img.style.backgroundImage = new StyleBackground(greenIndicator);
+            if (percent >= 0.6f)
+                _p60Img.style.backgroundImage = new StyleBackground(greenIndicator);
+            if (percent >= 1f)
+                _p100Img.style.backgroundImage = new StyleBackground(greenIndicator);
+        }
+        
+        //blackoutCutWires
+        public void EnterBlackoutCutWiresMinigame(TemplateContainer templateContainer)
+        {
+            
+        }
+        
+        //floodPipeBreak
+        public void EnterFloodPipeBreakMinigame(TemplateContainer templateContainer)
+        {
+            _rotationWheel = templateContainer.Q<VisualElement>("RotationWheel");
+            _wheelProgressBar = templateContainer.Q<ProgressBar>("WheelProgressBar");
+            
+            _rotationWheel.RegisterCallback<PointerDownEvent>(RWOnPointerDown);
+            _rotationWheel.RegisterCallback<PointerUpEvent>(RWOnPointerUp);
+            _rotationWheel.RegisterCallback<PointerCaptureOutEvent>(RWOnPointerCaptureOut);
+            _rotationWheel.RegisterCallback<PointerMoveEvent>(RWOnPointerMove);
+        }
+        
+        public void RWOnPointerDown(PointerDownEvent evt)
+        {
+            _isHolding = true;
+            _rotationWheel.CapturePointer(evt.pointerId);
+            
+            _wheelCenter = _rotationWheel.worldBound.center;
+            var mousePosition = evt.position;
+            var direction = (Vector2)mousePosition - _wheelCenter;
+            
+            _lastAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        }
+        
+        public void RWOnPointerUp(PointerUpEvent evt)
+        {
+            _isHolding = false;
+            if (_rotationWheel.HasPointerCapture(evt.pointerId))
+            {
+                _rotationWheel.ReleasePointer(evt.pointerId);
+            }
+        }
+        
+        private void RWOnPointerCaptureOut(PointerCaptureOutEvent evt)
+        {
+            _isHolding = false;
+        }
+        
+        private void RWOnPointerMove(PointerMoveEvent evt)
+        {
+            if (_isHolding)
+            {
+                var mousePosition = evt.position;
+                var direction = (Vector2)mousePosition - _wheelCenter;
+
+                _currentAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+                var angleDelta = Mathf.DeltaAngle(_lastAngle, _currentAngle);
+                _wheelProgressBar.value += angleDelta * _progressSpeed;
+                
+                if (_wheelProgressBar.value >= _wheelProgressBar.highValue)
+                {
+                    CompleteMinigame();
+                    return;
+                }
+                
+                _lastAngle = _currentAngle;
+                _rotationWheel.style.rotate = new StyleRotate(new Rotate(new Angle(_currentAngle, AngleUnit.Degree)));
+            }
+        }
+
+        //general
         public void CompleteMinigame()
         {
             var anim =  DOTween.Sequence();
             
-            successImage.gameObject.SetActive(true);
+            _successImg.visible = true;
             
-            anim.Append(successImage.DOFade(1f, 0.3f).From(0f))
-                .Join(successImage.rectTransform.DOScale(1f, 0.3f).From(0f).SetEase(Ease.OutBounce))
-                .Append(currentMinigame.gameObject.transform.DOScale(0f, 0.5f).From(1f).SetEase(Ease.OutBounce))
+            anim.Append(DOTween.To(
+                    () => _successImg.style.opacity.value,
+                    x => _successImg.style.opacity = x,
+                    1f, 0.3f).From(0f))
+                .Join(_successImg.DOScale(1f, 0.3f).From(new Vector2(0f, 0f)).SetEase(Ease.OutBounce))
+                .Append(_currentMinigame.DOScale(0f, 0.5f).From(new Vector2(1f, 1f)).SetEase(Ease.OutBounce))
                 .OnComplete(() =>
                 {
                     ViewModel.RequestCompleteMinigame();
                 });
         }
 
-        public void CloseMinigame()
+        public void CloseMinigame(ClickEvent e)
         {
             var anim =  DOTween.Sequence();
 
-            anim.Append(currentMinigame.gameObject.transform.DOScale(0f, 0.5f).From(1f).SetEase(Ease.OutBounce))
+            anim.Append(_currentMinigame.DOScale(0f, 0.5f).From(new Vector2(1f, 1f)).SetEase(Ease.OutBounce))
                 .OnComplete(() =>
                 {
                     ViewModel.RequestCloseMinigame();

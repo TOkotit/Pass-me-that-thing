@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:GroupBox style="height: 100%; justify-content: center;">
+        <ui:ProgressBar value="22" title="my-progress" name="WheelProgressBar" style="width: 913px; align-self: center; height: 35px;" />
+        <ui:VisualElement name="RotationWheel" style="flex-grow: 0; height: 432px; width: 432px; align-self: center; background-image: resource(&apos;Sprites/MinigameSprites/rotate_arrows&apos;);" />
+    </ui:GroupBox>
+</ui:UXML>
