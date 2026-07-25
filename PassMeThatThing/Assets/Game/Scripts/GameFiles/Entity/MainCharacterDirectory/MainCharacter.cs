@@ -56,15 +56,6 @@ namespace Game.Entity
         }
 
         [Server]
-        public void Fall(float delay, Vector3 impulse = new Vector3())
-        {
-            movement.LockUpMovement();
-            if (mCamera) mCamera.IsCameraRotating = false;
-            RpcFall(impulse);
-            StartCoroutine(GetUpAfterDelay(delay));
-        }
-
-        [Server]
         private IEnumerator GetUpAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
@@ -77,17 +68,28 @@ namespace Game.Entity
             Fall(delay, impulse);
         }
 
+        [Server]
+        public void Fall(float delay, Vector3 impulse = new Vector3())
+        {
+            movement.LockUpMovement();
+            if (mCamera) mCamera.IsCameraRotating = false;
+            maskLayerController.ApplyFullBody();
+            maskLayerController.RpcSetFullBody();
+
+            RpcFall(impulse);
+            StartCoroutine(GetUpAfterDelay(delay));
+        }
+
         [ClientRpc]
         private void RpcFall(Vector3 additionalImpulse)
         {
-            maskLayerController.EnableFullBodyAnimation();
             playerInteraction.Drop();
             movement.LockUpMovement();
             movement.DisableController();
             if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
             ragdollHandler.EnableRagdoll();
-            ragdollHandler.Hit(10f* Vector3.forward, transform.position);
+            ragdollHandler.Hit(10f * Vector3.forward, transform.position);
         }
 
         [Server]
@@ -95,6 +97,8 @@ namespace Game.Entity
         {
             if (!_isAlive) return;
             movement.UnlockMovement();
+            maskLayerController.RpcSetBodyOnly();
+
             if (mCamera) mCamera.IsCameraRotating = true;
             RpcStandUp();
         }
@@ -103,20 +107,22 @@ namespace Game.Entity
         private void RpcStandUp()
         {
             ragdollHandler.DisableRagdoll();
+
             view.PlayStandingUp(() =>
             {
+                maskLayerController.ApplyBodyOnly();
                 view.EnableAnimator();
-                maskLayerController.EnableBodyOnlyAnimation();
                 movement.UnlockMovement();
                 movement.EnableController();
-                view.DisableAnimator();
+                view.DisableAnimator(); 
                 if (mCamera) mCamera.IsCameraRotating = true;
             });
         }
-
+        
         protected void Awake()
         {
             _toughnessModel = new ToughnessModel();
+            Fall(0.1f, Vector3.zero);
         }
 
         public new void Start()
@@ -124,7 +130,6 @@ namespace Game.Entity
             _gameoverHandler.RegisterPlayer(this);
             base.Start();
             Initialize();
-
             if (isServer)
             {
                 ServerSetMaxHealth(100, true);

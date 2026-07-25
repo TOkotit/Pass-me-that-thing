@@ -335,21 +335,12 @@ namespace Game.Scripts.GameFiles.Items
         private void onActCanceled(InputAction.CallbackContext context)
         {
         }
+        
         [Command]
         private void CmdSwing()
         {
-            var item = _physicalItemInteractionController.CurrentHeldItem;
-            item.transform.localScale = Vector3.one;
             if (Time.time - lastSwingTime < swingCooldown) return;
-            if (!item) return;
-
             lastSwingTime = Time.time;
-            RpcSwing(item);
-        }
-
-        [TargetRpc]
-        private void RpcSwing(PhysicalItem item)
-        {
             _physicalItemInteractionController.TriggerSwing();
         }
 

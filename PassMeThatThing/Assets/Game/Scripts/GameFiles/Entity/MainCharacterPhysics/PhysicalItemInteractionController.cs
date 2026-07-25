@@ -150,11 +150,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         
         public void TriggerSwing()
         {
-            //pivotAnimator.enabled = true;
             if (pivotAnimator)
                 pivotAnimator.SetTrigger("Swing");
-            Debug.Log($"TriggerSwing {HandsMovement == null} {CurrentHeldItem == null}");
-            HandsMovement.FixGrab(CurrentHeldItem.Rigidbody);
+            Debug.Log($"TriggerSwing {!HandsMovement} {!CurrentHeldItem}");
+            //HandsMovement.FixGrab(CurrentHeldItem.Rigidbody);
             StartCoroutine(StopHolding());
         }
         
@@ -162,7 +161,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             yield return new WaitForSeconds(1);
             //pivotAnimator.enabled = false;
-            HandsMovement.ReleaseGrab();
+            //HandsMovement.ReleaseGrab();
         }
     }
 }
