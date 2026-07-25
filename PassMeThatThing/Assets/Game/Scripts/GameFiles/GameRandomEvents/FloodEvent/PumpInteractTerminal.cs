@@ -2,6 +2,7 @@ using Ami.BroAudio;
 using Game.Scripts.GameFiles.Events;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using VContainer.Unity;
 
@@ -13,7 +14,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         public bool _isFixed = true;
 
         [SerializeField] private SoundSource pipeSound = default;
-        [SerializeField] PipeBreakEvent _pipeBreakEvent;
+
+        [SerializeField] BrokenPumpEvent brokenPumpEvent;
         [SerializeField] ParticleSystem _particleSystem;
 
         [Server]
@@ -32,7 +34,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         {
             if (_isFixed) return;
             
-            _pipeBreakEvent.PlayerFixedPressure();
+            brokenPumpEvent.PlayerFixedPressure();
         }
         
         [ClientRpc]

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
 {
-    public class PipeBreakEvent : BaseGameEvent
+    public class BrokenPumpEvent : BaseGameEvent
     {
         [SerializeField] private float _chanceBoost = 0.5f;
         
