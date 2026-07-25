@@ -9,6 +9,7 @@ using Game.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Random = System.Random;
 
 namespace Game.Gameplay.View.UI.ScreenMinigame
 {
@@ -19,6 +20,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
         [SerializeField] private Sprite redIndicator;
         [SerializeField] private Sprite greenIndicator;
+
+        [SerializeField] private List<Color> wireColors;
         
         //ui refs
         private VisualElement _root;
@@ -47,7 +50,13 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         private int _turnedToggles;
         
         //blackoutCutWires
-
+        private GroupBox _inputContainer;
+        private GroupBox _outputContainer;
+        
+        private List<VisualElement> _draggableInputs;
+        private List<VisualElement> _wireLines;
+        private int _correctWires = 0;
+        
         private void Awake()
         {
             _root = uiDocument.rootVisualElement;
@@ -79,9 +88,9 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             switch (parameters.eventType)
             {
                 case GameEventsType.FloodBrokenPump:
-                    EnterFloodPipeBreakMinigame(_currentMinigame);
                     break;
                 case GameEventsType.FloodPipeBreak:
+                    EnterFloodPipeBreakMinigame(_currentMinigame);
                     break;
                 case GameEventsType.BlackoutBlowFuse:
                     EnterBlackoutBlowFuseMinigame(_currentMinigame);
@@ -155,7 +164,79 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         //blackoutCutWires
         public void EnterBlackoutCutWiresMinigame(TemplateContainer templateContainer)
         {
+            _inputContainer = templateContainer.Q<GroupBox>("InputContainer");
+            _outputContainer = templateContainer.Q<GroupBox>("OutputContainer");
+
+            var rand = new Random();
+            wireColors = wireColors.OrderBy(_ => rand.Next()).ToList();
+
+            foreach (var t in wireColors)
+            {
+                var newOutput = new VisualElement();
+                _outputContainer.Add(newOutput);
+                newOutput.AddToClassList("slot");
+
+                newOutput.style.width = 150;
+                newOutput.style.height = 150;
+                newOutput.style.backgroundColor = t;
+                newOutput.style.opacity = 0.5f;
+            }
             
+            wireColors = wireColors.OrderBy(_ => rand.Next()).ToList();
+            foreach (var t in wireColors)
+            {
+                var inputBox = new VisualElement();
+                
+                inputBox.style.width = 120;
+                inputBox.style.height = 120;
+                inputBox.style.backgroundColor = Color.white;
+
+                var newLine = new LineElement(new Vector2(0, 0),
+                    new Vector2(0, 0),
+                    t, 15f);
+                
+                newLine.style.width = Length.Percent(100);
+                newLine.style.height = Length.Percent(100);
+                newLine.style.position = Position.Absolute;
+                
+                templateContainer.Add(newLine);
+                
+                var newInput = new VisualElement();
+                
+                _inputContainer.Add(inputBox);
+                inputBox.Add(newInput);
+                
+                newInput.AddToClassList("draggable");
+                
+                newInput.AddManipulator(new WireDragAndDropManipulator(newInput,
+                    slotContainerName: "OutputContainer",
+                    slotClassName: "slot",
+                    onDrop: CheckWires,
+                    line: newLine,
+                    box: inputBox));
+                
+                newInput.style.width = 110;
+                newInput.style.height = 110;
+                newInput.style.backgroundColor = t;
+            }
+        }
+
+        private void CheckWires(VisualElement a, VisualElement b)
+        {
+            if (a.style.backgroundColor == b.style.backgroundColor)
+            {
+                _correctWires++;
+            }
+            else
+            {
+                _correctWires--;
+            }
+            Debug.Log($"CheckWires {_correctWires}");
+
+            if (_correctWires >= wireColors.Count)
+            {
+                CompleteMinigame();
+            }
         }
         
         //floodPipeBreak
