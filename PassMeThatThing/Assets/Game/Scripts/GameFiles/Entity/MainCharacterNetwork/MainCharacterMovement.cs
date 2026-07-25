@@ -4,6 +4,7 @@ using DI;
 using Entity;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using MainCharacter_old;
 using Mirror;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
@@ -32,6 +33,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private float _lastWaterDrop;
     private float _movementMultiplier = 1.0f;
     private Vector3 _lastVelocity;
+    private PhysicalItem _item;
     public Vector3 LastVelocity => _lastVelocity;
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
@@ -55,15 +57,16 @@ public class MainCharacterMovement : NetworkBehaviour
         velocity.y = _velocity.y; 
         return velocity;
     }
-    public void SetMovementMultiplier(float weight)
+    public void SetMovementMultiplier(PhysicalItem item)
     {
-        var multiplier = _model.BaseCarry / weight;
-        _movementMultiplier = Mathf.Min(1f, _model.BaseCarry / weight);
+        _movementMultiplier = Mathf.Min(1f, _model.BaseCarry / item.Rigidbody.mass);
+        _item = item;
     }
 
     public void ResetMovementMultiplier()
     {
         _movementMultiplier = 1;   
+        _item = null;
     }
     
     public Vector3 Velocity
@@ -172,7 +175,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isLocalPlayer || !characterController.enabled) return;
-        var currentSpeed = _model.Speed * _movementMultiplier;
+        var currentSpeed = _model.Speed * (_movementMultiplier / _item.Holders.Count);
         if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
         var horizontalVelocity = _moveDirection.normalized * currentSpeed;
         _lastVelocity = horizontalVelocity + Vector3.up * _velocity.y;
@@ -207,7 +210,7 @@ public class MainCharacterMovement : NetworkBehaviour
             }
         }
 
-        var currentSpeed = _model.Speed * _movementMultiplier;
+        var currentSpeed = _model.Speed * (_movementMultiplier / _item.Holders.Count);
         if (_isSprinting)
             currentSpeed *= _model.SprintMultiplier;
 

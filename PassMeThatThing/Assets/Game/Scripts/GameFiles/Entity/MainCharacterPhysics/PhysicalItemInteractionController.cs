@@ -85,7 +85,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public void PhysicalPickUpItem(PhysicalItem item)
         {
             _heldItem = item;
-            movement.SetMovementMultiplier(item.Rigidbody.mass);
+            movement.SetMovementMultiplier(item);
             SetOwnerAndLayer(item);
             TargetPickUpItem(item);
             _handsMovement.GrabItem(item);
@@ -96,7 +96,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             Debug.Log($"[PC] TargetPickUpItem {item}");
             _heldItem = item;
-            movement.SetMovementMultiplier(item.Rigidbody.mass);
+            movement.SetMovementMultiplier(item);
             SetOwnerAndLayer(item);
             if (_heldItem)
                 _handsMovement.GrabItem(_heldItem);
