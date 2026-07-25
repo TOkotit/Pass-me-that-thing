@@ -57,6 +57,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (item.CanBeOwned)
             {
                 item.Owner = mainCharacter;
+                item.Holders.Add(this.netIdentity);
                 if (isLocalPlayer)
                 {
                     item.gameObject.layer = LayerMask.NameToLayer("HeldItem");
@@ -70,6 +71,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             {
                 item.gameObject.layer = LayerMask.NameToLayer("Interactable");
                 item.Owner = null;
+                item.Holders.Remove(this.netIdentity);
             }
         }
 
