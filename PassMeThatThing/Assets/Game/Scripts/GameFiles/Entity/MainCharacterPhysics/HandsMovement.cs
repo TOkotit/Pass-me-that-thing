@@ -1,5 +1,6 @@
 using System;
 using DI;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
@@ -11,22 +12,32 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
     public class HandsMovement : NetworkBehaviour
     {
+        [Header("Hand Joints")]
+        [SerializeField] private ConfigurableJoint leftJoint;
+        [SerializeField] private ConfigurableJoint rightJoint;
+
         [Header("Linear Hold")]
         [SerializeField] private float baseHoldForce = 500f;
         [SerializeField] private float holdDamping = 50f;
         [SerializeField] private float maxHoldDistance = 1.5f;
+        [SerializeField] private float maxLiftMass = 15f;
 
-        [Header("Angular Hold (only for aligned items)")]
-        [SerializeField] private float maxAngularSpeed = 15f;
-        [SerializeField] private float angularResponsiveness = 0.5f;
+        [Header("Angular Hold – Aligned Items")]
+        [SerializeField] private float maxAngularSpeed = 20f;
+        [SerializeField] private float angularResponsiveness = 0.6f;
+
+        [Header("Angular Hold – Non‑Aligned Items")]
+        [SerializeField] private float rotationSpring = 100f;
+        [SerializeField] private float rotationDamper = 10f;
+        [SerializeField] private float maxTorquePerPlayer = 200f;
 
         [Header("Throwing")]
         [SerializeField] private float throwForceGrow = 5f;
         [SerializeField] private float maxThrowForce = 15f;
         [SerializeField] private float minChargeTime = 0.3f;
         [SerializeField] private Camera camera;
-        [SerializeField] private Transform animatorTransform;   
-        
+        [SerializeField] private Transform animatorTransform;
+
         [Inject] private PlayerInventoryModel _playerInventoryModel;
 
         public Transform AnimatorTransform => animatorTransform;
@@ -40,9 +51,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private Rigidbody _heldRb;
         private Transform _holdPivot;
         private bool _isHolding;
-        private Vector3 _grabOffset;          
-        private bool _shouldAlignRotation;    
-        
+        private Quaternion _initialLocalRotation;
+        private bool _shouldAlignRotation;
+
         private void Awake()
         {
             var gameplayScope = LifetimeScope.Find<GameplayScope>();
@@ -58,34 +69,23 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _heldItem = item;
             _heldRb = item.Rigidbody;
             _holdPivot = animatorTransform;
-
-            var grabPointWorld = _heldRb.position;
-            if (item.UniversalPoint)
-                grabPointWorld = item.UniversalPoint.position;
-            
-            _grabOffset = _heldRb.position - grabPointWorld;   _shouldAlignRotation = item.HasToBeAligned;
-
-            _heldRb.useGravity = true;
-            _heldRb.isKinematic = false;
-            _heldRb.linearDamping = 1f;
-            _heldRb.angularDamping = 2f;
-
+            _initialLocalRotation = Quaternion.Inverse(transform.rotation) * _heldRb.rotation;
+            _shouldAlignRotation = item.HasToBeAligned;
+            MoveHands(item);
             _isHolding = true;
-            RpcGrabItem(item.netIdentity, _grabOffset, _shouldAlignRotation);
+            RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation);
         }
 
         [ClientRpc]
-        private void RpcGrabItem(NetworkIdentity itemId, Vector3 grabOffset, bool alignRotation)
+        private void RpcGrabItem(PhysicalItem item, Quaternion initRot, bool align)
         {
-            if (itemId && itemId.TryGetComponent<PhysicalItem>(out var item))
-            {
-                _heldItem = item;
-                _heldRb = item.Rigidbody;
-                _holdPivot = animatorTransform;
-                _grabOffset = grabOffset;
-                _shouldAlignRotation = alignRotation;
-                _isHolding = true;
-            }
+            _heldItem = item;
+            _heldRb = item.Rigidbody;
+            _holdPivot = animatorTransform;
+            _initialLocalRotation = initRot;
+            _shouldAlignRotation = align;
+            MoveHands(item);
+            _isHolding = true;
         }
 
         [Server]
@@ -94,35 +94,37 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (!_isHolding || _heldItem != item) return;
 
             _isHolding = false;
+            ResetHands();
 
             if (canThrow && _heldRb)
             {
                 item.IsThrown = true;
                 var force = throwForce * camera.transform.forward;
                 _heldRb.AddForce(force, ForceMode.Impulse);
-                RpcApplyThrowForce(item.netIdentity, force);
+                RpcApplyThrowForce(item, force);
             }
 
             _heldRb = null;
             _heldItem = null;
             _throwForce = 0;
             _isThrowing = false;
-            RpcReleaseItem(item.netIdentity);
+            RpcReleaseItem(item);
         }
 
         [ClientRpc]
-        private void RpcApplyThrowForce(NetworkIdentity itemId, Vector3 force)
+        private void RpcApplyThrowForce(PhysicalItem item, Vector3 force)
         {
-            if (itemId && itemId.TryGetComponent<PhysicalItem>(out var item) && item.Rigidbody)
+            if (item && item.Rigidbody)
                 item.Rigidbody.AddForce(force, ForceMode.Impulse);
         }
 
         [ClientRpc]
-        private void RpcReleaseItem(NetworkIdentity itemId)
+        private void RpcReleaseItem(PhysicalItem item)
         {
             _isHolding = false;
             _heldRb = null;
             _heldItem = null;
+            ResetHands();
         }
 
         private void FixedUpdate()
@@ -145,41 +147,99 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void ManualHoldUpdate()
         {
             var pivotPos = _holdPivot.position;
-            var pivotRot = _holdPivot.rotation;
-            var targetCenterPos = pivotPos + _grabOffset;
+            var holderCount = Mathf.Max(1, _heldItem.Holders.Count);
+            var tooHeavy = _heldRb.mass > maxLiftMass / _heldItem.Holders.Count;
 
-            var toTarget = targetCenterPos - _heldRb.position;
+            var toTarget = pivotPos - _heldRb.position;
             var distance = toTarget.magnitude;
             var desiredVelocity = toTarget / Time.fixedDeltaTime;
-            var force = (desiredVelocity - _heldRb.linearVelocity) * _heldRb.mass / Time.fixedDeltaTime;
-            if (force.magnitude > baseHoldForce)
-                force = force.normalized * baseHoldForce;
-            force -= _heldRb.linearVelocity * (holdDamping * _heldRb.mass);
-            _heldRb.AddForce(force, ForceMode.Force);
+            var linearForce = (desiredVelocity - _heldRb.linearVelocity) * _heldRb.mass / Time.fixedDeltaTime;
+            if (linearForce.magnitude > baseHoldForce)
+                linearForce = linearForce.normalized * baseHoldForce;
+            linearForce -= _heldRb.linearVelocity * (holdDamping * _heldRb.mass);
+
+            if (tooHeavy) linearForce.y = 0f;   
+            _heldRb.AddForce(linearForce, ForceMode.Force);
 
             if (distance > maxHoldDistance)
             {
                 var correction = toTarget.normalized * (distance - maxHoldDistance);
+                if (tooHeavy) correction.y = 0f;
                 _heldRb.position += correction * 0.5f;
                 _heldRb.linearVelocity = Vector3.zero;
             }
 
             if (_shouldAlignRotation)
             {
-                var targetRot = pivotRot;
+                var targetRot = _holdPivot.rotation;
                 var rotDelta = targetRot * Quaternion.Inverse(_heldRb.rotation);
                 rotDelta.ToAngleAxis(out var angle, out var axis);
                 if (angle > 180f) angle -= 360f;
 
                 var desiredAngularVelocity = axis * (angle * Mathf.Deg2Rad) / Time.fixedDeltaTime;
                 desiredAngularVelocity = Vector3.ClampMagnitude(desiredAngularVelocity, maxAngularSpeed);
-
-                _heldRb.angularVelocity = Vector3.Lerp(
-                    _heldRb.angularVelocity,
-                    desiredAngularVelocity,
-                    angularResponsiveness * Time.fixedDeltaTime * 60f
-                );
+                _heldRb.angularVelocity = Vector3.Lerp(_heldRb.angularVelocity, desiredAngularVelocity,
+                    angularResponsiveness * Time.fixedDeltaTime * 60f);
             }
+            else
+            {
+                var targetRot = transform.rotation * _initialLocalRotation;
+                var rotDelta = targetRot * Quaternion.Inverse(_heldRb.rotation);
+                rotDelta.ToAngleAxis(out var angle, out var axis);
+                if (angle > 180f) angle -= 360f;
+
+                var spring = rotationSpring / holderCount;
+                var damper = rotationDamper / holderCount;
+                var maxTorque = maxTorquePerPlayer / holderCount;
+
+                var torque = axis * (angle * Mathf.Deg2Rad * spring) - _heldRb.angularVelocity * damper;
+                torque = Vector3.ClampMagnitude(torque, maxTorque);
+                _heldRb.AddTorque(torque, ForceMode.Force);
+            }
+        }
+
+        public void MoveHands(PhysicalItem item)
+        {
+            if (item.HandleType == HandleType.OneHanded)
+            {
+                rightJoint.gameObject.SetActive(true);
+                rightJoint.connectedBody = item.UniversalPoint ? item.UniversalPoint : item.RightHandPoint;
+            }
+            else if (item.HandleType == HandleType.TwoHanded)
+            {
+                if (item.RightHandPoint && item.LeftHandPoint)
+                {
+                    rightJoint.gameObject.SetActive(true);
+                    rightJoint.connectedBody = item.RightHandPoint;
+                    leftJoint.gameObject.SetActive(true);
+                    leftJoint.connectedBody = item.LeftHandPoint;
+                }
+            }
+            else if (item.HandleType == HandleType.Free)
+            {
+                rightJoint.gameObject.SetActive(true);
+                rightJoint.connectedBody = item.Rigidbody;
+                leftJoint.gameObject.SetActive(true);
+                leftJoint.connectedBody = item.Rigidbody;
+            }
+        }
+
+        public void ResetHands()
+        {
+            ResetLeftHand();
+            ResetRightHand();
+        }
+
+        public void ResetLeftHand()
+        {
+            if (leftJoint) leftJoint.connectedBody = null;
+            leftJoint.gameObject.SetActive(false);
+        }
+
+        public void ResetRightHand()
+        {
+            if (rightJoint) rightJoint.connectedBody = null;
+            rightJoint.gameObject.SetActive(false);
         }
 
         public void ChargeThrow()

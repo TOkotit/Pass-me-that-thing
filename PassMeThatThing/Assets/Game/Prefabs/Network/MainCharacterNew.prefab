@@ -4789,12 +4789,17 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  leftJoint: {fileID: 6186713367683430940}
+  rightJoint: {fileID: 6759388885409534181}
   baseHoldForce: 500
   holdDamping: 20
   maxHoldDistance: 2
-  rotationSpring: 1000
-  rotationDamping: 100
-  maxRotationTorque: 200
+  maxLiftMass: 100
+  maxAngularSpeed: 15
+  angularResponsiveness: 0.5
+  rotationSpring: 300
+  rotationDamper: 10
+  maxTorquePerPlayer: 200
   throwForceGrow: 5
   maxThrowForce: 15
   minChargeTime: 0.3
