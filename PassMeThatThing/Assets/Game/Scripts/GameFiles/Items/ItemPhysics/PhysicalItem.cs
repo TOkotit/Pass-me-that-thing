@@ -49,7 +49,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public bool DoActAndSwing => doActAndSwing;
         public bool CanBeOwned => canBeOwned;
         public MainCharacter Owner { get; set; }
-        public List<NetworkIdentity> Holders { get; set; }
+        public readonly SyncList<NetworkIdentity> Holders = new SyncList<NetworkIdentity>();
         public NetworkConnectionToClient ConnectionToClient { get; set; }
         public LMBReaction Reaction => reaction;
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
@@ -66,7 +66,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
-            Holders = new List<NetworkIdentity>();
             reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
             
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))

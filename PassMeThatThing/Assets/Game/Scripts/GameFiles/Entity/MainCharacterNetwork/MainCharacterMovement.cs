@@ -175,8 +175,8 @@ public class MainCharacterMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isLocalPlayer || !characterController.enabled) return;
-        var currentSpeed = _model.Speed * (_movementMultiplier / _item.Holders.Count);
-        if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
+        var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
+        var currentSpeed = _model.Speed * (_movementMultiplier / holderCount);if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
         var horizontalVelocity = _moveDirection.normalized * currentSpeed;
         _lastVelocity = horizontalVelocity + Vector3.up * _velocity.y;
         
@@ -210,7 +210,9 @@ public class MainCharacterMovement : NetworkBehaviour
             }
         }
 
-        var currentSpeed = _model.Speed * (_movementMultiplier / _item.Holders.Count);
+        var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
+        var currentSpeed = _model.Speed * (_movementMultiplier / holderCount);
+        Debug.Log(_item ? _item.Holders.Count : 1);
         if (_isSprinting)
             currentSpeed *= _model.SprintMultiplier;
 

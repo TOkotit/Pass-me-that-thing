@@ -39,9 +39,6 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1f;
         [Header("Swing Attack")]
-        //[SerializeField] private float swingForce = 5f;
-        //[SerializeField] private float swingTorque = 10f;
-        //[SerializeField] private float swingDuration = 0.2f;
         [SerializeField] private float swingCooldown = 0.8f;
 
         private float lastSwingTime = -999f;

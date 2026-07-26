@@ -1,15 +1,10 @@
-using System;
 using System.Collections;
 using System.Linq;
 using DI;
-using Entity;
 using Game.Entity;
-using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
-using Systems;
 using UnityEngine;
-using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
@@ -52,27 +47,38 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 Debug.LogError("GameplayScope not found!");
         }
 
+        [Server]
         private void SetOwnerAndLayer(PhysicalItem item)
         {
-            if (item.CanBeOwned)
-            {
-                item.Owner = mainCharacter;
-                item.Holders.Add(this.netIdentity);
-                if (isLocalPlayer)
-                {
-                    item.gameObject.layer = LayerMask.NameToLayer("HeldItem");
-                }
-            }
+            if (item.CanBeOwned) item.Owner = mainCharacter;
+            item.Holders.Add(netIdentity);
+            RpcSetLayer(item);   
         }
-        
+
+        [ClientRpc]
+        private void RpcSetLayer(PhysicalItem item)
+        {
+            if (!item) return;
+            item.gameObject.layer = isLocalPlayer
+                ? LayerMask.NameToLayer("HeldItem")
+                : LayerMask.NameToLayer("OtherHeldItem");
+        }
+
+        [Server]
         private void RestoreLayerAndClear(PhysicalItem item)
         {
+            if (!item) return;
+            item.Owner = null;
+            item.Holders.Remove(netIdentity);
+            if (item.Holders.Count == 0)
+                RpcRestoreLayer(item);
+        }
+
+        [ClientRpc]
+        private void RpcRestoreLayer(PhysicalItem item)
+        {
             if (item)
-            {
                 item.gameObject.layer = LayerMask.NameToLayer("Interactable");
-                item.Owner = null;
-                item.Holders.Remove(this.netIdentity);
-            }
         }
 
         public void ChargeDrop()
@@ -94,10 +100,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [TargetRpc]
         private void TargetPickUpItem(PhysicalItem item)
         {
-            Debug.Log($"[PC] TargetPickUpItem {item}");
             _heldItem = item;
             movement.SetMovementMultiplier(item);
-            SetOwnerAndLayer(item);
             if (_heldItem)
                 _handsMovement.GrabItem(_heldItem);
         }
@@ -133,7 +137,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (_heldItem)
             {
-                RestoreLayerAndClear(_heldItem);
+                // Локально возвращаем слой для мгновенной реакции
+                _heldItem.gameObject.layer = LayerMask.NameToLayer("Interactable");
                 _handsMovement.ReleaseItem(_heldItem, 0f, false);
                 _heldItem = null;
                 movement.ResetMovementMultiplier();
@@ -154,16 +159,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (pivotAnimator)
                 pivotAnimator.SetTrigger("Swing");
-            Debug.Log($"TriggerSwing {!HandsMovement} {!CurrentHeldItem}");
-            //HandsMovement.FixGrab(CurrentHeldItem.Rigidbody);
             StartCoroutine(StopHolding());
         }
         
         private IEnumerator StopHolding()
         {
             yield return new WaitForSeconds(1);
-            //pivotAnimator.enabled = false;
-            //HandsMovement.ReleaseGrab();
         }
     }
 }

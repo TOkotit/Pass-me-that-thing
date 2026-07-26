@@ -92,12 +92,12 @@ ConfigurableJoint:
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_SecondaryAxis: {x: 0, y: 0, z: 0}
-  m_XMotion: 1
-  m_YMotion: 1
-  m_ZMotion: 1
-  m_AngularXMotion: 0
-  m_AngularYMotion: 0
-  m_AngularZMotion: 0
+  m_XMotion: 2
+  m_YMotion: 2
+  m_ZMotion: 2
+  m_AngularXMotion: 2
+  m_AngularYMotion: 2
+  m_AngularZMotion: 2
   m_LinearLimitSpring:
     spring: 0
     damper: 0
@@ -660,7 +660,7 @@ Transform:
   m_GameObject: {fileID: 2472626591355819156}
   serializedVersion: 2
   m_LocalRotation: {x: -0.48616564, y: -0.48616555, z: -0.5134618, w: 0.5134618}
-  m_LocalPosition: {x: 0, y: 0.62, z: -1.243}
+  m_LocalPosition: {x: 0, y: 0.548, z: -0.954}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4377,12 +4377,12 @@ ConfigurableJoint:
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_SecondaryAxis: {x: 0, y: 0, z: 0}
-  m_XMotion: 1
-  m_YMotion: 1
-  m_ZMotion: 1
-  m_AngularXMotion: 0
-  m_AngularYMotion: 0
-  m_AngularZMotion: 0
+  m_XMotion: 2
+  m_YMotion: 2
+  m_ZMotion: 2
+  m_AngularXMotion: 2
+  m_AngularYMotion: 2
+  m_AngularZMotion: 2
   m_LinearLimitSpring:
     spring: 0
     damper: 0
@@ -4791,14 +4791,14 @@ MonoBehaviour:
   syncInterval: 0
   leftJoint: {fileID: 6186713367683430940}
   rightJoint: {fileID: 6759388885409534181}
-  baseHoldForce: 500
-  holdDamping: 20
+  baseHoldForce: 450
+  holdDamping: 15
   maxHoldDistance: 2
   maxLiftMass: 100
   maxAngularSpeed: 15
   angularResponsiveness: 0.5
-  rotationSpring: 300
-  rotationDamper: 10
+  rotationSpring: 200
+  rotationDamper: 50
   maxTorquePerPlayer: 200
   throwForceGrow: 5
   maxThrowForce: 15
@@ -4825,7 +4825,7 @@ MonoBehaviour:
   _camera: {fileID: 3355288843335198720}
   interactionLayer:
     serializedVersion: 2
-    m_Bits: 960
+    m_Bits: 17344
   interactionDistance: 5
   interactionTimeOut: 0.5
   swingCooldown: 0.8
