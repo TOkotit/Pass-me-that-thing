@@ -40,7 +40,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft
             workbench.Spawner.Interact();
         }
 
-        public IReadOnlyDictionary<Resource,int> GetStoredResources()
+        public IReadOnlyDictionary<Resource,float> GetStoredResources()
         {
             return MainResourceStorage.Instance.StoredResources;
         }

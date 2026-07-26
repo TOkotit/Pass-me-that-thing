@@ -23,10 +23,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         [Inject] private ItemPoolManager _itemPoolManager; 
         public override DamagableModel DamagableModel => _model;
         private List<ItemData> items = new List<ItemData>();
-        private Dictionary<Resource, int> _resources = new Dictionary<Resource, int>();
+        private Dictionary<Resource, float> _resources = new Dictionary<Resource, float>();
 
         public List<ItemData> Items => items;
-        public Dictionary<Resource, int> Resources => _resources;
+        public Dictionary<Resource, float> Resources => _resources;
         public void Interact()
         {
             

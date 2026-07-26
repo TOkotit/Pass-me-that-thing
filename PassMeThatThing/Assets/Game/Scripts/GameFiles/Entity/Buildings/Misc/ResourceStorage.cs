@@ -7,13 +7,13 @@ using UnityEngine;
 public class ResourceStorage : NetworkBehaviour
 {
     private static Dictionary<GameObject, ResourceStorage> storages = new Dictionary<GameObject, ResourceStorage>();
-    private readonly SyncDictionary<Resource, int> storedResources = new SyncDictionary<Resource, int>();
+    private readonly SyncDictionary<Resource, float> storedResources = new SyncDictionary<Resource, float>();
     public static Dictionary<GameObject, ResourceStorage> Storages => storages;
-    public IReadOnlyDictionary<Resource, int> StoredResources => storedResources;
+    public IReadOnlyDictionary<Resource, float> StoredResources => storedResources;
     [Server]
-    public void AddResource(Resource resource, int amount)
+    public void AddResource(Resource resource, float amount)
     {
-        if (storedResources.TryGetValue(resource, out int current))
+        if (storedResources.TryGetValue(resource, out float current))
             storedResources[resource] = current + amount;
         else
             storedResources.Add(resource, amount);
@@ -21,10 +21,10 @@ public class ResourceStorage : NetworkBehaviour
     }
 
     [Server]
-    public bool RemoveResource(Resource resource, int amount)
+    public bool RemoveResource(Resource resource, float amount)
     {
-        if (!storedResources.TryGetValue(resource, out int current)) return false;
-        int newAmount = current - amount;
+        if (!storedResources.TryGetValue(resource, out float current)) return false;
+        float newAmount = current - amount;
         if (newAmount < 0) return false;
         if (newAmount == 0) storedResources.Remove(resource);
         else storedResources[resource] = newAmount;
@@ -32,9 +32,9 @@ public class ResourceStorage : NetworkBehaviour
         return true;
     }
 
-    public bool HasResource(Resource resource, int amount)
+    public bool HasResource(Resource resource, float amount)
     {
-        if (!storedResources.TryGetValue(resource, out int current)) return false;
+        if (!storedResources.TryGetValue(resource, out float current)) return false;
         return current - amount >= 0;
     }
 

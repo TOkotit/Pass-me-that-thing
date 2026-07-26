@@ -30,7 +30,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Collider collider;
         [SyncVar]
         [SerializeField] private bool _isThrown;
-        [SerializedDictionary] public SerializedDictionary<Resource,int> Resources; 
+        [SerializedDictionary] public SerializedDictionary<Resource, float> Resources; 
         private LMBReaction reaction;
         private Outline _outline;
         private CollisionDamageDealer  damageDealer;

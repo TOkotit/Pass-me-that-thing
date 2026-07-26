@@ -68,7 +68,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _localCraftModel.Craft(recipeId);
         }
 
-        public void RequestAvailableResources(Action<IReadOnlyDictionary<Resource,int>, ResourceDatabase> f)
+        public void RequestAvailableResources(Action<IReadOnlyDictionary<Resource,float>, ResourceDatabase> f)
         {
             f(_craftManager.GetStoredResources(), _resourceDatabase);
         }

@@ -74,7 +74,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _craftButton.UnregisterCallback<ClickEvent>(OnCraftClick);
         }
 
-        public void UpdateResources(IReadOnlyDictionary<Resource,int> resources, ResourceDatabase resourceDatabase)
+        public void UpdateResources(IReadOnlyDictionary<Resource,float> resources, ResourceDatabase resourceDatabase)
         {
             foreach (var r in resources)
             {
