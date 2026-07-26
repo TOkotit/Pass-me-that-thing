@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:GroupBox style="height: 100%; justify-content: center;">
+        <ui:DropdownField label="Resolution" name="ResolutionDropdown" style="width: 905px; align-self: center;" />
+        <ui:Toggle label="Fullscreen" name="FullscreenToggle" style="width: 191px; align-self: center;" />
+    </ui:GroupBox>
+</ui:UXML>

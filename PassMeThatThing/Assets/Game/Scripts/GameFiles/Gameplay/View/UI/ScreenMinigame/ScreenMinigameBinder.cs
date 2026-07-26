@@ -106,6 +106,11 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         public void DisableMinigames()
         {
             _minigameContentContainer.Clear();
+
+            foreach (var t in _customToggles)
+            {
+                t.UnregisterValueChangedCallback(CheckToggles);
+            }
         }
 
         
