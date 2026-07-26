@@ -32,7 +32,7 @@ namespace Game.Entity
         [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
-        [SerializeField] private HandsMaskLayerController maskLayerController;
+        [SerializeField] private PlayerAnimationStateController maskLayerStateController;
 
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
@@ -73,8 +73,8 @@ namespace Game.Entity
         {
             movement.LockUpMovement();
             if (mCamera) mCamera.IsCameraRotating = false;
-            maskLayerController.ApplyFullBody();
-            maskLayerController.RpcSetFullBody();
+            maskLayerStateController.ApplyFullBody();
+            maskLayerStateController.RpcSetFullBody();
 
             RpcFall(impulse);
             StartCoroutine(GetUpAfterDelay(delay));
@@ -97,7 +97,7 @@ namespace Game.Entity
         {
             if (!_isAlive) return;
             movement.UnlockMovement();
-            maskLayerController.RpcSetBodyOnly();
+            maskLayerStateController.RpcSetBodyOnly();
 
             if (mCamera) mCamera.IsCameraRotating = true;
             RpcStandUp();
@@ -110,7 +110,7 @@ namespace Game.Entity
 
             view.PlayStandingUp(() =>
             {
-                maskLayerController.ApplyBodyOnly();
+                maskLayerStateController.ApplyBodyOnly();
                 view.EnableAnimator();
                 movement.UnlockMovement();
                 movement.EnableController();
