@@ -18,7 +18,8 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private MainCharacter character;
-    [SerializeField] private float maxHoldDistance = 2.0f; 
+    [SerializeField] private float maxHoldDistance = 2.0f;
+    [SerializeField] private float holdSoftZone = 1.5f;
     [SerializeField] private PhysicalItemInteractionController _itemController;
     [Inject] private DamagableRegistry _damagableRegistry;
     private MainCharacterModel _model => character.MainCharacterModel;
@@ -199,20 +200,26 @@ public class MainCharacterMovement : NetworkBehaviour
             var charPos = transform.position;
             var currentDist = Vector3.Distance(charPos, itemPos);
 
-            if (currentDist > maxHoldDistance)
+            if (currentDist > holdSoftZone)
             {
-                var dirToItem = (itemPos - charPos).normalized;
-                if (Vector3.Dot(desiredMove, dirToItem) < 0)
+                var dirAway = (charPos - itemPos).normalized;
+                var awayComponent = Vector3.Dot(desiredMove, dirAway);
+
+                if (awayComponent > 0)
                 {
-                    var projected = Vector3.ProjectOnPlane(desiredMove, dirToItem);
-                    desiredMove = projected.normalized * desiredMove.magnitude;
+                    var t = Mathf.InverseLerp(holdSoftZone, maxHoldDistance, currentDist);
+                    var factor = 1f - t;
+
+                    var perpendicular = desiredMove - dirAway * awayComponent;
+                    var weakenedAway = dirAway * (awayComponent * factor);
+                    desiredMove = perpendicular + weakenedAway;
+
                 }
             }
         }
 
         var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
         var currentSpeed = _model.Speed * (_movementMultiplier / holderCount);
-        Debug.Log(_item ? _item.Holders.Count : 1);
         if (_isSprinting)
             currentSpeed *= _model.SprintMultiplier;
 
