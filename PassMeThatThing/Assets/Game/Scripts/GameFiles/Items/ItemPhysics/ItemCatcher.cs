@@ -8,18 +8,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class ItemCatcher : NetworkBehaviour
     {
-        private PhysicalItemRegistry _physicalItemRegistry;
+        [Inject] private PhysicalItemRegistry _physicalItemRegistry;
         [SerializeField] private Transform dir;
-        private PlayerInteraction _playerInteraction;
-
-        public void SetPlayerInteraction(PlayerInteraction playerInteraction)
-        {
-            _playerInteraction = playerInteraction;
-        }
-        public void SetRegistry(PhysicalItemRegistry registry) 
-        {
-            _physicalItemRegistry = registry;
-        }
+        [SerializeField] private PlayerInteraction _playerInteraction;
         
         private void OnTriggerEnter(Collider other)
         {
@@ -34,7 +25,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                     if (item.Rigidbody && (item.Rigidbody.linearVelocity.normalized
                         + dir.forward).magnitude < 0.7f)
                     {
-                        _playerInteraction.TryPickUp(item);
+                        if (item.CanBeOwned) _playerInteraction.TryPickUp(item, Vector3.zero);
                     }
                 }
             }

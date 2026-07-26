@@ -61,30 +61,30 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void GrabItem(PhysicalItem item)
+        public void GrabItem(PhysicalItem item, Vector3 localPoint)
         {
             if (_isHolding)
                 ReleaseItem(_heldItem, 0, false);
-
+            
             _heldItem = item;
             _heldRb = item.Rigidbody;
             _holdPivot = animatorTransform;
             _initialLocalRotation = Quaternion.Inverse(transform.rotation) * _heldRb.rotation;
             _shouldAlignRotation = item.HasToBeAligned;
-            MoveHands(item);
+            MoveHands(item, localPoint);
             _isHolding = true;
-            RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation);
+            RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation, localPoint);
         }
 
         [ClientRpc]
-        private void RpcGrabItem(PhysicalItem item, Quaternion initRot, bool align)
+        private void RpcGrabItem(PhysicalItem item, Quaternion initRot, bool align, Vector3 localPoint)
         {
             _heldItem = item;
             _heldRb = item.Rigidbody;
             _holdPivot = animatorTransform;
             _initialLocalRotation = initRot;
             _shouldAlignRotation = align;
-            MoveHands(item);
+            MoveHands(item, localPoint);
             _isHolding = true;
         }
 
@@ -198,8 +198,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
         }
 
-        public void MoveHands(PhysicalItem item)
+        public void MoveHands(PhysicalItem item, Vector3 localPoint)
         {
+            rightJoint.connectedAnchor  = localPoint;
+            leftJoint.connectedAnchor  = localPoint;
+            rightJoint.transform.localPosition = Vector3.zero;
+            leftJoint.transform.localPosition = Vector3.zero;
             if (item.HandleType == HandleType.OneHanded)
             {
                 rightJoint.gameObject.SetActive(true);

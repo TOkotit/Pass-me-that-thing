@@ -88,22 +88,22 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void PhysicalPickUpItem(PhysicalItem item)
+        public void PhysicalPickUpItem(PhysicalItem item, Vector3 localPoint)
         {
             _heldItem = item;
             movement.SetMovementMultiplier(item);
             SetOwnerAndLayer(item);
-            TargetPickUpItem(item);
-            _handsMovement.GrabItem(item);
+            TargetPickUpItem(item, localPoint);
+            _handsMovement.GrabItem(item, localPoint);
         }
 
         [TargetRpc]
-        private void TargetPickUpItem(PhysicalItem item)
+        private void TargetPickUpItem(PhysicalItem item, Vector3 localPoint)
         {
             _heldItem = item;
             movement.SetMovementMultiplier(item);
             if (_heldItem)
-                _handsMovement.GrabItem(_heldItem);
+                _handsMovement.GrabItem(_heldItem, localPoint);
         }
         
         [Server]

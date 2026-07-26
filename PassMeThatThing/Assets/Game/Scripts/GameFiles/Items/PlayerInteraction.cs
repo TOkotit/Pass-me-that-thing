@@ -229,13 +229,15 @@ namespace Game.Scripts.GameFiles.Items
             {
                 lastInteractionTime = Time.time;
                 var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+                if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
                 {
-                    Debug.Log(hit.collider);
+                    var worldPoint = hit.point;
+                    var hitTransform = hit.collider.transform;
+                    var localPoint = hitTransform.InverseTransformPoint(worldPoint);
+                    
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
-                        TryPickUp(hit.collider);
+                        TryPickUp(hit.collider, localPoint);
                     }
                     else if (hit.collider.gameObject.CompareTag("InteractableItem"))
                     {
@@ -246,7 +248,7 @@ namespace Game.Scripts.GameFiles.Items
                                     out var interactable))
                                 CmdInteractWithItem(hit.collider.gameObject, item);
                         }
-                        else { TryPickUp(hit.collider); }
+                        else { TryPickUp(hit.collider, localPoint); }
                     }
                     else if (hit.collider.gameObject.CompareTag("Player"))
                     {
@@ -279,21 +281,21 @@ namespace Game.Scripts.GameFiles.Items
             _physicalItemInteractionController.ChargeDrop();
         }
 
-        public void TryPickUp(Collider target)
+        public void TryPickUp(Collider target, Vector3 localPoint)
         {
             var item = _physicalItemRegistry.GetItem(target.gameObject);
             Debug.Log("Trying Pick Up" + target.gameObject);
             if (item == _physicalItemInteractionController.CurrentHeldItem) return;
-            inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex);
+            inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex, localPoint);
         }
 
         [Server]
-        public void TryPickUp(PhysicalItem target)
+        public void TryPickUp(PhysicalItem target, Vector3 localPoint)
         {
             Debug.Log("Trying Pick Up" + target.gameObject);
             if (target == _physicalItemInteractionController.CurrentHeldItem) return;
             Debug.Log(inventory);
-            inventory.ServerPickUpItem(target, _playerInventoryModel.ActiveSlotIndex);
+            inventory.ServerPickUpItem(target, _playerInventoryModel.ActiveSlotIndex, localPoint);
             if (_outlineRegistry.TryGetOutline(target.gameObject, out var outline))
             {
                 _outlineRegistry.DisableOutline(outline);

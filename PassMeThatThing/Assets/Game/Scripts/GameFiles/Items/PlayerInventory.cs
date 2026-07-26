@@ -90,10 +90,10 @@ public class PlayerInventory : NetworkBehaviour
         _playerInventoryModel.ActiveSlotIndex = activeSlot; 
     }
     [Command]
-    public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot)
+    public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot, Vector3 localPoint)
     {
         physicalItem.ConnectionToClient = connectionToClient;
-        TryPickUpItemInternal(physicalItem, preferredSlot);
+        TryPickUpItemInternal(physicalItem, preferredSlot, localPoint);
     }
 
     [Command]
@@ -126,7 +126,7 @@ public class PlayerInventory : NetworkBehaviour
         if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
         if (physicalItem)
         {
-            _physicalСontroller.PhysicalPickUpItem(physicalItem);
+            _physicalСontroller.PhysicalPickUpItem(physicalItem, Vector3.zero);
             activeSlot = index;   
             physicalItem.ConnectionToClient = connectionToClient;
         }
@@ -193,16 +193,16 @@ public class PlayerInventory : NetworkBehaviour
             instanceId = item.Network.instanceId
         };
 
-        targetController.PhysicalPickUpItem(item);
+        targetController.PhysicalPickUpItem(item, Vector3.zero);
     }
     
     [Server]
-    public void ServerPickUpItem(PhysicalItem physicalItem, int preferredSlot)
+    public void ServerPickUpItem(PhysicalItem physicalItem, int preferredSlot, Vector3 localPoint)
     {
-        TryPickUpItemInternal(physicalItem, preferredSlot);
+        TryPickUpItemInternal(physicalItem, preferredSlot, localPoint);
     }
     
-    private void TryPickUpItemInternal(PhysicalItem physicalItem, int preferredSlot)
+    private void TryPickUpItemInternal(PhysicalItem physicalItem, int preferredSlot, Vector3 localPoint)
     {
         if (!physicalItem) return;
         var networkItem = physicalItem.Network;
@@ -243,7 +243,7 @@ public class PlayerInventory : NetworkBehaviour
             _physicalСontroller.ReleaseCurrentItem(0f, false);
         }
 
-        _physicalСontroller.PhysicalPickUpItem(physicalItem);
+        _physicalСontroller.PhysicalPickUpItem(physicalItem, localPoint);
         activeSlot = targetSlot;
     }
     

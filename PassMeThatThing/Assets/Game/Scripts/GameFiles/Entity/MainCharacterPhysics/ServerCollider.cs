@@ -33,8 +33,8 @@ namespace Game.NewMainCharacterPhysics
             var impactReceiver = col.GetComponent<DamagableImpactReceiver>();
 
             fixedJoint.connectedBody = bodyPart;
-            itemCatcher.SetPlayerInteraction(player.MainCharacterModel.PlayerInteraction);
-            itemCatcher.SetRegistry(_physicalItemRegistry);
+            //itemCatcher.SetPlayerInteraction(player.MainCharacterModel.PlayerInteraction);
+            //itemCatcher.SetRegistry(_physicalItemRegistry);
             impactReceiver?.SetDamagable(player);
 
             _damagableRegistry.Register(col.gameObject, player);
