@@ -23,7 +23,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public List<LevelRoomNew> AttachedTunnels = new();
     }
     
-    
     public class LevelPlacementOrchestratorNew : MonoBehaviour
     {
         [SerializeField] private RoomDatabaseNew roomDatabase;
@@ -34,8 +33,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private System.Random _random = new();
         
         private static readonly Vector3Int[] SearchDirections = {
-            new Vector3Int(1, 0, 0), new Vector3Int(-1, 0, 0),
-            new Vector3Int(0, 0, 1), new Vector3Int(0, 0, -1)
+            new(1, 0, 0), new(-1, 0, 0),
+            new(0, 0, 1), new(0, 0, -1)
         };
         
         private class PathNodeNew
@@ -45,7 +44,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             public int Depth;
         }
         
-
         public void GeneratePhysicalLevel(RoomNodeNew hubNode)
         {
             levelGrid.ClearGrid();
@@ -97,7 +95,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     Debug.LogWarning($"[ПРОПУСК] Не удалось разместить узел ID {current.NodeId}");
                 }
             }
-            ConnectAllFreeExits();;
+            ConnectAllFreeExits();
         }
 
         private bool PlaceHub(RoomNodeNew hubNode)
@@ -115,6 +113,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             if (!_placedRooms.TryGetValue(parentNode, out var parentData)) return false;
 
             var candidates = GetPrioritizedCandidates(nodeToPlace, parentData);
+            var validPlacements = new List<(LevelRoomNew prefab, ConnectionPointNew parentConn, RoomRotation rot, Vector3Int origin)>();
 
             foreach (var prefab in candidates)
             {
@@ -133,16 +132,28 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                             if (RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin))
                             {
-                                InstantiateAndRegisterRoom(nodeToPlace, prefab, origin, rot, parentConn);
-                                parentData.FreeConnections.Remove(parentConn);
-                                return true;
+                                validPlacements.Add((prefab, parentConn, rot, origin));
                             }
                         }
                     }
                 }
             }
 
-            return TryPlaceGlobal(nodeToPlace);
+            if (validPlacements.Count == 0) return TryPlaceGlobal(nodeToPlace);
+
+            if (nodeToPlace.Type == RoomTypeNew.RecoveryHangar)
+            {
+                validPlacements = validPlacements.OrderByDescending(p => Vector3Int.Distance(p.origin, Vector3Int.zero)).ToList();
+            }
+            else
+            {
+                validPlacements = validPlacements.OrderBy(_ => _random.Next()).ToList();
+            }
+            
+            var selected = validPlacements.First();
+            InstantiateAndRegisterRoom(nodeToPlace, selected.prefab, selected.origin, selected.rot, selected.parentConn);
+            parentData.FreeConnections.Remove(selected.parentConn);
+            return true;
         }
 
         private bool TryPlaceGlobal(RoomNodeNew nodeToPlace)
@@ -151,6 +162,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 .OrderBy(x => _random.Next()).ToList();
 
             var allPlaced = _placedRooms.Values.OrderBy(x => _random.Next()).ToList();
+            var validPlacements = new List<(PlacedRoomDataNew parent, LevelRoomNew prefab, ConnectionPointNew parentConn, RoomRotation rot, Vector3Int origin)>();
 
             foreach (var parentData in allPlaced)
             {
@@ -171,16 +183,29 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                                 if (RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin))
                                 {
-                                    InstantiateAndRegisterRoom(nodeToPlace, prefab, origin, rot, parentConn);
-                                    parentData.FreeConnections.Remove(parentConn);
-                                    return true;
+                                    validPlacements.Add((parentData, prefab, parentConn, rot, origin));
                                 }
                             }
                         }
                     }
                 }
             }
-            return false;
+
+            if (validPlacements.Count == 0) return false;
+            
+            if (nodeToPlace.Type == RoomTypeNew.RecoveryHangar)
+            {
+                validPlacements = validPlacements.OrderByDescending(p => Vector3Int.Distance(p.origin, Vector3Int.zero)).ToList();
+            }
+            else
+            {
+                validPlacements = validPlacements.OrderBy(_ => _random.Next()).ToList();
+            }
+
+            var selected = validPlacements.First();
+            InstantiateAndRegisterRoom(nodeToPlace, selected.prefab, selected.origin, selected.rot, selected.parentConn);
+            selected.parent.FreeConnections.Remove(selected.parentConn);
+            return true;
         }
 
         private PlacedRoomDataNew InstantiateAndRegisterRoom(RoomNodeNew node, LevelRoomNew prefab, Vector3Int origin, RoomRotation rotation, ConnectionPointNew? usedConnection)
@@ -297,7 +322,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             if (rawCandidates == null || rawCandidates.Count == 0) 
                 return new List<LevelRoomNew>();
 
-           
             var isEndOrPenultimate = nodeToPlace.Type == RoomTypeNew.RecoveryHangar || 
                                      nodeToPlace.ConnectedNodes.Count <= 1 ||
                                      nodeToPlace.ConnectedNodes.Any(neighbor => neighbor.Type == RoomTypeNew.RecoveryHangar || neighbor.ConnectedNodes.Count <= 1);
@@ -322,7 +346,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         private int CalculateFreeExitsScore(LevelRoomNew prefab, PlacedRoomDataNew parentData)
         {
-            int maxValidFreeDoors = -1;
+            var maxValidFreeDoors = -1;
 
             foreach (var parentConn in parentData.FreeConnections)
             {
@@ -340,16 +364,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     if (!RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin)) 
                         continue;
 
-                    int freeDoorsToUnoccupied = 0;
-                    Vector3Int entranceCell = targetCell;
-                    Vector3Int entranceDir = -parentConn.Direction;
+                    var freeDoorsToUnoccupied = 0;
+                    var entranceDir = -parentConn.Direction;
 
                     foreach (var plate in plates)
                     {
                         var plateGlobalPos = origin + plate.LocalPosition;
                         foreach (var door in plate.Doors)
                         {
-                            if (plateGlobalPos == entranceCell && door.GlobalDirection == entranceDir)
+                            if (plateGlobalPos == targetCell && door.GlobalDirection == entranceDir)
                                 continue;
 
                             var neighborCell = plateGlobalPos + door.GlobalDirection;
@@ -369,11 +392,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             return maxValidFreeDoors;
         }
+        
         private void ConnectAllFreeExits()
         {
             var allFreeConnections = new List<(PlacedRoomDataNew Room, ConnectionPointNew Conn)>();
             foreach (var kvp in _placedRooms)
             {
+                if (kvp.Key.Type == RoomTypeNew.CommandCenter || kvp.Key.Type == RoomTypeNew.RecoveryHangar)
+                {
+                    kvp.Value.FreeConnections.Clear();
+                    continue;
+                }
+
                 foreach (var conn in kvp.Value.FreeConnections)
                 {
                     allFreeConnections.Add((kvp.Value, conn));
@@ -447,7 +477,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     }
                     path.Reverse();
 
-                    if (path.Count <= 6)
+                    if (path.Count <= 10)
                     {
                         PlaceTunnelsAlongPath(path, tunnelPrefabs, startData.Room, startData.Conn, foundTarget.Value.Conn);
                         
@@ -461,41 +491,78 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         private void PlaceTunnelsAlongPath(List<Vector3Int> path, List<LevelRoomNew> tunnelPrefabs, PlacedRoomDataNew ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
         {
-            for (int i = 0; i < path.Count; i++)
+            var sortedPrefabs = tunnelPrefabs
+                .OrderByDescending(p => RoomRotationHelper.GetRotatedPlates(p, RoomRotation.Deg0).Length)
+                .ToList();
+
+            var i = 0;
+            while (i < path.Count)
             {
                 var cell = path[i];
-                if (levelGrid.IsCellOccupied(cell)) continue; 
-
-                var prevCell = (i == 0) ? startConn.GlobalPosition : path[i - 1];
-                var nextCell = (i == path.Count - 1) ? endConn.GlobalPosition : path[i + 1];
-
-                var dirToPrev = prevCell - cell;
-                var dirToNext = nextCell - cell;
-
-                bool placed = false;
-                foreach (var prefab in tunnelPrefabs.OrderBy(_ => _random.Next()))
+                if (levelGrid.IsCellOccupied(cell)) 
                 {
-                    for (int r = 0; r < 4; r++)
+                    i++;
+                    continue; 
+                }
+
+                var placed = false;
+                var prevCell = (i == 0) ? startConn.GlobalPosition : path[i - 1];
+
+                foreach (var prefab in sortedPrefabs)
+                {
+                    for (var r = 0; r < 4; r++)
                     {
                         var rot = (RoomRotation)r;
                         var plates = RoomRotationHelper.GetRotatedPlates(prefab, rot);
+                        var prefabSize = plates.Length;
 
-                        bool hasPrevDoor = false;
-                        bool hasNextDoor = false;
+                        if (i + prefabSize > path.Count) continue;
+
+                        var matchPath = true;
+                        var hasPrevDoor = false;
+                        var hasNextDoor = false;
+                        
+                        var expectedPathCells = new HashSet<Vector3Int>();
+                        for (var j = 0; j < prefabSize; j++)
+                        {
+                            expectedPathCells.Add(path[i + j]);
+                        }
+
+                        var nextCellAfterPrefab = (i + prefabSize == path.Count) ? endConn.GlobalPosition : path[i + prefabSize];
+                        var lastPrefabCell = path[i + prefabSize - 1];
+
+                        var actualPrefabCells = new HashSet<Vector3Int>();
 
                         foreach (var p in plates)
                         {
-                            if (p.LocalPosition == Vector3Int.zero)
+                            var globalPos = cell + p.LocalPosition;
+                            actualPrefabCells.Add(globalPos);
+
+                            if (globalPos == cell)
                             {
-                                foreach (var door in p.Doors)
+                                var dirToPrev = prevCell - cell;
+                                if (p.Doors.Any(d => d.GlobalDirection == dirToPrev))
                                 {
-                                    if (door.GlobalDirection == dirToPrev) hasPrevDoor = true;
-                                    if (door.GlobalDirection == dirToNext) hasNextDoor = true;
+                                    hasPrevDoor = true;
+                                }
+                            }
+
+                            if (globalPos == lastPrefabCell)
+                            {
+                                var dirToNext = nextCellAfterPrefab - lastPrefabCell;
+                                if (p.Doors.Any(d => d.GlobalDirection == dirToNext))
+                                {
+                                    hasNextDoor = true;
                                 }
                             }
                         }
 
-                        if (hasPrevDoor && hasNextDoor && RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, cell))
+                        if (!expectedPathCells.SetEquals(actualPrefabCells))
+                        {
+                            matchPath = false;
+                        }
+
+                        if (matchPath && hasPrevDoor && hasNextDoor && RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, cell))
                         {
                             var instance = InstantiateRoom(prefab, cell, rot, "PathTunnel");
                             ownerData.AttachedTunnels.Add(instance);
@@ -505,12 +572,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                                 levelGrid.SetCellState(cell + p.LocalPosition, true);
                             }
                             
+                            i += prefabSize - 1; 
                             placed = true;
                             break;
                         }
                     }
                     if (placed) break;
                 }
+                i++;
             }
         }
     }

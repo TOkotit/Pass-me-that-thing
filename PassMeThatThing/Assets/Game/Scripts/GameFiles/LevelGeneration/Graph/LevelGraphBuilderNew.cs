@@ -43,9 +43,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 AttachRoomToGraph(roomType);
             }
             
-            //CreateCycles();
-            //AddExtraTechnicalTunnels();
-            
             var farthestPoint = FindFarthestNode(root);
             var hangar = CreateNode(RoomTypeNew.RecoveryHangar);
             var branchId = _nodeBranchIds.GetValueOrDefault(farthestPoint, 0);
@@ -208,73 +205,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             AttachNodeWithOptionalTunnel(parentNode, newNode, parentBranch, true);
         }
         
-        
-        private RoomNodeNew SelectParentWeightedByCapacity(List<RoomNodeNew> nodes)
-        {
-            var weightedList = new List<RoomNodeNew>();
-            foreach (var node in nodes)
-            {
-                var freeSlots = _config.MaxConnectionsPerRoom - node.ConnectedNodes.Count;
-                var weight = Math.Max(1, freeSlots * freeSlots);
-                for (var i = 0; i < weight; i++)
-                {
-                    weightedList.Add(node);
-                }
-            }
-
-            return weightedList[_random.Next(weightedList.Count)];
-        }
-        
-        
-        private void CreateCycles()
-        {
-            var candidatePairs = new List<(RoomNodeNew nodeA, RoomNodeNew nodeB)>();
-
-            for (var i = 0; i < AllNodes.Count; i++)
-            {
-                for (var j = i + 1; j < AllNodes.Count; j++)
-                {
-                    var a = AllNodes[i];
-                    var b = AllNodes[j];
-
-                    if (a.ConnectedNodes.Contains(b)) continue;
-                    if (a.Type == RoomTypeNew.CommandCenter || b.Type == RoomTypeNew.CommandCenter) continue;
-
-                    _parents.TryGetValue(a, out var parentA);
-                    _parents.TryGetValue(b, out var parentB);
-
-                    var shareParent = parentA != null && parentA == parentB;
-
-                    if (!shareParent)
-                    {
-                        candidatePairs.Add((a, b));
-                    }
-                }
-            }
-
-            ShuffleList(candidatePairs);
-            var targetRoomsWithAlternativePath = (int)Math.Ceiling(AllNodes.Count * 0.7f);
-
-            foreach (var (a, b) in candidatePairs)
-            {
-                if (AllNodes.Count(n => n.ConnectedNodes.Count >= 2) >= targetRoomsWithAlternativePath) break;
-
-                if (a.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom ||
-                    b.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom) continue;
-
-                var tunnel = CreateNode(RoomTypeNew.TechnicalTunnels);
-                a.Connect(tunnel);
-                tunnel.Connect(b);
-
-                var branchA = _nodeBranchIds.TryGetValue(a, out var ba) ? ba : 0;
-                _nodeBranchIds[tunnel] = branchA;
-            }
-
-            OpenNodes.RemoveAll(node => node.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom);
-        }
-
-        
-        
         private void ShuffleList<T>(List<T> list)
         {
             var n = list.Count;
@@ -316,28 +246,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             }
 
             return farthestNode;
-        }
-        
-        private void AddExtraTechnicalTunnels()
-        {
-            var availableNodes = OpenNodes.Where(n => n.ConnectedNodes.Count < _config.MaxConnectionsPerRoom).ToList();
-            
-            var extraTunnelsCount = _random.Next(0, 3);
-
-            while (extraTunnelsCount > 0 && availableNodes.Count > 0)
-            {
-                var parentNode = availableNodes[_random.Next(availableNodes.Count)];
-                
-                var tunnel = CreateNode(RoomTypeNew.TechnicalTunnels);
-                parentNode.Connect(tunnel);
-                
-                if (parentNode.ConnectedNodes.Count >= _config.MaxConnectionsPerRoom)
-                {
-                    availableNodes.Remove(parentNode);
-                }
-
-                extraTunnelsCount--;
-            }
         }
     }
 }
