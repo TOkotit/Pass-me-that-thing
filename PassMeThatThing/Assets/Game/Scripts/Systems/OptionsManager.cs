@@ -109,6 +109,10 @@ namespace Game.Scripts.Systems
 
         public void StartRebindKey(InputAction inputAction, int targetIndex=-1, Action callback=null)
         {
+            inputAction.Disable();
+
+            Debug.Log($"[REBINDS] {inputAction.enabled}");
+
             if (targetIndex == -1)
             {
                 _rebindingOperation = inputAction.PerformInteractiveRebinding();
@@ -117,20 +121,19 @@ namespace Game.Scripts.Systems
             {
                 _rebindingOperation = inputAction.PerformInteractiveRebinding(targetIndex);
             }
-            
-            inputAction.Disable();
-                
+
             _rebindingOperation
                 .WithControlsExcluding("Mouse")
                 .OnMatchWaitForAnother(0.1f)
                 .OnComplete(operation => RebindComplete(inputAction, callback))
                 .Start();
         }
-        
+
+
         private void RebindComplete(InputAction inputAction, Action callback=null)
         {
-            inputAction.Enable();
             _rebindingOperation.Dispose();
+            inputAction.Enable();
             if (callback != null)
                 callback();
         }
