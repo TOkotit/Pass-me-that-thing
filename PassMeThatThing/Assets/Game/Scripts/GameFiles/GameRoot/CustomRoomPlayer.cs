@@ -48,8 +48,10 @@ namespace Root
         
         [SyncVar(hook = nameof(OnSteamIdChanged))]
         private ulong steamId;
-        
+
+        [SyncVar]
         public string nameText;
+        [SyncVar]
         public Texture2D avatarImage;
 
         public override void OnStartLocalPlayer()
