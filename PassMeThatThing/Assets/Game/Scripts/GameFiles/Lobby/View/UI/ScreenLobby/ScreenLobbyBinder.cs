@@ -62,9 +62,13 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
                 var playerView = lobbyPlayerViewPrefab.Instantiate();
                 _lobbyPlayersContainer.Add(playerView);
 
-                // playerView.Q<VisualElement>("LobbyPlayerImg").style.backgroundImage
-                //     = new StyleBackground();
-                playerView.Q<Label>("LobbyPlayerNameLb").text = "player_" + p.index.ToString(); //data.nickname;
+                playerView.Q<VisualElement>("LobbyPlayerImg").style.backgroundImage
+                    = p.avatarImage is null ? null : new StyleBackground(p.avatarImage);
+                    
+                playerView.Q<Label>("LobbyPlayerNameLb").text 
+                    = string.IsNullOrEmpty(p.nameText) 
+                    ? "player_" + p.index.ToString()
+                    : p.nameText; 
                 playerView.Q<Label>("LobbyPlayerReadyStatusLb").text = p.readyToBegin ?  "Ready" : "Not Ready";
             }
         }

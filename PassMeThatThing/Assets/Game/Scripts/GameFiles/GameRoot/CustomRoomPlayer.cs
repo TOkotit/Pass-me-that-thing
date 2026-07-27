@@ -82,27 +82,32 @@ namespace Root
 
         private IEnumerator LoadSteamAvatar(CSteamID cSteamId)
         {
-            int imageId = SteamFriends.GetLargeFriendAvatar(cSteamId);
+            Debug.Log("LoadSteamAvatar");
+            int imageId = SteamFriends.GetSmallFriendAvatar(cSteamId);
 
             // Если аватар ещё не загружен в кэш Steam ждем его готовности
             while (imageId == -1)
             {
                 yield return null;
-                imageId = SteamFriends.GetLargeFriendAvatar(cSteamId);
+                imageId = SteamFriends.GetSmallFriendAvatar(cSteamId);
             }
 
             if (imageId > 0)
             {
                 var avatarTexture = GetSteamAvatarAsTexture(imageId);
-                if (avatarImage != null && avatarTexture != null)
+                Debug.Log($"avatarTexture {avatarTexture == null}");
+                if (avatarTexture != null)
                 {
                     avatarImage = avatarTexture;
                 }
             }
+
+            _viewHandler.PlayersViewDataChanged();
         }
         
         private Texture2D GetSteamAvatarAsTexture(int imageId)
         {
+            Debug.Log("GetSteamAvatarAsTexture");
             uint width, height;
             if (!SteamUtils.GetImageSize(imageId, out width, out height))
                 return null;
