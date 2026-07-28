@@ -1000,7 +1000,7 @@ Transform:
   m_GameObject: {fileID: 2472626591355819156}
   serializedVersion: 2
   m_LocalRotation: {x: -0.48616564, y: -0.48616555, z: -0.5134618, w: 0.5134618}
-  m_LocalPosition: {x: 0, y: 0.548, z: -0.954}
+  m_LocalPosition: {x: -0, y: 0.444, z: -1.173}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5712,13 +5712,16 @@ MonoBehaviour:
   syncInterval: 0
   leftJoint: {fileID: 6186713367683430940}
   rightJoint: {fileID: 6759388885409534181}
-  grabJoint: {fileID: 1323866539399521512}
-  baseHoldForce: 450
+  baseHoldForce: 2000
   holdDamping: 15
   maxHoldDistance: 2
-  maxLiftMass: 100
+  maxLiftMass: 250
+  extraForceScale: 0.1
   maxAngularSpeed: 15
   angularResponsiveness: 0.5
+  rotationSpring: 100
+  rotationDamper: 5
+  maxTorquePerPlayer: 50
   throwForceGrow: 5
   maxThrowForce: 15
   minChargeTime: 0.3
