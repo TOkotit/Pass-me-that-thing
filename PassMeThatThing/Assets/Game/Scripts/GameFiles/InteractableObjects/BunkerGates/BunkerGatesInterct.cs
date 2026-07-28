@@ -53,11 +53,11 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
 
         public void Interact()
         {
-            CmdToggleGate();
+            CmdToggleBunkerGate();
         }
 
         [Command(requiresAuthority = false)] 
-        private void CmdToggleGate() => isOpen = !isOpen;
+        private void CmdToggleBunkerGate() => isOpen = !isOpen;
         
         [ServerCallback]
         public void SrbToggle() => isOpen = !isOpen;

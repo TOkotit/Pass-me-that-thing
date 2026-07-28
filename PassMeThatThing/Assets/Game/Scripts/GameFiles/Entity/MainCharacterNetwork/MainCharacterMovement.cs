@@ -86,7 +86,6 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (_damagableRegistry.TryGetDamagable(hit.gameObject, out var damagable) && damagable is MainCharacter otherCharacter)
         {
-            
             var relativeVelocity = otherCharacter.Movement.LastVelocity - LastVelocity;
             var impactSpeed = Vector3.Dot(relativeVelocity, hit.normal);
             Debug.LogError($"!Impact with {hit.gameObject.name}! {impactSpeed}");
@@ -100,6 +99,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.LogError($"Impact with {collision.gameObject.name}");
+        if (_itemController.CurrentHeldItem.Collider == collision.collider) return;
         var impactSpeed = 0f;
         if (collision.rigidbody)
         {
