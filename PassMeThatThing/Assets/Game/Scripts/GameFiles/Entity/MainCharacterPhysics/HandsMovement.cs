@@ -72,7 +72,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _heldRb = item.Rigidbody;
             _holdPivot = animatorTransform;
 
-            // Сохраняем полный относительный поворот и отдельно Y-угол
             _initialLocalRotation = Quaternion.Inverse(transform.rotation) * _heldRb.rotation;
             _initialRelativeYaw = _initialLocalRotation.eulerAngles.y;
 
@@ -160,7 +159,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
             if (_shouldAlignRotation)
             {
-                // === Выравниваемые предметы: центр масс к пивоту + полное жёсткое вращение ===
                 var toTarget = pivotPos - _heldRb.position;
                 var distance = toTarget.magnitude;
                 var desiredVelocity = toTarget / Time.fixedDeltaTime;
@@ -191,48 +189,42 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
             else
             {
-                // === Невыравниваемые предметы: разделённые силы + вертикальная стабилизация ===
-                Vector3 grabPoint = _heldRb.position + _heldRb.rotation * _localPoint;
-                Vector3 toTarget = pivotPos - grabPoint;
-                float distance = toTarget.magnitude;
+                var grabPoint = _heldRb.position + _heldRb.rotation * _localPoint;
+                var toTarget = pivotPos - grabPoint;
+                var distance = toTarget.magnitude;
 
-                // Общая сила, которая должна быть приложена к точке захвата
                 var desiredVelocity = toTarget / Time.fixedDeltaTime;
                 var totalForce = (desiredVelocity - _heldRb.GetPointVelocity(grabPoint)) * _heldRb.mass / Time.fixedDeltaTime;
                 if (totalForce.magnitude > baseHoldForce)
                     totalForce = totalForce.normalized * baseHoldForce;
                 totalForce -= _heldRb.GetPointVelocity(grabPoint) * (holdDamping * _heldRb.mass);
 
-                // Доп. сила при превышении дистанции
                 if (distance > maxHoldDistance)
                 {
-                    float extraForceMag = (distance - maxHoldDistance) * baseHoldForce * extraForceScale;
-                    Vector3 extraForce = toTarget.normalized * extraForceMag;
+                    var extraForceMag = (distance - maxHoldDistance) * baseHoldForce * extraForceScale;
+                    var extraForce = toTarget.normalized * extraForceMag;
                     totalForce += extraForce;
                 }
 
-                // Разделяем на вертикальную (к центру масс) и горизонтальную (к точке захвата)
-                Vector3 verticalForce = Vector3.up * totalForce.y;
-                Vector3 horizontalForce = new Vector3(totalForce.x, 0f, totalForce.z);
+                var verticalForce = Vector3.up * totalForce.y;
+                var horizontalForce = new Vector3(totalForce.x, 0f, totalForce.z);
 
-                if (tooHeavy) verticalForce = Vector3.zero;   // не можем поднимать
-
+                if (tooHeavy) verticalForce = Vector3.zero;   
                 _heldRb.AddForce(verticalForce, ForceMode.Force);                     // к центру масс
                 _heldRb.AddForceAtPosition(horizontalForce, grabPoint, ForceMode.Force); // к точке захвата
 
-                // === Вертикальная стабилизация: только Y-поворот, предмет всегда вертикален ===
-                float targetYaw = transform.eulerAngles.y + _initialRelativeYaw;
-                Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+                var targetYaw = transform.eulerAngles.y + _initialRelativeYaw;
+                var targetRot = Quaternion.Euler(0f, targetYaw, 0f);
 
-                Quaternion rotDelta = targetRot * Quaternion.Inverse(_heldRb.rotation);
+                var rotDelta = targetRot * Quaternion.Inverse(_heldRb.rotation);
                 rotDelta.ToAngleAxis(out float angle, out Vector3 axis);
                 if (angle > 180f) angle -= 360f;
 
-                float spring = rotationSpring / holderCount;
-                float damper = rotationDamper / holderCount;
-                float maxTorque = maxTorquePerPlayer / holderCount;
+                var spring = rotationSpring / holderCount;
+                var damper = rotationDamper / holderCount;
+                var maxTorque = maxTorquePerPlayer / holderCount;
 
-                Vector3 torqueLocal = axis * (angle * Mathf.Deg2Rad * spring) - _heldRb.angularVelocity * damper;
+                var torqueLocal = axis * (angle * Mathf.Deg2Rad * spring) - _heldRb.angularVelocity * damper;
                 torqueLocal = Vector3.ClampMagnitude(torqueLocal, maxTorque);
                 _heldRb.AddTorque(torqueLocal, ForceMode.Force);
             }
