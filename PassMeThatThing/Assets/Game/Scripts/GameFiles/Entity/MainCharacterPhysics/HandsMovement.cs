@@ -21,15 +21,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private float holdDamping = 50f;
         [SerializeField] private float maxHoldDistance = 1.5f;
         [SerializeField] private float maxLiftMass = 15f;
+        [SerializeField] private float extraForceScale = 0.1f;
 
         [Header("Angular Hold – Aligned Items")]
         [SerializeField] private float maxAngularSpeed = 20f;
         [SerializeField] private float angularResponsiveness = 0.6f;
 
-        [Header("Angular Hold – Non‑Aligned Items")]
-        [SerializeField] private float rotationSpring = 100f;
-        [SerializeField] private float rotationDamper = 10f;
-        [SerializeField] private float maxTorquePerPlayer = 200f;
+        [Header("Angular Hold – Non-Aligned Items (Vertical + Yaw)")]
+        [SerializeField] private float rotationSpring = 20f;
+        [SerializeField] private float rotationDamper = 5f;
+        [SerializeField] private float maxTorquePerPlayer = 50f;
 
         [Header("Throwing")]
         [SerializeField] private float throwForceGrow = 5f;
@@ -42,6 +43,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public Transform AnimatorTransform => animatorTransform;
         public float CurrentThrowForce => _throwForce;
+        public Vector3 LocalPoint => _localPoint;
 
         private bool _isThrowing;
         private float _chargeStartTime;
@@ -53,6 +55,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private bool _isHolding;
         private Quaternion _initialLocalRotation;
         private bool _shouldAlignRotation;
+        private Vector3 _localPoint;
+        private float _initialRelativeYaw;   // относительный Y-угол в момент захвата
 
         private void Awake()
         {
@@ -63,27 +67,30 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Server]
         public void GrabItem(PhysicalItem item, Vector3 localPoint)
         {
-            if (_isHolding)
-                ReleaseItem(_heldItem, 0, false);
-            
+            _localPoint = localPoint;
             _heldItem = item;
             _heldRb = item.Rigidbody;
             _holdPivot = animatorTransform;
+
             _initialLocalRotation = Quaternion.Inverse(transform.rotation) * _heldRb.rotation;
+            _initialRelativeYaw = _initialLocalRotation.eulerAngles.y;
+
             _shouldAlignRotation = item.HasToBeAligned;
-            MoveHands(item, localPoint);
+            MoveHands(item, _localPoint);
             _isHolding = true;
-            RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation, localPoint);
+            RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation, _localPoint, _initialRelativeYaw);
         }
 
         [ClientRpc]
-        private void RpcGrabItem(PhysicalItem item, Quaternion initRot, bool align, Vector3 localPoint)
+        private void RpcGrabItem(PhysicalItem item, Quaternion initRot, bool align, Vector3 localPoint, float relativeYaw)
         {
             _heldItem = item;
             _heldRb = item.Rigidbody;
             _holdPivot = animatorTransform;
             _initialLocalRotation = initRot;
             _shouldAlignRotation = align;
+            _localPoint = localPoint;
+            _initialRelativeYaw = relativeYaw;
             MoveHands(item, localPoint);
             _isHolding = true;
         }
@@ -148,29 +155,28 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             var pivotPos = _holdPivot.position;
             var holderCount = Mathf.Max(1, _heldItem.Holders.Count);
-            var tooHeavy = _heldRb.mass > maxLiftMass / _heldItem.Holders.Count;
-
-            var toTarget = pivotPos - _heldRb.position;
-            var distance = toTarget.magnitude;
-            var desiredVelocity = toTarget / Time.fixedDeltaTime;
-            var linearForce = (desiredVelocity - _heldRb.linearVelocity) * _heldRb.mass / Time.fixedDeltaTime;
-            if (linearForce.magnitude > baseHoldForce)
-                linearForce = linearForce.normalized * baseHoldForce;
-            linearForce -= _heldRb.linearVelocity * (holdDamping * _heldRb.mass);
-
-            if (tooHeavy) linearForce.y = 0f;   
-            _heldRb.AddForce(linearForce, ForceMode.Force);
-
-            if (distance > maxHoldDistance)
-            {
-                var correction = toTarget.normalized * (distance - maxHoldDistance);
-                if (tooHeavy) correction.y = 0f;
-                _heldRb.position += correction * 0.5f;
-                _heldRb.linearVelocity = Vector3.zero;
-            }
+            var tooHeavy = _heldRb.mass > maxLiftMass / holderCount;
 
             if (_shouldAlignRotation)
             {
+                var toTarget = pivotPos - _heldRb.position;
+                var distance = toTarget.magnitude;
+                var desiredVelocity = toTarget / Time.fixedDeltaTime;
+                var linearForce = (desiredVelocity - _heldRb.linearVelocity) * _heldRb.mass / Time.fixedDeltaTime;
+                if (linearForce.magnitude > baseHoldForce)
+                    linearForce = linearForce.normalized * baseHoldForce;
+                linearForce -= _heldRb.linearVelocity * (holdDamping * _heldRb.mass);
+                if (tooHeavy) linearForce.y = 0f;
+                _heldRb.AddForce(linearForce, ForceMode.Force);
+
+                if (distance > maxHoldDistance)
+                {
+                    var correction = toTarget.normalized * (distance - maxHoldDistance);
+                    if (tooHeavy) correction.y = 0f;
+                    _heldRb.position += correction * 0.5f;
+                    _heldRb.linearVelocity = Vector3.zero;
+                }
+
                 var targetRot = _holdPivot.rotation;
                 var rotDelta = targetRot * Quaternion.Inverse(_heldRb.rotation);
                 rotDelta.ToAngleAxis(out var angle, out var axis);
@@ -183,27 +189,54 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
             else
             {
-                var targetRot = transform.rotation * _initialLocalRotation;
+                var grabPoint = _heldRb.position + _heldRb.rotation * _localPoint;
+                var toTarget = pivotPos - grabPoint;
+                var distance = toTarget.magnitude;
+
+                var desiredVelocity = toTarget / Time.fixedDeltaTime;
+                var totalForce = (desiredVelocity - _heldRb.GetPointVelocity(grabPoint)) * _heldRb.mass / Time.fixedDeltaTime;
+                if (totalForce.magnitude > baseHoldForce)
+                    totalForce = totalForce.normalized * baseHoldForce;
+                totalForce -= _heldRb.GetPointVelocity(grabPoint) * (holdDamping * _heldRb.mass);
+
+                if (distance > maxHoldDistance)
+                {
+                    var extraForceMag = (distance - maxHoldDistance) * baseHoldForce * extraForceScale;
+                    var extraForce = toTarget.normalized * extraForceMag;
+                    totalForce += extraForce;
+                }
+
+                var verticalForce = Vector3.up * totalForce.y;
+                var horizontalForce = new Vector3(totalForce.x, 0f, totalForce.z);
+
+                if (tooHeavy) verticalForce = Vector3.zero;   
+                _heldRb.AddForce(verticalForce, ForceMode.Force);                     // к центру масс
+                _heldRb.AddForceAtPosition(horizontalForce, grabPoint, ForceMode.Force); // к точке захвата
+
+                var targetYaw = transform.eulerAngles.y + _initialRelativeYaw;
+                var targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+
                 var rotDelta = targetRot * Quaternion.Inverse(_heldRb.rotation);
-                rotDelta.ToAngleAxis(out var angle, out var axis);
+                rotDelta.ToAngleAxis(out float angle, out Vector3 axis);
                 if (angle > 180f) angle -= 360f;
 
                 var spring = rotationSpring / holderCount;
                 var damper = rotationDamper / holderCount;
                 var maxTorque = maxTorquePerPlayer / holderCount;
 
-                var torque = axis * (angle * Mathf.Deg2Rad * spring) - _heldRb.angularVelocity * damper;
-                torque = Vector3.ClampMagnitude(torque, maxTorque);
-                _heldRb.AddTorque(torque, ForceMode.Force);
+                var torqueLocal = axis * (angle * Mathf.Deg2Rad * spring) - _heldRb.angularVelocity * damper;
+                torqueLocal = Vector3.ClampMagnitude(torqueLocal, maxTorque);
+                _heldRb.AddTorque(torqueLocal, ForceMode.Force);
             }
         }
 
         public void MoveHands(PhysicalItem item, Vector3 localPoint)
         {
-            rightJoint.connectedAnchor  = localPoint;
-            leftJoint.connectedAnchor  = localPoint;
+            rightJoint.connectedAnchor = localPoint;
+            leftJoint.connectedAnchor = localPoint;
             rightJoint.transform.localPosition = Vector3.zero;
             leftJoint.transform.localPosition = Vector3.zero;
+
             if (item.HandleType == HandleType.OneHanded)
             {
                 rightJoint.gameObject.SetActive(true);

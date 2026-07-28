@@ -11,23 +11,16 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private Hand hand;
         [SerializeField] private PhysicalItemInteractionController interactionController;
         [SerializeField] private ConfigurableJoint joint;
+        [SerializeField] private Transform handTransform;
+        [SerializeField] private Collider handCollider;
         private void OnTriggerEnter(Collider other)
         {
             var item = interactionController.CurrentHeldItem;
             if (item.Collider == other)
             {
-                if (item.HandleType == HandleType.OneHanded)
-                {
-                    if (hand == Hand.Right)
-                    {
-                        LockMovement();
-                    }
-                }
-
-                if (item.HandleType == HandleType.TwoHanded)
-                {
-                    LockMovement();
-                }
+                var point = other.ClosestPoint(transform.position);
+                var normal = (point - handCollider.bounds.center).normalized;
+                LockMovement();
             }
         }
         private void LockMovement()

@@ -86,7 +86,6 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (_damagableRegistry.TryGetDamagable(hit.gameObject, out var damagable) && damagable is MainCharacter otherCharacter)
         {
-            
             var relativeVelocity = otherCharacter.Movement.LastVelocity - LastVelocity;
             var impactSpeed = Vector3.Dot(relativeVelocity, hit.normal);
             Debug.LogError($"!Impact with {hit.gameObject.name}! {impactSpeed}");
@@ -100,6 +99,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.LogError($"Impact with {collision.gameObject.name}");
+        if (_itemController.CurrentHeldItem.Collider == collision.collider) return;
         var impactSpeed = 0f;
         if (collision.rigidbody)
         {
@@ -191,37 +191,30 @@ public class MainCharacterMovement : NetworkBehaviour
     {
         if (!isCharacterCanMove || !characterController.enabled) return;
 
-        var desiredMove = _moveDirection; 
+        var desiredMove = _moveDirection;
 
-        if (_itemController && _itemController.CurrentHeldItem)
+        if (_itemController && _itemController.CurrentHeldItem && _itemController.HandsMovement)
         {
-            var itemTransform = _itemController.CurrentHeldItem.transform;
-            var itemPos = itemTransform.position;
+            var grabWorldPos = _itemController.CurrentHeldItem.transform.TransformPoint(
+                _itemController.HandsMovement.LocalPoint);
             var charPos = transform.position;
-            var currentDist = Vector3.Distance(charPos, itemPos);
+            var currentDist = Vector3.Distance(charPos, grabWorldPos);
 
             if (currentDist > holdSoftZone)
             {
-                var dirAway = (charPos - itemPos).normalized;
+                var dirAway = (charPos - grabWorldPos).normalized;
                 var awayComponent = Vector3.Dot(desiredMove, dirAway);
-
                 if (awayComponent > 0)
                 {
                     var t = Mathf.InverseLerp(holdSoftZone, maxHoldDistance, currentDist);
                     var factor = 1f - t;
-
-                    var perpendicular = desiredMove - dirAway * awayComponent;
-                    var weakenedAway = dirAway * (awayComponent * factor);
-                    desiredMove = perpendicular + weakenedAway;
-
+                    desiredMove = desiredMove - dirAway * awayComponent + dirAway * (awayComponent * factor);
                 }
             }
         }
-
         var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
         var currentSpeed = _model.Speed * (_movementMultiplier / holderCount);
-        if (_isSprinting)
-            currentSpeed *= _model.SprintMultiplier;
+        if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
 
         characterController.Move(desiredMove * (currentSpeed * Time.fixedDeltaTime));
     }
