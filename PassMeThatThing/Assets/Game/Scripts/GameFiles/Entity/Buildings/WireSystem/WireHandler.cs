@@ -1,4 +1,8 @@
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using Game.Gameplay.View.UI;
 using Mirror;
+using System;
+using UnityEngine;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
@@ -8,6 +12,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [Inject] private LocalWireHandlerModel _handlerModel;
         [Inject] private WireManager _wireManager;
 
+        [Inject] private GameplayUIManager _gameplayUIManager;
+
         private void Start()
         {
             if (isLocalPlayer)
@@ -15,6 +21,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 _handlerModel.OnWireNodeHighlighted += WireNodeHighlighted;
                 _handlerModel.OnWireNodePairMatched += WireNodePairMatched;
                 _handlerModel.OnWireNodeCleared +=  WireNodeCleared;
+            }
+            else
+            {
+                Destroy(gameObject);
             }
         }
 

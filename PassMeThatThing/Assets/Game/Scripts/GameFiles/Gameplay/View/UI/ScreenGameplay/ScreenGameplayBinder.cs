@@ -42,6 +42,10 @@ namespace Game.Gameplay.View.UI
         private Label _gameGlobalStateText;
         private Label _gameGlobalStateTimerText;
 
+        private VisualElement _leftPlugImage;
+        private VisualElement _rightPlugImage;
+        private GroupBox _wirePlacementContainer;
+
         private void Awake()
         {
             _root = uiDocument.rootVisualElement;
@@ -54,17 +58,17 @@ namespace Game.Gameplay.View.UI
             _gameEventsContainer = _root.Q<GroupBox>("EventsContainer");
             _gameGlobalStateText = _root.Q<Label>("PhaseLb");
             _gameGlobalStateTimerText = _root.Q<Label>("RemainingTimeLb");
-            
+            _leftPlugImage = _root.Q<VisualElement>("LeftPlugImage");
+            _rightPlugImage = _root.Q<VisualElement>("RightPlugImage");
+            _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
         }
 
         private void Start()
         {
-            ViewModel.InitHealthUI(UpdateCurrHealthUI);
             ViewModel.RequestSubHealthUI(UpdateCurrHealthUI);
             
             ViewModel.RequestSubDeathUI(UpdateDeathUI);
 
-            ViewModel.InitActiveSlot(SetActiveItemSlot);
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
             
             ViewModel.InitImage(SetItemImageSprite);
@@ -79,7 +83,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
-            
+
+            ViewModel.RequestSubPlugImages(UpdatePlugImages);
         }
 
         private void OnDestroy()
@@ -88,7 +93,7 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
 
-            ViewModel.UnInitGameEventToClient(ReceiveEvents);
+            ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
             
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
 
@@ -243,6 +248,40 @@ namespace Game.Gameplay.View.UI
                     });
             }
                 
+        }
+
+        public void UpdatePlugImages(int wireCount)
+        {
+            switch (wireCount)
+            {
+                case 0:
+                    {
+                        _leftPlugImage.DOShake(0.2f).OnComplete(() =>
+                        {
+                            _leftPlugImage.visible = false;
+                            _rightPlugImage.visible = false;
+                            _wirePlacementContainer.visible = false;
+                        });
+                        break;
+                    }
+                case 1:
+                    {
+                        _wirePlacementContainer.visible = true;
+                        _leftPlugImage.visible = true;
+                        _leftPlugImage.DOShake(0.2f);
+                        break;
+                    }
+                case 2:
+                    {
+
+                        _rightPlugImage.visible = true;
+                        _rightPlugImage.DOShake(0.2f).OnComplete(() => 
+                            {
+                                _wirePlacementContainer.visible = false;
+                            });
+                        break;
+                    }
+            }
         }
     }
 }

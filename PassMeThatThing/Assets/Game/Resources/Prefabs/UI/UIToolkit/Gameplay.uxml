@@ -1,8 +1,19 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Gameplay/Gameplay.uss?fileID=7433441132597879392&amp;guid=e152551381caab343a416b55f7bf77d3&amp;type=3#Gameplay" />
-    <ui:VisualElement name="Cursor" style="flex-grow: 0; width: 10px; height: 10px; align-self: center; flex-direction: column; align-content: center; justify-content: space-between; align-items: stretch; background-color: rgb(255, 255, 255); position: absolute; left: 50%; top: 50%;" />
+    <ui:VisualElement name="Cursor" style="flex-grow: 0; width: 10px; height: 10px; align-self: center; flex-direction: column; align-content: center; justify-content: space-between; align-items: stretch; background-color: rgb(255, 255, 255); position: absolute; left: 50%; top: 50%; translate: -50% -50%;" />
     <ui:VisualElement enabled="true" name="HealthVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-image: resource(&apos;Sprites/low_hp&apos;); display: flex; opacity: 0;" />
     <ui:GroupBox style="align-self: auto; justify-content: center; align-items: auto; align-content: auto; height: 100%;">
+        <ui:GroupBox name="WirePlacementContainer" style="align-self: center; top: 89px; visibility: visible;">
+            <ui:GroupBox style="position: relative; height: 229px; width: 433px; top: auto; left: auto; align-self: center; flex-direction: row;">
+                <ui:VisualElement name="LeftPlugImage" style="flex-grow: 1; background-image: resource(&apos;Sprites/wire_plug&apos;); -unity-background-scale-mode: scale-to-fit; background-position-x: right 0; margin-right: 26px; visibility: hidden;" />
+                <ui:VisualElement name="RightPlugImage" style="flex-grow: 1; background-image: resource(&apos;Sprites/wire_plug&apos;); background-position-y: center 0; -unity-background-scale-mode: scale-to-fit; background-position-x: right 0; scale: -1 1; visibility: hidden;" />
+            </ui:GroupBox>
+            <ui:GroupBox name="GroupBox" style="top: auto; font-size: 37px; -unity-text-align: middle-center; position: relative; bottom: 0; color: rgb(255, 255, 255); align-self: auto; align-items: flex-start; justify-content: flex-start; align-content: auto; width: 410px;">
+                <ui:Label text="Choose another to connect" style="width: auto; align-self: center;" />
+                <ui:Label text="Choose again to clear" style="width: auto; align-self: center;" />
+                <ui:Label text="C to cancel" style="width: auto; align-self: center;" />
+            </ui:GroupBox>
+        </ui:GroupBox>
         <ui:GroupBox name="EventsContainer" style="height: 534px; width: 301px; align-items: stretch; align-content: flex-start; align-self: flex-start; position: absolute; background-color: rgba(115, 115, 115, 0.51);" />
         <ui:GroupBox style="height: 107px; width: 404px; align-items: stretch; align-content: flex-start; align-self: flex-start; bottom: 0; position: absolute; left: 0; flex-direction: row; justify-content: space-between; font-size: 100%;">
             <ui:Label text="Label" name="RemainingTimeLb" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); font-size: 50px;" />

@@ -107,9 +107,12 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         {
             _minigameContentContainer.Clear();
 
-            foreach (var t in _customToggles)
+            if (_customToggles != null)
             {
-                t.UnregisterValueChangedCallback(CheckToggles);
+                foreach (var t in _customToggles)
+                {
+                    t.UnregisterValueChangedCallback(CheckToggles);
+                }
             }
         }
 

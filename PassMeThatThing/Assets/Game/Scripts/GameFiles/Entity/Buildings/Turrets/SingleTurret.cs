@@ -11,10 +11,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
     /// </summary>
     public class SingleTurret : Turret, IDependsOnWireNet
     {
+        private const float rotationSpeed = 20f;
+
         [SerializeField] private WireNodePort inputPort;
+        [SerializeField] private GameObject turretHead;
+        [SerializeField] private GameObject firePoint;
         
         private float _elapsedAttack;
-        
+        private Vector3 _dir;
+        private Vector3 _headRotation;
+
         public float Damage => TurretData.damage;
         public float AttackSpeed => TurretData.attackSpeed;
 
@@ -47,15 +53,26 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             
             if (!IsTurretWork) return;
             if (!targetDetector.IsTargetVisible) return;
-            
-            
+
+            _dir = targetDetector.DetectedTargetObject.transform.position - turretHead.transform.position;
+
+            _headRotation = Quaternion.Lerp(turretHead.transform.rotation,
+                Quaternion.LookRotation(_dir),
+                rotationSpeed * Time.deltaTime).eulerAngles;
+            turretHead.transform.rotation = Quaternion.Euler(0f, _headRotation.y, 0f);
+
             _elapsedAttack += Time.fixedDeltaTime;
             if (_elapsedAttack >= (1 / AttackSpeed))
             {
-                turretAttackController.AttackRay(Damage, targetDetector.DetectedTargetObject);
-                
+                Attack();
                 _elapsedAttack = 0f;
             }
+        }
+
+        public void Attack()
+        {
+            turretAttackController.AttackRay(Damage,
+                    firePoint.transform, targetDetector.DetectedTargetObject);
         }
 
 

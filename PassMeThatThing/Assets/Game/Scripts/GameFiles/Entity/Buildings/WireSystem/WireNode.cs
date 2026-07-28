@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -11,8 +12,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
     public class WireNode : NetworkBehaviour, Interactable
     {
         [SerializeField] private WireType wireType;
+
+        [SerializeField] private int connLimit = 2;
+        [SerializeField] private List<GameObject> portObjects;
+
         [SerializeField] private bool isSplitter;
-        [SerializeField] private int splitterConnLimit = 4;
+
         
         [Inject] protected WireManager _wireManager;
         
@@ -22,7 +27,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private int _nodeId = -1;
         [SyncVar]
         private int _netId = -1;
-        
+
         public int NodeId
         {
             get => _nodeId;
@@ -36,9 +41,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
 
         public bool IsSplitter => isSplitter;
-        public int SplitterConnLimit => splitterConnLimit;
 
         public WireType WireType => wireType;
+
+        public int ConnLimit => connLimit;
+
+        public List<GameObject> PortObjects => portObjects;
 
         public virtual void Start()
         {
@@ -60,7 +68,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         {
             //Debug.Log($"[W] wirenode interact");
             
-            _handlerModel.HighlightNode(NodeId);
+            _handlerModel.HighlightNode(NodeId, this);
         }
 
         public void SrbToggle()

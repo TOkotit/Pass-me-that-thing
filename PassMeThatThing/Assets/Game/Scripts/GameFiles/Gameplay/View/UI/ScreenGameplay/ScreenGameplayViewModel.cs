@@ -1,6 +1,7 @@
 ﻿using System;
 using Game.Entity;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
@@ -21,7 +22,9 @@ namespace Game.Gameplay.View.UI
     public class ScreenGameplayViewModel : WindowViewModel
     {
         private readonly GameplayUIManager _uiManager;
-        
+        private readonly CompositeDisposable _subscriptions = new();
+        public override string Id => "ScreenGameplay";
+
         private readonly PlayerInventoryModel  _playerInventoryModel;
         private readonly ItemDatabase _itemDatabase;
         private readonly GameRandomEventManager _gameRandomEventManager;
@@ -31,10 +34,7 @@ namespace Game.Gameplay.View.UI
         private readonly GameInputManager _gameInputManager;
         
         private readonly MCLocalModel  _mcLocalModel;
-        
-        private readonly CompositeDisposable _subscriptions = new();
-        
-        public override string Id => "ScreenGameplay";
+        private readonly LocalWireHandlerModel _localWireHandlerModel;
         
         
         private Action<int, Sprite, int> addEvent;
@@ -55,9 +55,14 @@ namespace Game.Gameplay.View.UI
             _mcLocalModel = container.Resolve<MCLocalModel>();
             
             _gameInputManager = container.Resolve<GameInputManager>();
-            
+
+            _localWireHandlerModel = container.Resolve<LocalWireHandlerModel>();
+
+
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed += RequestOpenPause;
             _gameInputManager.GameInput.Gameplay.WireMenu.performed += RequestOpenWireMenu;
+
+            _gameInputManager.GameInput.Gameplay.CancelBuilding.performed += CancelWirePlacement;
         }
         
         public override void Dispose()
@@ -65,6 +70,8 @@ namespace Game.Gameplay.View.UI
             // Debug.Log("Disposing ScreenGameplayViewModel");
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed -= RequestOpenPause;
             _gameInputManager.GameInput.Gameplay.WireMenu.performed -= RequestOpenWireMenu;
+
+            _gameInputManager.GameInput.Gameplay.CancelBuilding.performed -= CancelWirePlacement;
         }
 
         public void RequestOpenPause(InputAction.CallbackContext c)
@@ -77,13 +84,15 @@ namespace Game.Gameplay.View.UI
             _uiManager.OpenScreenWireMenu();
         }
 
-        public void InitHealthUI(Action<int, int> f)
+        public void CancelWirePlacement(InputAction.CallbackContext c)
         {
-            f(_mcLocalModel.Health, _mcLocalModel.MaxHealth);
+            _localWireHandlerModel.CancelHighlight();
         }
-        
+
         public void RequestSubHealthUI(Action<int, int> f)
         {
+            f(_mcLocalModel.Health, _mcLocalModel.MaxHealth);
+
             _mcLocalModel.OnHealthChanged += f;
         }
         
@@ -126,12 +135,10 @@ namespace Game.Gameplay.View.UI
             _globalStageManager.OnTimerChangedUI -= f;
         }
 
-        public void InitActiveSlot(Action<int> f)
-        {
-            f(_playerInventoryModel.ActiveSlotIndex);
-        }
         public void RequestSubActiveSlot(Action<int> f)
         {
+            f(_playerInventoryModel.ActiveSlotIndex);
+
             _playerInventoryModel.OnActiveSlotChanged += f;
         }
         
@@ -197,7 +204,7 @@ namespace Game.Gameplay.View.UI
             _gameRandomEventManager.OnEventReceived += f;
         }
         
-        public void UnInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
+        public void UnsubInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
         {
             _gameRandomEventManager.OnEventReceived -= f;
         }
@@ -247,6 +254,19 @@ namespace Game.Gameplay.View.UI
             Action<int> remove)
         {
             _gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
+        }
+
+
+        public void RequestSubPlugImages(Action<int> f)
+        {
+            f(_localWireHandlerModel.HighlightedNodesId.Count);
+
+            _localWireHandlerModel.OnWireNodeCount += f;
+        }
+
+        public void RequestUnsubPlugImages(Action<int> f)
+        {
+            _localWireHandlerModel.OnWireNodeCount -= f;
         }
 
     }

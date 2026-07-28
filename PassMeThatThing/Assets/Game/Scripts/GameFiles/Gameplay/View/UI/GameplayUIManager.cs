@@ -84,7 +84,7 @@ namespace Game.Gameplay.View.UI
 
             return viewModel;
         }
-        
+
         public ScreenBuildViewModel OpenScreenBuild()
         {
             var viewModel = new ScreenBuildViewModel(this, Container);

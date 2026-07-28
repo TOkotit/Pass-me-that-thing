@@ -12,19 +12,19 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         //[SerializeField] private float maxDistance;
         
         
-        private Dictionary<int, WireNode> allNodes = new ();
+        private SyncDictionary<int, WireNode> allNodes = new ();
         private Dictionary<int, WireNodePort> portNodes = new ();
         
-        private Dictionary<int, List<int>> nodeConnections = new ();
+        private SyncDictionary<int, List<int>> nodeConnections = new ();
         
         private Dictionary<int, WireNetModel> wireNets = new ();
         
         private int _lastNodeIdCounter;
         private int _lastNetIdCounter;
 
-        public Dictionary<int, WireNode> AllNodes => allNodes;
+        public SyncDictionary<int, WireNode> AllNodes => allNodes;
         public Dictionary<int, WireNodePort> PortNodes => portNodes;
-        public Dictionary<int, List<int>> NodeConnections => nodeConnections;
+        public SyncDictionary<int, List<int>> NodeConnections => nodeConnections;
         public Dictionary<int, WireNetModel> WireNets => wireNets;
 
         [Server]
@@ -80,14 +80,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             
             if (firstNode.WireType != secondNode.WireType) return;
 
-            // проверка  физики
-            var direction = (firstNode.transform.position - secondNode.transform.position).normalized;
-            if (Physics.Raycast(secondNode.transform.position, direction, 
-                    Vector3.Distance(firstNode.transform.position, secondNode.transform.position), obstacleLayer))
-            {
-                Debug.Log($"[W] WALLS");
-                return;
-            }
+            //// проверка  физики
+            //var direction = (firstNode.transform.position - secondNode.transform.position).normalized;
+            //if (Physics.Raycast(secondNode.transform.position, direction, 
+            //        Vector3.Distance(firstNode.transform.position, secondNode.transform.position), obstacleLayer))
+            //{
+            //    Debug.Log($"[W] WALLS");
+            //    return;
+            //}
             
             if (NodeConnections[firstNodeId] == null)
                 NodeConnections[firstNodeId] = new List<int>();
@@ -96,39 +96,19 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 NodeConnections[secondNodeId] = new List<int>();
 
             //проверка на лимит
-            if (firstNode.IsSplitter)
+
+            if (NodeConnections[firstNodeId].Count >= firstNode.ConnLimit)
             {
-                if (NodeConnections[firstNodeId].Count > firstNode.SplitterConnLimit)
-                {
-                    Debug.Log($"[W] LIMIT");
-                    return;
-                }
+                Debug.Log($"[W] LIMIT");
+                return;
             }
-            else
+
+            if (NodeConnections[secondNodeId].Count >= secondNode.ConnLimit)
             {
-                if (NodeConnections[firstNodeId].Count > 1)
-                {
-                    Debug.Log($"[W] LIMIT");
-                    return;
-                }
+                Debug.Log($"[W] LIMIT");
+                return;
             }
             
-            if (secondNode.IsSplitter)
-            {
-                if (NodeConnections[secondNodeId].Count > secondNode.SplitterConnLimit)
-                {
-                    Debug.Log($"[W] LIMIT");
-                    return;
-                }
-            }
-            else
-            {
-                if (NodeConnections[secondNodeId].Count > 1)
-                {
-                    Debug.Log($"[W] LIMIT");
-                    return;
-                }
-            }
 
             if (firstNode.NetId == secondNode.NetId && secondNode.NetId != -1)
             {
@@ -251,7 +231,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [ClientRpc]
         public void RpcDrawNodeLines(int firstNodeId, int secondNodeId)
         {
-            wireVisualizer.DrawNodeLines(AllNodes[firstNodeId], AllNodes[secondNodeId]);
+            wireVisualizer.DrawNodeLines(AllNodes[firstNodeId],
+                AllNodes[secondNodeId],
+                NodeConnections[firstNodeId].Count,
+                NodeConnections[secondNodeId].Count
+                );
         }
         
         [ClientRpc]

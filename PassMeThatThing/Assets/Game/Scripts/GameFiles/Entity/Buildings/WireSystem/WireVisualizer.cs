@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
@@ -7,25 +8,55 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
     public class WireVisualizer : MonoBehaviour
     {
-        [SerializeField] private LineRenderer lineRendererPrefab;
+        [SerializeField] private WireLineView wireLineViewPrefab;
         [SerializeField] private SerializedDictionary<WireType, Color> wireColors;
         
-        private Dictionary<(int, int), LineRenderer> lineRenderersContainer = new ();
+        private Dictionary<(int, int), WireLineView> wireLineViewContainer = new ();
 
 
         
-        public void DrawNodeLines(WireNode firstNode, WireNode secondNode)
+        public void DrawNodeLines(WireNode firstNode, WireNode secondNode, 
+            int firstConnCount, int secondConnCount)
         {
-            
-            var temp = Instantiate(lineRendererPrefab);
 
-            temp.SetPosition(0, firstNode.transform.position);
-            temp.SetPosition(1, secondNode.transform.position);
+            if (firstNode.WireType == WireType.Electricity)
+            {
+                var temp = Instantiate(wireLineViewPrefab);
+
+                var p1 = firstNode.PortObjects[firstConnCount - 1];
+                var p2 = secondNode.PortObjects[secondConnCount - 1];
+
+                temp.plug1.SetActive(true);
+                temp.plug2.SetActive(true);
+
+                temp.plug1.transform.position = p1.transform.position;
+                temp.plug1.transform.rotation = p1.transform.rotation;
+
+                temp.plug2.transform.position = p2.transform.position;
+                temp.plug2.transform.rotation = p2.transform.rotation;
+
+                temp.lineRenderer.SetPosition(0, temp.wirePoint1.position);
+                temp.lineRenderer.SetPosition(1, temp.wirePoint2.position);
+
+                temp.lineRenderer.startColor = wireColors[firstNode.WireType];
+                temp.lineRenderer.endColor = wireColors[firstNode.WireType];
+
+                wireLineViewContainer[(firstNode.NodeId, secondNode.NodeId)] = temp;
+            }
+            else
+            {
+                var temp = Instantiate(wireLineViewPrefab);
+
+                temp.lineRenderer.SetPosition(0, firstNode.transform.position);
+                temp.lineRenderer.SetPosition(1, secondNode.transform.position);
+
+                temp.lineRenderer.startColor = wireColors[firstNode.WireType];
+                temp.lineRenderer.endColor = wireColors[firstNode.WireType];
+
+                wireLineViewContainer[(firstNode.NodeId, secondNode.NodeId)] = temp;
+            }
+
             
-            temp.startColor = wireColors[firstNode.WireType];
-            temp.endColor = wireColors[firstNode.WireType];
-            
-            lineRenderersContainer[(firstNode.NodeId, secondNode.NodeId)] = temp;
         }
 
         public void ClearNodeLines(WireNode firstNode)
@@ -33,7 +64,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             //Todo переделать на поиск соседних а не всех
             
             var toRemove = new List<(int, int)>();
-            foreach (var line in lineRenderersContainer)
+            foreach (var line in wireLineViewContainer)
             {
                 if (line.Key.Item1 == firstNode.NodeId || line.Key.Item2 == firstNode.NodeId)
                 {
@@ -44,7 +75,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
             foreach (var line in toRemove)
             {
-                lineRenderersContainer.Remove(line);
+                wireLineViewContainer.Remove(line);
             }
         }
     }

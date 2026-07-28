@@ -23,11 +23,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             lineRenderer.positionCount = 2;
         }
 
-        public void AttackRay(float damage, TargetObject target)
+        public void AttackRay(float damage, Transform firepoint, TargetObject target)
         {
             lineRenderer.enabled = true;
             
-            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(0, firepoint.position);
             lineRenderer.SetPosition(1, target.transform.position);
             
             if (_endDrawRayCoroutine != null) StopCoroutine(_endDrawRayCoroutine);
