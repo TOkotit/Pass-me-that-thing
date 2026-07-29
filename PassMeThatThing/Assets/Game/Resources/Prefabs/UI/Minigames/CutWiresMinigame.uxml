@@ -1,7 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Minigames/Minigames.uss?fileID=7433441132597879392&amp;guid=17c96bb3ead65b940bdaf4bb0d57cce1&amp;type=3#Minigames" />
-    <ui:VisualElement style="flex-grow: 1; align-self: auto; justify-content: space-between; flex-direction: row;">
-        <ui:GroupBox name="OutputContainer" style="position: absolute; height: 630px; width: 373px; top: auto; left: auto; right: 0;" />
-        <ui:GroupBox name="InputContainer" style="position: absolute; height: 630px; width: 373px; top: auto; left: auto;" />
-    </ui:VisualElement>
+    <ui:GroupBox style="height: 100%;">
+        <ui:VisualElement style="flex-grow: 1; align-self: auto; justify-content: space-between; flex-direction: row; position: absolute; height: 980px; width: 904px; top: 45px; left: 223px; background-image: resource(&apos;Sprites/MinigameSprites/WireMinigameSprites/wires_background&apos;);">
+            <ui:GroupBox name="OutputContainer" style="position: absolute; height: 630px; width: 373px; top: auto; left: auto; right: 0; align-self: center;" />
+            <ui:GroupBox name="InputContainer" style="position: absolute; height: 630px; width: 373px; top: auto; left: auto; align-self: center;" />
+        </ui:VisualElement>
+    </ui:GroupBox>
 </ui:UXML>
