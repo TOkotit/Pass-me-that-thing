@@ -6,16 +6,12 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class LMBWireCutters : LMBReaction
     {
-        public LMBWireCutters(PhysicalItem item) : base(item)
-        {
-        }
-
         public override void Act()
         {
             Debug.Log($"Act {nameof(LMBWireCutters)}");
         }
 
-        public override void CollisionEnter(Collision other)
+        public void CollisionEnter(Collision other)
         {
             if (EventTerminalsRegistry.Instance.TryGetItem(other.gameObject, out var terminal))
             {

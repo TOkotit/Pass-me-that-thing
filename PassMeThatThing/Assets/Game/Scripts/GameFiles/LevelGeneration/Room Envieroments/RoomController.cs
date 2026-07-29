@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
 {
     public class RoomController : MonoBehaviour
     {
+        public bool IsPowerOn { get; private set; } = true;
+        
         private readonly List<NetworkOutlineShader> _lights = new();
         private GlobalVisionShaderManager _globalmanger;
         public IReadOnlyList<NetworkOutlineShader> Lights => _lights;
@@ -22,8 +25,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
         public void RegisterLight(NetworkOutlineShader roomLight)
         {
             if (!_lights.Contains(roomLight))
+            {
                 _lights.Add(roomLight);
+                if (NetworkServer.active && !IsPowerOn)
+                {
+                    roomLight.SetVisionState(false);
+                }
+            }
         }
+
 
         public void UnregisterLight(NetworkOutlineShader roomLight)
         {

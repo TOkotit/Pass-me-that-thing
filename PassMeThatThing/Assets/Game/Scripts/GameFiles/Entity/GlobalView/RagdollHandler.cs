@@ -13,12 +13,14 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
         
         public void Hit(Vector3 force, Vector3 hitPosition)
         {
-            _injuredRigidbody = _rigidbodies
+            _injuredRigidbody = _rigidbodies.Where(rigidbody => !rigidbody.isKinematic)
                 .OrderBy(rigidbody => Vector3.Distance(rigidbody.position, hitPosition))
-                .First();
-
-            _injuredRigidbody.AddForceAtPosition(force, hitPosition, ForceMode.Impulse);
+                .FirstOrDefault();
+            Debug.LogWarning(_injuredRigidbody);
+            _injuredRigidbody?.AddForceAtPosition(force, hitPosition, ForceMode.Impulse);
         }
+
+        
 
         public void EnableRagdoll()
         {

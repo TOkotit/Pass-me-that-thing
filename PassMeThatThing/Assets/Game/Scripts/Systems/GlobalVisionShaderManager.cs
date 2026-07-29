@@ -9,7 +9,7 @@ public class GlobalVisionShaderManager : MonoBehaviour
     public static GlobalVisionShaderManager Instance { get; private set; }
     
     private readonly HashSet<RoomController> _allRooms = new();
-    
+    public bool IsGlobalPowerOn { get; private set; } = true;
     private readonly List<Vector4> _activeZones = new();
     private readonly Vector4[] _shaderData = new Vector4[64];
 
@@ -28,7 +28,15 @@ public class GlobalVisionShaderManager : MonoBehaviour
         _activeZones.Add(new Vector4(position.x, position.y, position.z, radius));
     }
     
-    public void RegisterRoom(RoomController room) => _allRooms.Add(room);
+    public void RegisterRoom(RoomController room)
+    {
+        _allRooms.Add(room);
+
+        if (NetworkServer.active && !IsGlobalPowerOn)
+        {
+            room.SetLightsState(false);
+        }
+    }
     public void UnregisterRoom(RoomController room) => _allRooms.Remove(room);
     
     private void LateUpdate()

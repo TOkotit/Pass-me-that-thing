@@ -56,12 +56,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private Quaternion _initialLocalRotation;
         private bool _shouldAlignRotation;
         private Vector3 _localPoint;
-        private float _initialRelativeYaw;   // относительный Y-угол в момент захвата
+        private float _initialRelativeYaw;
+
+        private Vector3 _pivotDefaultLocalPos;
 
         private void Awake()
         {
             var gameplayScope = LifetimeScope.Find<GameplayScope>();
             if (gameplayScope) gameplayScope.Container.Inject(this);
+            if (animatorTransform)
+                _pivotDefaultLocalPos = animatorTransform.parent.localPosition;
         }
 
         [Server]
@@ -74,8 +78,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
             _initialLocalRotation = Quaternion.Inverse(transform.rotation) * _heldRb.rotation;
             _initialRelativeYaw = _initialLocalRotation.eulerAngles.y;
-
             _shouldAlignRotation = item.HasToBeAligned;
+
+            AlignPivotForItem(item);   // смещаем пивот под предмет
             MoveHands(item, _localPoint);
             _isHolding = true;
             RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation, _localPoint, _initialRelativeYaw);
@@ -91,6 +96,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _shouldAlignRotation = align;
             _localPoint = localPoint;
             _initialRelativeYaw = relativeYaw;
+
+            AlignPivotForItem(item);   // смещаем пивот и на клиенте
             MoveHands(item, localPoint);
             _isHolding = true;
         }
@@ -101,6 +108,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (!_isHolding || _heldItem != item) return;
 
             _isHolding = false;
+            ResetPivot();       // возвращаем пивот в исходное положение
             ResetHands();
 
             if (canThrow && _heldRb)
@@ -131,6 +139,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _isHolding = false;
             _heldRb = null;
             _heldItem = null;
+            ResetPivot();       // возвращаем пивот и на клиенте
             ResetHands();
         }
 
@@ -228,6 +237,18 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 torqueLocal = Vector3.ClampMagnitude(torqueLocal, maxTorque);
                 _heldRb.AddTorque(torqueLocal, ForceMode.Force);
             }
+        }
+
+        // Методы для смещения пивота
+        public void AlignPivotForItem(PhysicalItem item)
+        {
+            if (!item) return;
+            animatorTransform.parent.localPosition = _pivotDefaultLocalPos + item.DefaultPosition;
+        }
+
+        public void ResetPivot()
+        {
+            animatorTransform.parent.localPosition = _pivotDefaultLocalPos;
         }
 
         public void MoveHands(PhysicalItem item, Vector3 localPoint)

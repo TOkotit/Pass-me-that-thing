@@ -1,4 +1,4 @@
-using Game.Scripts.GameFiles.Entity.Buildings;
+/*using Game.Scripts.GameFiles.Entity.Buildings;
 using UnityEngine;
 using VContainer;
 
@@ -18,4 +18,4 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         
         public LocalBuildingHandlerModel LocalBuildingHandlerModel => _localBuildingHandlerModel;
     }
-}
+}*/

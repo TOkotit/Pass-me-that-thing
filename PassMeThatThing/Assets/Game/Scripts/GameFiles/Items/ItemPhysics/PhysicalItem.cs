@@ -31,7 +31,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SyncVar]
         [SerializeField] private bool _isThrown;
         [SerializedDictionary] public SerializedDictionary<Resource, float> Resources; 
-        private LMBReaction reaction;
+        [SerializeField] private LMBReaction reaction;
         private Outline _outline;
         private CollisionDamageDealer  damageDealer;
         private NetworkTransformReliable _networkTransform;
@@ -66,20 +66,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
-            reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
+            //reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
             
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnServerTakeDamage += RpcPlayParticlesOnHit;
-        }
-
-        private void OnCollisionEnter(Collision other)
-        {
-            if (isServer)
-            {
-                IsThrown = false;
-
-                reaction?.CollisionEnter(other);
-            }
         }
         
         [ClientRpc]
