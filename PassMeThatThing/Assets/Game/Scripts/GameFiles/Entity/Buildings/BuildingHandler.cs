@@ -114,6 +114,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             _currentBuildingId = buildingId;
 
             var prevPrefab = _buildingDatabase.GetBuildingFromAll(buildingId).previewPrefab;
+
             if (prevPrefab != null)
                 _buildingPreview = Instantiate(prevPrefab);
             else
