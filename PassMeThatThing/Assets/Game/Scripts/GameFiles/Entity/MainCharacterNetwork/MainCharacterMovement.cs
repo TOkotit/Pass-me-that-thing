@@ -99,7 +99,7 @@ public class MainCharacterMovement : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.LogError($"Impact with {collision.gameObject.name}");
-        if (_itemController.CurrentHeldItem.Collider == collision.collider) return;
+        if (_itemController?.CurrentHeldItem?.Collider == collision.collider) return;
         var impactSpeed = 0f;
         if (collision.rigidbody)
         {

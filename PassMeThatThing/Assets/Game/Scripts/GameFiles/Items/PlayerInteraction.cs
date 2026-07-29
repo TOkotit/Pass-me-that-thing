@@ -311,19 +311,20 @@ namespace Game.Scripts.GameFiles.Items
 
         private void onActPerformed(InputAction.CallbackContext context)
         {
-            if (!PhysicalItemInteractionController.CurrentHeldItem) return;
-            if (PhysicalItemInteractionController.CurrentHeldItem.Reaction != null)
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+            if (!currentItem) return;
+            if (currentItem.Reaction)
             {
-                PhysicalItemInteractionController.CurrentHeldItem.Reaction.Act();
-                if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned && 
-                    PhysicalItemInteractionController.CurrentHeldItem.DoActAndSwing)
+                currentItem.Reaction.Act();
+                Debug.Log(currentItem.Reaction);
+                if (currentItem.CanBeOwned && currentItem.DoActAndSwing)
                 {
                     CmdSwing();
                 }
             }
             else
             {
-                if (PhysicalItemInteractionController.CurrentHeldItem.CanBeOwned)
+                if (currentItem.CanBeOwned)
                 {
                     CmdSwing();
                 }

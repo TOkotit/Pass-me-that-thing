@@ -78,6 +78,7 @@ namespace Game.Entity
 
             RpcFall(impulse);
             StartCoroutine(GetUpAfterDelay(delay));
+            Debug.LogWarning(10f * Vector3.forward);
         }
 
         [ClientRpc]

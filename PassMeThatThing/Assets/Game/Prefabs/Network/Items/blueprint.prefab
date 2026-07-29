@@ -16,10 +16,10 @@ GameObject:
   - component: {fileID: 5340831970347749924}
   - component: {fileID: 2742765135364868261}
   - component: {fileID: 7776855572588576369}
-  - component: {fileID: 5761795943132506895}
   - component: {fileID: 6213635256034360291}
   - component: {fileID: 2873655632455000256}
   - component: {fileID: -7858528019227517261}
+  - component: {fileID: 6220081608871803678}
   m_Layer: 7
   m_Name: blueprint
   m_TagString: Item
@@ -187,19 +187,7 @@ MonoBehaviour:
   _isThrown: 0
   Resources:
     _serializedList: []
---- !u!114 &5761795943132506895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6289893463516360249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 085425eea6904958b84a4a13e5f7362d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buildingId: singleTurret
+  reaction: {fileID: 6220081608871803678}
 --- !u!114 &6213635256034360291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,6 +264,23 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &6220081608871803678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bee289e112af4455993a0b1c1ef47228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  Item: {fileID: 7776855572588576369}
+  _buildingId: 
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0

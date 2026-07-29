@@ -208,7 +208,7 @@ MonoBehaviour:
   universalPoint: {fileID: 2035920568844150800}
   leftHandPoint: {fileID: 0}
   rightHandPoint: {fileID: 0}
-  defaultPosition: {x: 0, y: 0, z: 2}
+  defaultPosition: {x: 0, y: 0, z: -0.2}
   canBeOwned: 0
   doActAndSwing: 0
   rigidBody: {fileID: 6503836219789275439}
@@ -228,7 +228,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 150
   m_LinearDamping: 0
-  m_AngularDamping: 0
+  m_AngularDamping: 0.2
   m_CenterOfMass: {x: 0, y: -0.5, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

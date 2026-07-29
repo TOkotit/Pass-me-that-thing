@@ -1,34 +1,23 @@
+using Game.Scripts.GameFiles.Entity.Buildings;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.Events.Blackout;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class LMBBlueprint : LMBReaction
     {
-        private PhysicalItem _item;
-        private BlueprintItem _blueprintItem;
-        private string _buildingId;
+        //[SerializeField] private BlueprintItem _blueprintItem;
+        [SerializeField] private string _buildingId;
+        [Inject] private LocalBuildingHandlerModel _localBuildingHandlerModel;
+
         
-        public LMBBlueprint(PhysicalItem item) : base(item)
-        {
-            if (item.TryGetComponent<BlueprintItem>(out _blueprintItem))
-            {
-                _item = item;
-                _buildingId = _blueprintItem.BuildingId;
-            }
-        }
 
         public override void Act()
         {
             Debug.Log($"Act {nameof(LMBBlueprint)}");
-            
-            _blueprintItem.LocalBuildingHandlerModel.StartBuildPreview(_buildingId, _item.Network.instanceId);
-        }
-
-        public override void CollisionEnter(Collision other)
-        {
-            
+            _localBuildingHandlerModel.StartBuildPreview(_buildingId, Item.Network.instanceId);
         }
     }
 }
