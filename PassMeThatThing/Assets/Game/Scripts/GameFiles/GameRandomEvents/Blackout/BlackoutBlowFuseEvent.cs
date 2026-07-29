@@ -11,7 +11,7 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         {
             if (GlobalVisionShaderManager.Instance)
             {
-                GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();
+                GlobalVisionShaderManager.Instance.SetAllRoomsStateServerOnly(false);
                 Debug.Log("[PowerOutageEvent] Электричество вырубилось! Лампы погасли.");
             }
             
@@ -29,7 +29,7 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         {
             if (GlobalVisionShaderManager.Instance)
             {
-                GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();
+                GlobalVisionShaderManager.Instance.SetAllRoomsStateServerOnly(true);
                 Debug.Log("[PowerOutageEvent] Электричество восстановлено! Лампы горят.");
             }
 

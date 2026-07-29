@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments;
 using Mirror;
 using UnityEngine;
 
@@ -12,21 +13,30 @@ public class NetworkOutlineShader : NetworkBehaviour
     
     public bool IsActive => _isActive;
 
-
+    private RoomController _roomController;
     
-    private void OnEnable()
+    private void Start()
     {
-        if (GlobalVisionShaderManager.Instance != null)
+        var currentParent = transform.parent;
+        
+        while (currentParent != null)
         {
-            GlobalVisionShaderManager.Instance.RegisterLamp(this);
+            if (currentParent.TryGetComponent(out _roomController))
+            {
+                _roomController.RegisterLight(this);
+                return;
+            }
+            currentParent = currentParent.parent;
         }
-    }
 
-    private void OnDisable()
+        Debug.LogWarning($"RoomController не найден в родительских объектах для {gameObject.name}");
+    }
+    
+    private void OnDestroy()
     {
-        if (GlobalVisionShaderManager.Instance != null)
+        if (_roomController != null)
         {
-            GlobalVisionShaderManager.Instance.UnregisterLamp(this);
+            _roomController.UnregisterLight(this);
         }
     }
     
@@ -40,7 +50,7 @@ public class NetworkOutlineShader : NetworkBehaviour
     private void Update()
     {
         if (!_isActive) return;
-        if (!GlobalVisionShaderManager.Instance) return;
+        if (GlobalVisionShaderManager.Instance == null) return;
 
         GlobalVisionShaderManager.Instance.AddZone(transform.position, radius);
     }

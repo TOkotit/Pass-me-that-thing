@@ -198,6 +198,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 newOutput.style.marginTop = 30f;
 
                 newOutput.style.backgroundImage = new StyleBackground(t.end);
+                newOutput.style.alignSelf = Align.FlexEnd;
 
                 _elemRegistry[newOutput] = t.color;
             }
