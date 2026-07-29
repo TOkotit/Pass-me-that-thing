@@ -100,6 +100,8 @@ namespace MainCharacterNetwork
         {
             if (isLocalPlayer)
                 TryUnsubscribe();
+            
+            SetVisionState(false);
         }
 
         private void TrySubscribe()
@@ -243,6 +245,8 @@ namespace MainCharacterNetwork
         
         private void OnDestroy()
         {
+            SetVisionState(false);
+            
             if (isLocalPlayer && _gameInput != null)
             {
                 TryUnsubscribe();
