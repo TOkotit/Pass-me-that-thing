@@ -336,6 +336,7 @@ GameObject:
   - component: {fileID: 7731117980661811066}
   - component: {fileID: -4513696885992193877}
   - component: {fileID: 5931013953064351819}
+  - component: {fileID: 4022830543685297442}
   m_Layer: 0
   m_Name: Armory Variant 6
   m_TagString: Untagged
@@ -439,6 +440,18 @@ MonoBehaviour:
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 5342357472219633577}
   totalDoors: 3
+--- !u!114 &4022830543685297442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7099438886666654703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5d3a154891f4690ae17c44d1c999750, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3330118211815937954
 PrefabInstance:
   m_ObjectHideFlags: 0
