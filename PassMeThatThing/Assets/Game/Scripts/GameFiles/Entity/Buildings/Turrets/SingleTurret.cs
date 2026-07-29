@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using Entity;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using Mirror;
 using UnityEngine;
 using VContainer;
 
@@ -16,16 +18,25 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         [SerializeField] private WireNodePort inputPort;
         [SerializeField] private GameObject turretHead;
         [SerializeField] private GameObject firePoint;
-        
+
+        [SerializeField] private LineRenderer lineRenderer;
+
         private float _elapsedAttack;
         private Vector3 _dir;
         private Vector3 _headRotation;
+        private Coroutine _endDrawRayCoroutine;
 
         public float Damage => TurretData.damage;
         public float AttackSpeed => TurretData.attackSpeed;
 
         public bool IsTurretWork;
-        
+
+        private new void Awake()
+        {
+            base.Awake();
+            lineRenderer.positionCount = 2;
+        }
+
         public new void Start()
         {
             base.Start();
@@ -59,7 +70,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             _headRotation = Quaternion.Lerp(turretHead.transform.rotation,
                 Quaternion.LookRotation(_dir),
                 rotationSpeed * Time.deltaTime).eulerAngles;
-            turretHead.transform.rotation = Quaternion.Euler(0f, _headRotation.y, 0f);
+            RpcRotateTurret(_headRotation);
 
             _elapsedAttack += Time.fixedDeltaTime;
             if (_elapsedAttack >= (1 / AttackSpeed))
@@ -69,10 +80,39 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             }
         }
 
+        [Server]
         public void Attack()
         {
             turretAttackController.AttackRay(Damage,
                     firePoint.transform, targetDetector.DetectedTargetObject);
+
+            RpcDrawLine(
+                firePoint.transform.position, 
+                targetDetector.DetectedTargetObject.transform.position);
+        }
+
+        [ClientRpc]
+        public void RpcRotateTurret(Vector3 headRotation)
+        {
+            turretHead.transform.rotation = Quaternion.Euler(0f, headRotation.y, 0f);
+        }
+
+        [ClientRpc]
+        public void RpcDrawLine(Vector3 firepoint, Vector3 target)
+        {
+            lineRenderer.enabled = true;
+
+            lineRenderer.SetPosition(0, firepoint);
+            lineRenderer.SetPosition(1, target);
+
+            if (_endDrawRayCoroutine != null) StopCoroutine(_endDrawRayCoroutine);
+            StartCoroutine(EndDrawRayCoroutine());
+        }
+
+        private IEnumerator EndDrawRayCoroutine()
+        {
+            yield return new WaitForSeconds(1f);
+            lineRenderer.enabled = false;
         }
 
 

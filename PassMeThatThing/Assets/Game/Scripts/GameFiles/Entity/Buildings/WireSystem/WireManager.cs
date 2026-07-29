@@ -13,10 +13,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         
         
         private SyncDictionary<int, WireNode> allNodes = new ();
+
         private Dictionary<int, WireNodePort> portNodes = new ();
         
-        private SyncDictionary<int, List<int>> nodeConnections = new ();
-        
+        private Dictionary<int, List<int>> nodeConnections = new ();
+
         private Dictionary<int, WireNetModel> wireNets = new ();
         
         private int _lastNodeIdCounter;
@@ -24,7 +25,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         public SyncDictionary<int, WireNode> AllNodes => allNodes;
         public Dictionary<int, WireNodePort> PortNodes => portNodes;
-        public SyncDictionary<int, List<int>> NodeConnections => nodeConnections;
+        public Dictionary<int, List<int>> NodeConnections => nodeConnections;
         public Dictionary<int, WireNetModel> WireNets => wireNets;
 
         [Server]
@@ -160,7 +161,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 }
             }
             
-            RpcDrawNodeLines(firstNodeId, secondNodeId);
+            RpcDrawNodeLines(firstNodeId, secondNodeId,
+                NodeConnections[firstNodeId].Count,
+                NodeConnections[secondNodeId].Count);
             
             PrintDebugInfo();
         }
@@ -229,13 +232,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
 
         [ClientRpc]
-        public void RpcDrawNodeLines(int firstNodeId, int secondNodeId)
+        public void RpcDrawNodeLines(int firstNodeId, int secondNodeId, 
+            int firstConnCount, int secondConnCount)
         {
             wireVisualizer.DrawNodeLines(AllNodes[firstNodeId],
                 AllNodes[secondNodeId],
-                NodeConnections[firstNodeId].Count,
-                NodeConnections[secondNodeId].Count
-                );
+                firstConnCount,
+                secondConnCount);
         }
         
         [ClientRpc]
