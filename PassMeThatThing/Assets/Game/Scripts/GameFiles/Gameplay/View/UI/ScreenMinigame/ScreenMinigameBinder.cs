@@ -13,6 +13,15 @@ using Random = System.Random;
 
 namespace Game.Gameplay.View.UI.ScreenMinigame
 {
+    [Serializable]
+    public class WireColorSpritesData
+    {
+        public Color color;
+        public VectorImage start;
+        public VectorImage end;
+        public VectorImage wire;
+    }
+
     public class ScreenMinigameBinder : WindowBinder<ScreenMinigameViewModel>
     {
         [SerializeField] private UIDocument uiDocument;
@@ -21,8 +30,9 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         [SerializeField] private Sprite redIndicator;
         [SerializeField] private Sprite greenIndicator;
 
-        [SerializeField] private List<Color> wireColors;
-        
+        [Header("blackoutCutWires")]
+        [SerializeField] private List<WireColorSpritesData> wireColors;
+
         //ui refs
         private VisualElement _root;
         private Button _closeBtn;
@@ -52,10 +62,9 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         //blackoutCutWires
         private GroupBox _inputContainer;
         private GroupBox _outputContainer;
-        
-        private List<VisualElement> _draggableInputs;
-        private List<VisualElement> _wireLines;
-        private int _correctWires = 0;
+
+        private Dictionary<VisualElement, Color> _elemRegistry = new();
+        private List<Color> _matchedColors = new();
         
         private void Awake()
         {
@@ -184,34 +193,41 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 _outputContainer.Add(newOutput);
                 newOutput.AddToClassList("slot");
 
-                newOutput.style.width = 150;
-                newOutput.style.height = 150;
-                newOutput.style.backgroundColor = t;
-                newOutput.style.opacity = 0.5f;
+                newOutput.style.width = 180;
+                newOutput.style.height = 120;
+                newOutput.style.marginTop = 30f;
+
+                newOutput.style.backgroundImage = new StyleBackground(t.end);
+
+                _elemRegistry[newOutput] = t.color;
             }
             
             wireColors = wireColors.OrderBy(_ => rand.Next()).ToList();
             foreach (var t in wireColors)
             {
                 var inputBox = new VisualElement();
-                
+                _inputContainer.Add(inputBox);
+
                 inputBox.style.width = 120;
                 inputBox.style.height = 120;
-                inputBox.style.backgroundColor = Color.white;
+                inputBox.style.marginTop = 30f;
 
-                var newLine = new LineElement(new Vector2(0, 0),
+                inputBox.transform.scale = new Vector2(-1, 1);
+                inputBox.style.backgroundImage = new StyleBackground(t.end);
+
+
+                var newWireLine = new LineElement(
                     new Vector2(0, 0),
-                    t, 15f);
+                    new Vector2(0, 0),
+                    t.wire, 120f);
                 
-                newLine.style.width = Length.Percent(100);
-                newLine.style.height = Length.Percent(100);
-                newLine.style.position = Position.Absolute;
+                newWireLine.style.position = Position.Absolute;
                 
-                templateContainer.Add(newLine);
+                templateContainer.Add(newWireLine);
                 
                 var newInput = new VisualElement();
                 
-                _inputContainer.Add(inputBox);
+                
                 inputBox.Add(newInput);
                 
                 newInput.AddToClassList("draggable");
@@ -220,28 +236,31 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                     slotContainerName: "OutputContainer",
                     slotClassName: "slot",
                     onDrop: CheckWires,
-                    line: newLine,
-                    box: inputBox));
-                
+                    line: newWireLine,
+                    box: inputBox,
+                    t: t));
+
+                _elemRegistry[newInput] = t.color;
                 newInput.style.width = 110;
                 newInput.style.height = 110;
-                newInput.style.backgroundColor = t;
+                //newInput.style.backgroundColor = Color.lightPink;
             }
         }
 
         private void CheckWires(VisualElement a, VisualElement b)
         {
-            if (a.style.backgroundColor == b.style.backgroundColor)
+            if (_elemRegistry[a] == _elemRegistry[b])
             {
-                _correctWires++;
+                if (!_matchedColors.Contains(_elemRegistry[a]))
+                    _matchedColors.Add(_elemRegistry[a]);
             }
             else
             {
-                _correctWires--;
+                _matchedColors.Remove(_elemRegistry[a]);
             }
-            Debug.Log($"CheckWires {_correctWires}");
+            Debug.Log($"CheckWires {_matchedColors.Count}");
 
-            if (_correctWires >= wireColors.Count)
+            if (_matchedColors.Count >= wireColors.Count)
             {
                 CompleteMinigame();
             }

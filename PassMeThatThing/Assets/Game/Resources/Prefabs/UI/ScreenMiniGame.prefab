@@ -59,10 +59,22 @@ MonoBehaviour:
   redIndicator: {fileID: 21300000, guid: 501c90e4e0f9eb847a2e78eebfa5baae, type: 3}
   greenIndicator: {fileID: 21300000, guid: 585028b7757b1594f97ac1f82a9074cf, type: 3}
   wireColors:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 1, b: 0.023826122, a: 1}
-  - {r: 0.14285564, g: 0, b: 1, a: 1}
-  - {r: 1, g: 0.7210716, b: 0, a: 1}
+  - color: {r: 0.8, g: 0.10980392, b: 0, a: 1}
+    start: {fileID: 7388822144124034973, guid: 9e2d9378a5ba285449ec7c1954531848, type: 3}
+    end: {fileID: 7388822144124034973, guid: bd721ff10799881468bb056c8815a5e7, type: 3}
+    wire: {fileID: 7388822144124034973, guid: be3ee74b82b61f144a209d84675d3f2e, type: 3}
+  - color: {r: 0.10980392, g: 0.8, b: 0, a: 1}
+    start: {fileID: 7388822144124034973, guid: 0913cad3dcd1b7d4387914d354f7e5ba, type: 3}
+    end: {fileID: 7388822144124034973, guid: 72a073ae39de62d428e5b3d1db82c5fc, type: 3}
+    wire: {fileID: 7388822144124034973, guid: f373fabdbe0d4ad47b23363fbc39ecff, type: 3}
+  - color: {r: 0, g: 0.2901961, b: 0.8, a: 1}
+    start: {fileID: 7388822144124034973, guid: 0c8ae6f520ee2b4438a1b02e392852c7, type: 3}
+    end: {fileID: 7388822144124034973, guid: 747a7caf3f6a0ec4bba6802da5836574, type: 3}
+    wire: {fileID: 7388822144124034973, guid: 66357e3e5095b5c4fa512a60221799b8, type: 3}
+  - color: {r: 0.972549, g: 0.68235296, b: 0, a: 1}
+    start: {fileID: 7388822144124034973, guid: 6695576ffc8d52f4ab3187673827fdf5, type: 3}
+    end: {fileID: 7388822144124034973, guid: edfe033843496f0418b922b1cbd8365f, type: 3}
+    wire: {fileID: 7388822144124034973, guid: d84b24f2eb88dff439b4fcbfc4caca4f, type: 3}
 --- !u!114 &6331916873995454345
 MonoBehaviour:
   m_ObjectHideFlags: 0

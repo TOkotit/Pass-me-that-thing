@@ -11,7 +11,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         private Action<VisualElement, VisualElement> _onDrop;
         private LineElement _line;
         private VisualElement _box;
-        
+        private WireColorSpritesData _t;
+
         private bool _isDragging;
 
         private Vector2 _pointerStartPanel;
@@ -23,7 +24,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             string slotContainerName = "SlotsContainer",
             string slotClassName = "slot",
             LineElement line = null,
-            VisualElement box = null)
+            VisualElement box = null,
+            WireColorSpritesData t = null)
         {
             this.target = target;
             _onDrop = onDrop;
@@ -31,6 +33,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             _slotClassName = slotClassName;
             _line = line;
             _box = box;
+            _t = t;
         }
         
         protected override void RegisterCallbacksOnTarget()
@@ -86,7 +89,13 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             target.style.top = newLocal.y;
             
             if (_line != null && _box != null)
-                _line.UpdatePositions(_box.worldBound.center, target.worldBound.center);
+            {
+                _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
+                    _box.worldBound.position.y), target.worldBound.position);
+                _box.transform.scale = new Vector2(1, 1);
+                _box.style.backgroundImage = new StyleBackground(_t.start);
+            }
+                
             
             evt.StopPropagation();
         }
@@ -170,7 +179,13 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             target.style.top = desiredLocal.y;
             
             if (_line != null && _box != null)
-                _line.UpdatePositions(_box.worldBound.center, target.worldBound.center);
+            {
+                _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
+                    _box.worldBound.position.y), target.worldBound.position);
+                _box.transform.scale = new Vector2(1, 1);
+                _box.style.backgroundImage = new StyleBackground(_t.start);
+            }
+                
         }
 
         private void SnapBackToStart()
@@ -178,13 +193,19 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             if (target.parent == null)
                 return;
             
-            var localStart = target.parent.WorldToLocal(_elementStartWorld);
+            //var localStart = target.parent.WorldToLocal(_elementStartWorld);
             
-            target.style.left = localStart.x;
-            target.style.top = localStart.y;
+            target.style.left = 0f;
+            target.style.top = 0f;
             
             if (_line != null && _box != null)
-                _line.UpdatePositions(_box.worldBound.center, _elementStartWorld);
+            {
+                _line.UpdatePositions(_box.worldBound.position,
+                    _box.worldBound.position);
+
+                _box.transform.scale = new Vector2(-1, 1);
+                _box.style.backgroundImage = new StyleBackground(_t.end);
+            }
         }
     }
 }
