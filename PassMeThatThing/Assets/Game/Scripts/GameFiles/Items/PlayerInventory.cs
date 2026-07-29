@@ -255,7 +255,7 @@ public class PlayerInventory : NetworkBehaviour
         var slotToRemove = -1;
         foreach (var kvp in ServerInventory)
         {
-            if (kvp.Value.itemId == item.Network.itemId)
+            if (kvp.Value.instanceId == item.Network.instanceId)
             {
                 slotToRemove = kvp.Key;
                 break;
