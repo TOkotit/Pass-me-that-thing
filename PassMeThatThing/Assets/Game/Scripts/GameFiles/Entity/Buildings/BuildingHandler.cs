@@ -154,7 +154,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             _preview = false;
             enabled = false;
             _currentBuildingId = "";
-            Destroy(_buildingPreview.gameObject);
+            if (_buildingPreview != null)
+                Destroy(_buildingPreview.gameObject);
             //buildingPreview.SetActive(false);
             CloseBuildingPreviewScreen();
         }

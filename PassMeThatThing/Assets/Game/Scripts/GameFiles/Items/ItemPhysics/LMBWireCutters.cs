@@ -13,7 +13,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         public void OnCollisionEnter(Collision other)
         {
-            Debug.Log($"<color=red>CollisionEnter {nameof(LMBWireCutters)}");
             if (EventTerminalsRegistry.Instance.TryGetItem(other.gameObject, out var terminal))
             {
                 Debug.Log($"<color=orange>Collision Enter {nameof(LMBWireCutters)}");
