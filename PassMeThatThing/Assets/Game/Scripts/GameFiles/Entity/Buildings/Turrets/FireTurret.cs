@@ -11,7 +11,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
     /// <summary>
     /// турели которые бьют мобов и требуют определенный тип ресов
     /// </summary>
-    public class SingleTurret : Turret, IDependsOnWireNet
+    public class FireTurret : Turret, IDependsOnWireNet
     {
         private const float rotationSpeed = 20f;
 
@@ -54,8 +54,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         [Inject]
         public void Construct(BuildingsDatabase buildingsDatabase, TurretDatabase turretDatabas)
         {
-            BuildingData = buildingsDatabase.GetBuildingFromAll("singleTurret");
-            TurretData = turretDatabas.GetTurret("singleTurret");
+            BuildingData = buildingsDatabase.GetBuildingFromAll("fireTurret");
+            TurretData = turretDatabas.GetTurret("fireTurret");
         }
 
         private void FixedUpdate()
@@ -123,13 +123,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            Debug.Log($"[Single Turret] OnHealthChanged {currentHealth} / {maxHealth}");
+            Debug.Log($"[Fire Turret] OnHealthChanged {currentHealth} / {maxHealth}");
         }
 
         public void OnWireNetWorkingStateChanged(bool isNetWorking)
         {
             _isTurretWork = isNetWorking;
-            Debug.Log($"[Single Turret] IsTurretWork {_isTurretWork}");
+            Debug.Log($"[Fire Turret] IsTurretWork {_isTurretWork}");
         }
     }
 }
