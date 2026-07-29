@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments;
 using Mirror;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class GlobalVisionShaderManager : MonoBehaviour
 {
     public static GlobalVisionShaderManager Instance { get; private set; }
     
-    private readonly HashSet<NetworkOutlineShader> _allLamps = new();
+    private readonly HashSet<RoomController> _allRooms = new();
     
     private readonly List<Vector4> _activeZones = new();
     private readonly Vector4[] _shaderData = new Vector4[64];
@@ -27,8 +28,8 @@ public class GlobalVisionShaderManager : MonoBehaviour
         _activeZones.Add(new Vector4(position.x, position.y, position.z, radius));
     }
     
-    public void RegisterLamp(NetworkOutlineShader lamp) => _allLamps.Add(lamp);
-    public void UnregisterLamp(NetworkOutlineShader lamp) => _allLamps.Remove(lamp);
+    public void RegisterRoom(RoomController room) => _allRooms.Add(room);
+    public void UnregisterRoom(RoomController room) => _allRooms.Remove(room);
     
     private void LateUpdate()
     {
@@ -45,13 +46,14 @@ public class GlobalVisionShaderManager : MonoBehaviour
         _activeZones.Clear();
     }
     
-    public void ToggleAllLampsServerOnly()
+    [Server]
+    public void SetAllRoomsStateServerOnly(bool state)
     {
         if (!NetworkServer.active) return;
 
-        foreach (var lamp in _allLamps.Where(lamp => lamp != null))
+        foreach (var room in _allRooms.Where(room => room != null))
         {
-            lamp.SetVisionState(!lamp.IsActive);
+            room.SetLightsState(state);
         }
     }
 }
