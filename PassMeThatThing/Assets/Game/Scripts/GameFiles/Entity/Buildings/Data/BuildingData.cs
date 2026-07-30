@@ -9,7 +9,8 @@ public class BuildingData : ScriptableObject
     public string buildingName;
     public GameObject worldPrefab; 
     public Sprite buildingImage;
-    
+    public GameObject previewPrefab;
+
     [Header("Building Stats")]
     public int maxHealth;
 }

@@ -16,16 +16,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             Debug.Log($"Act {nameof(LMBWrench)}");
         }
 
-        //[Server]
         public void OnCollisionEnter(Collision other)
         {
-            Debug.Log($"коснулся! {other}");
             var otherCollider = other.collider;
             if (EventTerminalsRegistry.Instance.TryGetItem(otherCollider.gameObject, out var terminal))
             {
-                Debug.Log($"коснулся! {nameof(LMBWrench)}");
+                Debug.Log($"<color=orange>Collision Enter {nameof(LMBWrench)}");
                 if (terminal is PumpInteractTerminal or ValveInteractTerminal)
                 {
+                    Debug.Log("<color=green> Interacting</color>");
                     terminal.TerminalAct(Item.ConnectionToClient);
                 }
             }

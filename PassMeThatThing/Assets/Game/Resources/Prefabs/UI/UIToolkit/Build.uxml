@@ -1,13 +1,17 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 40, 166, 0.37); justify-content: flex-end;">
-        <ui:GroupBox style="height: 257px; width: 461px; align-self: center;">
-            <ui:GroupBox style="flex-direction: row; justify-content: center;">
-                <ui:Label text="Confirm" name="ConfirmLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
-                <ui:Label text="[X]" name="ConfirmBindLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+        <ui:GroupBox style="height: 377px; width: 461px; align-self: center; color: rgb(255, 255, 255); font-size: 45px; -unity-text-align: middle-center; justify-content: center; align-content: flex-start; align-items: center;">
+            <ui:GroupBox style="flex-direction: row; justify-content: center; width: 557px;">
+                <ui:Label text="Rotate" />
+                <ui:Label text="[MouseWheel]" />
             </ui:GroupBox>
             <ui:GroupBox style="flex-direction: row; justify-content: center;">
-                <ui:Label text="Cancel" name="CancelLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
-                <ui:Label text="[C]" name="CancelBindLb" style="font-size: 75px; color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+                <ui:Label text="Confirm" name="ConfirmLb" />
+                <ui:Label text="[X]" name="ConfirmBindLb" />
+            </ui:GroupBox>
+            <ui:GroupBox style="flex-direction: row; justify-content: center;">
+                <ui:Label text="Cancel" name="CancelLb" />
+                <ui:Label text="[C]" name="CancelBindLb" />
             </ui:GroupBox>
         </ui:GroupBox>
     </ui:VisualElement>
