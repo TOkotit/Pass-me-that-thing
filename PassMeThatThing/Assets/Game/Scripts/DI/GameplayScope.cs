@@ -5,6 +5,7 @@ using VContainer;
 using VContainer.Unity;
 using UnityEngine;
 using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Entity;
 using Game.Scripts.GameFiles.Entity.Buildings;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
@@ -98,6 +99,7 @@ namespace DI
             builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
             builder.Register<DamagableModel>(Lifetime.Transient);
             
+            builder.Register<PhysicsApplyer>(Lifetime.Singleton);
             builder.Register<PlayerInventoryModel>(Lifetime.Singleton);
             builder.Register<MCLocalModel>(Lifetime.Singleton);
             builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
