@@ -83,8 +83,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         [Server]
         public void Attack()
         {
-            turretAttackController.AttackRay(Damage,
-                    firePoint.transform, targetDetector.DetectedTargetObject);
+            turretAttackController.AttackRay(Damage, targetDetector.DetectedTargetObject);
 
             RpcDrawLine(
                 firePoint.transform.position, 

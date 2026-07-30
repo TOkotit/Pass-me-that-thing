@@ -13,31 +13,26 @@ namespace Game.Scripts.Systems
         public bool TakeDamage(float damage, 
             Damagable damageable, 
             SerializedDictionary<DamagableType, float> damageTypes = null,
-            int toughnessDamage=0,
-            Action callback=null
-            )
+            int toughnessDamage = 0,
+            Action callback = null)
         {
-            
-            
             if (!damageable) return false;
 
+            float multiplier = 1f;
             if (damageTypes != null)
             {
                 if (!damageTypes.ContainsKey(damageable.Type)) return false;
+                multiplier = damageTypes[damageable.Type];
             }
-            
-            var finalDamage = (int)(damage * damageTypes[damageable.Type]);
-            
+    
+            int finalDamage = (int)(damage * multiplier);
             damageable.ServerTakeDamage(finalDamage);
 
-            if (toughnessDamage > 0)
+            if (toughnessDamage > 0 && damageable is ToughnessDamagable tough)
             {
-                if (damageable is ToughnessDamagable toughnessDamagable)
-                {
-                    toughnessDamagable.ServerReduceToughness(toughnessDamage);
-                }
+                tough.ServerReduceToughness(toughnessDamage);
             }
-            
+
             callback?.Invoke();
             return true;
         }

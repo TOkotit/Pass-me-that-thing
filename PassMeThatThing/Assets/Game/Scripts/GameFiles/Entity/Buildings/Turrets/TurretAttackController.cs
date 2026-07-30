@@ -16,9 +16,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
         
 
-        public void AttackRay(float damage, Transform firepoint, TargetObject target)
+        public void AttackRay(float damage, TargetObject target)
         {
-            //_damageSystem.TakeDamage(damage, target.gameObject, damageTypes,gameObject);
+            _damageSystem.TakeDamage(damage, target.Damagable, damageTypes);
         }
 
         

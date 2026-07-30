@@ -74,7 +74,7 @@ namespace Game.Entity
             if (mCamera) mCamera.IsCameraRotating = false;
             maskLayerStateController.ApplyFullBody();
             maskLayerStateController.RpcSetFullBody();
-
+            ragdollHandler.EnableRagdoll();
             RpcFall(impulse);
             StartCoroutine(GetUpAfterDelay(delay));
             Debug.LogWarning(10f * Vector3.forward);
@@ -97,8 +97,8 @@ namespace Game.Entity
         {
             if (!_isAlive) return;
             movement.UnlockMovement();
+            ragdollHandler.DisableRagdoll();
             maskLayerStateController.RpcSetBodyOnly();
-
             if (mCamera) mCamera.IsCameraRotating = true;
             RpcStandUp();
         }
