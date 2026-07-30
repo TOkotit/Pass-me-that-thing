@@ -193,7 +193,7 @@ public class MainCharacterMovement : NetworkBehaviour
 
         var desiredMove = _moveDirection;
 
-        if (_itemController && _itemController.CurrentHeldItem && _itemController.HandsMovement)
+        if (_itemController && _itemController.CurrentHeldItem && !_itemController.CurrentHeldItem.CanBeOwned && _itemController.HandsMovement)
         {
             var grabWorldPos = _itemController.CurrentHeldItem.transform.TransformPoint(
                 _itemController.HandsMovement.LocalPoint);

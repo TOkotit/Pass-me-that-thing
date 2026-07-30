@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Entity;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Entity
     {
         public static DamagableRegistry Instance { get; private set; }
         private Dictionary<GameObject, Damagable> _damagableObjects = new Dictionary<GameObject, Damagable>();
+        public List<Damagable> GetDamageables() => _damagableObjects.Values.ToList();
         public DamagableRegistry()
         {
             Instance = this;

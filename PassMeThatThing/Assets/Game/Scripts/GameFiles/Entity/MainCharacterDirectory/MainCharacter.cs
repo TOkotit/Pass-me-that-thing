@@ -29,7 +29,6 @@ namespace Game.Entity
         [SerializeField] private PlayerInventory playerInventory;
         [SerializeField] private Animator animator;
         [SerializeField] private MainCharacterView view;
-        [SerializeField] private RagdollHandler ragdollHandler;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
         [SerializeField] private PlayerAnimationStateController maskLayerStateController;
@@ -183,6 +182,11 @@ namespace Game.Entity
         {
             base.OnStartServer();
             GlobalStageManager.Instance?.RegisterPlayer(netIdentity);
+        }
+
+        public override void Hit(Vector3 force, Vector3 hitPosition)
+        {
+            ragdollHandler.Hit(force, hitPosition);
         }
     }
 }
