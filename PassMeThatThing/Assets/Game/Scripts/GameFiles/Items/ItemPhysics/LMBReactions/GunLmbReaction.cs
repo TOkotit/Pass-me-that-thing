@@ -14,12 +14,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float force;
         [SerializeField] private int toughnessDamage;
         [SerializeField] private TracerController tracerController;
+        private float lastShotTime;
+        private float delay = 1f;
         public override void Act()
         { 
+            if (Time.time - lastShotTime <= delay) return;
             Debug.Log(tracerController + " " + barrel);
             physicsApplyer.ShotRaycast(barrel.position,Vector3.forward, maxDistance, layersToShot,
                 force:force, damage:damage, toughDamage: toughnessDamage );
-            //tracerController.Shoot(barrel.position, barrel.forward);
+            tracerController.Shoot(barrel.position, barrel.forward);
         }
     }
 }
