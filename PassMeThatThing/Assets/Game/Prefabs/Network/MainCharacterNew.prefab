@@ -2584,6 +2584,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _groundCheckPoint: {fileID: 3139416664511315302}
+  _checkRadius: 0.2
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!65 &5082337633237883009
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5632,13 +5637,13 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 100
   type: 0
+  ragdollHandler: {fileID: 8805327884920507483}
   movement: {fileID: 651297173663608658}
   mCamera: {fileID: 4308959635244113436}
   playerInteraction: {fileID: 4478196668402527849}
   playerInventory: {fileID: 6709948530886720346}
   animator: {fileID: 8935181529844188146}
   view: {fileID: 61961466200725570}
-  ragdollHandler: {fileID: 8805327884920507483}
   fallDelay: 5
   stats: {fileID: 11400000, guid: 2b5855a4ab79fcb45a28f203cff5fedb, type: 2}
   maskLayerStateController: {fileID: 7043869274546149518}
@@ -5928,26 +5933,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _rigidbodies:
-  - {fileID: 427638673505212484}
-  - {fileID: 3075161339793395337}
-  - {fileID: 2827629948962156920}
-  - {fileID: 7437470499134062289}
-  - {fileID: 1799807774404606571}
-  - {fileID: 5673229217591912465}
-  - {fileID: 2117766559403050407}
-  - {fileID: 583647126428489525}
-  - {fileID: 995155819319742339}
-  - {fileID: 1333696112329134132}
-  - {fileID: 8656380570542763198}
-  - {fileID: 8098317420220156342}
-  - {fileID: 7387630697365970101}
-  - {fileID: 3933155108864352952}
-  - {fileID: 8836833526221190881}
-  - {fileID: 5237361742386321487}
-  - {fileID: 8237284482449413213}
-  - {fileID: 7772442820503902198}
-  - {fileID: 154417488650167984}
+  rigidbodies: []
 --- !u!114 &5028845775452447155
 MonoBehaviour:
   m_ObjectHideFlags: 0
