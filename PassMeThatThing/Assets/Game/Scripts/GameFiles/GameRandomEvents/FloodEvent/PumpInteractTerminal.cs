@@ -15,8 +15,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
 
         [SerializeField] private SoundSource pipeSound = default;
 
-        [SerializeField] BrokenPumpEvent brokenPumpEvent;
-        [SerializeField] ParticleSystem _particleSystem;
+        [SerializeField] private BrokenPumpEvent brokenPumpEvent;
+        [SerializeField] private ParticleSystem _particleSystem;
+        [SerializeField] public Outline _outline;
 
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)

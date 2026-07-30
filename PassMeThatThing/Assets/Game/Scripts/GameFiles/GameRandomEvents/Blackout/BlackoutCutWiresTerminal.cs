@@ -14,7 +14,8 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         [SerializeField] private ParticleSystem _particleSystem;
         
         [SerializeField] private WireNodePort port;
-        
+        [SerializeField] public Outline _outline;
+
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
         {

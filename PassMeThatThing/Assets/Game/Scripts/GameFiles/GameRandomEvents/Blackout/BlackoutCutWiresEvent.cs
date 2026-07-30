@@ -17,6 +17,7 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             // }
             
             if (powerTerminal) powerTerminal._isFixed = false;
+            RpcEnableOutline();
         }
         
         [Server]
@@ -33,8 +34,21 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             //     GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();
             //     Debug.Log("[PowerOutageEvent] Электричество восстановлено! Лампы горят.");
             // }
-
+            RpcDisableOutline();
             GameRandomEventManager.DisableEvent(EventId);
+        }
+        
+        [ClientRpc]
+        private void RpcEnableOutline()
+        {
+            powerTerminal._outline.enabled = true;
+
+        }
+
+        [ClientRpc]
+        private void RpcDisableOutline()
+        {
+            powerTerminal._outline.enabled = false;
         }
     }
 }

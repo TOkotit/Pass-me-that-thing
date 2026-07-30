@@ -25,11 +25,25 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
         {
             _isFloodingActive = true;
             valve.Open();
+            RpcEnableOutline();
             _waterMeshInstance = Instantiate(waterMesh);
             _waterMeshInstance.transform.position = transform.position;
             _waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
             
             NetworkServer.Spawn(_waterMeshInstance);
+        }
+
+        [ClientRpc]
+        private void RpcEnableOutline()
+        {
+            valve._outline.enabled = true;
+
+        }
+
+        [ClientRpc]
+        private void RpcDisableOutline()
+        {
+            valve._outline.enabled = false;
         }
         
         private void FixedUpdate()
@@ -63,6 +77,8 @@ namespace Game.Scripts.GameFiles.Events.FloodEvent
             {
                 NetworkServer.Destroy(_waterMeshInstance);
             }
+
+            RpcDisableOutline();
             GameRandomEventManager.DisableEvent(EventId);
         }
     }

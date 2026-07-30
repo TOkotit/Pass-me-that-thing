@@ -87,7 +87,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             if (_currentGameStage == GlobalStagesType.Preparation)
             {
                 _playerReadyManager.ResetReady();
-                _gameRandomEventManager.TryTriggerRandomEvents();
+                //_gameRandomEventManager.TryTriggerRandomEvents();
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
