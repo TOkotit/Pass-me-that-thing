@@ -134,7 +134,11 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         public void OnCraftClick(ClickEvent e)
         {
-            ViewModel.RequestCraft(_selectedRecipe.recipeId);
+            if (_selectedRecipe != null)
+            {
+                ViewModel.RequestCraft(_selectedRecipe.recipeId);
+            }
+            
         }
         
     }

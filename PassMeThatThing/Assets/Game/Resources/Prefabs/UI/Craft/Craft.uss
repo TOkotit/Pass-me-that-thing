@@ -1,0 +1,22 @@
+.my-custom-list .unity-list-view__item {
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+    transition-property: scale;
+}
+
+.my-custom-list .unity-list-view__item:hover {
+    background-color: transparent;
+}
+
+.my-custom-list .unity-collection-view__item--selected {
+    background-color: transparent;
+    scale: 0.9 0.9;
+}
+
+.my-custom-list .unity-collection-view__item--selected:hover {
+    background-color: transparent;
+}
+
+.my-custom-list .unity-list-view__item:focus {
+    background-color: transparent;
+}
