@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using Game.Scripts.Enums;
 using UnityEngine;
+using Game.Scripts.GameFiles.Items;
 
 public class ResourceStorage : NetworkBehaviour
 {
@@ -10,6 +11,9 @@ public class ResourceStorage : NetworkBehaviour
     private readonly SyncDictionary<Resource, float> storedResources = new SyncDictionary<Resource, float>();
     public static Dictionary<GameObject, ResourceStorage> Storages => storages;
     public IReadOnlyDictionary<Resource, float> StoredResources => storedResources;
+
+    public event Action OnResourcesChanged;
+
     [Server]
     public void AddResource(Resource resource, float amount)
     {
@@ -18,6 +22,7 @@ public class ResourceStorage : NetworkBehaviour
         else
             storedResources.Add(resource, amount);
         PrintResources();
+        RpcResourceChanged();
     }
 
     [Server]
@@ -29,6 +34,7 @@ public class ResourceStorage : NetworkBehaviour
         if (newAmount == 0) storedResources.Remove(resource);
         else storedResources[resource] = newAmount;
         PrintResources();
+        RpcResourceChanged();
         return true;
     }
 
@@ -44,6 +50,13 @@ public class ResourceStorage : NetworkBehaviour
         {
             Debug.Log(pair.Key + ": " + pair.Value);
         }
+    }
+
+    [ClientRpc]
+    public void RpcResourceChanged()
+    {
+        Debug.Log("[ResourceStorage] RpcResourceChanged");
+        OnResourcesChanged?.Invoke();
     }
 
     private void Awake()
