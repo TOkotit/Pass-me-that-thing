@@ -46,7 +46,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             foreach (var col in size)
             {
-                //_damageSystem.TakeDamage(damage, col.gameObject, damageTypes, gameObject);
+                DamagableRegistry.Instance.TryGetDamagable(col.gameObject, out var dam);
+                _damageSystem.TakeDamage(damage, dam, damageTypes);
             }
 
             OnAttackMelee?.Invoke();
