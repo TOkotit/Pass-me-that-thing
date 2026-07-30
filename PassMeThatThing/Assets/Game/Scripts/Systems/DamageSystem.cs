@@ -11,19 +11,20 @@ namespace Game.Scripts.Systems
     public class DamageSystem
     {
         public bool TakeDamage(float damage, 
-            GameObject gameObject, 
-            SerializedDictionary<DamagableType, float> damageTypes,
-            GameObject source,
+            Damagable damageable, 
+            SerializedDictionary<DamagableType, float> damageTypes = null,
             int toughnessDamage=0,
             Action callback=null
             )
         {
-            var damageable = DamagableRegistry.Instance.TryGetDamagable(gameObject, out var item);
+            
             
             if (!damageable) return false;
-            
-            
-            if (!damageTypes.ContainsKey(damageable.Type)) return false;
+
+            if (damageTypes != null)
+            {
+                if (!damageTypes.ContainsKey(damageable.Type)) return false;
+            }
             
             var finalDamage = (int)(damage * damageTypes[damageable.Type]);
             

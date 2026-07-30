@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Entity;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
     {
         public static PhysicalItemRegistry Instance { get; private set; }
         private Dictionary<GameObject, PhysicalItem> _physicalItems = new Dictionary<GameObject, PhysicalItem>();
+        public List<PhysicalItem> GetItems() => _physicalItems.Values.ToList();
 
         public PhysicalItemRegistry()
         {

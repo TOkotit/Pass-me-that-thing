@@ -18,9 +18,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected TargetDetector targetDetector;
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
-
-        [SerializeField] protected RagdollHandler  ragdollHandler;
-        
         
         [Inject] private DamagableRegistry _damagableRegistry;
         private float SMLogicTimer;
