@@ -5448,6 +5448,7 @@ GameObject:
   - component: {fileID: 5028845775452447155}
   - component: {fileID: 9049365366940597573}
   - component: {fileID: 4828880146996937221}
+  - component: {fileID: 1449079932796894948}
   m_Layer: 8
   m_Name: MainCharacterNew
   m_TagString: Player
@@ -5679,6 +5680,9 @@ MonoBehaviour:
   maxHoldDistance: 2
   holdSoftZone: 1.5
   _itemController: {fileID: 4772467737411900661}
+  footstepSound: {fileID: 1449079932796894948}
+  walkFootstepInterval: 0.5
+  sprintFootstepInterval: 0.3
 --- !u!114 &123923750185839253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5927,6 +5931,29 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &1449079932796894948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7528151646145926360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 10f027fdbe66ab441b8ea62c75827013, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 7528151646145926360}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
 --- !u!1 &8313002827743973345
 GameObject:
   m_ObjectHideFlags: 0

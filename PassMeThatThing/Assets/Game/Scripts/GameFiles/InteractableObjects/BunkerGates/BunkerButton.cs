@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
@@ -8,12 +9,21 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
     public class BunkerButton : NetworkBehaviour, Interactable
     {
         [SerializeField] private BunkerGates linkedGate;
-
+        [SerializeField] private SoundSource buttonSound;
+        [SerializeField] private SoundSource errorButtonSound;
+        
+        
         public void Interact()
         {
+
             if (linkedGate)
             {
                 linkedGate.Interact();
+                RpcPlayButtonSound();
+            }
+            else
+            {
+                RpcPlayButtonErrorSound();
             }
         }
 
@@ -42,6 +52,24 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
         {
             base.OnStartClient();
             InteractableRegistry.Instance.Register(gameObject, this);
+        }
+
+        [ClientRpc]
+        private void RpcPlayButtonSound()
+        {
+            if (buttonSound)
+            {
+                buttonSound.Play();
+            }
+        }
+        
+        [ClientRpc]
+        private void RpcPlayButtonErrorSound()
+        {
+            if (errorButtonSound)
+            {
+                errorButtonSound.Play();
+            }
         }
     }
 }

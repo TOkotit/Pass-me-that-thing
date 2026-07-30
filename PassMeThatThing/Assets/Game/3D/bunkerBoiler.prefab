@@ -5351,6 +5351,7 @@ GameObject:
   - component: {fileID: 7596056865138643028}
   - component: {fileID: 8478146997884831424}
   - component: {fileID: 2843183957370936083}
+  - component: {fileID: 2274485749957583969}
   m_Layer: 7
   m_Name: WaterPump
   m_TagString: Untagged
@@ -5467,7 +5468,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _isFixed: 1
-  pipeSound: {fileID: 0}
+  pipeSound: {fileID: 2274485749957583969}
   brokenPumpEvent: {fileID: 936848206209627289}
   _particleSystem: {fileID: 2372262910394379805}
   _outline: {fileID: 2843183957370936083}
@@ -6021,6 +6022,29 @@ MonoBehaviour:
     - {x: 0.00000037252897, y: -0.86602545, z: 0.49999994}
     - {x: 0.7499999, y: 0.4330127, z: 0.5000003}
     - {x: 0.74999994, y: -0.43301255, z: 0.50000024}
+--- !u!114 &2274485749957583969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5329309119451256100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 03f46f29273576644a4f38103d470c50, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 5329309119451256100}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 2
+  _delay: 0
 --- !u!1 &5412857771416286706
 GameObject:
   m_ObjectHideFlags: 0
@@ -6036,6 +6060,7 @@ GameObject:
   - component: {fileID: 5594920560472654092}
   - component: {fileID: 4126178822815003743}
   - component: {fileID: 4229831435766542653}
+  - component: {fileID: 3765685512533779642}
   m_Layer: 7
   m_Name: Valve
   m_TagString: Untagged
@@ -6140,6 +6165,7 @@ MonoBehaviour:
   syncInterval: 0
   impactParticles: {fileID: 7283380301379167282}
   pivot: {fileID: 1458293848279393470}
+  valveSound: {fileID: 3765685512533779642}
   rotationAxis: {x: 0, y: 0, z: 1}
   openAngle: 270
   closedAngle: 0
@@ -6186,6 +6212,29 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &3765685512533779642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412857771416286706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 6cb790a1264e57644b03db0f52cb88a3, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 5412857771416286706}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 2
+  _delay: 0
 --- !u!1 &5702409112984647015
 GameObject:
   m_ObjectHideFlags: 0

@@ -314,6 +314,8 @@ GameObject:
   - component: {fileID: 2936198478436544583}
   - component: {fileID: 4698269526793292540}
   - component: {fileID: -4380078391780676488}
+  - component: {fileID: 2693778944511484553}
+  - component: {fileID: 4902147946108173764}
   m_Layer: 7
   m_Name: Gun
   m_TagString: Item
@@ -480,6 +482,8 @@ MonoBehaviour:
   force: 10
   toughnessDamage: 1
   tracerController: {fileID: 8099793897704055216}
+  shotSound: {fileID: 2693778944511484553}
+  emptySound: {fileID: 4902147946108173764}
 --- !u!120 &7110100661858507794
 LineRenderer:
   serializedVersion: 2
@@ -651,6 +655,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2693778944511484553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7141351114629633791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 47c7001ab5b961d41bc62056d699180c, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 7141351114629633791}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
+--- !u!114 &4902147946108173764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7141351114629633791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 178586468349f8c43960ccbde966fa97, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 7141351114629633791}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
 --- !u!1 &7966655478954682477
 GameObject:
   m_ObjectHideFlags: 0

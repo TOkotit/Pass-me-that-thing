@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.InteractableObjects;
@@ -14,7 +15,8 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
     {
         [SerializeField] private ParticleSystem impactParticles;
         [SerializeField] private Transform pivot;
-        
+        [SerializeField] private SoundSource valveSound = default;
+
         [SerializeField] private Vector3 rotationAxis = Vector3.forward;
         [SerializeField] private float openAngle = 0f;
         [SerializeField] private float closedAngle = 360f;
@@ -47,6 +49,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             if (_isClosed) return;
             
             RpcPlayImpactParticles();
+            RpcPlayImpactSound();
             if (ActivateMinigame(conn, floodEvent))
             {
                 Debug.Log("<color=yellow> [Server] IsTerminalBusy = true");
@@ -93,7 +96,15 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
                 impactParticles.Play();
             }
         }
-        
+                
+        [ClientRpc]
+        private void RpcPlayImpactSound()
+        {
+            if (valveSound && !valveSound.IsPlaying) 
+            {
+                valveSound.Play();
+            }
+        }
         private void OnClosedStateChanged(bool oldValue, bool newValue)
         {
             _isClosed = newValue;
@@ -128,5 +139,6 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             _isClosed = true;
             _targetAngle = closedAngle;
         }
+
     }
 }

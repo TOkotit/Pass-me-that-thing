@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Mirror;
 using UnityEngine;
@@ -12,7 +13,8 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         
         [SerializeField] private BlackoutCutWiresEvent _cutWiresEvent;
         [SerializeField] private ParticleSystem _particleSystem;
-        
+        [SerializeField] private SoundSource electricity = default;
+
         [SerializeField] private WireNodePort port;
         [SerializeField] public Outline _outline;
 
@@ -22,7 +24,8 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             base.TerminalAct(conn);
             if (IsTerminalBusy) return;
             if (_isFixed) return;
-            
+
+            RpcPlayImpactSound();
             RpcPlayImpactParticles();
             if (ActivateMinigame(conn, _cutWiresEvent))
             {
@@ -58,6 +61,15 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             if (_particleSystem && !_particleSystem.isPlaying) 
             {
                 _particleSystem.Play();
+            }
+        }
+        
+        [ClientRpc]
+        private void RpcPlayImpactSound()
+        {
+            if (electricity && !electricity.IsPlaying) 
+            {
+                electricity.Play();
             }
         }
         
