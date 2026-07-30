@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Game.Scripts.GameFiles.Entity.GlobalView;
+using Mirror;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
@@ -9,6 +10,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View
     public class MainCharacterView : MonoBehaviour
     {
         [SerializeField] private Animator animator;
+        [SerializeField] private NetworkAnimator networkAnimator;
         [SerializeField] private Transform parent;
         [SerializeField] private Transform characterRig;
         [SerializeField] private Transform hips;
@@ -70,7 +72,16 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View
             characterRig.rotation = initHipsRot;
         }
 
-        public void EnableAnimator() => animator.enabled = true;
-        public void DisableAnimator() => animator.enabled = false;
+        public void EnableAnimator()
+        {
+            animator.enabled = true;
+            networkAnimator.enabled = true;
+        }
+
+        public void DisableAnimator()
+        {
+            animator.enabled = false;
+            networkAnimator.enabled = false;
+        }
     }
 }

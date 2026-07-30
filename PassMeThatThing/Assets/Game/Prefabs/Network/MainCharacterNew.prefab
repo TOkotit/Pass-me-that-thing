@@ -58,7 +58,9 @@ GameObject:
   - component: {fileID: 4921423358191159518}
   - component: {fileID: 7079597633657148170}
   - component: {fileID: 6186713367683430940}
-  m_Layer: 12
+  - component: {fileID: 5504544594832688999}
+  - component: {fileID: 2316883022832112797}
+  m_Layer: 0
   m_Name: LeftHandGrab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,6 +227,45 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 2
+--- !u!114 &5504544594832688999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587442219588498292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c35cda4f6a9d4a989ddd71aae0d0c181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  interactionController: {fileID: 4772467737411900661}
+  joint: {fileID: 6186713367683430940}
+  handCollider: {fileID: 1368654193285164775}
+--- !u!135 &2316883022832112797
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587442219588498292}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1080865833119888482
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,6 +948,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8935181529844188146}
+  networkAnimator: {fileID: 8634793547797183727}
   parent: {fileID: 1761147164635753575}
   characterRig: {fileID: 3393740394347641825}
   hips: {fileID: 1893581831006513416}
@@ -5233,7 +5275,9 @@ GameObject:
   - component: {fileID: 2632577018975859687}
   - component: {fileID: 6759388885409534181}
   - component: {fileID: 9111401862884752967}
-  m_Layer: 12
+  - component: {fileID: 7231076482926040452}
+  - component: {fileID: 356708947023432654}
+  m_Layer: 0
   m_Name: RightHandGrab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5400,6 +5444,45 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 2
+--- !u!114 &7231076482926040452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7452230097271913097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c35cda4f6a9d4a989ddd71aae0d0c181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  interactionController: {fileID: 4772467737411900661}
+  joint: {fileID: 6759388885409534181}
+  handCollider: {fileID: 5642157823630545869}
+--- !u!135 &356708947023432654
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7452230097271913097}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7528151646145926360
 GameObject:
   m_ObjectHideFlags: 0
@@ -5656,8 +5739,8 @@ MonoBehaviour:
     m_Bits: 0
   characterController: {fileID: 4585087161987446141}
   character: {fileID: 3471299420040406428}
-  maxHoldDistance: 3.5
-  holdSoftZone: 3
+  maxHoldDistance: 2
+  holdSoftZone: 1.5
   _itemController: {fileID: 4772467737411900661}
 --- !u!114 &123923750185839253
 MonoBehaviour:
@@ -5712,16 +5795,17 @@ MonoBehaviour:
   syncInterval: 0
   leftJoint: {fileID: 6186713367683430940}
   rightJoint: {fileID: 6759388885409534181}
+  grabJoint: {fileID: 1323866539399521512}
+  jointSpring: 5000
+  jointDamper: 5
+  angularSpring: 2000
+  angularDamper: 0
   baseHoldForce: 750
   holdDamping: 10
   maxHoldDistance: 2
   maxLiftMass: 250
-  extraForceScale: 0.1
   maxAngularSpeed: 15
   angularResponsiveness: 0.5
-  rotationSpring: 750
-  rotationDamper: 5
-  maxTorquePerPlayer: 50
   throwForceGrow: 5
   maxThrowForce: 15
   minChargeTime: 0.3
