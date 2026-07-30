@@ -20,7 +20,6 @@ namespace MainCharacterNetwork
         [SerializeField] private float zoomDistance = 5f;
         [SerializeField] private Transform cameraRoot;
         [SerializeField] private Camera ragdollCamera;
-        [SerializeField] private Transform spinePivot;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
@@ -115,10 +114,10 @@ namespace MainCharacterNetwork
 
             var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
             
-            if (_isLocalPlayer)
+            /*if (_isLocalPlayer)
             {
                 spinePivot.localRotation = Quaternion.Euler(targetTilt);
-            }
+            }*/
         }
 
         public void SetupInput(GameInput input)
