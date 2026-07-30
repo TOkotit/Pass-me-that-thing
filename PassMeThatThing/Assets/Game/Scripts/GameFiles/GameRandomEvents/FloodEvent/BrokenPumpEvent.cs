@@ -23,6 +23,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         {
             _isPressureCritical = true;
             pumpInteractTerminal._isFixed = false;
+            RpcEnableOutline();
             if (_siblingFloodEvent)
             {
                 _siblingFloodEvent.CurrentTriggerChance += _chanceBoost;
@@ -47,7 +48,21 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
                 _siblingFloodEvent.CurrentTriggerChance -= _chanceBoost;
             }
 
+            RpcDisableOutline();
             GameRandomEventManager.DisableEvent(EventId);
+        }
+        
+        [ClientRpc]
+        private void RpcEnableOutline()
+        {
+            pumpInteractTerminal._outline.enabled = true;
+
+        }
+
+        [ClientRpc]
+        private void RpcDisableOutline()
+        {
+            pumpInteractTerminal._outline.enabled = false;
         }
     }
 }

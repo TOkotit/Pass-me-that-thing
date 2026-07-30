@@ -20,6 +20,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [SerializeField] private float closedAngle = 360f;
         [SerializeField] private float moveSpeed = 100f;
         [SerializeField] private Events.FloodEvent.FloodEvent floodEvent;
+        [SerializeField] public Outline _outline;
         
         [SyncVar(hook = nameof(OnClosedStateChanged))]
         public bool _isClosed = true;
