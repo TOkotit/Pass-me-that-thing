@@ -9994,6 +9994,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770106241}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &772050320
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3505892995384287723, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: item
+      value: 
+      objectReference: {fileID: 11400000, guid: 96fecb6815e9ef844abf297892f61bb4, type: 2}
+    - target: {fileID: 3505892995384287723, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: reserveItemPoolManager
+      value: 
+      objectReference: {fileID: 791840328}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.853177
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 9.908383
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6662152543530940653, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: sceneId
+      value: 2855691323
+      objectReference: {fileID: 0}
+    - target: {fileID: 7755887012746823137, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_Name
+      value: Cardboard Box (Closed) (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
 --- !u!1 &778492269
 GameObject:
   m_ObjectHideFlags: 0
@@ -28841,3 +28910,4 @@ SceneRoots:
   - {fileID: 529245399}
   - {fileID: 731863048}
   - {fileID: 1946267998}
+  - {fileID: 772050320}
