@@ -20,7 +20,6 @@ namespace MainCharacterNetwork
         [SerializeField] private float zoomDistance = 5f;
         [SerializeField] private Transform cameraRoot;
         [SerializeField] private Camera ragdollCamera;
-        [SerializeField] private Transform spinePivot;
         private GameInput _gameInput;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
