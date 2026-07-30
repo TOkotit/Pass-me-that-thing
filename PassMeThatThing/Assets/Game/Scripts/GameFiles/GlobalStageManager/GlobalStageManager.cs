@@ -93,6 +93,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
                 _enemySpawner.SpawnWave(1, _enemyDatabase.GetEnemy("spider"));
+                _enemySpawner.SpawnWave(3, _enemyDatabase.GetEnemy("zombie"));
             }
 
             if (duration > 0)
