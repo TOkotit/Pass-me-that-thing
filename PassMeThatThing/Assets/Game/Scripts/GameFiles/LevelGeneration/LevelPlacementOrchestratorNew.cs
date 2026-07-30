@@ -295,7 +295,22 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => Quaternion.identity
             };
 
-            var instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
+            LevelRoomNew instance;
+
+            #if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    instance = (LevelRoomNew)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, levelContainer);
+                    instance.transform.SetPositionAndRotation(worldPos, rotQuat);
+                }
+                else
+                {
+                    instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
+                }
+            #else
+                instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
+            #endif
+
             instance.name = roomName;
             return instance;
         }
@@ -581,6 +596,46 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
                 i++;
             }
+        }
+        
+        [ContextMenu("Bake Grid From Scene")]
+        public void BakeGridFromScene()
+        {
+            if (levelGrid == null || levelContainer == null) return;
+
+            levelGrid.InitializeGrid();
+            levelGrid.ClearGrid();
+
+            var allPlacedRooms = levelContainer.GetComponentsInChildren<LevelRoomNew>();
+
+            foreach (var room in allPlacedRooms)
+            {
+                var originCell = levelGrid.UnityGrid.WorldToCell(room.transform.position);
+
+                var yRot = Mathf.RoundToInt(room.transform.eulerAngles.y) % 360;
+                if (yRot < 0) yRot += 360;
+
+                var currentRotation = RoomRotation.Deg0;
+                if (Mathf.Abs(yRot - 90) <= 5) currentRotation = RoomRotation.Deg90;
+                else if (Mathf.Abs(yRot - 180) <= 5) currentRotation = RoomRotation.Deg180;
+                else if (Mathf.Abs(yRot - 270) <= 5) currentRotation = RoomRotation.Deg270;
+
+                var plates = RoomRotationHelper.GetRotatedPlates(room, currentRotation);
+
+                foreach (var plate in plates)
+                {
+                    var globalPos = originCell + plate.LocalPosition;
+                    levelGrid.SetCellState(globalPos, true);
+                }
+            }
+
+            levelGrid.BakeSerializedData();
+
+            #if UNITY_EDITOR
+                        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            #endif
+
+            Debug.Log($"[LevelPlacement] Сетка успешно пересобрана! Обнаружено комнат на сцене: {allPlacedRooms.Length}");
         }
     }
 }
