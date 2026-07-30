@@ -13,6 +13,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         [SerializeField] private Damagable damagable;
         [SerializeField] private int priority;
         [SerializeField] private DamagableType damagableType;
+
+        public Damagable Damagable => damagable;
         
         [Inject] 
         private TargetsRegistry Registry { get; set; }
