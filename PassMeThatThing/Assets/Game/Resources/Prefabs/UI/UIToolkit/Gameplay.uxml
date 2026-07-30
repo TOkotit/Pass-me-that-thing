@@ -14,17 +14,20 @@
                 <ui:Label text="C to cancel" style="width: auto; align-self: center;" />
             </ui:GroupBox>
         </ui:GroupBox>
-        <ui:GroupBox name="EventsContainer" style="height: 534px; width: 301px; align-items: stretch; align-content: flex-start; align-self: flex-start; position: absolute; background-color: rgba(115, 115, 115, 0.51);" />
-        <ui:GroupBox style="height: 107px; width: 404px; align-items: stretch; align-content: flex-start; align-self: flex-start; bottom: 0; position: absolute; left: 0; flex-direction: row; justify-content: space-between; font-size: 100%;">
+        <ui:GroupBox name="EventsContainer" style="height: 593px; width: 294px; align-items: stretch; position: absolute; background-color: rgba(115, 115, 115, 0.51); justify-content: flex-start; top: 304px; left: auto; right: 0;" />
+        <ui:VisualElement name="Minimap" style="flex-grow: 1; position: absolute; height: 301px; width: 341px; top: 0; left: auto; right: 0; background-image: resource(&apos;Sprites/GameplaySprites/minimap&apos;); background-position-y: top 0; background-position-x: right 0; -unity-background-scale-mode: scale-to-fit;" />
+        <ui:GroupBox style="height: 107px; width: 516px; align-items: stretch; align-content: flex-start; align-self: flex-start; bottom: 0; position: absolute; left: auto; flex-direction: row; justify-content: space-between; font-size: 100%; right: 0;">
             <ui:Label text="Label" name="RemainingTimeLb" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); font-size: 50px;" />
             <ui:Label text="Label" name="PhaseLb" style="flex-grow: 1; font-size: 50%; color: rgb(255, 255, 255); -unity-text-align: lower-left;" />
         </ui:GroupBox>
-        <ui:GroupBox name="InventoryContainer" style="height: 169px; width: 565px; align-items: stretch; align-content: flex-start; align-self: center; position: absolute; left: 50%; bottom: 0; right: auto; translate: -50% 0; background-color: rgba(128, 128, 128, 0.63); justify-content: space-evenly; flex-direction: row;">
-            <ui:VisualElement name="Item1Img" class="inventory-item" />
-            <ui:VisualElement name="Item2Img" class="inventory-item" style="flex-grow: 1;" />
-            <ui:VisualElement name="Item3Img" class="inventory-item" style="flex-grow: 1;" />
+        <ui:GroupBox name="InventoryContainer" style="height: 278px; width: 584px; align-items: stretch; align-content: flex-start; align-self: center; position: absolute; left: 0%; bottom: 0; right: auto; translate: 0% 0; background-color: rgba(128, 128, 128, 0); justify-content: space-evenly; flex-direction: row; background-image: resource(&apos;Sprites/GameplaySprites/inventory_3s&apos;); -unity-background-scale-mode: scale-to-fit; background-position-y: bottom 0;">
+            <ui:VisualElement name="Item1Img" class="inventory-item" style="position: absolute; height: 89px; width: 76px; top: 67px; left: 169px;" />
+            <ui:VisualElement name="Item2Img" class="inventory-item" style="flex-grow: 1; position: absolute; height: 91px; width: 86px; top: 70px; left: 310px;" />
+            <ui:VisualElement name="Item3Img" class="inventory-item" style="flex-grow: 1; position: absolute; height: 83px; width: 79px; left: 462px; top: 70px;" />
         </ui:GroupBox>
-        <ui:Label text="Label" name="HealthLb" style="flex-grow: 1; font-size: 100px; color: rgb(255, 255, 255); position: absolute; left: 0; top: 0;" />
+        <ui:VisualElement name="PlayerHud" style="flex-grow: 1; position: absolute; height: 397px; top: 3px; width: 395px; left: -3px; background-image: resource(&apos;Sprites/GameplaySprites/player_hud&apos;); -unity-background-scale-mode: scale-to-fit; background-position-y: top 0; background-position-x: left 0;">
+            <ui:Label text="Label" name="HealthLb" style="flex-grow: 1; font-size: 35px; color: rgb(255, 255, 255); position: absolute; left: 187px; top: 13px; height: 59px; width: 125px;" />
+        </ui:VisualElement>
         <ui:Label name="ThrowLb" style="flex-grow: 1; font-size: 100px; color: rgb(255, 255, 255); position: absolute; left: 959px; top: 540px; display: flex;" />
     </ui:GroupBox>
     <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-image: resource(&apos;Sprites/deathImage&apos;); display: flex; opacity: 0;" />
