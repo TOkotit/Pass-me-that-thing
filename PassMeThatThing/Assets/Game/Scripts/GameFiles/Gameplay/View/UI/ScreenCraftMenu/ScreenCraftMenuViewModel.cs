@@ -19,12 +19,15 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private GameplayUIManager _uiManager;
 
         private GameInputManager _gameInput;
-        private ResourceDatabase _resourceDatabase;
+        
         private WorkbenchItemRecipeDatabase _recipeDatabase;
         private LocalCraftModel _localCraftModel;
         
-        private CraftManager _craftManager;
-        
+
+
+        public CraftManager craftManager;
+        public ResourceDatabase resourceDatabase;
+
         public override string Id => "ScreenCraftMenu";
 
 
@@ -36,13 +39,13 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
             _localCraftModel = container.Resolve<LocalCraftModel>();
             
-            _resourceDatabase = container.Resolve<ResourceDatabase>();
             _recipeDatabase = container.Resolve<WorkbenchItemRecipeDatabase>();
 
 
+            craftManager = container.Resolve<CraftManager>();
+            resourceDatabase = container.Resolve<ResourceDatabase>();
+
             _gameInput.GameInput.UI.PauseMenu.performed += OnPauseClicked;
-            
-            _craftManager = container.Resolve<CraftManager>();
         }
 
         public override void Dispose()
@@ -58,9 +61,9 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _uiManager.OpenScreenGameplay();
         }
 
-        public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe> , ResourceDatabase> f)
+        public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe>> f)
         {
-            f(_recipeDatabase.AllRecipes, _resourceDatabase);
+            f(_recipeDatabase.AllRecipes);
         }
 
         public void RequestCraft(string recipeId)
@@ -68,10 +71,16 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _localCraftModel.Craft(recipeId);
         }
 
-        public void RequestAvailableResources(Action<IReadOnlyDictionary<Resource,float>, ResourceDatabase> f)
+        public void RequestSubForAvailableResources(Action f)
         {
-            f(_craftManager.GetStoredResources(), _resourceDatabase);
+            f();
+
+            MainResourceStorage.Instance.OnResourcesChanged += f;
         }
-        
+
+        public void RequestUnsubForAvailableResources(Action f)
+        {
+            MainResourceStorage.Instance.OnResourcesChanged -= f;
+        }
     }
 }

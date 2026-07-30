@@ -3,29 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
 using Game.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
-// using Button = UnityEngine.UI.Button;
-// using Image = UnityEngine.UI.Image;
 
 namespace Game.Gameplay.View.UI.ScreenBuild
 {
     public class ScreenCraftMenuBinder : WindowBinder<ScreenCraftMenuViewModel>
     {
-        // [SerializeField] private RecipeViewElement recipeViewPrefab;
-        // [SerializeField] private GameObject recipesContainer;
-        //
-        // [SerializeField] private Image resultImage;
-        // [SerializeField] private TextMeshProUGUI resultText;
-        // [SerializeField] private Button craftButton;
-        //
-        // [SerializeField] private ResourceViewElement resourceViewPrefab;
-        // [SerializeField] private GameObject resourceContainer;
-
-        private ResourceDatabase _resourceDatabase;
         private List<WorkbenchItemRecipe> _recipesData = new();
         
         private WorkbenchItemRecipe _selectedRecipe;
@@ -59,7 +47,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private void Start()
         {
             ViewModel.RequestUpdateRecipes(UpdateRecipes);
-            ViewModel.RequestAvailableResources(UpdateResources);
+            ViewModel.RequestSubForAvailableResources(UpdateResources);
 
             InitRecipesList();
             
@@ -70,15 +58,18 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         private void OnDestroy()
         {
+            ViewModel.RequestUnsubForAvailableResources(UpdateResources);
+
             _recipeContainer.selectedIndicesChanged -= OnRecipeClick;
             _craftButton.UnregisterCallback<ClickEvent>(OnCraftClick);
         }
 
-        public void UpdateResources(IReadOnlyDictionary<Resource,float> resources, ResourceDatabase resourceDatabase)
+        public void UpdateResources()
         {
-            foreach (var r in resources)
+            _resourceContainer.Clear();
+            foreach (var r in ViewModel.craftManager.GetStoredResources())
             {
-                var rData = resourceDatabase.GetResource(r.Key);
+                var rData = ViewModel.resourceDatabase.GetResource(r.Key);
                 
                 var res = resourceViewPrefab.Instantiate();
                 _resourceContainer.Add(res);
@@ -105,7 +96,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
                 
                 foreach (var rp in r.Resources)
                 {
-                    var rData = _resourceDatabase.GetResource(rp.resource);
+                    var rData = ViewModel.resourceDatabase.GetResource(rp.resource);
                     
                     var rRes = recipeResViewPrefab.Instantiate();
                     recipeResContainer.Add(rRes);
@@ -119,9 +110,8 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _recipeContainer.itemsSource = _recipesData;
         }
         
-        public void UpdateRecipes(List<WorkbenchItemRecipe> recipes, ResourceDatabase resourceDatabase)
+        public void UpdateRecipes(List<WorkbenchItemRecipe> recipes)
         {
-            _resourceDatabase = resourceDatabase;
             foreach (var r in recipes)
             {
                 _recipesData.Add(r);
