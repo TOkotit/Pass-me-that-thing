@@ -10,7 +10,7 @@ using Mirror;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using Assets.Game.Scripts.Utils;
 using UnityEngine.UIElements;
 
 
@@ -18,7 +18,7 @@ namespace Game.Gameplay.View.UI
 {
     public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
     {
-        private Color selectedColor = Color.cornflowerBlue;
+        private Color selectedColor = CustomColorUtils.FromHex("5CDD8A");
         private Color noSelectionColor = new Color(1f, 1f, 1f, 0f);
         
         private int _activeSlotIndex = -1;
@@ -48,6 +48,7 @@ namespace Game.Gameplay.View.UI
 
         private void Awake()
         {
+
             _root = uiDocument.rootVisualElement;
 
             _healthText = _root.Q<Label>("HealthLb");
@@ -200,20 +201,6 @@ namespace Game.Gameplay.View.UI
         private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
         {
             if (_gameEvents.ContainsKey(eventId)) return;
-            //
-            // var gameEvent = Instantiate(_gameEventPrefab, _gameEventsConatainer.transform, false);
-            //
-            // gameEvent.Icon.sprite = icon;
-            // gameEvent.Text.text = $"R-{roomNumber}";
-            //
-            // _gameEvents.Add(eventId, gameEvent);
-            //
-            // if (_gameEventsConatainer.TryGetComponent<RectTransform>(out var containerRect))
-            // {
-            //     LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
-            // }
-            //
-            // gameEvent.transform.DOScale(1f, 0.2f).From(0f).SetEase(Ease.InOutBack);
             
             var gameEvent = gameEventPrefab.Instantiate();
             
