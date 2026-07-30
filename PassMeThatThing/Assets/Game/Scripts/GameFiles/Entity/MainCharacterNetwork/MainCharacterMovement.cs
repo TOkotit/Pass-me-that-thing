@@ -164,7 +164,13 @@ public class MainCharacterMovement : NetworkBehaviour
         Debug.Log("Jump: " + groundCheck.IsGrounded);
         if (groundCheck.IsGrounded)
         {
+            Debug.Log($"<color=green> groundCheck.IsGrounded: {groundCheck.IsGrounded}");
+
             _velocity.y = _model.JumpHeight;
+        }
+        else
+        {
+            Debug.Log($"<color=red> groundCheck.IsGrounded: {groundCheck.IsGrounded}");
         }
     }
     

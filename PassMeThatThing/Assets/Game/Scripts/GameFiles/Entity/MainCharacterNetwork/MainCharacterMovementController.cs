@@ -208,38 +208,6 @@ namespace MainCharacterNetwork
             _controllable.Rotate(rotation);
         }
         
-        // ================== COMMANDS ==================
-        
-        // [Command]
-        // private void CmdJump()
-        // {
-        //     _controllable.Jump();
-        // }
-        //
-        // [Command]
-        // private void CmdSprintStarted()
-        // {
-        //     _controllable.SetSprinting(true); 
-        // }
-        //
-        // [Command]
-        // private void CmdSprintCanceled()
-        // {
-        //     _controllable.SetSprinting(false);
-        // }
-        //
-        // [Command]
-        // private void CmdMove(Vector3 direction)
-        // {
-        //     // Debug.Log($"<color=aliceblue>[{gameObject.name}] Moving to {direction}...");
-        //     _controllable.Move(direction);
-        // }
-        //
-        // [Command]
-        // public void CmdRotate(Quaternion rotation)
-        // {
-        //     _controllable.Rotate(rotation);
-        // }
         
         // ================== DI ==================
         
