@@ -40,31 +40,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             var size = Physics.OverlapBox(
                 attackCubeCenter.position,
                 halfExtents,
-                // colliders, 
                 transform.rotation, 
                 _targetLayer
             );
 
             foreach (var col in size)
             {
-                _damageSystem.TakeDamage(damage, col.gameObject, damageTypes, gameObject);
+                //_damageSystem.TakeDamage(damage, col.gameObject, damageTypes, gameObject);
             }
 
             OnAttackMelee?.Invoke();
             
             Debug.Log("Zombie AttackMelee");
-        }
-        
-        private Damagable FindDamagableInHierarchy(GameObject obj)
-        {
-            var t = obj.transform;
-            while (t)
-            {
-                if (DamagableRegistry.Instance.TryGetDamagable(t.gameObject, out var damagable))
-                    return damagable;
-                t = t.parent;
-            }
-            return null;
         }
         
         private void OnDrawGizmosSelected()

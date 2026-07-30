@@ -8,18 +8,15 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
 {
     public class HandGrab : NetworkBehaviour
     {
-        [SerializeField] private Hand hand;
         [SerializeField] private PhysicalItemInteractionController interactionController;
         [SerializeField] private ConfigurableJoint joint;
-        [SerializeField] private Transform handTransform;
         [SerializeField] private Collider handCollider;
         private void OnTriggerEnter(Collider other)
         {
             var item = interactionController.CurrentHeldItem;
+            Debug.Log($"Схватил? {other.name} == {item.name}");
             if (item.Collider == other)
             {
-                var point = other.ClosestPoint(transform.position);
-                var normal = (point - handCollider.bounds.center).normalized;
                 LockMovement();
             }
         }

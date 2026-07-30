@@ -29,8 +29,9 @@ namespace Game.Scripts.GameFiles.Items
         private OutlineRegistry _outlineRegistry;
         private DamagableRegistry _damagableRegistry;
         private bool _inTimeOut;
-        private float lastInteractionTime;
-        private float lastDropTime;
+        private Coroutine _currentAction;
+        private float _lastInteractionTime;
+        private float _lastDropTime;
 
         [SerializeField] private PhysicalItemInteractionController _physicalItemInteractionController;
         [SerializeField] private MainCharacter mainCharacter;
@@ -177,6 +178,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnDrop(InputAction.CallbackContext context)
         {
+            _currentAction = null;
             Drop();
         }
 
@@ -198,9 +200,9 @@ namespace Game.Scripts.GameFiles.Items
 
         public void Drop()
         {
-            if (Time.time - lastInteractionTime > interactionTimeOut)
+            if (Time.time - _lastInteractionTime > interactionTimeOut)
             {
-                lastInteractionTime = Time.time;
+                _lastInteractionTime = Time.time;
                 var hands = _physicalItemInteractionController.HandsMovement;
                 var throwForce = hands.CurrentThrowForce;
                 var canThrow = hands.CanThrow;
@@ -224,10 +226,11 @@ namespace Game.Scripts.GameFiles.Items
 
         private void TryInteract()
         {
+            _currentAction = null;
             Debug.LogWarning("Trying interaction");
-            if (Time.time - lastInteractionTime > interactionTimeOut)
+            if (Time.time - _lastInteractionTime > interactionTimeOut)
             {
-                lastInteractionTime = Time.time;
+                _lastInteractionTime = Time.time;
                 var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                 if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
                 {
@@ -278,6 +281,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnDropCharge(InputAction.CallbackContext context)
         {
+            _currentAction = null;
             _physicalItemInteractionController.ChargeDrop();
         }
 
@@ -311,6 +315,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void onActPerformed(InputAction.CallbackContext context)
         {
+            _currentAction = null;
             var currentItem = _physicalItemInteractionController.CurrentHeldItem;
             if (!currentItem) return;
             if (currentItem.Reaction)

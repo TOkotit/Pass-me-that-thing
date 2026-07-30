@@ -7,13 +7,14 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
 {
     public class RagdollHandler : NetworkBehaviour
     {
-        [SerializeField] private List<Rigidbody> _rigidbodies;
+        [SerializeField] private List<Rigidbody> rigidbodies;
+        public List<Rigidbody> GetRigidbodies() => rigidbodies;
 
         private Rigidbody _injuredRigidbody;
         
         public void Hit(Vector3 force, Vector3 hitPosition)
         {
-            _injuredRigidbody = _rigidbodies.Where(rigidbody => !rigidbody.isKinematic)
+            _injuredRigidbody = rigidbodies.Where(rigidbody => !rigidbody.isKinematic)
                 .OrderBy(rigidbody => Vector3.Distance(rigidbody.position, hitPosition))
                 .FirstOrDefault();
             Debug.LogWarning(_injuredRigidbody);
@@ -24,7 +25,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
 
         public void EnableRagdoll()
         {
-            foreach (var r in _rigidbodies)
+            foreach (var r in rigidbodies)
             {
                 r.isKinematic = false;
             }
@@ -32,7 +33,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
         
         public void DisableRagdoll()
         {
-            foreach (var r in _rigidbodies)
+            foreach (var r in rigidbodies)
             {
                 r.isKinematic = true;
             }

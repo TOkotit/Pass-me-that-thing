@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
@@ -7,11 +8,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
     [RequireComponent(typeof(Grid))]
     public class LevelGrid : MonoBehaviour
     {
-        [Header("Визуализация сетки")]
         public int editorDrawRadius = 20;
         [SerializeField] private Grid _grid;
         [SerializeField] private Color emptyCellColor = Color.gray;
         [SerializeField] private Color occupiedCellColor = Color.green;
+        
+        
+        [SerializeField, HideInInspector] 
+        private List<Vector3Int> _serializedOccupiedCells = new();
         
         public Grid UnityGrid => _grid;
         
@@ -27,7 +31,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
             if (!_grid)
                 _grid = GetComponent<Grid>();
 
-            _occupiedCells ??= new HashSet<Vector3Int>();
+            _occupiedCells ??= new HashSet<Vector3Int>(_serializedOccupiedCells);
+            
         }
         
         public void SetCellState(Vector3Int cellPosition, bool isOccupied)
@@ -52,7 +57,21 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
         public void ClearGrid()
         {
             _occupiedCells?.Clear();
+            _serializedOccupiedCells.Clear();
         }
+        
+        public void BakeSerializedData()
+        {
+            if (_occupiedCells != null)
+            {
+                _serializedOccupiedCells = _occupiedCells.ToList();
+            }
+            
+            #if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(this);
+            #endif
+        }
+        
 
         private void OnDrawGizmos()
         {

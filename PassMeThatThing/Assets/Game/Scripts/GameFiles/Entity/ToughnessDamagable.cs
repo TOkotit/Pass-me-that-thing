@@ -1,4 +1,5 @@
 ﻿using Enums;
+using Game.Scripts.GameFiles.Entity.GlobalView;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -11,6 +12,8 @@ namespace Entity
     public abstract class ToughnessDamagable : Damagable
     {
         protected ToughnessModel _toughnessModel;
+        [SerializeField] protected RagdollHandler ragdollHandler;
+        public RagdollHandler RagdollHandler => ragdollHandler;
         
         [SyncVar(hook = nameof(OnSyncedToughnessChanged))]
         private int _syncedToughness;
@@ -28,7 +31,7 @@ namespace Entity
                 _toughnessModel.OnToughnessBreak += OnToughnessBreak;
             }
         }
-        
+        public virtual void Hit(Vector3 force, Vector3 hitPosition){}
         protected virtual void OnDestroy()
         {
             base.OnDestroy();

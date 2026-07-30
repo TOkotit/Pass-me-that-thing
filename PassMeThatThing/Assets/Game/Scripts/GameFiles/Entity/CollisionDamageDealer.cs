@@ -39,7 +39,7 @@ namespace Game.Scripts.GameFiles.Entity
                 finalDamage += (int)(velocity * velocityDamageMultiplier);
             }
             
-            _damageSystem.TakeDamage(finalDamage, other.gameObject, damageTypes,gameObject, toughnessDamage, OnServerTakeDamage);
+            //_damageSystem.TakeDamage(finalDamage, other.gameObject, damageTypes,gameObject, toughnessDamage, OnServerTakeDamage);
             Debug.Log($"{other.gameObject.name} collided with {finalDamage} damage");
             
             _lastDamageTime = Time.time;
