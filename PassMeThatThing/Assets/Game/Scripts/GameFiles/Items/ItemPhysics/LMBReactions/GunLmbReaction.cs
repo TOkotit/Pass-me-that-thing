@@ -20,7 +20,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         { 
             if (Time.time - lastShotTime <= delay) return;
             Debug.Log(tracerController + " " + barrel);
-            physicsApplyer.ShotRaycast(barrel.position,Vector3.forward, maxDistance, layersToShot,
+            physicsApplyer.ShotRaycast(barrel.position, barrel.forward, maxDistance, layersToShot,
                 force:force, damage:damage, toughDamage: toughnessDamage );
             tracerController.Shoot(barrel.position, barrel.forward);
         }

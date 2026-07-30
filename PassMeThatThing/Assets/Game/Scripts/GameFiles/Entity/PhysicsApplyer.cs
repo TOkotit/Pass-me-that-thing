@@ -26,11 +26,13 @@ namespace Game.Scripts.GameFiles.Entity
                 {
                     item.Rigidbody.AddForceAtPosition(force * direction, hit.point, ForceMode.Impulse);
                 }
-
+                Debug.Log(hit.collider.gameObject.name + " was hit " + hit.collider.tag);
                 if (IsTargetDamagable(hit.collider.gameObject, out var damagable))
                 {
+                    Debug.Log(damagable);
                     if (damagable is ToughnessDamagable toughnessDamagable)
                     {
+                        Debug.Log(toughnessDamagable);
                         toughnessDamagable.Hit(hit.point, force * direction);
                     }
                     damageSystem.TakeDamage(damage, damagable, toughnessDamage : toughDamage);
