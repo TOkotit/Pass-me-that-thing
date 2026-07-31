@@ -64,6 +64,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             
             if (!_isTurretWork) return;
             if (!targetDetector.IsTargetVisible) return;
+            if (targetDetector.DetectedTargetObject == null) return;
 
             _dir = targetDetector.DetectedTargetObject.transform.position - turretHead.transform.position;
 
