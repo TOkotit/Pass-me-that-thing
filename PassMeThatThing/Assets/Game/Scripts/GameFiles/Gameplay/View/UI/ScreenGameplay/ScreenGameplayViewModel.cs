@@ -6,8 +6,6 @@ using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;
-using MainCharacter_old;
-using Microsoft.Unity.VisualStudio.Editor;
 using Mirror;
 using ObservableCollections;
 using R3;
