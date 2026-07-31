@@ -49,7 +49,6 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
             if (_isClosed) return;
             
             RpcPlayImpactParticles();
-            RpcPlayImpactSound();
             if (ActivateMinigame(conn, floodEvent))
             {
                 Debug.Log("<color=yellow> [Server] IsTerminalBusy = true");
@@ -62,6 +61,8 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         public override void CmdMinigameComplete()
         {
             floodEvent.StopEvent();
+            RpcPlayImpactSound();
+
             _isClosed = true;
         }
 
@@ -100,7 +101,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [ClientRpc]
         private void RpcPlayImpactSound()
         {
-            if (valveSound && !valveSound.IsPlaying) 
+            if (valveSound) 
             {
                 valveSound.Play();
             }

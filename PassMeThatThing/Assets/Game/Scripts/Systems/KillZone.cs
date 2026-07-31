@@ -16,11 +16,6 @@ namespace Game.Scripts.Systems
             if (networkIdentity == null) return;
             
             other.transform.position = pointOfTeleporting.position;
-            
-            var rb = other.GetComponent<Rigidbody>();
-            if (rb == null) return;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
         }
     }
 }
