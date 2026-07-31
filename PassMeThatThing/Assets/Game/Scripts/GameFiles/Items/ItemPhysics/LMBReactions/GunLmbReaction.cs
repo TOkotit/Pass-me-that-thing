@@ -29,7 +29,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             if (Time.time - lastShotTime <= delay || ammo <= 0)
             {
                 if (ammo <= 0)
-                    RpcPlayEmptySound();
+                    CmdPlayEmptySound();
                 return;
             }
             Debug.Log(tracerController + " " + barrel);
@@ -39,7 +39,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             lastShotTime = Time.time;
             ammo -= 1;
             RpcPlayParticle(hitPoint);
-            RpcPlayShotSound();
+            CmdPlayShotSound();
         }
 
         [ClientRpc]
@@ -48,6 +48,17 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             _poolManager.GetAndPlayParticle(Particles.pow, hitPoint);
         }
 
+        [Command]
+        private void CmdPlayShotSound()
+        {
+            RpcPlayShotSound();
+        }
+        
+        [Command]
+        private void CmdPlayEmptySound()
+        {
+            RpcPlayEmptySound();
+        }
         
         [ClientRpc]
         private void RpcPlayShotSound()
