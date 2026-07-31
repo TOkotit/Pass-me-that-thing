@@ -19,11 +19,11 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             if (linkedGate)
             {
                 linkedGate.Interact();
-                RpcPlayButtonSound();
+                CmdPlayButtonSound();
             }
             else
             {
-                RpcPlayButtonErrorSound();
+                CmdPlayButtonErrorSound();
             }
         }
 
@@ -54,6 +54,18 @@ namespace Game.Scripts.GameFiles.InteractableObjects.BunkerGates
             InteractableRegistry.Instance.Register(gameObject, this);
         }
 
+        [Command]
+        private void CmdPlayButtonSound()
+        {
+            RpcPlayButtonSound();
+        }
+        
+        [Command]
+        private void CmdPlayButtonErrorSound()
+        {
+            RpcPlayButtonSound();
+        }
+        
         [ClientRpc]
         private void RpcPlayButtonSound()
         {
