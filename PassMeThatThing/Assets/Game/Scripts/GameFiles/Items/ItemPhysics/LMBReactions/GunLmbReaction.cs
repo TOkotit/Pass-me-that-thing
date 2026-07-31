@@ -42,7 +42,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             CmdPlayShotSound();
         }
 
-        [Command]
+        [Command(requiresAuthority = false)]
         private void CmdPlayParticle(Vector3 hitPoint)
         {
             RpcPlayParticle(hitPoint);
@@ -54,13 +54,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             _poolManager.GetAndPlayParticle(Particles.pow, hitPoint);
         }
 
-        [Command]
+        [Command(requiresAuthority = false)]
         private void CmdPlayShotSound()
         {
             RpcPlayShotSound();
         }
-        
-        [Command]
+
+        [Command(requiresAuthority = false)]
         private void CmdPlayEmptySound()
         {
             RpcPlayEmptySound();
