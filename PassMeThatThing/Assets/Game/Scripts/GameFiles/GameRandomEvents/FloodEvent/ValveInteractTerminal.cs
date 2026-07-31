@@ -101,7 +101,7 @@ namespace Game.Scripts.GameFiles.GameEvents.FloodEvent
         [ClientRpc]
         private void RpcPlayImpactSound()
         {
-            if (valveSound) 
+            if (valveSound && !valveSound.IsPlaying) 
             {
                 valveSound.Play();
             }
