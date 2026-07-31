@@ -41,7 +41,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         [ClientRpc]
         private void RpcPlayImpactSound()
         {
-            if (pipeSound && !pipeSound.IsPlaying) 
+            if (pipeSound) 
             {
                 pipeSound.Play();
             }
