@@ -38,8 +38,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             var hitPoint = tracerController.Shoot(barrel.position, barrel.forward);
             lastShotTime = Time.time;
             ammo -= 1;
-            RpcPlayParticle(hitPoint);
+            CmdPlayParticle(hitPoint);
             CmdPlayShotSound();
+        }
+
+        [Command]
+        private void CmdPlayParticle(Vector3 hitPoint)
+        {
+            RpcPlayParticle(hitPoint);
         }
 
         [ClientRpc]
