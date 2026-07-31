@@ -9,6 +9,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
     public class GunLmbReaction : LMBReaction //в будущем будет корневым классом для
     {                                         //всех пушек, поэтому название не с LMB
         [Inject] private PhysicsApplyer physicsApplyer;
+        [Inject] private ParticlePoolManager _poolManager;
+
         [SerializeField] private Transform barrel;
         [SerializeField] private float maxDistance;
         [SerializeField] private LayerMask layersToShot;
@@ -33,11 +35,19 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             Debug.Log(tracerController + " " + barrel);
             physicsApplyer.ShotRaycast(barrel.position, barrel.forward, maxDistance, layersToShot,
                 force:force, damage:damage, toughDamage: toughnessDamage );
-            tracerController.Shoot(barrel.position, barrel.forward);
+            var hitPoint = tracerController.Shoot(barrel.position, barrel.forward);
             lastShotTime = Time.time;
             ammo -= 1;
+            RpcPlayParticle(hitPoint);
             RpcPlayShotSound();
         }
+
+        [ClientRpc]
+        private void RpcPlayParticle(Vector3 hitPoint)
+        {
+            _poolManager.GetAndPlayParticle(Particles.pow, hitPoint);
+        }
+
         
         [ClientRpc]
         private void RpcPlayShotSound()
