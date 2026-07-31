@@ -97,7 +97,7 @@ public class MainCharacterMovement : NetworkBehaviour
         {
             var relativeVelocity = otherCharacter.Movement.LastVelocity - LastVelocity;
             var impactSpeed = Vector3.Dot(relativeVelocity, hit.normal);
-            Debug.LogError($"!Impact with {hit.gameObject.name}! {impactSpeed}");
+            Debug.Log($"<color=red>[ERROR]</color>! Impact with {hit.gameObject.name}! {impactSpeed}");
             if (impactSpeed > 25f)
             {
                 var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
@@ -107,7 +107,7 @@ public class MainCharacterMovement : NetworkBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.LogError($"Impact with {collision.gameObject.name}");
+        Debug.Log($"<color=red>[ERROR]</color> Impact with {collision.gameObject.name}");
         if (_itemController?.CurrentHeldItem?.Collider == collision.collider) return;
         var impactSpeed = 0f;
         if (collision.rigidbody)
