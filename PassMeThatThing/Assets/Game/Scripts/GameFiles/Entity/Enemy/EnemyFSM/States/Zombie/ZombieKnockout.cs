@@ -26,7 +26,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             for (var i = 0; i < 1; i++)
             {
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(3);
             }
             StateMachine.ChangeState(_zombie.ZombieWalk);
         }

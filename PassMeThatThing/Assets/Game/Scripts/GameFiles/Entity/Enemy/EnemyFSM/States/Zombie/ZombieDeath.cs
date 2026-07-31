@@ -1,4 +1,6 @@
 using Game.Scripts.Enums;
+using System.Collections;
+using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
@@ -16,8 +18,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
-            _zombie.RpcSelfDestroy();
             
+            _zombie.RpcFall();
+            _zombie.StartCoroutine(Wait());
+        }
+
+        private IEnumerator Wait()
+        {
+            for (var i = 0; i < 1; i++)
+            {
+                yield return new WaitForSeconds(3);
+            }
+            _zombie.RpcSelfDestroy();
         }
 
         public override void LogicUpdate()
