@@ -12,7 +12,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         //[SerializeField] private float maxDistance;
         
         
-        private SyncDictionary<int, WireNode> allNodes = new ();
+        private Dictionary<int, WireNode> allNodes = new ();
 
         private Dictionary<int, WireNodePort> portNodes = new ();
         
@@ -23,7 +23,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private int _lastNodeIdCounter;
         private int _lastNetIdCounter;
 
-        public SyncDictionary<int, WireNode> AllNodes => allNodes;
+        public Dictionary<int, WireNode> AllNodes => allNodes;
         public Dictionary<int, WireNodePort> PortNodes => portNodes;
         public Dictionary<int, List<int>> NodeConnections => nodeConnections;
         public Dictionary<int, WireNetModel> WireNets => wireNets;
@@ -160,11 +160,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                     }
                 }
             }
-            
-            RpcDrawNodeLines(firstNodeId, secondNodeId,
+
+            RpcDrawNodeLines(firstNode, secondNode,
                 NodeConnections[firstNodeId].Count,
                 NodeConnections[secondNodeId].Count);
-            
+
             PrintDebugInfo();
         }
 
@@ -211,7 +211,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             WireNets[AllNodes[nodeId].NetId].RemoveWireNode(nodeId);
             node.NetId = -1;
             
-            RpcClearNodeLines(nodeId);
+            RpcClearNodeLines(node);
             
             PrintDebugInfo();
         }
@@ -232,19 +232,19 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
 
         [ClientRpc]
-        public void RpcDrawNodeLines(int firstNodeId, int secondNodeId, 
+        public void RpcDrawNodeLines(WireNode firstNode, WireNode secondNode, 
             int firstConnCount, int secondConnCount)
         {
-            wireVisualizer.DrawNodeLines(AllNodes[firstNodeId],
-                AllNodes[secondNodeId],
+            wireVisualizer.DrawNodeLines(firstNode,
+                secondNode,
                 firstConnCount,
                 secondConnCount);
         }
         
         [ClientRpc]
-        public void RpcClearNodeLines(int nodeId)
+        public void RpcClearNodeLines(WireNode node)
         {
-            wireVisualizer.ClearNodeLines(AllNodes[nodeId]);
+            wireVisualizer.ClearNodeLines(node);
         }
 
         
