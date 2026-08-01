@@ -17,14 +17,15 @@ namespace Game.Scripts.Systems
         private string FilePath => Application.dataPath + "/" + "OptionsData.json";
         private string RebindFilePath => Application.dataPath + "/" + "RebindKeysData.json";
         
-        public OptionsData OptionsData;
-        public bool IsDataSaved;
-        
-        public Resolution[] Resolutions => Screen.resolutions;
-
         [Inject] private GameInputManager _inputManager;
         private InputActionRebindingExtensions.RebindingOperation _rebindingOperation;
-        
+
+        public OptionsData OptionsData;
+        public bool IsDataSaved;
+
+        public Resolution[] Resolutions => Screen.resolutions;
+
+        public event Action<float> OnSensitivityChanged;
         public void SetInitialSettings()
         {
             Debug.Log("OptionsManager SetInitialSettings");
@@ -37,11 +38,12 @@ namespace Game.Scripts.Systems
                     isFullScreen = false,
                     resolutionIndex = 0,
                     language = "English",
+                    mouseSensitivity = 15f,
                     audioValues = new ()
                     {
-                        {BroAudioType.All, 0.5f},
-                        {BroAudioType.Music, 0.5f},
-                        {BroAudioType.SFX, 0.5f}
+                        {BroAudioType.All, 10f},
+                        {BroAudioType.Music, 10f},
+                        {BroAudioType.SFX, 10f}
                     }
                 };
                 
@@ -54,6 +56,7 @@ namespace Game.Scripts.Systems
             {
                 SetAudioVolume(pair.Key, pair.Value, init: true);
             }
+            SetMouseSensitivity(OptionsData.mouseSensitivity, true);
         }
         
         //general game settings
@@ -68,16 +71,16 @@ namespace Game.Scripts.Systems
             //
         }
         
-        //audio settings
-        public void SetAudioVolume(BroAudioType audioType, float volume, float fadeTime=0f, bool init=false)
+        //audio settings 
+        public void SetAudioVolume(BroAudioType audioType, float volumePercent, float fadeTime=0f, bool init=false)
         {
             if (!init)
-                OptionsData.audioValues[audioType] = volume;
+                OptionsData.audioValues[audioType] = volumePercent;
             else
             {
                 IsDataSaved = false;
             }
-            BroAudio.SetVolume(audioType, volume, fadeTime);
+            BroAudio.SetVolume(audioType, volumePercent / 10f, fadeTime);
         }
         
         //video settings
@@ -105,7 +108,17 @@ namespace Game.Scripts.Systems
             Screen.fullScreen = isFullScreen;
         }
         
-        //keyboard
+        //controls
+        public void SetMouseSensitivity(float valuePercent, bool init = false)
+        {
+            if (!init)
+                OptionsData.mouseSensitivity = valuePercent;
+            else
+            {
+                IsDataSaved = false;
+            }
+            OnSensitivityChanged?.Invoke(valuePercent);
+        }
 
         public void StartRebindKey(InputAction inputAction, int targetIndex=-1, Action callback=null)
         {

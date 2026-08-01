@@ -1,6 +1,7 @@
 ﻿ using System;
 using DI;
 using Game.Scripts.Enums;
+using Game.Scripts.Systems;
 using Mirror;
 using Systems;
 using UnityEngine;
@@ -12,8 +13,9 @@ namespace MainCharacterNetwork
     [RequireComponent(typeof(Camera))]
     public class MainCharacterCamera : MonoBehaviour
     {
+        private const float standardSensitivity = 30f;
+
         [SerializeField] private Camera mCamera;
-        [SerializeField] private float sensitivity = 1f;
         [SerializeField] private float maxPitch = 80f;
         [SerializeField] private bool lockCursor = true;
         [SerializeField] private float tiltMultiplier = 0.2f;
@@ -21,10 +23,12 @@ namespace MainCharacterNetwork
         [SerializeField] private Transform cameraRoot;
         [SerializeField] private Camera ragdollCamera;
         private GameInput _gameInput;
+        private OptionsManager _optionsManager;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
         private CameraState _cameraState;
-            
+
+        private float _sensitivity;
         private Vector2 _rotation;
         private bool _initialized;
         private bool _isLocalPlayer;
@@ -79,9 +83,13 @@ namespace MainCharacterNetwork
         
         
         [Inject]
-        public void Construct(GameInputManager gameInputManager)
+        public void Construct(GameInputManager gameInputManager, OptionsManager optionsManager)
         {
             _gameInput = gameInputManager.GameInput;
+            _optionsManager = optionsManager;
+
+            SetSensitivity(optionsManager.OptionsData.mouseSensitivity);
+            _optionsManager.OnSensitivityChanged += SetSensitivity;
         }
 
         private void LateUpdate()
@@ -102,8 +110,8 @@ namespace MainCharacterNetwork
 
             var inputDelta = _gameInput.Gameplay.MouseDrag.ReadValue<Vector2>();
 
-            _rotation.x -= inputDelta.y * sensitivity * 0.01f;
-            _rotation.y += inputDelta.x * sensitivity * 0.01f;
+            _rotation.x -= inputDelta.y * _sensitivity * 0.01f;
+            _rotation.y += inputDelta.x * _sensitivity * 0.01f;
 
             _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
 
@@ -126,5 +134,14 @@ namespace MainCharacterNetwork
             _initialized = true;
         }
 
+        public void SetSensitivity(float sensitivityPercent)
+        {
+            _sensitivity = standardSensitivity * sensitivityPercent / 100;
+        }
+
+        private void OnDestroy()
+        {
+            _optionsManager.OnSensitivityChanged -= SetSensitivity;
+        }
     }
 }

@@ -11,9 +11,11 @@ namespace Game.Scripts.Systems
         public bool isFullScreen;
         public int resolutionIndex;
 
+        public float mouseSensitivity; //% from 0 to 100
+
         public string language;
         
-        public SerializedDictionary<BroAudioType, float> audioValues;
-        
+        public SerializedDictionary<BroAudioType, float> audioValues; //% from 0 to 100
+
     }
 }
