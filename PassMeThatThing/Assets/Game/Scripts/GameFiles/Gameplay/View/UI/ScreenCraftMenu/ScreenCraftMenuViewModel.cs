@@ -71,16 +71,16 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _localCraftModel.Craft(recipeId);
         }
 
-        public void RequestSubForAvailableResources(Action f)
+        public void RequestSubForAvailableResources(Action<IReadOnlyDictionary<Resource, float>> f)
         {
-            f();
+            f(craftManager.GetStoredResources());
 
-            MainResourceStorage.Instance.OnResourcesChanged += f;
+            MainResourceStorage.Instance.OnSyncResourcesChanged += f;
         }
 
-        public void RequestUnsubForAvailableResources(Action f)
+        public void RequestUnsubForAvailableResources(Action<IReadOnlyDictionary<Resource, float>> f)
         {
-            MainResourceStorage.Instance.OnResourcesChanged -= f;
+            MainResourceStorage.Instance.OnSyncResourcesChanged -= f;
         }
     }
 }
