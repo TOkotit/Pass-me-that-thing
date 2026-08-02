@@ -1,9 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/Craft.uss?fileID=7433441132597879392&amp;guid=3256edf6c0034d34babdb6aec5079c7c&amp;type=3#Craft" />
     <ui:Label text="Label" name="NameLb" style="font-size: 21px; visibility: hidden; display: none;" />
-    <ui:GroupBox class="thin-bordered-rect" style="flex-direction: row; color: rgb(92, 221, 138); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; flex-grow: 1; padding-top: 9px; padding-right: 9px; padding-bottom: 9px; padding-left: 9px;">
+    <ui:GroupBox name="GroupBox" class="thin-bordered-rect" style="flex-direction: row; color: rgb(92, 221, 138); margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; flex-grow: 0; padding-top: 9px; padding-right: 9px; padding-bottom: 9px; padding-left: 9px; width: 80px; height: 80px;">
         <ui:VisualElement name="ResImg" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/GabrielAguiarProductions/FreeQuickEffectsVol1/Textures/Circle01_v1.png?fileID=2800000&amp;guid=d13b9cb06b250314f9e816b4192ef192&amp;type=3#Circle01_v1&quot;); justify-content: flex-end;">
-            <ui:Label text="999" name="AmountLb" style="font-size: 38px; color: rgb(255, 255, 255); -unity-text-align: middle-left; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            <ui:Label text="999" name="AmountLb" style="font-size: 19px; color: rgb(255, 255, 255); -unity-text-align: middle-left; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
         </ui:VisualElement>
     </ui:GroupBox>
 </ui:UXML>

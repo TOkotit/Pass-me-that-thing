@@ -5,7 +5,7 @@
         <ui:VisualElement style="position: absolute; width: 1275px; height: 776px; flex-direction: row; top: 94px; left: 308px;">
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Recipes" class="title" />
-                <ui:ListView name="RecipesContainer" fixed-item-height="100" virtualization-method="DynamicHeight" show-border="true" class="my-custom-list" style="flex-grow: 1;" />
+                <ui:ListView name="RecipesContainer" fixed-item-height="100" virtualization-method="DynamicHeight" show-border="true" class="my-custom-list" style="flex-grow: 1; padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px;" />
             </ui:VisualElement>
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Result" class="title" />
@@ -17,9 +17,15 @@
             </ui:VisualElement>
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Resources" class="title" />
-                <ui:VisualElement name="ResContainer" style="flex-grow: 1;">
-                    <ui:Instance template="ResourceView" />
-                </ui:VisualElement>
+                <ui:ScrollView style="flex-grow: 1;">
+                    <ui:VisualElement name="ResContainer" style="flex-grow: 1; flex-wrap: wrap; flex-direction: row; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
+                        <ui:Instance template="ResourceView" />
+                        <ui:Instance template="ResourceView" />
+                        <ui:Instance template="ResourceView" />
+                        <ui:Instance template="ResourceView" />
+                        <ui:Instance template="ResourceView" />
+                    </ui:VisualElement>
+                </ui:ScrollView>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:GroupBox>
