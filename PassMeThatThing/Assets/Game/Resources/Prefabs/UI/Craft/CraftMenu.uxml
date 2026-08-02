@@ -1,12 +1,26 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="ResourceView" src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/ResourceView.uxml?fileID=9197481963319205126&amp;guid=8c06a7cc98e3e0045b4bba114412eab0&amp;type=3#ResourceView" />
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/Craft.uss?fileID=7433441132597879392&amp;guid=3256edf6c0034d34babdb6aec5079c7c&amp;type=3#Craft" />
-    <ui:GroupBox style="justify-content: space-between; flex-direction: row; align-content: flex-start; align-self: stretch; align-items: stretch; height: 100%; background-image: resource(&apos;Sprites/Craft/craft_background&apos;); color: rgb(92, 221, 138);">
-        <ui:ListView name="RecipesContainer" fixed-item-height="100" virtualization-method="DynamicHeight" show-border="true" class="my-custom-list" style="width: 390px; position: absolute; height: 791px; top: 129px; left: 310px; transform-origin: center;" />
-        <ui:VisualElement style="flex-grow: 1; justify-content: space-around; align-items: center; align-self: auto; flex-wrap: nowrap; flex-direction: column; flex-shrink: 1; align-content: center; width: 421px; position: absolute; height: 799px; top: 136px; left: 743px;">
-            <ui:VisualElement name="CurrentResultIm" style="width: 168px; position: relative; height: 171px; border-top-width: 4px; border-right-width: 4px; border-bottom-width: 4px; border-left-width: 4px; border-left-color: rgb(33, 112, 61); border-right-color: rgb(33, 112, 61); border-top-color: rgb(33, 112, 61); border-bottom-color: rgb(33, 112, 61); border-top-left-radius: 33px; border-top-right-radius: 33px; border-bottom-right-radius: 33px; border-bottom-left-radius: 33px; align-self: center; align-content: flex-start; flex-grow: 0;" />
-            <ui:Label text="label" name="CurrentResultLb" style="height: 105px; width: 271px; font-size: 31px; -unity-text-align: middle-center; white-space: normal; text-overflow: clip; -unity-font-style: normal;" />
-            <ui:Button text="Craft&#10;" name="CraftBtn" style="height: 164px; width: 364px; font-size: 54px; background-color: rgba(255, 255, 255, 0); border-left-color: rgb(33, 112, 61); border-right-color: rgb(33, 112, 61); border-top-color: rgb(33, 112, 61); border-bottom-color: rgb(33, 112, 61); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; border-top-width: 4px; border-right-width: 4px; border-bottom-width: 4px; border-left-width: 4px;" />
+    <ui:GroupBox name="GroupBox" style="flex-grow: 1; background-image: resource(&apos;Sprites/Craft/big_display&apos;); -unity-background-scale-mode: scale-to-fit; justify-content: space-evenly;">
+        <ui:VisualElement style="position: absolute; width: 1275px; height: 776px; flex-direction: row; top: 94px; left: 308px;">
+            <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
+                <ui:Label text="Recipes" class="title" />
+                <ui:ListView name="RecipesContainer" fixed-item-height="100" virtualization-method="DynamicHeight" show-border="true" class="my-custom-list" style="flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
+                <ui:Label text="Result" class="title" />
+                <ui:VisualElement name="CurrentResultIm" class="bordered-rect thin-bordered-rect" style="width: 168px; position: relative; height: 171px; align-self: center; align-content: flex-start; flex-grow: 0; margin-top: 66px;" />
+                <ui:Label text="label" name="CurrentResultLb" class="bordered-rect" style="height: 315px; width: 361px; font-size: 31px; -unity-text-align: middle-center; white-space: normal; text-overflow: clip; -unity-font-style: normal; align-self: center; margin-top: 50px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(89, 185, 123);" />
+                <ui:Button name="CraftBtn" style="height: 90px; width: 227px; font-size: 54px; position: absolute; top: 813px; left: 50%; translate: -46% 0; right: auto; -unity-text-align: middle-center; background-color: rgba(188, 188, 188, 0); background-image: resource(&apos;Sprites/Craft/big_display_btn&apos;); padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;">
+                    <ui:Label text="Craft" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 70px; width: 204px; color: rgb(140, 61, 14);" />
+                </ui:Button>
+            </ui:VisualElement>
+            <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
+                <ui:Label text="Resources" class="title" />
+                <ui:VisualElement name="ResContainer" style="flex-grow: 1;">
+                    <ui:Instance template="ResourceView" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="ResContainer" style="flex-grow: 1; position: absolute; height: 800px; width: 416px; top: 157px; left: 1195px;" />
     </ui:GroupBox>
 </ui:UXML>

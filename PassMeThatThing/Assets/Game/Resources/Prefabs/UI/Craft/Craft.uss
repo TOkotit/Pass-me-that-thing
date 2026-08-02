@@ -20,3 +20,39 @@
 .my-custom-list .unity-list-view__item:focus {
     background-color: transparent;
 }
+
+.bordered-rect {
+    border-left-color: rgb(89, 185, 123);
+    border-right-color: rgb(89, 185, 123);
+    border-top-color: rgb(89, 185, 123);
+    border-bottom-color: rgb(89, 185, 123);
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    border-bottom-right-radius: 32px;
+    border-bottom-left-radius: 32px;
+}
+
+.thin-bordered-rect {
+    border-left-color: rgb(89, 185, 123);
+    border-right-color: rgb(89, 185, 123);
+    border-top-color: rgb(89, 185, 123);
+    border-bottom-color: rgb(89, 185, 123);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    border-bottom-right-radius: 32px;
+    border-bottom-left-radius: 32px;
+}
+
+.title {
+    font-size: 56px;
+    -unity-text-align: middle-center;
+    color: rgb(92, 221, 138);
+}
