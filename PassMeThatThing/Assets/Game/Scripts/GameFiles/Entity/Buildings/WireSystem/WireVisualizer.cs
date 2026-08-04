@@ -15,25 +15,22 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
 
         
-        public void DrawNodeLines(WireNode firstNode, WireNode secondNode, 
-            int firstConnCount, int secondConnCount)
+        public void DrawNodeLines(WireNode firstNode, WireNode secondNode,
+            WireNodeEntry firstEntry, WireNodeEntry secondEntry)
         {
 
             if (firstNode.WireType == WireType.Electricity)
             {
                 var temp = Instantiate(wireLineViewPrefab);
 
-                var p1 = firstNode.PortObjects[firstConnCount - 1];
-                var p2 = secondNode.PortObjects[secondConnCount - 1];
-
                 temp.plug1.SetActive(true);
                 temp.plug2.SetActive(true);
 
-                temp.plug1.transform.position = p1.transform.position;
-                temp.plug1.transform.rotation = p1.transform.rotation;
+                temp.plug1.transform.position = firstEntry.EntryView.transform.position;
+                temp.plug1.transform.rotation = firstEntry.EntryView.transform.rotation;
 
-                temp.plug2.transform.position = p2.transform.position;
-                temp.plug2.transform.rotation = p2.transform.rotation;
+                temp.plug2.transform.position = secondEntry.EntryView.transform.position;
+                temp.plug2.transform.rotation = secondEntry.EntryView.transform.rotation;
 
                 temp.lineRenderer.SetPosition(0, temp.wirePoint1.position);
                 temp.lineRenderer.SetPosition(1, temp.wirePoint2.position);

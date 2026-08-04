@@ -19,14 +19,21 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private Dictionary<int, List<int>> nodeConnections = new ();
 
         private Dictionary<int, WireNetModel> wireNets = new ();
-        
+
+        private Dictionary<int, WireNodeEntry> _entryObjects = new();
+
+        //firstNode/entryid, secondNode/entryId
+        private List<(int, int)> _usedEntries = new ();
+
         private int _lastNodeIdCounter;
         private int _lastNetIdCounter;
+        private int _lastEntryIdCounter;
 
         public Dictionary<int, WireNode> AllNodes => allNodes;
         public Dictionary<int, WireNodePort> PortNodes => portNodes;
         public Dictionary<int, List<int>> NodeConnections => nodeConnections;
         public Dictionary<int, WireNetModel> WireNets => wireNets;
+        public Dictionary<int, WireNodeEntry> EntryObjects => _entryObjects;
 
         [Server]
         public void RegisterNode(WireNode wireNode)
@@ -58,6 +65,22 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
 
         [Server]
+        public void RegisterEntry(WireNodeEntry entry)
+        {
+            _lastEntryIdCounter++;
+
+            entry.EntryId = _lastEntryIdCounter;
+
+            _entryObjects[_lastEntryIdCounter] = entry;
+        }
+
+        [Server]
+        public void UnregisterEntry(int entryId)
+        {
+            _entryObjects.Remove(entryId);
+        }
+
+        [Server]
         public int CreateWireNet()
         {
             _lastNetIdCounter++;
@@ -68,13 +91,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
         
         [Command(requiresAuthority = false)]
-        public void CmdMakeConnection(int prevNodeId, int nextNodeId)
+        public void CmdMakeConnection(int prevNodeId, int nextNodeId, int firstEntryId, int secondEntryId)
         {
-            MakeConnection(prevNodeId, nextNodeId);
+            MakeConnection(prevNodeId, nextNodeId, firstEntryId, secondEntryId);
         }
         
         [Server]
-        public void MakeConnection(int firstNodeId, int secondNodeId)
+        public void MakeConnection(int firstNodeId, int secondNodeId,
+            int firstEntryId, int secondEntryId)
         {
             var firstNode =  AllNodes[firstNodeId];
             var secondNode =  AllNodes[secondNodeId];
@@ -98,28 +122,35 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
             //проверка на лимит
 
-            if (NodeConnections[firstNodeId].Count >= firstNode.ConnLimit)
+            if (NodeConnections[firstNodeId].Count >= firstNode.ConnLimit
+                || NodeConnections[secondNodeId].Count >= secondNode.ConnLimit)
             {
                 Debug.Log($"[W] LIMIT");
                 return;
             }
 
-            if (NodeConnections[secondNodeId].Count >= secondNode.ConnLimit)
+            if (_usedEntries.Any(x => x.Item1 == firstEntryId 
+            || x.Item2 == firstEntryId
+            || x.Item1 == secondEntryId
+            || x.Item2 == secondEntryId))
             {
-                Debug.Log($"[W] LIMIT");
+                Debug.Log($"[W] Entries already in use");
                 return;
             }
-            
+
 
             if (firstNode.NetId == secondNode.NetId && secondNode.NetId != -1)
             {
-                Debug.Log($"[W] NET LOOP / CONNECTED  NetId-{firstNode.NetId}");
+                Debug.Log($"[W] NET LOOP / ALREADY CONNECTED  NetId-{firstNode.NetId}");
                 return;
             }
             
+
             NodeConnections[firstNodeId].Add(secondNodeId);
             NodeConnections[secondNodeId].Add(firstNodeId);
-            
+
+            _usedEntries.Add((firstEntryId, secondEntryId));
+
             if (firstNode.NetId == -1)
             {
                 if (secondNode.NetId == -1)
@@ -162,8 +193,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
 
             RpcDrawNodeLines(firstNode, secondNode,
-                NodeConnections[firstNodeId].Count,
-                NodeConnections[secondNodeId].Count);
+                EntryObjects[firstEntryId],
+                EntryObjects[secondEntryId]);
 
             PrintDebugInfo();
         }
@@ -204,10 +235,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 AttachConnectedToNewWireNet(wireNetId, NodeConnections[nodeId][i], nodeId);
             }
             
-            //clear others
+            //clear self
             NodeConnections[nodeId].Clear();
 
-            
+            foreach (var entry in node.Entries)
+            {
+                _usedEntries.RemoveAll(x => x.Item1 == entry.EntryId || x.Item2 == entry.EntryId);
+            }
+
             WireNets[AllNodes[nodeId].NetId].RemoveWireNode(nodeId);
             node.NetId = -1;
             
@@ -232,13 +267,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
 
         [ClientRpc]
-        public void RpcDrawNodeLines(WireNode firstNode, WireNode secondNode, 
-            int firstConnCount, int secondConnCount)
+        public void RpcDrawNodeLines(WireNode firstNode, WireNode secondNode,
+            WireNodeEntry firstEntry, WireNodeEntry secondEntry)
         {
             wireVisualizer.DrawNodeLines(firstNode,
                 secondNode,
-                firstConnCount,
-                secondConnCount);
+                firstEntry,
+                secondEntry);
         }
         
         [ClientRpc]
@@ -256,6 +291,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             
             Debug.Log("[W] WireNets" + string.Join("\n", WireNets
                 .Select(n => $"{n.Key} : {string.Join(", ", n.Value.nodesId)}")));
+
+            Debug.Log("[W] usedEntries" + string.Join("\n", _usedEntries
+                .Select(n => $"{n.Item1} - {n.Item2}")));
         }
     }
 }

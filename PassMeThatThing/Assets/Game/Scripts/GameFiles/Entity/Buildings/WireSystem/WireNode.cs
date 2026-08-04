@@ -9,50 +9,46 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
-    public class WireNode : NetworkBehaviour, Interactable
+    /// <summary>
+    /// Один узел системы коммуникаций(электричество, вода)
+    /// </summary>
+    public class WireNode : NetworkBehaviour
     {
         [SerializeField] private WireType wireType;
 
         [SerializeField] private int connLimit = 2;
-        [SerializeField] private List<GameObject> portObjects;
 
-        [SerializeField] private bool isSplitter;
-
+        [SerializeField] private List<WireNodeEntry> _entries;
         
         [Inject] protected WireManager _wireManager;
-        
         [Inject] private LocalWireHandlerModel _handlerModel;
         
         [SyncVar]
         private int _nodeId = -1;
         [SyncVar]
         private int _netId = -1;
+        
 
-        public int NodeId
-        {
-            get => _nodeId;
-            set => _nodeId = value;
-        }
+        public int NodeId { get => _nodeId; set => _nodeId = value; }
 
-        public int NetId
-        {
-            get => _netId;
-            set => _netId = value;
-        }
-
-        public bool IsSplitter => isSplitter;
+        public int NetId { get => _netId; set => _netId = value; }
 
         public WireType WireType => wireType;
 
         public int ConnLimit => connLimit;
 
-        public List<GameObject> PortObjects => portObjects;
+        public List<WireNodeEntry> Entries => _entries;
 
         public virtual void Start()
         {
             if (isServer)
             {
                 _wireManager.RegisterNode(this);
+            }
+
+            foreach (var entry in Entries)
+            {
+                entry.OnEntryInteract += EntryInteracted;   
             }
         }
 
@@ -62,29 +58,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             {
                 _wireManager.UnRegisterNode(NodeId);
             }
+
+            foreach (var entry in Entries)
+            {
+                entry.OnEntryInteract -= EntryInteracted;
+            }
         }
 
-        public void Interact()
+        public void EntryInteracted(int entryId)
         {
-            //Debug.Log($"[W] wirenode interact");
-            
-            _handlerModel.HighlightNode(NodeId, this);
-        }
-
-        public void SrbToggle()
-        {
-            
-        }
-
-        public void InteractWithItem(PhysicalItem item)
-        {
-            
-        }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            InteractableRegistry.Instance.Register(gameObject, this);
+            _handlerModel.HighlightNode(NodeId, entryId);
         }
     }
 }
