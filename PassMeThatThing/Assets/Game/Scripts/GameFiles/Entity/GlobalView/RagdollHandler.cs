@@ -23,7 +23,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
 
         
 
-        public void EnableRagdoll()
+        public virtual void EnableRagdoll()
         {
             foreach (var r in rigidbodies)
             {
@@ -31,7 +31,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
             }
         }
         
-        public void DisableRagdoll()
+        public virtual void DisableRagdoll()
         {
             foreach (var r in rigidbodies)
             {
