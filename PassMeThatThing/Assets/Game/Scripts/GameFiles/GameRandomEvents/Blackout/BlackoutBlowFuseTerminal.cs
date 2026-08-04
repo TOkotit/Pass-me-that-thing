@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using Mirror;
 using UnityEngine;
 
@@ -10,13 +11,17 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         
         [SerializeField] private BlackoutBlowFuseEvent _powerOutageEvent;
         [SerializeField] private ParticleSystem _particleSystem;
+        [SerializeField] public Outline _outline;
+        [SerializeField] private SoundSource electricity = default;
+
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
         {
             base.TerminalAct(conn);
             if (IsTerminalBusy) return;
             if (_isFixed) return;
-            
+
+            RpcPlayImpactSound();
             RpcPlayImpactParticles();
             if (ActivateMinigame(conn, _powerOutageEvent))
             {
@@ -62,6 +67,14 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             if (_particleSystem && !_particleSystem.isPlaying) 
             {
                 _particleSystem.Play();
+            }
+        }
+        [ClientRpc]
+        private void RpcPlayImpactSound()
+        {
+            if (electricity && !electricity.IsPlaying) 
+            {
+                electricity.Play();
             }
         }
     }

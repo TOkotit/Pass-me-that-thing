@@ -147,7 +147,7 @@ namespace Game.Entity
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public override void OnDeath()

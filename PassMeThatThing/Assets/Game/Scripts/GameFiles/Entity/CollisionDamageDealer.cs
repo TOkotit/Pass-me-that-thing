@@ -22,8 +22,9 @@ namespace Game.Scripts.GameFiles.Entity
         [Inject] private DamageSystem _damageSystem;
         
         private float _lastDamageTime = -999f;
-        
-        public event Action OnServerTakeDamage;
+
+        public Vector3 HitPosition;
+        public event Action OnTakeDamage;
 
         private void OnCollisionEnter(Collision other)
         {
@@ -39,7 +40,16 @@ namespace Game.Scripts.GameFiles.Entity
                 finalDamage += (int)(velocity * velocityDamageMultiplier);
             }
             
-            //_damageSystem.TakeDamage(finalDamage, other.gameObject, damageTypes,gameObject, toughnessDamage, OnServerTakeDamage);
+            if (DamagableRegistry.Instance.TryGetDamagable(other.gameObject, out var dam))
+            {
+                _damageSystem.TakeDamage(finalDamage, dam, damageTypes, toughnessDamage, OnTakeDamage);
+                if (other.contactCount > 0)
+                {
+                    HitPosition = other.GetContact(0).point;
+                }
+            }
+
+            
             Debug.Log($"{other.gameObject.name} collided with {finalDamage} damage");
             
             _lastDamageTime = Time.time;

@@ -8,7 +8,6 @@ using Game.UI;
 using Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Utils;
 using VContainer;
 
 namespace Game.MainMenu.View.UI.ScreenOptionsMenu
@@ -35,16 +34,15 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             
             _gameInputManager = container.Resolve<GameInputManager>();
             
-            _gameInputManager.GameInput.UI.PauseMenu.performed += PauseMenuOnPerformed;
+            _gameInputManager.GameInput.UI.PauseMenu.performed += OnClosePerformed;
         }
 
         public override void Dispose()
         {
-            // Debug.Log("Disposing ScreenGameplayViewModel");
-            _gameInputManager.GameInput.UI.PauseMenu.performed -= PauseMenuOnPerformed;
+            _gameInputManager.GameInput.UI.PauseMenu.performed -= OnClosePerformed;
         }
 
-        private void PauseMenuOnPerformed(InputAction.CallbackContext c)
+        private void OnClosePerformed(InputAction.CallbackContext c)
         {
             RequestGoToPrevScreen();
         }
@@ -90,6 +88,11 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         public void RequestChangeFullscreen(bool isFullscreen)
         {
             _optionsManager.SetFullScreen(isFullscreen);
+        }
+
+        public void RequestChangeMouseSensitivity(float value)
+        {
+            _optionsManager.SetMouseSensitivity(value);
         }
 
         public void RequestStartKeyRebind(InputAction inputActionReference, int targetIndex=-1, Action callback=null)

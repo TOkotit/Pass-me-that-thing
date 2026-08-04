@@ -35,26 +35,28 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         }
 
         [Server]
-        public void SpawnWave(int count, EnemyData enemyData)
+        public void SpawnWave(List<EnemyData> enemiesData)
         {
-            Debug.Log($"Spawning wave of: {enemyData.Id}");
+            //Debug.Log($"Spawning wave of: {enemyData.Id}");
             var positions = zombieSpawnPositions;
             
-            if (enemyData.Id == "zombie")
-            {
-                positions = zombieSpawnPositions;
-            }
+            //if (enemyData.Id == "zombie")
+            //{
+            //    positions = zombieSpawnPositions;
+            //}
             
-            for (var i = 0; i < positions.Count && i < count; i++)
+            for (var i = 0; i < positions.Count && i < enemiesData.Count; i++)
             {
-                if (_enemyCount < enemyLimit)
-                {
-                    SpawnEnemy(positions[i].position, enemyData);
-                }
-                else
-                {
-                    Debug.Log($"Enemy limit {_enemyCount}/{enemyLimit}");
-                }
+                SpawnEnemy(positions[i].position, enemiesData[i]);
+
+                //if (_enemyCount < enemyLimit)
+                //{
+                //    SpawnEnemy(positions[i].position, enemiesData[i]);
+                //}
+                //else
+                //{
+                //    Debug.Log($"Enemy limit {_enemyCount}/{enemyLimit}");
+                //}
             }
         }
 

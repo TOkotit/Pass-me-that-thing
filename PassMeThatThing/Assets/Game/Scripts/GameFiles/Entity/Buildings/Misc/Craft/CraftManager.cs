@@ -9,14 +9,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft
     public class CraftManager : NetworkBehaviour
     {
         [Inject] private WorkbenchItemRecipeDatabase _recipeDatabase;
-        
+
         [Command(requiresAuthority =  false)]
         public void CmdCraft(Workbench workbench, string recipeID)
         {
             var recipe = _recipeDatabase.GetRecipe(recipeID);
             Craft(workbench, recipe);
         }
-
         
         [Server]
         private void Craft(Workbench workbench, WorkbenchItemRecipe recipe)
@@ -42,6 +41,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft
 
         public IReadOnlyDictionary<Resource,float> GetStoredResources()
         {
+            Debug.Log("[CRAFT] craftmanager GetStoredResources");
             return MainResourceStorage.Instance.StoredResources;
         }
     }

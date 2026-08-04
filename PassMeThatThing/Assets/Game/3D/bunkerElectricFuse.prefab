@@ -358,15 +358,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521277632010768499, guid: f78aaaec3b393e24ca74cd6de8194347, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -16.47
+      value: -1.069
       objectReference: {fileID: 0}
     - target: {fileID: 5521277632010768499, guid: f78aaaec3b393e24ca74cd6de8194347, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.78
+      value: 1.747
       objectReference: {fileID: 0}
     - target: {fileID: 5521277632010768499, guid: f78aaaec3b393e24ca74cd6de8194347, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 31.91
+      value: -2.263
       objectReference: {fileID: 0}
     - target: {fileID: 5521277632010768499, guid: f78aaaec3b393e24ca74cd6de8194347, type: 3}
       propertyPath: m_LocalRotation.w
@@ -559,6 +559,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -516098083770646512, guid: 3d00111a04c2f984b95b057ba6d88dd8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5208848217100801720}
+    - targetCorrespondingSourceObject: {fileID: -516098083770646512, guid: 3d00111a04c2f984b95b057ba6d88dd8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2165894485844020496}
+    - targetCorrespondingSourceObject: {fileID: -516098083770646512, guid: 3d00111a04c2f984b95b057ba6d88dd8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4834307426254635620}
   m_SourcePrefab: {fileID: 100100000, guid: 3d00111a04c2f984b95b057ba6d88dd8, type: 3}
 --- !u!1 &1205684129804564460 stripped
 GameObject:
@@ -604,6 +610,49 @@ MonoBehaviour:
   _isFixed: 1
   _powerOutageEvent: {fileID: 7979897720179107626}
   _particleSystem: {fileID: 84932636652173043}
+  _outline: {fileID: 2165894485844020496}
+  electricity: {fileID: 4834307426254635620}
+--- !u!114 &2165894485844020496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205684129804564460}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 2
+  outlineColor: {r: 1, g: 0.9267906, b: 0, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &4834307426254635620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205684129804564460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 7cda3cd3750bb254092effc6238f4042, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 1205684129804564460}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 2
+  _delay: 0
 --- !u!1 &7197142913657521560 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8391222552659086748, guid: 3d00111a04c2f984b95b057ba6d88dd8, type: 3}
@@ -685,8 +734,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   eventType: 3
-  _baseTriggerChance: 1
-  _powerTerminal: {fileID: 5208848217100801720}
+  _baseTriggerChance: 0.3
+  powerTerminal: {fileID: 5208848217100801720}
 --- !u!114 &9222993472738374748
 MonoBehaviour:
   m_ObjectHideFlags: 0

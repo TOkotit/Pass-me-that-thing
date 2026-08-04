@@ -37,7 +37,8 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
         private List<string> _resolutionNames = new();
 
-        //keyboard
+        //controls
+        private Slider _sensitivitySlider;
         private GroupBox _rebindsContainer;
         private Dictionary<InputMapType, List<InputAction>> _inputActions;
         private List<RebindButton> _rebindButtons = new();
@@ -56,6 +57,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _resolutionsDropdown = _root.Q<DropdownField>("ResolutionDropdown");
             _fullscreenToggle = _root.Q<Toggle>("FullscreenToggle");
 
+            _sensitivitySlider = _root.Q<Slider>("MouseSensitivitySlider");
             _rebindsContainer = _root.Q<GroupBox>("RebindsContainer");
         }
 
@@ -73,6 +75,8 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
             _closeBtn.RegisterCallback<ClickEvent>(OnCloseButtonClicked);
             _saveBtn.RegisterCallback<ClickEvent>(OnSaveButtonClicked);
+
+            _sensitivitySlider.RegisterValueChangedCallback<float>(OnMouseSensitivitySliderValueChanged);
         }
         
         private void OnDestroy()
@@ -86,6 +90,8 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
             _closeBtn.UnregisterCallback<ClickEvent>(OnCloseButtonClicked);
             _saveBtn.UnregisterCallback<ClickEvent>(OnSaveButtonClicked);
+
+            _sensitivitySlider.UnregisterValueChangedCallback<float>(OnMouseSensitivitySliderValueChanged);
 
             foreach (var r in _rebindButtons)
             {
@@ -112,6 +118,8 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
             UpdateResolutions(resolutions, data.resolutionIndex);
             UpdateFullscreenToggle(data.isFullScreen);
+
+            UpdateSensitivitySliderValue(data.mouseSensitivity);
 
             _inputActions = ViewModel.RequestGetAllInputActions();
 
@@ -198,6 +206,11 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             Debug.Log($"[AUDIO SLIDERS] {type}: {value}");
         }
 
+        private void UpdateSensitivitySliderValue(float value)
+        {
+            _sensitivitySlider.value = value;
+        }
+
         private void UpdateResolutions(Resolution[] resolutions, int currentResolutionIndex)
         {
             _resolutionNames.Clear();
@@ -230,6 +243,11 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         private void OnSFXSliderValueChanged(ChangeEvent<float> e)
         {
             ViewModel.RequestChangeAudioValueOptions(BroAudioType.SFX, e.newValue);
+        }
+
+        private void OnMouseSensitivitySliderValueChanged(ChangeEvent<float> e)
+        {
+            ViewModel.RequestChangeMouseSensitivity(e.newValue);
         }
 
         private void OnResolutionsDropdownValueChanged(ChangeEvent<string> e)

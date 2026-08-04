@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Events;
@@ -87,12 +88,20 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             if (_currentGameStage == GlobalStagesType.Preparation)
             {
                 _playerReadyManager.ResetReady();
-                _gameRandomEventManager.TryTriggerRandomEvents();
+                //_gameRandomEventManager.TryTriggerRandomEvents();
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
-                _enemySpawner.SpawnWave(1, _enemyDatabase.GetEnemy("spider"));
+                var spiderData = _enemyDatabase.GetEnemy("spider");
+                var zombieData = _enemyDatabase.GetEnemy("zombie");
+                _enemySpawner.SpawnWave(new List<EnemyData>()
+                {
+                    spiderData,
+                    zombieData,
+                    zombieData,
+                    zombieData,
+                });
             }
 
             if (duration > 0)

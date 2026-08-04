@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Ami.BroAudio;
 using DI;
 using Entity;
 using Game.Entity;
@@ -21,6 +22,14 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private float maxHoldDistance = 2.0f;
     [SerializeField] private float holdSoftZone = 1.5f;
     [SerializeField] private PhysicalItemInteractionController _itemController;
+    
+    
+    [SerializeField] private SoundSource footstepSound;
+    [SerializeField] private float walkFootstepInterval = 0.5f;
+    [SerializeField] private float sprintFootstepInterval = 0.3f;
+    private float _footstepTimer;
+    
+    
     [Inject] private DamagableRegistry _damagableRegistry;
     private MainCharacterModel _model => character.MainCharacterModel;
     public Vector3 CurrentVelocity => characterController ? characterController.velocity : Vector3.zero;
@@ -88,7 +97,7 @@ public class MainCharacterMovement : NetworkBehaviour
         {
             var relativeVelocity = otherCharacter.Movement.LastVelocity - LastVelocity;
             var impactSpeed = Vector3.Dot(relativeVelocity, hit.normal);
-            Debug.LogError($"!Impact with {hit.gameObject.name}! {impactSpeed}");
+            Debug.Log($"<color=red>[ERROR]</color>! Impact with {hit.gameObject.name}! {impactSpeed}");
             if (impactSpeed > 25f)
             {
                 var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
@@ -98,7 +107,7 @@ public class MainCharacterMovement : NetworkBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.LogError($"Impact with {collision.gameObject.name}");
+        Debug.Log($"<color=red>[ERROR]</color> Impact with {collision.gameObject.name}");
         if (_itemController?.CurrentHeldItem?.Collider == collision.collider) return;
         var impactSpeed = 0f;
         if (collision.rigidbody)
@@ -189,6 +198,7 @@ public class MainCharacterMovement : NetworkBehaviour
         
         MoveInternal();
         ApplyGravity();
+        HandleFootsteps();
         if (groundCheck.IsGrounded && _velocity.y < 0f)
             _velocity.y = -2f;
     }
@@ -230,5 +240,37 @@ public class MainCharacterMovement : NetworkBehaviour
         if (!isCharacterCanMove || !characterController.enabled) return;
         _velocity += Vector3.down * (_model.Gravity * Time.fixedDeltaTime);
         characterController.Move(_velocity * Time.fixedDeltaTime);
+    }
+    
+    
+    private void HandleFootsteps()
+    {
+        var isMoving = _moveDirection.sqrMagnitude > 0.01f;
+    
+        if (groundCheck.IsGrounded && isMoving)
+        {
+            _footstepTimer -= Time.fixedDeltaTime;
+            if (_footstepTimer <= 0f)
+            {
+                CmdPlayFootstepSound();
+                _footstepTimer = _isSprinting ? sprintFootstepInterval : walkFootstepInterval;
+            }
+        }
+        else
+        {
+            _footstepTimer = 0f; 
+        }
+    }
+    
+    [Command]
+    private void CmdPlayFootstepSound()
+    {
+        RpcPlayFootstepSound();
+    }
+
+    [ClientRpc]
+    private void RpcPlayFootstepSound()
+    {
+        if (footstepSound) footstepSound.Play();
     }
 }

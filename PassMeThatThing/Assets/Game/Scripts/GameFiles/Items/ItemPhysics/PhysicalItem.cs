@@ -69,7 +69,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             //reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
             
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
-                damageDealer.OnServerTakeDamage += RpcPlayParticlesOnHit;
+                damageDealer.OnTakeDamage += RpcPlayParticlesOnHit;
         }
         
         [ClientRpc]
@@ -77,7 +77,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             Debug.Log("<color=yellow>PlayParticlesOnHit");
             
-            _particlePool.GetAndPlayParticle(Particles.pow, transform.position);
+            _particlePool.GetAndPlayParticle(Particles.pow, damageDealer.HitPosition);
             
         }
 

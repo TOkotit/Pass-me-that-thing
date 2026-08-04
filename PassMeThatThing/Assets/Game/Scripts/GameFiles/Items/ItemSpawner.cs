@@ -1,3 +1,4 @@
+using Ami.BroAudio;
 using DG.Tweening;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -11,6 +12,7 @@ namespace Game.Scripts.GameFiles.Items
     {
         [SerializeField] private Transform pointToSpawn;
         [SerializeField] private ItemData item;
+        [SerializeField] private SoundSource craftSound;
         [SerializeField] private ItemPoolManager reserveItemPoolManager; //удалить потом
         public ItemData Item {get => item; set => item = value;}
         public Transform PointToSpawn {get => pointToSpawn; set => pointToSpawn = value;}
@@ -28,7 +30,7 @@ namespace Game.Scripts.GameFiles.Items
 
             var physItem = itemToDrop.GetComponent<PhysicalItem>();
             _physicalItemRegistry.Register(physItem);
-
+            RpcCraftPlaySound();
             //RpcInteractWithObject();
         }
 
@@ -40,6 +42,15 @@ namespace Game.Scripts.GameFiles.Items
                 {
                     gameObject.SetActive(false);
                 });
+        }
+        
+        [ClientRpc]
+        public void RpcCraftPlaySound()
+        {
+            if (craftSound)
+            {
+                craftSound.Play();
+            }
         }
         public void SpawnItem() //код для тестовой сцены, не работает. потом удалить
         {

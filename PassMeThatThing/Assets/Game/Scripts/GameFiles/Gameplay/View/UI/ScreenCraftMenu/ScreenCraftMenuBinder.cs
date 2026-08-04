@@ -64,10 +64,11 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _craftButton.UnregisterCallback<ClickEvent>(OnCraftClick);
         }
 
-        public void UpdateResources()
+        public void UpdateResources(IReadOnlyDictionary<Resource, float> d)
         {
+            Debug.Log("[CRAFT] binder UpdateResources");
             _resourceContainer.Clear();
-            foreach (var r in ViewModel.craftManager.GetStoredResources())
+            foreach (var r in d)
             {
                 var rData = ViewModel.resourceDatabase.GetResource(r.Key);
                 

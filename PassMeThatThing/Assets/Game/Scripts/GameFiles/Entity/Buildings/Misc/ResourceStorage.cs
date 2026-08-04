@@ -12,7 +12,28 @@ public class ResourceStorage : NetworkBehaviour
     public static Dictionary<GameObject, ResourceStorage> Storages => storages;
     public IReadOnlyDictionary<Resource, float> StoredResources => storedResources;
 
-    public event Action OnResourcesChanged;
+    public event Action<IReadOnlyDictionary<Resource, float>> OnSyncResourcesChanged;
+
+    private void Awake()
+    {
+        storages[transform.gameObject] = this;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        storedResources.OnChange += OnStoredResDictChanged;
+    }
+
+    public override void OnStopClient()
+    {
+        storedResources.OnChange -= OnStoredResDictChanged;
+    }
+
+    private void OnStoredResDictChanged(SyncIDictionary<Resource, float>.Operation op, Resource r, float v)
+    {
+        OnSyncResourcesChanged?.Invoke(StoredResources);
+    }
 
     [Server]
     public void AddResource(Resource resource, float amount)
@@ -22,7 +43,6 @@ public class ResourceStorage : NetworkBehaviour
         else
             storedResources.Add(resource, amount);
         PrintResources();
-        RpcResourceChanged();
     }
 
     [Server]
@@ -34,7 +54,7 @@ public class ResourceStorage : NetworkBehaviour
         if (newAmount == 0) storedResources.Remove(resource);
         else storedResources[resource] = newAmount;
         PrintResources();
-        RpcResourceChanged();
+
         return true;
     }
 
@@ -52,15 +72,4 @@ public class ResourceStorage : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    public void RpcResourceChanged()
-    {
-        Debug.Log("[ResourceStorage] RpcResourceChanged");
-        OnResourcesChanged?.Invoke();
-    }
-
-    private void Awake()
-    {
-        storages[transform.gameObject] = this;
-    }
 }

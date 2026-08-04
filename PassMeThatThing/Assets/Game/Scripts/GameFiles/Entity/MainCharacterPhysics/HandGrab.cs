@@ -14,10 +14,13 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         private void OnTriggerEnter(Collider other)
         {
             var item = interactionController.CurrentHeldItem;
-            Debug.Log($"Схватил? {other.name} == {item.name}");
-            if (item.Collider == other)
+            if (item != null)
             {
-                LockMovement();
+                Debug.Log($"Схватил? {other.name} == {item.name}");
+                if (item.Collider == other)
+                {
+                    LockMovement();
+                }
             }
         }
         private void LockMovement()

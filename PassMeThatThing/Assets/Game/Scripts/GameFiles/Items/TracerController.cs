@@ -9,7 +9,7 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private float maxDistance = 100f;
         [SerializeField] private float duration = 0.5f;
 
-        public void Shoot(Vector3 origin, Vector3 direction)
+        public Vector3 Shoot(Vector3 origin, Vector3 direction)
         {
             float distance = maxDistance;
             if (Physics.Raycast(origin, direction, out var hit, maxDistance, hitLayers))
@@ -25,6 +25,7 @@ namespace Game.Scripts.GameFiles.Items
                 lr.SetPosition(1, Vector3.forward * distance);
             }
             Destroy(instance, duration);
+            return hit.point;
         }
     }
 }
