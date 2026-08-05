@@ -7,7 +7,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
 {
     public class RagdollHandler : NetworkBehaviour
     {
-        [SerializeField] private List<Rigidbody> rigidbodies;
+        [SerializeField] protected List<Rigidbody> rigidbodies;
         public List<Rigidbody> GetRigidbodies() => rigidbodies;
 
         private Rigidbody _injuredRigidbody;

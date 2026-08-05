@@ -106,15 +106,14 @@ namespace Game.Entity
         [ClientRpc]
         private void RpcStandUp()
         {
-            ragdollHandler.DisableRagdoll();
-
             view.PlayStandingUp(() =>
             {
+                ragdollHandler.DisableRagdoll();
                 //maskLayerStateController.ApplyBodyOnly();
                 view.EnableAnimator();
                 movement.UnlockMovement();
                 movement.EnableController();
-                view.DisableAnimator(); 
+                //view.DisableAnimator(); 
                 if (mCamera) mCamera.IsCameraRotating = true;
             });
         }
@@ -122,7 +121,6 @@ namespace Game.Entity
         protected void Awake()
         {
             _toughnessModel = new ToughnessModel();
-            Fall(0.1f, Vector3.zero);
         }
 
         public new void Start()
