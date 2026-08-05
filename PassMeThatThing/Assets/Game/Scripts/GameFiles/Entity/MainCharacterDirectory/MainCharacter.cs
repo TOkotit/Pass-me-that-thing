@@ -109,6 +109,7 @@ namespace Game.Entity
             view.PlayStandingUp(() =>
             {
                 ragdollHandler.DisableRagdoll();
+                if (animator) animator.Rebind();
                 //maskLayerStateController.ApplyBodyOnly();
                 view.EnableAnimator();
                 movement.UnlockMovement();
