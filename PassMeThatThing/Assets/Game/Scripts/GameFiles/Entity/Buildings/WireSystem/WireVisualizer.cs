@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using AYellowpaper.SerializedCollections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
@@ -9,12 +10,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
     public class WireVisualizer : MonoBehaviour
     {
         [SerializeField] private WireLineView wireLineViewPrefab;
+        [SerializeField] private GameObject tubeViewPrefab;
         [SerializeField] private SerializedDictionary<WireType, Color> wireColors;
         
         private Dictionary<(int, int), WireLineView> wireLineViewContainer = new ();
+        private Dictionary<(int, int), GameObject> tubeViewContainer = new();
 
 
-        
         public void DrawNodeLines(WireNode firstNode, WireNode secondNode,
             WireNodeEntry firstEntry, WireNodeEntry secondEntry)
         {
@@ -42,15 +44,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
             else
             {
-                var temp = Instantiate(wireLineViewPrefab);
+                var temp = Instantiate(tubeViewPrefab);
 
-                temp.lineRenderer.SetPosition(0, firstNode.transform.position);
-                temp.lineRenderer.SetPosition(1, secondNode.transform.position);
+                temp.transform.position = firstEntry.EntryView.transform.position;
 
-                temp.lineRenderer.startColor = wireColors[firstNode.WireType];
-                temp.lineRenderer.endColor = wireColors[firstNode.WireType];
+                var distance = Vector3.Distance(firstEntry.EntryView.transform.position,
+                    secondEntry.EntryView.transform.position);
+                temp.transform.localScale = new Vector3(distance, 0.3f, 0.3f);
+                var direction = (secondEntry.EntryView.transform.position 
+                    - firstEntry.EntryView.transform.position).normalized;
+                temp.transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0f, 90f, 0f);
 
-                wireLineViewContainer[(firstNode.NodeId, secondNode.NodeId)] = temp;
+                tubeViewContainer[(firstNode.NodeId, secondNode.NodeId)] = temp;
             }
 
             
