@@ -37,6 +37,7 @@ namespace Game.Entity
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
         public MainCharacterMovement Movement => movement;
+        public MainCharacterCamera MCamera => mCamera;
 
         [SyncVar(hook = nameof(OnIsAliveChanged))]
         private bool _isAlive = true;

@@ -13,11 +13,16 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private Camera ragdollCamera;
         [SerializeField] private SkinnedMeshRenderer networkMeshRenderer;
         private Dictionary<string, Rigidbody> _playerBoneDict;
-        private MainCharacter player;
+        private MainCharacter _player;
+        private Camera _playerCamera;
 
         public void Setup(Damagable mainCharacter, Dictionary<string, Rigidbody> playerBoneDict)
         {
-            if (mainCharacter is MainCharacter mc) player = mc;
+            if (mainCharacter is MainCharacter mc)
+            {
+                _player = mc;
+                _playerCamera = mc.MCamera.Camera;
+            }
             else { return; }
             _playerBoneDict = playerBoneDict;
         }
@@ -46,7 +51,8 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         public void EnableRagdoll()
         {
             SyncBones(true);
-            if (player.netIdentity.isLocalPlayer)
+            ragdollCamera.transform.rotation = _playerCamera.transform.rotation;
+            if (_player.netIdentity.isLocalPlayer)
                 ragdollCamera.enabled = true;
             foreach (var bone in ragdollBones) 
                 bone.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
