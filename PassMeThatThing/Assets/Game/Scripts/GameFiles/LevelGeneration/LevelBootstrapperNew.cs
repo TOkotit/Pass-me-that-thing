@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using UnityEngine;
 
@@ -5,22 +6,28 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 {
     public class LevelBootstrapperNew : MonoBehaviour
     {
-        [SerializeField] private LevelPlacementOrchestratorNew orchestrator;
+        [SerializeField] private LevelOrchestrator orchestrator;
         [SerializeField] private LevelGraphConfig graphConfig = new LevelGraphConfig();
 
         [ContextMenu("Generate Level")]
         public void Generate()
         {
-            var builder = new LevelGraphBuilderNew(graphConfig);
-            var graphResult = builder.GenerateGraph();
-
-            if (graphResult.IsValid && graphResult.Root != null)
+            if (orchestrator == null)
             {
-                orchestrator.GeneratePhysicalLevel(graphResult.Root);
+                Debug.LogError("[СБОЙ] Ссылка на LevelOrchestrator не назначена в инспекторе.");
+                return;
+            }
+
+            var generator = new LevelGenerator(graphConfig);
+            var clusters = generator.GenerateClusters();
+
+            if (clusters != null && clusters.Count > 0)
+            {
+                orchestrator.GeneratePhysicalLevel(clusters);
             }
             else
             {
-                Debug.LogError("[СБОЙ] Не удалось сгенерировать граф уровня.");
+                Debug.LogError("[СБОЙ] Не удалось сгенерировать кластеры уровня.");
             }
         }
 
