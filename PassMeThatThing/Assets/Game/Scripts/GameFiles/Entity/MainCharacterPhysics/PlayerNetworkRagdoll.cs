@@ -11,6 +11,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
     {
         [SerializeField] private List<Rigidbody> ragdollBones;
         [SerializeField] private Camera ragdollCamera;
+        [SerializeField] private SkinnedMeshRenderer networkMeshRenderer;
         private Dictionary<string, Rigidbody> _playerBoneDict;
         private MainCharacter player;
 
@@ -47,16 +48,18 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             SyncBones(true);
             if (player.netIdentity.isLocalPlayer)
                 ragdollCamera.enabled = true;
-            foreach (var bone in ragdollBones)
-                bone.gameObject.SetActive(true);
+            foreach (var bone in ragdollBones) 
+                bone.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
+            networkMeshRenderer.enabled = true;
         }
 
         public void DisableRagdoll()
         {
             SyncBones(false);
             ragdollCamera.enabled = false;
-            foreach (var bone in ragdollBones)
-                bone.gameObject.SetActive(false);
+            foreach (var bone in ragdollBones) 
+                bone.gameObject.layer = LayerMask.NameToLayer("OutOfBounds");
+            networkMeshRenderer.enabled = false;
         }
     }
 }
