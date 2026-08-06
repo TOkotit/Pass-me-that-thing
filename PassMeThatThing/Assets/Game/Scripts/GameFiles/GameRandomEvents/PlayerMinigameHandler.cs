@@ -3,7 +3,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 
-namespace Game.Scripts.GameFiles.Events
+namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class PlayerMinigameHandler : NetworkBehaviour
     {

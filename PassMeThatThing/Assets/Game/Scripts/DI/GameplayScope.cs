@@ -11,7 +11,6 @@ using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.Entity.Enemy;
-using Game.Scripts.GameFiles.Events;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
@@ -20,6 +19,7 @@ using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Systems;
 using UnityEngine.Serialization;
+using Game.Scripts.GameFiles.GameRandomEvents;
 
 namespace DI
 {

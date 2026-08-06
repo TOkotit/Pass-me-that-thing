@@ -4,7 +4,7 @@ using System.Linq;
 using AYellowpaper.SerializedCollections;
 using DG.Tweening;
 using Game.Scripts.Enums;
-using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.UI;
 using TMPro;
 using UnityEngine;

@@ -1,8 +1,8 @@
-using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GameRandomEvents;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
+namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 {
     public class BrokenPumpEvent : BaseGameEvent
     {
@@ -11,13 +11,14 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         [SyncVar]
         private bool _isPressureCritical = false;
         
-        [SerializeField] private Events.FloodEvent.FloodEvent _siblingFloodEvent;
+        //[SerializeField] private Events.FloodEvent.FloodEvent _siblingFloodEvent;
 
         [SerializeField] private PumpInteractTerminal pumpInteractTerminal;
+
         private void Awake()
         {
-            if (!_siblingFloodEvent)
-                _siblingFloodEvent = GetComponent<Events.FloodEvent.FloodEvent>();
+            //if (!_siblingFloodEvent)
+            //    _siblingFloodEvent = GetComponent<Events.FloodEvent.FloodEvent>();
         }
         
         protected override void OnStartEvent()
@@ -28,11 +29,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
 
 
 
-            if (_siblingFloodEvent)
-            {
-                _siblingFloodEvent.CurrentTriggerChance += _chanceBoost;
-                Debug.Log($"[PressureEvent] Давление повышено! Шанс локальной протечки увеличен.");
-            }
+            //if (_siblingFloodEvent)
+            //{
+            //    _siblingFloodEvent.CurrentTriggerChance += _chanceBoost;
+            //    Debug.Log($"[PressureEvent] Давление повышено! Шанс локальной протечки увеличен.");
+            //}
         }
         
         
@@ -47,10 +48,10 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         {
             _isPressureCritical = false;
             
-            if (_siblingFloodEvent)
-            {
-                _siblingFloodEvent.CurrentTriggerChance -= _chanceBoost;
-            }
+            //if (_siblingFloodEvent)
+            //{
+            //    _siblingFloodEvent.CurrentTriggerChance -= _chanceBoost;
+            //}
 
             RpcDisableOutline();
             GameRandomEventManager.DisableEvent(EventId);

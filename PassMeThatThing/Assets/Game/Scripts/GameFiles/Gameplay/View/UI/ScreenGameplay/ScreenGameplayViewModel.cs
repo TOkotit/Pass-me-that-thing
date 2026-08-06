@@ -2,7 +2,7 @@
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
-using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;

@@ -7,7 +7,7 @@ using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
 
-namespace Game.Scripts.GameFiles.Events
+namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class GameRandomEventManager : NetworkBehaviour
     {

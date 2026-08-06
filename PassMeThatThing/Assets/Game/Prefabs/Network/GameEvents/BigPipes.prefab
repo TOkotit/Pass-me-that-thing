@@ -64,16 +64,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  impactParticles: {fileID: 2367443740266242791}
-  pivot: {fileID: 4518478493167500406}
-  valveSound: {fileID: 4301122828989730178}
-  rotationAxis: {x: 0, y: 0, z: 1}
-  openAngle: 270
-  closedAngle: 0
-  moveSpeed: 130
   floodEvent: {fileID: 0}
-  _outline: {fileID: 4680887058531560655}
-  _isClosed: 1
+  pivot: {fileID: 4518478493167500406}
+  outline: {fileID: 4680887058531560655}
+  impactParticles: {fileID: 2367443740266242791}
+  valveSound: {fileID: 4301122828989730178}
 --- !u!65 &6024597353830638933
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -313,10 +308,10 @@ MonoBehaviour:
   syncInterval: 0
   eventType: 2
   _baseTriggerChance: 0.2
-  waterMesh: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
-  _waterMeshTransform: {fileID: 2958257391534694994}
+  terminal: {fileID: 1202088884199672489}
+  waterMeshPrefab: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
+  waterMeshTransform: {fileID: 2958257391534694994}
   maxWaterWidth: 10
-  valve: {fileID: 1202088884199672489}
 --- !u!114 &6609596328987690964
 MonoBehaviour:
   m_ObjectHideFlags: 0

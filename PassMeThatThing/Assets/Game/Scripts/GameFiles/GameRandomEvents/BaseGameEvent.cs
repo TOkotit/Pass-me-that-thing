@@ -5,7 +5,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Game.Scripts.GameFiles.Events
+namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class BaseGameEvent : NetworkBehaviour
     {
