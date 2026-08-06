@@ -12,10 +12,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         private bool _isPressureCritical = false;
         
         [SerializeField] private Events.FloodEvent.FloodEvent _siblingFloodEvent;
+
         [SerializeField] private PumpInteractTerminal pumpInteractTerminal;
         private void Awake()
         {
-            if(!_siblingFloodEvent)
+            if (!_siblingFloodEvent)
                 _siblingFloodEvent = GetComponent<Events.FloodEvent.FloodEvent>();
         }
         
@@ -24,6 +25,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
             _isPressureCritical = true;
             pumpInteractTerminal._isFixed = false;
             RpcEnableOutline();
+
+
+
             if (_siblingFloodEvent)
             {
                 _siblingFloodEvent.CurrentTriggerChance += _chanceBoost;
