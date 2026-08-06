@@ -37,6 +37,7 @@ namespace MainCharacterNetwork
         private Quaternion _originalSpineLocalRotation;
         private Coroutine _zoomRoutine;
 
+        public Camera Camera => mCamera;
         private void SwitchToRagdollCamera()
         {
             if (mCamera) mCamera.enabled = false;

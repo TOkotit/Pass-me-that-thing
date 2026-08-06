@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 769732946101677498}
   - component: {fileID: 2767698410208855198}
   - component: {fileID: 3929916606286768084}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 6994763640148584160}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 1306662255296442457}
   - component: {fileID: 72868186197826526}
   - component: {fileID: 3544537407906541623}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 5397495808355805781}
@@ -344,7 +344,7 @@ GameObject:
   - component: {fileID: 8641620883526097230}
   - component: {fileID: 5183427474978581937}
   - component: {fileID: 1648523919615606209}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.018
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -528,8 +528,7 @@ GameObject:
   - component: {fileID: 2711707405350218870}
   - component: {fileID: 4250069258308397130}
   - component: {fileID: 5471844799854690812}
-  - component: {fileID: 3367100742019572769}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: PlayerNetworkRagdoll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -589,6 +588,7 @@ MonoBehaviour:
   - {fileID: 9161135124524694600}
   - {fileID: 7622274098847312203}
   ragdollCamera: {fileID: 2436872359045635582}
+  networkMeshRenderer: {fileID: 2362333523138645296}
 --- !u!114 &5471844799854690812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -606,40 +606,6 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &3367100742019572769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3380579513481197260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 2711707405350218870}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!1 &3747334405887977805
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,7 +618,7 @@ GameObject:
   - component: {fileID: 1707096764383402229}
   - component: {fileID: 9161135124524694600}
   - component: {fileID: 7545224834967812782}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -838,7 +804,7 @@ GameObject:
   - component: {fileID: 8494737050302169887}
   - component: {fileID: 5645919049326685605}
   - component: {fileID: 1322232791983959359}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.017
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1023,7 +989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 6966225548743057572}
@@ -1058,7 +1024,7 @@ GameObject:
   - component: {fileID: 7622274098847312203}
   - component: {fileID: 7539877365281329340}
   - component: {fileID: 2672033728969842906}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.015
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1242,7 +1208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 8148784497476911404}
@@ -1277,7 +1243,7 @@ GameObject:
   - component: {fileID: 965312873132233550}
   - component: {fileID: 2381178965610379081}
   - component: {fileID: 3500213225200276564}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.021
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1361,7 +1327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 1515102517409062134}
@@ -1498,7 +1464,7 @@ GameObject:
   - component: {fileID: 7527440298069478191}
   - component: {fileID: 2001085611540407666}
   - component: {fileID: 2634819904341014552}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1683,7 +1649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 2328737628410224743}
@@ -1717,7 +1683,7 @@ GameObject:
   - component: {fileID: 7991865714197340501}
   - component: {fileID: 184194461923162749}
   - component: {fileID: 6130511659889311198}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1902,7 +1868,7 @@ GameObject:
   - component: {fileID: 2735088011189009032}
   - component: {fileID: 2732781041161288567}
   - component: {fileID: 2216273389800853652}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1988,7 +1954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 787603843195524807}
@@ -2023,7 +1989,7 @@ GameObject:
   - component: {fileID: 2917243388553348230}
   - component: {fileID: 2437897763050120737}
   - component: {fileID: 6597980106432023926}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2208,7 +2174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 2240642329939533986}
@@ -2243,7 +2209,7 @@ GameObject:
   - component: {fileID: 4167162990408111942}
   - component: {fileID: 8768405888611868986}
   - component: {fileID: 7233003548871984688}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.016
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2428,7 +2394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 4254214014221329926}
@@ -2464,13 +2430,13 @@ GameObject:
   - component: {fileID: 197981142346769143}
   - component: {fileID: 3786855379922168802}
   - component: {fileID: 2443338141109279135}
-  m_Layer: 8
+  m_Layer: 15
   m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1666754918003154069
 Transform:
   m_ObjectHideFlags: 0
@@ -2493,7 +2459,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5466549823149942057}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -2644,8 +2610,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2330929443877244447}
-  - component: {fileID: 9128862917908434342}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: char.rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2668,40 +2633,6 @@ Transform:
   - {fileID: 6994763640148584160}
   m_Father: {fileID: 2711707405350218870}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9128862917908434342
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5961955829140200483}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 2330929443877244447}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!1 &6005284266850179749
 GameObject:
   m_ObjectHideFlags: 0
@@ -2715,7 +2646,7 @@ GameObject:
   - component: {fileID: 9012078384029458851}
   - component: {fileID: 8545066436260661406}
   - component: {fileID: 4132837491996027763}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.019
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2900,7 +2831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 4455185412985137123}
@@ -2935,7 +2866,7 @@ GameObject:
   - component: {fileID: 4754315734113295855}
   - component: {fileID: 8801957206777932795}
   - component: {fileID: 5839260845540020989}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3119,7 +3050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 2519438938969319465}
@@ -3154,7 +3085,7 @@ GameObject:
   - component: {fileID: 2144802620286690762}
   - component: {fileID: 2495890852872858529}
   - component: {fileID: 9066580115096735517}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3339,7 +3270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 6473911855476915085}
@@ -3373,7 +3304,7 @@ GameObject:
   - component: {fileID: 4687433262069573171}
   - component: {fileID: 7249845982431207944}
   - component: {fileID: 1137784203660553087}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.020
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3557,7 +3488,7 @@ GameObject:
   - component: {fileID: 873310902005677032}
   - component: {fileID: 1710189938981343125}
   - component: {fileID: 7412015790384183072}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3743,7 +3674,7 @@ GameObject:
   - component: {fileID: 529283915870102219}
   - component: {fileID: 6379230045314624636}
   - component: {fileID: 2264683114226530945}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3928,7 +3859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 5057722113480376691}
@@ -3962,7 +3893,7 @@ GameObject:
   - component: {fileID: 2143586626892012313}
   - component: {fileID: 8601953702065609024}
   - component: {fileID: 2155146036636759278}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: Bone.012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4144,8 +4075,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7328390306947804603}
   - component: {fileID: 2362333523138645296}
-  - component: {fileID: 6527683554616695951}
-  m_Layer: 12
+  m_Layer: 15
   m_Name: char
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4174,7 +4104,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8943123109130418719}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -4246,37 +4176,3 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0000034896657, y: -0.013851945, z: 0.000042953063}
     m_Extent: {x: 0.01615294, y: 0.015813218, z: 0.0050695906}
   m_DirtyAABB: 0
---- !u!114 &6527683554616695951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8943123109130418719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 7328390306947804603}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01

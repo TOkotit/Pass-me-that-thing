@@ -52,8 +52,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View
             var initHipsPos = hips.position;
             parent.position = initHipsPos;
             if (Physics.Raycast(hips.position, Vector3.down, out RaycastHit hit, 5, groundMask))
-                parent.position = new Vector3(parent.position.x, hit.point.y, parent.position.z) +
-                                   Vector3.up;
+                parent.position = new Vector3(parent.position.x, hit.point.y, parent.position.z);
             characterRig.position = initHipsPos;
         }
 

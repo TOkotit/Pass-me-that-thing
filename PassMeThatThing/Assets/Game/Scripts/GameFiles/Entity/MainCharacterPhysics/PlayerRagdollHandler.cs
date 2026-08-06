@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.GlobalView;
@@ -9,8 +10,15 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
     {
         [SerializeField] private GameObject ragdollPrefab;
         [SerializeField] private MainCharacter player;
+        [SerializeField] private SkinnedMeshRenderer playerMeshRenderer;
         private PlayerNetworkRagdoll _ragdollInstance;
         private Dictionary<string, Rigidbody> _playerBoneDict;
+
+
+        private void Start()
+        {
+            Setup();
+        }
 
         public override void EnableRagdoll()
         {
@@ -47,6 +55,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             {
                 rb.gameObject.SetActive(false);
             }
+            playerMeshRenderer.enabled = false;
         }
 
         private void EnablePlayer()
@@ -55,6 +64,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             {
                 rb.gameObject.SetActive(true);
             }
+            playerMeshRenderer.enabled = true;
         }
     }
 }
