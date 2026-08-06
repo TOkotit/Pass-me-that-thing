@@ -63,6 +63,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
             }
         }
 
+        //View
         [ClientRpc]
         private void RpcPlayImpactParticles()
         {
@@ -71,6 +72,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
                 impactParticles.Play();
             }
         }
+
         [ClientRpc]
         private void RpcPlayImpactSound()
         {

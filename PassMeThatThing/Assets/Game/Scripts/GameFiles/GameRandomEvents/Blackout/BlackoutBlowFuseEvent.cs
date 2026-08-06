@@ -26,7 +26,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
         [Server]
         public void FixEvent() 
         {
-            StopEvent();
+            GameRandomEventManager.DeactivateEvent(EventId);
         }
 
         [Server]
@@ -37,8 +37,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
                 GlobalVisionShaderManager.Instance.SetAllRoomsStateServerOnly(true);
                 Debug.Log("[PowerOutageEvent] Электричество восстановлено! Лампы горят.");
             }
-            
-            GameRandomEventManager.DisableEvent(EventId);
 
             RpcDisableOutline();
         }

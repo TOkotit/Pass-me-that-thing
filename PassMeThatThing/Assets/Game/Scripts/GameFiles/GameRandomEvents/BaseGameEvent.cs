@@ -37,7 +37,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         }
         
         public GameRandomEventManager GameRandomEventManager => _gameRandomEventManager;
-        private bool _isInjected;
         
         
         [Server]
@@ -46,16 +45,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             base.OnStartServer();
             _currentTriggerChance = _baseTriggerChance;
             RegisterEvent();
-        }
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            if (!isServer && !_isInjected)
-            {
-                
-                GameplayScope.Resolver?.Inject(this);
-                _isInjected = true;
-            }
         }
         
         private void RegisterEvent()

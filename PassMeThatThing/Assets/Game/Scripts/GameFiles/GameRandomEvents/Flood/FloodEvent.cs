@@ -38,7 +38,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         [Server]
         public void FixEvent()
         {
-            StopEvent();
+            GameRandomEventManager.DeactivateEvent(EventId);
         }
 
         [Server]
@@ -49,8 +49,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             {
                 NetworkServer.Destroy(_waterMeshInstance);
             }
-
-            GameRandomEventManager.DisableEvent(EventId);
 
             RpcDisableOutline();
         }

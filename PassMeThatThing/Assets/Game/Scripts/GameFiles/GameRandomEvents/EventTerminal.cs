@@ -35,10 +35,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             _registry.Unregister(this); 
         } 
 
-        public virtual void OnFixedChanged(bool oldValue, bool newValue)
-        {
-
-        }
+        public virtual void OnFixedChanged(bool oldValue, bool newValue) { }
         
         [Command(requiresAuthority = false)]
         public virtual void CmdMinigameClose() { }

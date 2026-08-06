@@ -44,7 +44,16 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             
             return assignedId;
         }
-        
+
+        [Server]
+        public void UnregisterEvent(int id)
+        {
+            if (_sceneEvents.ContainsKey(id))
+            {
+                _sceneEvents.Remove(id);
+            }
+        }
+
         [Server]
         public BaseGameEvent GetEventById(int id)
         {
@@ -70,22 +79,12 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 Debug.LogWarning($"[GameEventManager] Невозможно запустить: ивент с ID:{eventId} не найден на карте.");
             }
         }
-        [Server]
-        public void UnregisterEvent(int id)
-        {
-            if (_sceneEvents.ContainsKey(id))
-            {
-                _sceneEvents.Remove(id);
-            }
-        }
 
         [Server]
-        public void DisableEvent(int eventId)
+        public void DeactivateEvent(int eventId)
         {
-
             if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
-
                 gameEvent.StopEvent();
                 StartedEvents.Remove(eventId);
             }

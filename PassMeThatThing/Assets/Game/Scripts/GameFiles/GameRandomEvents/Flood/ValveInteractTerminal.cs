@@ -1,6 +1,4 @@
 using Ami.BroAudio;
-using Game.Scripts.GameFiles.Entity.Enemy;
-using Game.Scripts.GameFiles.GameRandomEvents;
 using Mirror;
 using System.Collections;
 using UnityEngine;
@@ -10,9 +8,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 {
     public class ValveInteractTerminal : EventTerminal
     {
-        private const float openAngle = 0f;
-        private const float closedAngle = 360f;
-        private const float rotationTime = 1f; //s
+        private const float openAngle = 270f;
+        private const float closedAngle = 0f;
+        private const float rotationTime = 3f; //s
 
         //refs
         [SerializeField] private FloodEvent floodEvent;
@@ -25,10 +23,15 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         [SerializeField] private ParticleSystem impactParticles;
         [SerializeField] private SoundSource valveSound = default;
 
+        private Quaternion _initRotation;
         private float _rotationProggress;
 
         public Outline Outline { get => outline; set => outline = value; }
 
+        private void Awake()
+        {
+            _initRotation = pivot.rotation;
+        }
 
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
@@ -76,11 +79,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             }
         }
 
-        public override void OnFixedChanged (bool oldValue, bool newValue)
+        public override void OnFixedChanged(bool oldValue, bool newValue)
         {
             if (isServer)
             {
-                Debug.Log("[EVENT] valve terminal OnFixedChanged");
+                Debug.Log($"[EVENT] valve terminal OnFixedChanged {newValue}");
 
                 RpcRotateValve(newValue ? closedAngle : openAngle);
             }
@@ -99,7 +102,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             _rotationProggress = 0f;
 
             var startRotation = pivot.rotation;
-            var targetRotation = Quaternion.AngleAxis(newAngle, pivot.forward);
+            var targetRotation = Quaternion.AngleAxis(newAngle, pivot.forward) * _initRotation;
 
             while (_rotationProggress < rotationTime)
             {

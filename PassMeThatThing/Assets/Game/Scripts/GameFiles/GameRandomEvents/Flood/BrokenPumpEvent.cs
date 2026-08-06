@@ -8,9 +8,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
     {
         [SerializeField] private float _chanceBoost = 0.5f;
         
-        [SyncVar]
-        private bool _isPressureCritical = false;
-        
         //[SerializeField] private Events.FloodEvent.FloodEvent _siblingFloodEvent;
 
         [SerializeField] private PumpInteractTerminal pumpInteractTerminal;
@@ -23,11 +20,10 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         
         protected override void OnStartEvent()
         {
-            _isPressureCritical = true;
-            pumpInteractTerminal._isFixed = false;
+            if (pumpInteractTerminal)
+                pumpInteractTerminal.IsFixed = false;
+
             RpcEnableOutline();
-
-
 
             //if (_siblingFloodEvent)
             //{
@@ -38,25 +34,20 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         
         
         [Server]
-        public void PlayerFixedPressure() 
+        public void FixEvent() 
         {
-            StopEvent();
+            GameRandomEventManager.DeactivateEvent(EventId);
         }
 
         [Server]
         protected override void OnStopEvent()
         {
-            _isPressureCritical = false;
             
-            //if (_siblingFloodEvent)
-            //{
-            //    _siblingFloodEvent.CurrentTriggerChance -= _chanceBoost;
-            //}
 
             RpcDisableOutline();
-            GameRandomEventManager.DisableEvent(EventId);
         }
-        
+
+        //View
         [ClientRpc]
         private void RpcEnableOutline()
         {

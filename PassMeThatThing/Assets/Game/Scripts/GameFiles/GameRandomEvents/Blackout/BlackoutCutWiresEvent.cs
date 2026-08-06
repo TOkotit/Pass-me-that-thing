@@ -10,12 +10,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         protected override void OnStartEvent()
         {
-            // if (GlobalVisionShaderManager.Instance)
-            // {
-            //     GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();
-            //     Debug.Log("[PowerOutageEvent] Электричество вырубилось! Лампы погасли.");
-            // }
-            
             if (terminal) 
                 terminal.IsFixed = false;
 
@@ -25,19 +19,14 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
         [Server]
         public void FixEvent() 
         {
-            StopEvent();
+            GameRandomEventManager.DeactivateEvent(EventId);
         }
 
         [Server]
         protected override void OnStopEvent()
         {
-            // if (GlobalVisionShaderManager.Instance)
-            // {
-            //     GlobalVisionShaderManager.Instance.ToggleAllLampsServerOnly();
-            //     Debug.Log("[PowerOutageEvent] Электричество восстановлено! Лампы горят.");
-            // }
+
             RpcDisableOutline();
-            GameRandomEventManager.DisableEvent(EventId);
         }
         
         [ClientRpc]
