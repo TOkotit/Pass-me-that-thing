@@ -32,7 +32,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                     CmdPlayEmptySound();
                 return;
             }
-            Debug.Log(tracerController + " " + barrel);
+            
             physicsApplyer.ShotRaycast(barrel.position, barrel.forward, maxDistance, layersToShot,
                 force:force, damage:damage, toughDamage: toughnessDamage );
             var hitPoint = tracerController.Shoot(barrel.position, barrel.forward);

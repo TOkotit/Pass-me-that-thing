@@ -51,9 +51,11 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         public void EnableRagdoll()
         {
             SyncBones(true);
-            ragdollCamera.transform.rotation = _playerCamera.transform.rotation;
             if (_player.netIdentity.isLocalPlayer)
+            {
+                ragdollCamera.transform.rotation = _playerCamera.transform.rotation;
                 ragdollCamera.enabled = true;
+            }
             foreach (var bone in ragdollBones) 
                 bone.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
             networkMeshRenderer.enabled = true;

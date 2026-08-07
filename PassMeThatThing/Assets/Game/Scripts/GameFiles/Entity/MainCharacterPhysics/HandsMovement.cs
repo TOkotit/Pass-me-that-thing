@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using DI;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using VContainer;
 using VContainer.Unity;
 
@@ -12,9 +14,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
     public class HandsMovement : NetworkBehaviour
     {
-        [Header("Hand Joints")]
-        [SerializeField] private ConfigurableJoint leftJoint;
-        [SerializeField] private ConfigurableJoint rightJoint;
+        [Header("Smooth Grab")]
+        [SerializeField] private float grabDuration = 0.25f;
+        [SerializeField] private AnimationCurve grabCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        [SerializeField] private Transform rightHandIKTarget;
+        [SerializeField] private Transform leftHandIKTarget;
+        [SerializeField] private TwoBoneIKConstraint rightArmIK;
+        [SerializeField] private TwoBoneIKConstraint leftArmIK;
 
         [Header("Grab Joint (non‑aligned)")]
         [SerializeField] private ConfigurableJoint grabJoint;
@@ -22,8 +28,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Header("Joint Drive")]
         [SerializeField] private float jointSpring = 3000f;
         [SerializeField] private float jointDamper = 50f;
-        [SerializeField] private float angularSpring = 500f;   
-        [SerializeField] private float angularDamper = 10f;  
+        [SerializeField] private float angularSpring = 500f;
+        [SerializeField] private float angularDamper = 10f;
 
         [Header("Linear Hold (aligned)")]
         [SerializeField] private float baseHoldForce = 500f;
@@ -50,7 +56,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public float JointSpring { get => jointSpring; set => jointSpring = value; }
         public float JointDamper { get => jointDamper; set => jointDamper = value; }
-        
+
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
@@ -62,8 +68,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private Quaternion _initialLocalRotation;
         private bool _shouldAlignRotation;
         private Vector3 _localPoint;
-
         private Vector3 _pivotDefaultLocalPos;
+
+        private Transform _rightHandTargetPoint;
+        private Transform _leftHandTargetPoint;
 
         private void Awake()
         {
@@ -84,13 +92,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _shouldAlignRotation = item.HasToBeAligned;
 
             if (_shouldAlignRotation)
-            {
                 _initialLocalRotation = Quaternion.Inverse(transform.rotation) * _heldRb.rotation;
-            }
             else
-            {
                 SetupGrabJoint(item, localPoint);
-            }
 
             AlignPivotForItem(item);
             MoveHands(item, localPoint);
@@ -110,9 +114,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _localPoint = localPoint;
 
             if (!_shouldAlignRotation)
-            {
                 SetupGrabJoint(item, localPoint);
-            }
 
             AlignPivotForItem(item);
             MoveHands(item, localPoint);
@@ -183,8 +185,43 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
 
             if (_isHolding && _heldRb && _holdPivot && isServer && _shouldAlignRotation)
-            {
                 ManualHoldUpdateAligned();
+        }
+
+        private void Update()
+        {
+            if (!_isHolding || _heldItem == null) return;
+
+            if (_heldItem.HandleType == HandleType.Free)
+            {
+                PositionFreeHandTargets(_heldItem, _localPoint);
+            }
+            else if (_heldItem.HandleType == HandleType.OneHanded)
+            {
+                if (_rightHandTargetPoint != null)
+                {
+                    rightHandIKTarget.position = _rightHandTargetPoint.position;
+                    rightHandIKTarget.rotation = _rightHandTargetPoint.rotation;
+                }
+                else
+                {
+                    var worldPos = _heldItem.transform.TransformPoint(_localPoint);
+                    rightHandIKTarget.position = worldPos;
+                    rightHandIKTarget.rotation = _heldItem.transform.rotation;
+                }
+            }
+            else if (_heldItem.HandleType == HandleType.TwoHanded)
+            {
+                if (_rightHandTargetPoint != null)
+                {
+                    rightHandIKTarget.position = _rightHandTargetPoint.position;
+                    rightHandIKTarget.rotation = _rightHandTargetPoint.rotation;
+                }
+                if (_leftHandTargetPoint != null)
+                {
+                    leftHandIKTarget.position = _leftHandTargetPoint.position;
+                    leftHandIKTarget.rotation = _leftHandTargetPoint.rotation;
+                }
             }
         }
 
@@ -227,7 +264,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             grabJoint.connectedBody = _heldRb;
             grabJoint.connectedAnchor = item.CanBeOwned ? Vector3.zero : localPoint;
-
             ApplyJointDrive();
             grabJoint.gameObject.SetActive(true);
         }
@@ -238,7 +274,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             {
                 positionSpring = jointSpring,
                 positionDamper = jointDamper,
-                maximumForce = float.MaxValue  
+                maximumForce = float.MaxValue
             };
             grabJoint.xDrive = linearDrive;
             grabJoint.yDrive = linearDrive;
@@ -247,7 +283,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             {
                 positionSpring = angularSpring,
                 positionDamper = angularDamper,
-                maximumForce = float.MaxValue   
+                maximumForce = float.MaxValue
             };
             grabJoint.angularXDrive = angularDrive;
             grabJoint.angularYZDrive = angularDrive;
@@ -266,57 +302,109 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public void MoveHands(PhysicalItem item, Vector3 localPoint)
         {
-            var separation = 0.1f; 
-            var worldPoint = item.transform.TransformPoint(localPoint);
-            var pivotRight = animatorTransform.right;
-            var rightWorld = worldPoint - pivotRight * separation;
-            var leftWorld = worldPoint + pivotRight * separation;
-            rightJoint.connectedAnchor = item.transform.InverseTransformPoint(rightWorld);
-            leftJoint.connectedAnchor = item.transform.InverseTransformPoint(leftWorld);
-            
-            rightJoint.transform.localPosition = Vector3.zero;
-            leftJoint.transform.localPosition = Vector3.zero;
+            StopAllCoroutines();
+
+            _rightHandTargetPoint = null;
+            _leftHandTargetPoint = null;
 
             if (item.HandleType == HandleType.OneHanded)
             {
-                rightJoint.gameObject.SetActive(true);
-                rightJoint.connectedBody = item.UniversalPoint ? item.UniversalPoint : item.RightHandPoint;
+                var target = item.UniversalPoint ? item.UniversalPoint : item.RightHandPoint;
+                if (target)
+                {
+                    _rightHandTargetPoint = target.transform;
+                    rightHandIKTarget.position = target.position;
+                    rightHandIKTarget.rotation = target.rotation;
+                }
+                else
+                {
+                    var worldPos = item.transform.TransformPoint(localPoint);
+                    rightHandIKTarget.position = worldPos;
+                    rightHandIKTarget.rotation = item.transform.rotation;
+                    _rightHandTargetPoint = null;
+                }
+
+                rightHandIKTarget.gameObject.SetActive(true);
+                if (leftHandIKTarget) leftHandIKTarget.gameObject.SetActive(false);
+                StartCoroutine(FadeIKWeight(1f, 0f, grabDuration));
             }
             else if (item.HandleType == HandleType.TwoHanded)
             {
-                if (item.RightHandPoint && item.LeftHandPoint)
+                if (item.RightHandPoint)
                 {
-                    rightJoint.gameObject.SetActive(true);
-                    rightJoint.connectedBody = item.RightHandPoint;
-                    leftJoint.gameObject.SetActive(true);
-                    leftJoint.connectedBody = item.LeftHandPoint;
+                    _rightHandTargetPoint = item.RightHandPoint.transform;
+                    rightHandIKTarget.position = _rightHandTargetPoint.position;
+                    rightHandIKTarget.rotation = _rightHandTargetPoint.rotation;
+                    rightHandIKTarget.gameObject.SetActive(true);
                 }
+                if (item.LeftHandPoint)
+                {
+                    _leftHandTargetPoint = item.LeftHandPoint.transform;
+                    leftHandIKTarget.position = _leftHandTargetPoint.position;
+                    leftHandIKTarget.rotation = _leftHandTargetPoint.rotation;
+                    leftHandIKTarget.gameObject.SetActive(true);
+                }
+                StartCoroutine(FadeIKWeight(1f, 1f, grabDuration));
             }
             else if (item.HandleType == HandleType.Free)
             {
-                rightJoint.gameObject.SetActive(true);
-                rightJoint.connectedBody = item.Rigidbody;
-                leftJoint.gameObject.SetActive(true);
-                leftJoint.connectedBody = item.Rigidbody;
+                PositionFreeHandTargets(item, localPoint);
+                rightHandIKTarget.gameObject.SetActive(true);
+                leftHandIKTarget.gameObject.SetActive(true);
+                StartCoroutine(FadeIKWeight(1f, 1f, grabDuration));
             }
         }
 
         public void ResetHands()
         {
-            ResetLeftHand();
-            ResetRightHand();
+            StopAllCoroutines();
+            StartCoroutine(ReleaseHandsSequence());
         }
 
-        public void ResetLeftHand()
+        private IEnumerator ReleaseHandsSequence()
         {
-            if (leftJoint) leftJoint.connectedBody = null;
-            leftJoint.gameObject.SetActive(false);
+            yield return FadeIKWeight(0f, 0f, grabDuration * 0.5f);
+
+            if (rightHandIKTarget) rightHandIKTarget.gameObject.SetActive(false);
+            if (leftHandIKTarget) leftHandIKTarget.gameObject.SetActive(false);
+            _rightHandTargetPoint = null;
+            _leftHandTargetPoint = null;
         }
 
-        public void ResetRightHand()
+        private IEnumerator FadeIKWeight(float targetRight, float targetLeft, float duration)
         {
-            if (rightJoint) rightJoint.connectedBody = null;
-            rightJoint.gameObject.SetActive(false);
+            var startRight = rightArmIK ? rightArmIK.weight : 0f;
+            var startLeft = leftArmIK ? leftArmIK.weight : 0f;
+            var elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var t = Mathf.Clamp01(elapsed / duration);
+                var curvedT = grabCurve.Evaluate(t);
+
+                if (rightArmIK)
+                    rightArmIK.weight = Mathf.Lerp(startRight, targetRight, curvedT);
+                if (leftArmIK)
+                    leftArmIK.weight = Mathf.Lerp(startLeft, targetLeft, curvedT);
+
+                yield return null;
+            }
+
+            if (rightArmIK) rightArmIK.weight = targetRight;
+            if (leftArmIK) leftArmIK.weight = targetLeft;
+        }
+
+        private void PositionFreeHandTargets(PhysicalItem item, Vector3 localPoint)
+        {
+            var worldPoint = item.transform.TransformPoint(localPoint);
+            var rightDir = animatorTransform.right;
+            var separation = 0.1f;
+
+            rightHandIKTarget.position = worldPoint - rightDir * separation;
+            leftHandIKTarget.position = worldPoint + rightDir * separation;
+            rightHandIKTarget.rotation = item.transform.rotation;
+            leftHandIKTarget.rotation = item.transform.rotation;
         }
 
         public void ChargeThrow()
