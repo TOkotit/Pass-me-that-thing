@@ -64,10 +64,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var dir = dirs[i % dirs.Count];
                 PlaceCluster(nonCoreClusters[i], dir);
             }
-
-            // Ангар эвакуации ставим до туннелирования, чтобы забронировать под него
-            // свободный выход самого дальнего кластера раньше, чем его займёт туннель.
-
             ConnectAllFreeExits();
             PlaceRecoveryHangar(clusters);
 
@@ -107,7 +103,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var remainingRooms = coreCluster.Rooms.Where(r => r != commandCenterNode).ToList();
                 var placedCoreRooms = new List<PlacedRoomDataCluster> { commandCenterData };
 
-                bool success = true;
+                var success = true;
                 foreach (var roomNode in remainingRooms)
                 {
                     if (!TryPlaceRoomInCluster(roomNode, placedCoreRooms, coreCluster))
@@ -130,7 +126,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
         private void PlaceCluster(RoomCluster cluster, Vector3Int direction)
         {
-            for (int attempt = 0; attempt < MAX_CLUSTER_PLACEMENT_ATTEMPTS; attempt++)
+            for (var attempt = 0; attempt < MAX_CLUSTER_PLACEMENT_ATTEMPTS; attempt++)
             {
                 var startNode = cluster.Rooms[0];
                 var candidates = roomDatabase.GetSuitableRooms(startNode.Type, 1, false);
@@ -144,7 +140,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var startData = InstantiateAndRegisterRoom(prefab, origin.Value, rotation, cluster, $"Room_ClusterStart_{startNode.Type}");
 
                 var placedClusterRooms = new List<PlacedRoomDataCluster> { startData };
-                bool success = true;
+                var success = true;
 
                 for (var i = 1; i < cluster.Rooms.Count; i++)
                 {
@@ -166,10 +162,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             Debug.LogWarning($"[КЛАСТЕР] Не удалось разместить кластер после {MAX_CLUSTER_PLACEMENT_ATTEMPTS} попыток.");
         }
         
-        // ==========================================
-        // АНГАР ЭВАКУАЦИИ
-        // ==========================================
-
         private void PlaceRecoveryHangar(List<RoomCluster> clusters)
         {
             if (clusters == null || clusters.Count < 2) return;
@@ -179,11 +171,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             RoomCluster farthestCluster = null;
             var farthestDistance = -1;
-
-            // clusters[0] - ядро, ангар в нём не ставим, ищем среди остальных.
-            // Кластеру под ангар нужно минимум 2 свободных выхода: один займёт ангар,
-            // второй должен остаться, иначе кластер с ангаром будет невозможно
-            // подключить туннелем к остальной сети.
+            
             for (var i = 1; i < clusters.Count; i++)
             {
                 var cluster = clusters[i];
@@ -203,9 +191,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             if (farthestCluster == null)
             {
-                // Резервный вариант: ни у одного кластера нет двух выходов -
-                // берём просто самый дальний с хотя бы одним (риск тупика редкий, но лучше ангар,
-                // чем совсем без него).
                 for (var i = 1; i < clusters.Count; i++)
                 {
                     var cluster = clusters[i];
@@ -290,8 +275,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
         private bool IsCellAWell(Vector3Int emptyCellPos)
         {
-            int occupiedNeighbors = 0;
-            Vector3Int[] directions = { Vector3Int.forward, Vector3Int.back, Vector3Int.left, Vector3Int.right };
+            var occupiedNeighbors = 0;
+            var directions = new[] { Vector3Int.forward, Vector3Int.back, Vector3Int.left, Vector3Int.right };
 
             foreach (var dir in directions)
             {
@@ -330,7 +315,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var candidates = roomDatabase.GetSuitableRooms(nodeToPlace.Type, 1, false)
                 .OrderBy(_ => _random.Next()).ToList();
 
-            // Кешируем занятые клетки всех кластеров, кроме текущего
             var otherClustersCells = _allPlacedRooms
                 .Where(r => r.Cluster != cluster)
                 .SelectMany(r => r.OccupiedCells)
@@ -357,7 +341,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                                 if (RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin))
                                 {
-                                    // Защита от соприкосновения с чужими кластерами при разрастании
                                     if (IsSpaceIsolatedFromOtherClusters(origin, prefab, rot, otherClustersCells, 1))
                                     {
                                         validPlacements.Add((prefab, parentConn, rot, origin));
@@ -386,7 +369,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var coreRoom = _allPlacedRooms.FirstOrDefault(r => r.Prefab.RoomType == RoomTypeNew.CommandCenter);
             if (coreRoom == null) return null;
 
-            // Собираем клетки только центрального кластера (ядра)
             var coreCells = _allPlacedRooms
                 .Where(r => r.Cluster == coreRoom.Cluster)
                 .SelectMany(r => r.OccupiedCells)
@@ -397,7 +379,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 .SelectMany(r => r.OccupiedCells)
                 .ToHashSet();
 
-            // Формируем очередь направлений: сначала приоритетное, затем остальные
             var directionsToTry = new List<Vector3Int> { preferredDirection };
             directionsToTry.AddRange(SearchDirections.Where(d => d != preferredDirection).OrderBy(_ => _random.Next()));
 
@@ -405,12 +386,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             foreach (var dir in directionsToTry)
             {
-                // Поиск крайней координаты ядра в выбранном направлении сетки
-                int extremeValue = dir.x != 0 
+                var extremeValue = dir.x != 0 
                     ? (dir.x > 0 ? coreCells.Max(c => c.x) : coreCells.Min(c => c.x))
                     : (dir.z > 0 ? coreCells.Max(c => c.z) : coreCells.Min(c => c.z));
 
-                // Получение клеток ядра, лежащих на этой крайней линии
                 var edgeCells = coreCells.Where(c => 
                     (dir.x != 0 && c.x == extremeValue) || 
                     (dir.z != 0 && c.z == extremeValue)
@@ -460,10 +439,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var globalPos = origin + plate.LocalPosition;
         
-                // Проверяем квадрат вокруг клетки на наличие клеток чужих кластеров
-                for (int x = -minDistance; x <= minDistance; x++)
+                for (var x = -minDistance; x <= minDistance; x++)
                 {
-                    for (int z = -minDistance; z <= minDistance; z++)
+                    for (var z = -minDistance; z <= minDistance; z++)
                     {
                         var checkPos = globalPos + new Vector3Int(x, 0, z);
                         if (otherClustersCells.Contains(checkPos))
@@ -554,13 +532,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     foreach (var connB in otherRoom.FreeConnections.ToList())
                     {
-                        if (connA.GlobalPosition + connA.Direction == connB.GlobalPosition &&
-                            connB.Direction == -connA.Direction)
-                        {
-                            newRoomData.FreeConnections.Remove(connA);
-                            otherRoom.FreeConnections.Remove(connB);
-                            break;
-                        }
+                        if (connA.GlobalPosition + connA.Direction != connB.GlobalPosition ||
+                            connB.Direction != -connA.Direction) continue;
+                        newRoomData.FreeConnections.Remove(connA);
+                        otherRoom.FreeConnections.Remove(connB);
+                        break;
                     }
                 }
             }
@@ -582,9 +558,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             return null;
         }
 
-        // ==========================================
-        // БЛОК СОЕДИНЕНИЯ КЛАСТЕРОВ
-        // ==========================================
 
         private void ConnectAllFreeExits()
         {
@@ -602,16 +575,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var clusterLinks = new Dictionary<RoomCluster, HashSet<RoomCluster>>();
 
-            // Фаза 1: соединяем в первую очередь кластеры, которые ещё не связаны
-            // друг с другом напрямую - так получается сеть/паутина связей, а не
-            // все туннели подряд стягиваются в один прямой коридор.
+           
             ConnectFreeExitPairs(allFreeConnections, tunnelPrefabs, clusterLinks, preferUnlinked: true);
-
-            // Фаза 2: добираем оставшиеся выходы уже без этого ограничения.
+            
             ConnectFreeExitPairs(allFreeConnections, tunnelPrefabs, clusterLinks, preferUnlinked: false);
-
-            // Фаза 3: страхуемся, что все кластеры вошли в один связный граф с ядром -
-            // если после первых двух фаз кластер остался изолирован, тянем к нему туннель принудительно.
+            
             EnsureAllClustersConnected(tunnelPrefabs, clusterLinks);
         }
 
@@ -627,8 +595,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var startData = allFreeConnections[i];
                 var startCluster = startData.Room.Cluster;
 
-                IEnumerable<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> pool =
-                    allFreeConnections.Where(x => x.Room.Cluster != startCluster);
+                var pool = allFreeConnections.Where(x => x.Room.Cluster != startCluster);
 
                 if (preferUnlinked)
                 {
@@ -678,14 +645,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     foreach (var dir in SearchDirections)
                     {
                         var nextCell = curr.Cell + dir;
-                        if (!visited.Contains(nextCell))
-                        {
-                            if (!levelGrid.IsCellOccupied(nextCell) || targetDict.ContainsKey(nextCell))
-                            {
-                                visited.Add(nextCell);
-                                queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
-                            }
-                        }
+                        if (visited.Contains(nextCell)) continue;
+                        if (levelGrid.IsCellOccupied(nextCell) && !targetDict.ContainsKey(nextCell)) continue;
+                        visited.Add(nextCell);
+                        queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
                     }
                 }
 
@@ -814,8 +777,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             break;
                         }
 
-                        // Здесь связность важнее длины туннеля - разрешаем более дальний поиск,
-                        // чем в обычных фазах 1-2.
                         if (curr.Depth >= 16) continue;
 
                         foreach (var dir in SearchDirections)
@@ -878,7 +839,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
 
                 var placed = false;
-                var prevCell = (i == 0) ? startConn.GlobalPosition : path[i - 1];
+                var prevCell = i == 0 ? startConn.GlobalPosition : path[i - 1];
 
                 foreach (var prefab in sortedPrefabs)
                 {
@@ -1001,20 +962,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 if (roomData.Instance == null) continue;
 
-                // Перебираем все выходы, которые остались неиспользованными после генерации туннелей
                 foreach (var conn in roomData.FreeConnections)
                 {
                     var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
                     var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
                     
-                    // Расчет позиции на основе направления двери. Значение 4.9 применяется к нужной оси.
                     var wallPos = new Vector3(
                         centerWorldPos.x + conn.Direction.x * 4.9f, 
                         baseWorldPos.y + 4.5f, 
                         centerWorldPos.z + conn.Direction.z * 4.9f
                     );
 
-                    // Определение поворота стены в зависимости от направления двери
                     var wallRot = Quaternion.identity;
                     if (conn.Direction == Vector3Int.right) wallRot = Quaternion.Euler(0, 90, 0);
                     else if (conn.Direction == Vector3Int.back) wallRot = Quaternion.Euler(0, 180, 0);
