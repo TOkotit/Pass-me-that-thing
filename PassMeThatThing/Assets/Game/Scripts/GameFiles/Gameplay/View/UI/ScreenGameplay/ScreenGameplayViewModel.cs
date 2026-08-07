@@ -212,7 +212,7 @@ namespace Game.Gameplay.View.UI
             clear();
             foreach (var i in _gameRandomEventManager.StartedEvents)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
                 add(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
@@ -220,8 +220,8 @@ namespace Game.Gameplay.View.UI
         
         private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
         {
-            var e = _gameEventsDatabase.GetEvent(newItem.eventType);
-            Debug.Log($"[EVENT GVM] {newItem.eventType} {e.GameEventType}");
+            var e = _gameEventsDatabase.GetEvent(newItem.EventType);
+            Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
             switch (op)
             {
                 case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:

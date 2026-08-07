@@ -1,4 +1,5 @@
 using Ami.BroAudio;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Mirror;
 using System.Collections;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 
         //refs
         [SerializeField] private FloodEvent floodEvent;
+        [SerializeField] private WireNodePort port;
 
         //valve rotation
         [SerializeField] private Transform pivot;
@@ -85,8 +87,16 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             {
                 Debug.Log($"[EVENT] valve terminal OnFixedChanged {newValue}");
 
+                UpdatePort();
+
                 RpcRotateValve(newValue ? closedAngle : openAngle);
             }
+        }
+
+        [Server]
+        public void UpdatePort()
+        {
+            port.IsOn = IsFixed;
         }
 
 

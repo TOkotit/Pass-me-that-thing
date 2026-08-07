@@ -9,27 +9,35 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class BaseGameEvent : NetworkBehaviour
     {
-        [SyncVar] private int _eventId; 
-        public int EventId => _eventId;
-        
-        [SyncVar] public GameEventsType eventType;
+        [SerializeField, Range(0f, 1f)]
+        private float _baseTriggerChance = 0.2f;
+
+        [SyncVar] 
+        private int _eventId;
+
+        [SyncVar]
+        [SerializeField]
+        private GameEventsType eventType;
+
+        [SyncVar]
+        private bool _isEventActive;
+
+        [SyncVar] 
+        private int _roomNumber;
+
+        [Inject] 
+        private GameRandomEventManager  _gameRandomEventManager;
+
+        private float _currentTriggerChance;
 
         public virtual int timeLimit { get; }
         public virtual int difficulty { get; }
         public virtual string description { get; }
-        
-        [SyncVar]
-        private bool _isEventActive;
-        public bool IsEventActive => _isEventActive;
 
-        [SyncVar] private int _roomNumber;
+        public int EventId => _eventId;
+        public bool IsEventActive => _isEventActive;
         public int RoomNumber => _roomNumber;
-        
-        [Inject] private GameRandomEventManager  _gameRandomEventManager;
-        
-        [SerializeField, Range(0f, 1f)] 
-        private float _baseTriggerChance = 0.2f;
-        private float _currentTriggerChance;
+
         public float CurrentTriggerChance
         {
             get => _currentTriggerChance;
@@ -37,7 +45,14 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         }
         
         public GameRandomEventManager GameRandomEventManager => _gameRandomEventManager;
-        
+
+        public GameEventsType EventType => eventType;
+
+        public void UpdateCurrentTriggerChance(float chanceToAdd)
+        {
+            CurrentTriggerChance = _baseTriggerChance + chanceToAdd;
+            Debug.Log($"[EVENT] UpdateCurrentTriggerChance {EventId} - {CurrentTriggerChance}");
+        }
         
         [Server]
         public override void OnStartServer()
@@ -66,7 +81,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             
             _isEventActive = true;
             OnStartEvent();
-            Debug.Log($"[Server] Ивент ID:{_eventId} ({eventType}) ЗАПУЩЕН.");
+            Debug.Log($"[Server] Ивент ID:{_eventId} ({EventType}) ЗАПУЩЕН.");
         }
         
         [Server]
@@ -76,7 +91,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 
             _isEventActive = false;
             OnStopEvent();
-            Debug.Log($"[Server] Ивент ID:{_eventId} ({eventType}) ЗАВЕРШЕН.");
+            Debug.Log($"[Server] Ивент ID:{_eventId} ({EventType}) ЗАВЕРШЕН.");
         }
         
         [Server] protected virtual void OnStartEvent() { }

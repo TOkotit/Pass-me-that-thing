@@ -28,11 +28,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
         }
 
-        public event Action<bool> OnWireNetStateChanged;
+        public event Action<WireType, bool> OnWireNetStateChanged;
 
         public void OnWireNetWorkingStateChanged(bool isNetWorking)
         {
-            OnWireNetStateChanged?.Invoke(isNetWorking);
+            OnWireNetStateChanged?.Invoke(WireType, isNetWorking);
         }
         
         public void RecalculateNet()

@@ -125,7 +125,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             Debug.Log($"[Heavy Turret] OnHealthChanged {currentHealth} / {maxHealth}");
         }
 
-        public void OnWireNetWorkingStateChanged(bool isNetWorking)
+        public void OnWireNetWorkingStateChanged(WireType type, bool isNetWorking)
         {
             _isTurretWork = isNetWorking;
             Debug.Log($"[Heavy Turret] IsTurretWork {_isTurretWork}");

@@ -17,16 +17,27 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         //ивенты которые запущены
         private readonly SyncDictionary<int, BaseGameEvent> _startedEvents = new();
 
+        private float _pipebreakChanceBoost;
+
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
-        
+
+        public float PipebreakChanceBoost 
+        { 
+            get => _pipebreakChanceBoost; 
+            set
+            {
+                if (value != _pipebreakChanceBoost) 
+                    OnPipeBreakChanceBoostChanged?.Invoke(value);
+                _pipebreakChanceBoost = value;
+            } 
+        }
+
         public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
         
         
-        private List<int> _busyClientIds = new List<int>();
-        
-        public List<int> BusyClientIds => _busyClientIds;
-        
         public event Action<SyncDictionary<int, BaseGameEvent>> OnEventReceived;
+
+        public event Action<float> OnPipeBreakChanceBoostChanged;
 
         public override void OnStartClient()
         {

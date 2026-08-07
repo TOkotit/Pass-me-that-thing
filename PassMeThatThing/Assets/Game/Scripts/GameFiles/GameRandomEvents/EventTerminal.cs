@@ -54,7 +54,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             var parameters = new MinigameParameters
             {
                 eventId = gameEvent.EventId,
-                eventType = gameEvent.eventType,
+                eventType = gameEvent.EventType,
                 description = gameEvent.description,
                 difficulty = gameEvent.difficulty,
                 timeLimit = gameEvent.timeLimit,

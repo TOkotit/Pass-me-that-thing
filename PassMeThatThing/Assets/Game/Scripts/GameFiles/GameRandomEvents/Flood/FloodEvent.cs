@@ -17,8 +17,21 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 
         private GameObject _waterMeshInstance;
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
 
-        
+            UpdateCurrentTriggerChance(GameRandomEventManager.PipebreakChanceBoost);
+            GameRandomEventManager.OnPipeBreakChanceBoostChanged += UpdateCurrentTriggerChance;
+        }
+
+        public override void OnStopServer()
+        {
+            base.OnStopServer();
+
+            GameRandomEventManager.OnPipeBreakChanceBoostChanged -= UpdateCurrentTriggerChance;
+        }
+
         protected override void OnStartEvent()
         {
             _isFloodingActive = true;
@@ -53,8 +66,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             RpcDisableOutline();
         }
 
-        
-        
         private void FixedUpdate()
         {
             if (isServer && _isFloodingActive && _waterMeshInstance != null)

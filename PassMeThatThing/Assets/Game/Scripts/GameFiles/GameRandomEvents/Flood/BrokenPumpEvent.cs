@@ -7,29 +7,17 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
     public class BrokenPumpEvent : BaseGameEvent
     {
         [SerializeField] private float _chanceBoost = 0.5f;
-        
-        //[SerializeField] private Events.FloodEvent.FloodEvent _siblingFloodEvent;
-
         [SerializeField] private PumpInteractTerminal pumpInteractTerminal;
-
-        private void Awake()
-        {
-            //if (!_siblingFloodEvent)
-            //    _siblingFloodEvent = GetComponent<Events.FloodEvent.FloodEvent>();
-        }
         
         protected override void OnStartEvent()
         {
+            GameRandomEventManager.PipebreakChanceBoost = _chanceBoost;
+
+
             if (pumpInteractTerminal)
                 pumpInteractTerminal.IsFixed = false;
 
             RpcEnableOutline();
-
-            //if (_siblingFloodEvent)
-            //{
-            //    _siblingFloodEvent.CurrentTriggerChance += _chanceBoost;
-            //    Debug.Log($"[PressureEvent] Давление повышено! Шанс локальной протечки увеличен.");
-            //}
         }
         
         
@@ -42,7 +30,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         [Server]
         protected override void OnStopEvent()
         {
-            
+            GameRandomEventManager.PipebreakChanceBoost = 0f;
 
             RpcDisableOutline();
         }

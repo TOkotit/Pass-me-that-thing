@@ -183,7 +183,7 @@ namespace Game.Gameplay.View.UI
         {
             foreach (var i in dict)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
                 AddGameEvent(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }

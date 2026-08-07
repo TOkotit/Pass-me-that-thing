@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Entity;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Mirror;
@@ -16,6 +18,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         private const float rotationSpeed = 20f;
 
         [SerializeField] private WireNodePort inputPort;
+        [SerializeField] private WireNodePort inputWaterPort;
+
         [SerializeField] private GameObject turretHead;
         [SerializeField] private GameObject firePoint;
 
@@ -26,10 +30,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         private Vector3 _headRotation;
         private Coroutine _endDrawRayCoroutine;
 
+        private Dictionary<WireType, bool> _workConditions = new();
+        private bool _isTurretWork;
+
         public float Damage => TurretData.damage;
         public float AttackSpeed => TurretData.attackSpeed;
 
-        private bool _isTurretWork;
 
         private new void Awake()
         {
@@ -41,13 +47,21 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         {
             base.Start();
             if (isServer)
+            {
                 inputPort.OnWireNetStateChanged += OnWireNetWorkingStateChanged;
+                inputWaterPort.OnWireNetStateChanged += OnWireNetWorkingStateChanged;
+            }
+               
         }
 
         public new void OnDestroy()
         {
             if (isServer)
+            {
                 inputPort.OnWireNetStateChanged -= OnWireNetWorkingStateChanged;
+                inputWaterPort.OnWireNetStateChanged -= OnWireNetWorkingStateChanged;
+            }
+
             base.OnDestroy();
         }
         
@@ -125,9 +139,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             Debug.Log($"[Single Turret] OnHealthChanged {currentHealth} / {maxHealth}");
         }
 
-        public void OnWireNetWorkingStateChanged(bool isNetWorking)
+        public void OnWireNetWorkingStateChanged(WireType type, bool isNetWorking)
         {
-            _isTurretWork = isNetWorking;
+            _workConditions[type] = isNetWorking;
+            CheckWork();
+        }
+
+        public void CheckWork()
+        {
+            _isTurretWork = _workConditions.Values.All(x => x == true);
             Debug.Log($"[Single Turret] IsTurretWork {_isTurretWork}");
         }
     }

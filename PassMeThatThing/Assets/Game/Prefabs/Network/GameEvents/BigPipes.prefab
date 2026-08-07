@@ -64,7 +64,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  floodEvent: {fileID: 0}
+  floodEvent: {fileID: 1032108084039664460}
+  port: {fileID: 3858860607167916054}
   pivot: {fileID: 4518478493167500406}
   outline: {fileID: 4680887058531560655}
   impactParticles: {fileID: 2367443740266242791}
@@ -262,6 +263,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2364647274207604012}
+  - component: {fileID: 7989009915996929182}
   - component: {fileID: 1032108084039664460}
   - component: {fileID: 6609596328987690964}
   m_Layer: 0
@@ -291,6 +293,18 @@ Transform:
   - {fileID: 6890673984556843464}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7989009915996929182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6398786016326100300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.AutoGameplayScopeInjector
 --- !u!114 &1032108084039664460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,8 +320,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  eventType: 2
   _baseTriggerChance: 0.2
+  eventType: 2
   terminal: {fileID: 1202088884199672489}
   waterMeshPrefab: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
   waterMeshTransform: {fileID: 2958257391534694994}
@@ -420,12 +434,27 @@ PrefabInstance:
       propertyPath: portType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7019257140765831107, guid: 1a88a65fca9a93d4792dcc613e1f75ca, type: 3}
+      propertyPath: availableValue
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -5185724171136630408, guid: 1a88a65fca9a93d4792dcc613e1f75ca, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a88a65fca9a93d4792dcc613e1f75ca, type: 3}
+--- !u!114 &3858860607167916054 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7019257140765831107, guid: 1a88a65fca9a93d4792dcc613e1f75ca, type: 3}
+  m_PrefabInstance: {fileID: 6117019042382694357}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e4c44d13fa34ddea4ea61b3cafc3784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6890673984556843464 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 811935546557072925, guid: 1a88a65fca9a93d4792dcc613e1f75ca, type: 3}
