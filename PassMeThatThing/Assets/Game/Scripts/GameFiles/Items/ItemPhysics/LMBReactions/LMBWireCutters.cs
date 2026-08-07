@@ -1,5 +1,5 @@
-using Game.Scripts.GameFiles.Events;
-using Game.Scripts.GameFiles.Events.Blackout;
+using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.GameRandomEvents.Blackout;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics

@@ -1,5 +1,5 @@
 ﻿using Game.Gameplay.View.UI;
-using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Mirror;
 using R3;

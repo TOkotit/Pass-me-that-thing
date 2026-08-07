@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy;
-using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.Utils;
 using Mirror;
 using UnityEngine;

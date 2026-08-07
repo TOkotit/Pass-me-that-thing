@@ -1,21 +1,16 @@
 using Ami.BroAudio;
-using Game.Scripts.GameFiles.Events;
+using Game.Scripts.GameFiles.GameRandomEvents;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
-using VContainer;
-using VContainer.Unity;
+using static UnityEditor.Profiling.RawFrameDataView;
 
-namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
+namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 {
     public class PumpInteractTerminal : EventTerminal
     {
-        [SyncVar]
-        public bool _isFixed = true;
+        [SerializeField] private BrokenPumpEvent brokenPumpEvent;
 
         [SerializeField] private SoundSource pipeSound = default;
-
-        [SerializeField] private BrokenPumpEvent brokenPumpEvent;
         [SerializeField] private ParticleSystem _particleSystem;
         [SerializeField] public Outline _outline;
 
@@ -24,20 +19,27 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.FloodEvent
         {
             base.TerminalAct(conn);
             
-            if (_isFixed) return;
+            if (IsFixed) return;
+
+            FixTerminal();
+
             RpcPlayImpactParticles();
             RpcPlayImpactSound();
-            CmdFixPipe();
         }
         
-        [Command(requiresAuthority = false)]
-        private void CmdFixPipe()
+
+        [Server]
+        private void FixTerminal()
         {
-            if (_isFixed) return;
-            
-            brokenPumpEvent.PlayerFixedPressure();
+            IsFixed = true;
+
+            if (brokenPumpEvent != null)
+            {
+                brokenPumpEvent.FixEvent();
+            }
         }
-        
+
+        //View
         [ClientRpc]
         private void RpcPlayImpactSound()
         {

@@ -2,28 +2,31 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Game.Scripts.GameFiles.Events.Blackout
+namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 {
     public class BlackoutBlowFuseEvent : BaseGameEvent
     {
 
-        [SerializeField] private BlackoutBlowFuseTerminal powerTerminal;
+        [SerializeField] private BlackoutBlowFuseTerminal terminal;
+
         protected override void OnStartEvent()
         {
-            RpcEnableOutline();
             if (GlobalVisionShaderManager.Instance)
             {
                 GlobalVisionShaderManager.Instance.SetAllRoomsStateServerOnly(false);
                 Debug.Log("[PowerOutageEvent] Электричество вырубилось! Лампы погасли.");
             }
 
-            if (powerTerminal) powerTerminal._isFixed = false;
+            if (terminal) 
+                terminal.IsFixed = false;
+
+            RpcEnableOutline();
         }
         
         [Server]
-        public void PlayerFixedPower() 
+        public void FixEvent() 
         {
-            StopEvent();
+            GameRandomEventManager.DeactivateEvent(EventId);
         }
 
         [Server]
@@ -36,19 +39,19 @@ namespace Game.Scripts.GameFiles.Events.Blackout
             }
 
             RpcDisableOutline();
-            GameRandomEventManager.DisableEvent(EventId);
         }
-        
+
+        //View
         [ClientRpc]
         private void RpcEnableOutline()
         {
-            powerTerminal._outline.enabled = true;
+            terminal.Outline.enabled = true;
         }
 
         [ClientRpc]
         private void RpcDisableOutline()
         {
-            powerTerminal._outline.enabled = false;
+            terminal.Outline.enabled = false;
         }
     }
 }

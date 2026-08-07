@@ -7,7 +7,7 @@ using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
 
-namespace Game.Scripts.GameFiles.Events
+namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class GameRandomEventManager : NetworkBehaviour
     {
@@ -17,16 +17,27 @@ namespace Game.Scripts.GameFiles.Events
         //ивенты которые запущены
         private readonly SyncDictionary<int, BaseGameEvent> _startedEvents = new();
 
+        private float _pipebreakChanceBoost;
+
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
-        
+
+        public float PipebreakChanceBoost 
+        { 
+            get => _pipebreakChanceBoost; 
+            set
+            {
+                if (value != _pipebreakChanceBoost) 
+                    OnPipeBreakChanceBoostChanged?.Invoke(value);
+                _pipebreakChanceBoost = value;
+            } 
+        }
+
         public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
         
         
-        private List<int> _busyClientIds = new List<int>();
-        
-        public List<int> BusyClientIds => _busyClientIds;
-        
         public event Action<SyncDictionary<int, BaseGameEvent>> OnEventReceived;
+
+        public event Action<float> OnPipeBreakChanceBoostChanged;
 
         public override void OnStartClient()
         {
@@ -44,7 +55,16 @@ namespace Game.Scripts.GameFiles.Events
             
             return assignedId;
         }
-        
+
+        [Server]
+        public void UnregisterEvent(int id)
+        {
+            if (_sceneEvents.ContainsKey(id))
+            {
+                _sceneEvents.Remove(id);
+            }
+        }
+
         [Server]
         public BaseGameEvent GetEventById(int id)
         {
@@ -70,22 +90,12 @@ namespace Game.Scripts.GameFiles.Events
                 Debug.LogWarning($"[GameEventManager] Невозможно запустить: ивент с ID:{eventId} не найден на карте.");
             }
         }
-        [Server]
-        public void UnregisterEvent(int id)
-        {
-            if (_sceneEvents.ContainsKey(id))
-            {
-                _sceneEvents.Remove(id);
-            }
-        }
 
         [Server]
-        public void DisableEvent(int eventId)
+        public void DeactivateEvent(int eventId)
         {
-
             if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
-
                 gameEvent.StopEvent();
                 StartedEvents.Remove(eventId);
             }

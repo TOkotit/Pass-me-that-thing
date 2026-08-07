@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Events
+namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class EventTerminalsRegistry
     {

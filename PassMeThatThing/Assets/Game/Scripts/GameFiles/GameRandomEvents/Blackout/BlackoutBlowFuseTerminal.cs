@@ -2,41 +2,42 @@ using Ami.BroAudio;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Events.Blackout
+namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 {
     public class BlackoutBlowFuseTerminal : EventTerminal
     {
-        [SyncVar]
-        public bool _isFixed = true;
-        
-        [SerializeField] private BlackoutBlowFuseEvent _powerOutageEvent;
-        [SerializeField] private ParticleSystem _particleSystem;
-        [SerializeField] public Outline _outline;
+        [SerializeField] private BlackoutBlowFuseEvent blowFuseEvent;
+
+        [SerializeField] private ParticleSystem impactParticles;
+        [SerializeField] private Outline outline;
         [SerializeField] private SoundSource electricity = default;
+
+
+        public Outline Outline => outline;
+
 
         [Server]
         public override void TerminalAct(NetworkConnectionToClient conn)
         {
-            base.TerminalAct(conn);
             if (IsTerminalBusy) return;
-            if (_isFixed) return;
+            if (IsFixed) return;
 
-            RpcPlayImpactSound();
-            RpcPlayImpactParticles();
-            if (ActivateMinigame(conn, _powerOutageEvent))
+
+            if (ActivateMinigame(conn, blowFuseEvent))
             {
-                Debug.Log("<color=yellow> [Server] IsTerminalBusy = true");
+                Debug.Log("[EVENTS] IsTerminalBusy = true");
                 IsTerminalBusy = true;
                 currentClient = conn;
             }
-            
-            // FixFuse();
+
+            RpcPlayImpactSound();
+            RpcPlayImpactParticles();
         }
         
         [Command(requiresAuthority = false)]
         public override void CmdMinigameComplete()
         {
-            FixFuse();
+            FixTerminal();
         }
 
         [Command(requiresAuthority = false)]
@@ -52,23 +53,26 @@ namespace Game.Scripts.GameFiles.Events.Blackout
         }
         
         [Server]
-        private void FixFuse()
+        private void FixTerminal()
         {
-            _isFixed = true;
+            IsFixed = true;
             
-            if (_powerOutageEvent != null)
+            if (blowFuseEvent != null)
             {
-                _powerOutageEvent.PlayerFixedPower();
+                blowFuseEvent.FixEvent();
             }
         }
+
+        //View
         [ClientRpc]
         private void RpcPlayImpactParticles()
         {
-            if (_particleSystem && !_particleSystem.isPlaying) 
+            if (impactParticles && !impactParticles.isPlaying) 
             {
-                _particleSystem.Play();
+                impactParticles.Play();
             }
         }
+
         [ClientRpc]
         private void RpcPlayImpactSound()
         {

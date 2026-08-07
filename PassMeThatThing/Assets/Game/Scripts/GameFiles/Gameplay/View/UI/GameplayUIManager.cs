@@ -1,19 +1,17 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿
 using Enums;
 using Game.Gameplay.View.UI.ScreenBuild;
 using Game.Gameplay.View.UI.ScreenDefeat;
 using Game.Gameplay.View.UI.ScreenMinigame;
 using Game.Gameplay.View.UI.ScreenPauseMenu;
 using Game.MainMenu.View.UI.ScreenOptionsMenu;
-using Game.Scripts.GameFiles.Events;
 using Game.UI;
-using MainCharacter_old;
-using R3;
+
 using Systems;
 using VContainer;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Game.Scripts.GameFiles.GameRandomEvents;
+
 
 namespace Game.Gameplay.View.UI
 {

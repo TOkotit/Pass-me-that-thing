@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using DG.Tweening;
 using Game.Scripts.Enums;
-using Game.Scripts.GameFiles.Events;
 using Game.UI;
 using Mirror;
 using TMPro;
@@ -12,6 +11,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Assets.Game.Scripts.Utils;
 using UnityEngine.UIElements;
+using Game.Scripts.GameFiles.GameRandomEvents;
 
 
 namespace Game.Gameplay.View.UI
@@ -183,7 +183,7 @@ namespace Game.Gameplay.View.UI
         {
             foreach (var i in dict)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.eventType);
+                var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
                 AddGameEvent(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
