@@ -41,6 +41,7 @@ namespace Game.Gameplay.View.UI
         private GroupBox _gameEventsContainer;
         private Label _gameGlobalStateText;
         private Label _gameGlobalStateTimerText;
+        private VisualElement _miniMap;
 
         private VisualElement _leftPlugImage;
         private VisualElement _rightPlugImage;
@@ -59,6 +60,7 @@ namespace Game.Gameplay.View.UI
             _gameEventsContainer = _root.Q<GroupBox>("EventsContainer");
             _gameGlobalStateText = _root.Q<Label>("PhaseLb");
             _gameGlobalStateTimerText = _root.Q<Label>("RemainingTimeLb");
+            _miniMap = _root.Q<VisualElement>("Minimap");
             _leftPlugImage = _root.Q<VisualElement>("LeftPlugImage");
             _rightPlugImage = _root.Q<VisualElement>("RightPlugImage");
             _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
@@ -80,7 +82,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
             
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
-            
+            ViewModel.RequestSubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
@@ -101,6 +103,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            ViewModel.RequestUnsubCameraRotation(UpdateMiniMapRotation);
+
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
             ViewModel.RequestUnsub();
         }
@@ -269,6 +273,12 @@ namespace Game.Gameplay.View.UI
                         break;
                     }
             }
+        }
+
+        private void UpdateMiniMapRotation(float currentYAngle)
+        {
+            if (_miniMap == null) Debug.LogError("[UI] Не назначена миникарта");
+            _miniMap.style.rotate = new StyleRotate(new Rotate(Angle.Degrees(-currentYAngle)));
         }
     }
 }

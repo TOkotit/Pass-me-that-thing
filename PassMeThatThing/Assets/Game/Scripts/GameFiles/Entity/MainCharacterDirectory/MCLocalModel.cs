@@ -11,6 +11,7 @@ namespace Game.Entity
 
         public event Action<int, int> OnHealthChanged;
         public event Action<bool> OnDeathChanged;
+        public event Action<float> OnCameraYRotationChanged;
 
         public int Health
         {
@@ -37,6 +38,11 @@ namespace Game.Entity
                     OnDeathChanged?.Invoke(value);
                 _isDead = value;
             }
+        }
+        
+        public void ReportCameraRotation(float angleY)
+        {
+            OnCameraYRotationChanged?.Invoke(angleY);
         }
     }
 }

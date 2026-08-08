@@ -6,6 +6,7 @@ using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.UI;
+using MainCharacterNetwork;
 using Mirror;
 using ObservableCollections;
 using R3;
@@ -28,7 +29,6 @@ namespace Game.Gameplay.View.UI
         private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
-        
         private readonly GameInputManager _gameInputManager;
         
         private readonly MCLocalModel  _mcLocalModel;
@@ -51,7 +51,6 @@ namespace Game.Gameplay.View.UI
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
-            
             _gameInputManager = container.Resolve<GameInputManager>();
 
             _localWireHandlerModel = container.Resolve<LocalWireHandlerModel>();
@@ -153,6 +152,16 @@ namespace Game.Gameplay.View.UI
         public void RequestUnsubThrowCharge(Action<int> f)
         {
             _playerInventoryModel.OnThrowChargeChanged -= f;
+        }
+
+        public void RequestSubCameraRotation(Action<float> f)
+        {
+            _mcLocalModel.OnCameraYRotationChanged += f;
+        }
+        
+        public void RequestUnsubCameraRotation(Action<float> f)
+        {
+            _mcLocalModel.OnCameraYRotationChanged -= f;
         }
         
         public void RequestSubInteractionText(Action<bool> f)

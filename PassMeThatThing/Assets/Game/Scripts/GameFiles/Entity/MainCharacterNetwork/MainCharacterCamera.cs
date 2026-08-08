@@ -1,5 +1,6 @@
 ﻿ using System;
 using DI;
+using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.Systems;
 using Mirror;
@@ -27,7 +28,7 @@ namespace MainCharacterNetwork
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
         private CameraState _cameraState;
-
+        private MCLocalModel _mcLocalModel;
         private float _sensitivity;
         private Vector2 _rotation;
         private bool _initialized;
@@ -36,7 +37,7 @@ namespace MainCharacterNetwork
         private bool _isFirstPerson = true;
         private Quaternion _originalSpineLocalRotation;
         private Coroutine _zoomRoutine;
-
+        
         public Camera Camera => mCamera;
         private void SwitchToRagdollCamera()
         {
@@ -84,11 +85,12 @@ namespace MainCharacterNetwork
         
         
         [Inject]
-        public void Construct(GameInputManager gameInputManager, OptionsManager optionsManager)
+        public void Construct(GameInputManager gameInputManager, OptionsManager optionsManager, MCLocalModel mcLocalModel)
         {
             _gameInput = gameInputManager.GameInput;
             _optionsManager = optionsManager;
-
+            _mcLocalModel = mcLocalModel;
+            
             SetSensitivity(optionsManager.OptionsData.mouseSensitivity);
             _optionsManager.OnSensitivityChanged += SetSensitivity;
         }
@@ -112,7 +114,13 @@ namespace MainCharacterNetwork
             var inputDelta = _gameInput.Gameplay.MouseDrag.ReadValue<Vector2>();
 
             _rotation.x -= inputDelta.y * _sensitivity * 0.01f;
-            _rotation.y += inputDelta.x * _sensitivity * 0.01f;
+            var deltaY = inputDelta.x * _sensitivity * 0.01f;
+            _rotation.y += deltaY;
+
+            if (Mathf.Abs(deltaY) > 0.0001f)
+            {
+                _mcLocalModel?.ReportCameraRotation(_rotation.y);
+            }
 
             _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
 
