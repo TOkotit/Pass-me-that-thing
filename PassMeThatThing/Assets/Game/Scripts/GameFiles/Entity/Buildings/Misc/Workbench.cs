@@ -32,7 +32,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 
         public void InteractWithItem(PhysicalItem item)
         {
-            throw new System.NotImplementedException();
+
         }
 
         public override void OnStartClient()
