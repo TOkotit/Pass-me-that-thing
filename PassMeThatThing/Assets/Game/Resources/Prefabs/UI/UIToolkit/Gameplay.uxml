@@ -15,7 +15,8 @@
             </ui:GroupBox>
         </ui:GroupBox>
         <ui:GroupBox name="EventsContainer" style="height: 593px; width: 294px; align-items: stretch; position: absolute; background-color: rgba(115, 115, 115, 0); justify-content: flex-start; top: 304px; left: auto; right: 0;"/>
-        <ui:VisualElement name="Minimap" style="flex-grow: 1; position: absolute; height: 301px; width: 341px; top: 0; left: auto; right: 0; background-image: resource(&quot;Sprites/GameplaySprites/minimap&quot;); background-position-y: top 0; background-position-x: right 0; -unity-background-scale-mode: scale-to-fit; rotate: 0;"/>
+        <ui:VisualElement name="Minimap" style="flex-grow: 1; position: absolute; height: 307px; width: 351px; top: 0; left: 1558px; right: 0; background-image: resource(&quot;Sprites/GameplaySprites/minimap Grid&quot;); background-position-y: top 0; background-position-x: right 0; -unity-background-scale-mode: scale-to-fit; rotate: 0; justify-content: flex-start; bottom: auto;"/>
+        <ui:VisualElement name="MinimapFrame" style="flex-grow: 1; top: 7px; right: 1px; position: absolute; height: 293px; width: 341px; background-image: resource(&quot;Sprites/GameplaySprites/minimap Frame&quot;); -unity-background-scale-mode: scale-to-fit;"/>
         <ui:GroupBox style="height: 107px; width: 516px; align-items: stretch; align-content: flex-start; align-self: flex-start; bottom: 0; position: absolute; left: auto; flex-direction: row; justify-content: space-between; font-size: 100%; right: 0;">
             <ui:Label text="Label" name="RemainingTimeLb" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); font-size: 50px;"/>
             <ui:Label text="Label" name="PhaseLb" style="flex-grow: 1; font-size: 50%; color: rgb(255, 255, 255); -unity-text-align: lower-left;"/>
