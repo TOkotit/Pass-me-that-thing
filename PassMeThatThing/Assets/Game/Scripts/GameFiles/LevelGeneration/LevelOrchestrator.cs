@@ -22,7 +22,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     public class LevelOrchestrator : MonoBehaviour
     {
         [SerializeField] private RoomDatabaseNew roomDatabase;
-        [SerializeField] private LevelGrid levelGrid;
+        [SerializeField] public LevelGrid levelGrid;
         [SerializeField] private Transform levelContainer;
         [SerializeField] private GameObject wallPrefab;
         
