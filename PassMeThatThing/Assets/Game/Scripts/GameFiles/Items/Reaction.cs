@@ -3,10 +3,8 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public abstract class LMBReaction : NetworkBehaviour
+    public abstract class Reaction : NetworkBehaviour, IReaction
     {
-        [SerializeField] protected PhysicalItem Item;
-
         public abstract void Act();
     }
 }

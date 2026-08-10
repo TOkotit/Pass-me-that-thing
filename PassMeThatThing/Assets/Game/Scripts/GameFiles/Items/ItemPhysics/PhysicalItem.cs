@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
@@ -30,17 +29,18 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Collider collider;
         [SyncVar]
         [SerializeField] private bool _isThrown;
-        [SerializedDictionary] public SerializedDictionary<Resource, float> Resources; 
-        [SerializeField] private LMBReaction reaction;
+        [SerializedDictionary] public SerializedDictionary<Resource, float> Resources;
+
+        [SerializeField] private LmbReaction reaction;   // реакция на левую кнопку (любая)
+
         private Outline _outline;
-        private CollisionDamageDealer  damageDealer;
+        private CollisionDamageDealer damageDealer;
         private NetworkTransformReliable _networkTransform;
-        
+
         [Inject] private ParticlePoolManager _particlePool;
 
-        
         public float Hardness => hardness;
-        public int Durability {get => durability; set => durability = value; }
+        public int Durability { get => durability; set => durability = value; }
         public HandleType HandleType => handleType;
         public Rigidbody UniversalPoint => universalPoint;
         public Rigidbody LeftHandPoint => leftHandPoint;
@@ -51,7 +51,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public MainCharacter Owner { get; set; }
         public readonly SyncList<NetworkIdentity> Holders = new SyncList<NetworkIdentity>();
         public NetworkConnectionToClient ConnectionToClient { get; set; }
-        public LMBReaction Reaction => reaction;
+        public LmbReaction Reaction => reaction;
+
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
@@ -66,62 +67,38 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
-            //reaction = LMBReactionFactory.CreateReaction(_network.itemId, this);
-            
+
+            if (reaction)
+                reaction.Item = this;   
+
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnTakeDamage += RpcPlayParticlesOnHit;
         }
-        
+
         [ClientRpc]
         private void RpcPlayParticlesOnHit()
         {
             Debug.Log("<color=yellow>PlayParticlesOnHit");
-            
             _particlePool.GetAndPlayParticle(Particles.pow, damageDealer.HitPosition);
-            
         }
 
-        // [Command(requiresAuthority = false)]
-        // public void EnableActingMode(float duration)
-        // {
-        //     _isActing = true;
-        //     if (_actingCoroutine != null)
-        //     {
-        //         StopCoroutine(_actingCoroutine);
-        //     }
-        //     _actingCoroutine = StartCoroutine(ActingRoutine(duration));
-        // }
-        //
-        // private IEnumerator ActingRoutine(float duration)
-        // {
-        //     yield return new WaitForSeconds(duration);
-        //     _isActing = false;
-        //     _actingCoroutine = null;
-        // }
-        
         public override void OnStartClient()
         {
             base.OnStartClient();
             if (!isServer)
-            {
                 PhysicalItemRegistry.Instance.Register(this);
-            }
         }
 
         private void OnDestroy()
         {
             if (!isServer)
-            {
                 PhysicalItemRegistry.Instance.Unregister(this);
-            }
         }
 
         private void OnEnable()
         {
             if (!isServer && PhysicalItemRegistry.Instance.GetItem(gameObject) == null)
-            {
                 PhysicalItemRegistry.Instance.Register(this);
-            }
         }
     }
 }

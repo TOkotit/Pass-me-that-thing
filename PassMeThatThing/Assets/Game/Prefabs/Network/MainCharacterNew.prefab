@@ -3587,7 +3587,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6644831831588054324}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: -0.5}
+  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3595,7 +3595,7 @@ Transform:
   - {fileID: 2519632053595224258}
   - {fileID: 45617297572742701}
   m_Father: {fileID: 2276895376379071897}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 270}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 90}
 --- !u!95 &524437659641354089
 Animator:
   serializedVersion: 7
@@ -3645,8 +3645,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6680325055433136703}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5789735, y: 0.28855413, z: -0.046243437, w: 0.7611753}
-  m_LocalPosition: {x: 2.1304003e-10, y: 5.5879353e-11, z: -0.012650372}
+  m_LocalRotation: {x: 0.5789735, y: 0.28855413, z: -0.0462434, w: 0.7611753}
+  m_LocalPosition: {x: 0, y: 0, z: -0.012650362}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4476,6 +4476,7 @@ MonoBehaviour:
   view: {fileID: 61961466200725570}
   fallDelay: 5
   stats: {fileID: 11400000, guid: 2b5855a4ab79fcb45a28f203cff5fedb, type: 2}
+  strength: 20
 --- !u!143 &4585087161987446141
 CharacterController:
   m_ObjectHideFlags: 0

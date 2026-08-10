@@ -225,7 +225,6 @@ MonoBehaviour:
     _serializedList:
     - Key: 0
       Value: 2
-  reaction: {fileID: 7803437061417197889}
 --- !u!114 &7803437061417197889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,7 +240,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  Item: {fileID: 7776855572588576369}
 --- !u!114 &6213635256034360291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,6 +318,7 @@ MonoBehaviour:
       Value: -1
     - Key: 3
       Value: 1
+  HitPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,11 +420,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4433705178596746829, guid: ec5876386039059498c2a14ff5845846, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4433705178596746829, guid: ec5876386039059498c2a14ff5845846, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4433705178596746829, guid: ec5876386039059498c2a14ff5845846, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -433,7 +432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4433705178596746829, guid: ec5876386039059498c2a14ff5845846, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -90
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 4433705178596746829, guid: ec5876386039059498c2a14ff5845846, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
