@@ -1,10 +1,11 @@
+// ShotReaction.cs
 using System;
+using System.Collections;
 using Ami.BroAudio;
 using Game.Scripts.GameFiles.Entity;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using System.Collections;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
@@ -12,7 +13,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
     {
         [Inject] protected PhysicsApplyer PhysicsApplyer;
         [Inject] protected ParticlePoolManager PoolManager;
-
+        
         [SerializeField] protected Transform barrel;
         [SerializeField] protected float maxDistance;
         [SerializeField] protected LayerMask layersToShot;
@@ -23,32 +24,53 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] protected SoundSource shotSound;
         [SerializeField] protected SoundSource emptySound;
         [SerializeField] protected float delay = 1f;
-
         [Header("Ammo")]
         [SerializeField] protected int maxAmmo = 30;
         protected int CurrentAmmo;
         protected bool IsReloading;
 
-        [SerializeField] protected IEffectController EffectController;
+        [SerializeField] protected EffectController EffectController;
         protected float LastShotTime;
 
-        public override void Act()
+        [Header("Automatic Fire")]
+        [SerializeField] private bool _automatic = false;
+
+        public override bool IsContinuous => _automatic;
+
+        protected virtual bool CanShoot()
         {
-            if (Time.time - LastShotTime <= delay || CurrentAmmo <= 0)
+            if (Time.time - LastShotTime <= delay || CurrentAmmo <= 0 || IsReloading)
             {
                 if (CurrentAmmo <= 0 && !IsReloading)
                     CmdPlayEmptySound();
-                return;
+                return false;
             }
+            return true;
+        }
 
-            PhysicsApplyer.ShotRaycast(barrel.position, barrel.forward, maxDistance, layersToShot,
+        /// <summary> Выполняет выстрел в указанном направлении. </summary>
+        protected virtual void Shoot(Vector3 direction)
+        {
+            PhysicsApplyer.ShotRaycast(barrel.position, direction, maxDistance, layersToShot,
                 force: force, damage: damage, toughDamage: toughnessDamage);
-            var hitPoint = EffectController.ActivateEffect(barrel.position, barrel.forward);
+            var hitPoint = EffectController.ActivateEffect(barrel.position, direction);
             LastShotTime = Time.time;
             CurrentAmmo -= 1;
             CmdPlayParticle(hitPoint);
             CmdPlayShotSound();
         }
+
+        protected virtual Vector3 GetAimDirection()
+        {
+            return barrel.forward;
+        }
+
+        public override void Act()
+        {
+            if (!CanShoot()) return;
+            Shoot(GetAimDirection());
+        }
+
 
         [Command(requiresAuthority = false)]
         public virtual void CmdReload()
@@ -67,10 +89,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             RpcReloadFinish();
         }
 
-        [ClientRpc]
-        protected void RpcReloadStart() { }
-        [ClientRpc]
-        protected void RpcReloadFinish() { }
+        [ClientRpc] protected void RpcReloadStart() { }
+        [ClientRpc] protected void RpcReloadFinish() { }
 
         [Command(requiresAuthority = false)]
         protected void CmdPlayParticle(Vector3 hitPoint) => RpcPlayParticle(hitPoint);

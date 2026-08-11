@@ -42,8 +42,9 @@ namespace Game.Scripts.GameFiles.Items
         [Header("Swing Attack")]
         [SerializeField] private float swingCooldown = 0.8f;
 
-        private float lastSwingTime = -999f;
-
+        private float _lastSwingTime = -999f;
+        private bool _leftMouseHeld;
+        
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController PhysicalItemInteractionController => _physicalItemInteractionController;
         
@@ -83,7 +84,14 @@ namespace Game.Scripts.GameFiles.Items
         private void FixedUpdate()
         {
             if (!isLocalPlayer) return;
-
+            if (_leftMouseHeld)
+            {
+                var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+                if (currentItem && currentItem.Reaction && currentItem.Reaction.IsContinuous)
+                {
+                    currentItem.Reaction.Act();
+                }
+            }
             if (_outlineRegistry.EnabledOutlines.Count > 1)
             {
                 for (var i = _outlineRegistry.EnabledOutlines.Count - 1 - 1; i >= 0; i--)
@@ -125,8 +133,8 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput.Gameplay.RightMouse.canceled += OnDrop;
             _gameInput.Gameplay.RightMouse.performed += OnDropCharge;
 
-            _gameInput.Gameplay.LeftMouse.performed += onActPerformed;
-            _gameInput.Gameplay.LeftMouse.canceled += onActCanceled;
+            _gameInput.Gameplay.LeftMouse.performed += OnActPerformed;
+            _gameInput.Gameplay.LeftMouse.canceled += OnActCanceled;
 
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
@@ -155,8 +163,8 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.RightMouse.canceled -= OnDrop;
                 _gameInput.Gameplay.RightMouse.performed -= OnDropCharge;
 
-                _gameInput.Gameplay.LeftMouse.performed -= onActPerformed;
-                _gameInput.Gameplay.LeftMouse.canceled -= onActCanceled;
+                _gameInput.Gameplay.LeftMouse.performed -= OnActPerformed;
+                _gameInput.Gameplay.LeftMouse.canceled -= OnActCanceled;
 
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
@@ -313,39 +321,41 @@ namespace Game.Scripts.GameFiles.Items
             interactable.Interact();
         }
 
-        private void onActPerformed(InputAction.CallbackContext context)
+        private void OnActPerformed(InputAction.CallbackContext context)
         {
-            _currentAction = null;
             var currentItem = _physicalItemInteractionController.CurrentHeldItem;
             if (!currentItem) return;
+
             if (currentItem.Reaction)
             {
-                currentItem.Reaction.Act();
-                Debug.Log(currentItem.Reaction);
-                if (currentItem.CanBeOwned && currentItem.DoActAndSwing)
+                if (currentItem.Reaction.IsContinuous)
                 {
-                    CmdSwing();
+                    _leftMouseHeld = true;     
+                }
+                else
+                {
+                    currentItem.Reaction.Act(); 
+                    if (currentItem.CanBeOwned && currentItem.DoActAndSwing)
+                        CmdSwing();
                 }
             }
             else
             {
                 if (currentItem.CanBeOwned)
-                {
                     CmdSwing();
-                }
             }
-            
         }
 
-        private void onActCanceled(InputAction.CallbackContext context)
+        private void OnActCanceled(InputAction.CallbackContext context)
         {
+            _leftMouseHeld = false;
         }
         
         [Command]
         private void CmdSwing()
         {
-            if (Time.time - lastSwingTime < swingCooldown) return;
-            lastSwingTime = Time.time;
+            if (Time.time - _lastSwingTime < swingCooldown) return;
+            _lastSwingTime = Time.time;
             _physicalItemInteractionController.TriggerSwing();
         }
 

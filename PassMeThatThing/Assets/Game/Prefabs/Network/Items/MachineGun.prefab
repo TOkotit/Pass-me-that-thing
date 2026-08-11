@@ -224,6 +224,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2907e76ae16d42399f2e99c9325409e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.TracerController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   tracerPrefab: {fileID: 4869235277661200890, guid: d8bbc15648c5ae440a1e705a36b78789, type: 3}
   hitLayers:
     serializedVersion: 2
@@ -256,20 +259,23 @@ MonoBehaviour:
   toughnessDamage: 1
   shotSound: {fileID: 0}
   emptySound: {fileID: 0}
-  delay: 0.01
+  delay: 0.1
   maxAmmo: 30
-  tracerController: {fileID: 1406382544099183535}
-  baseSpread: 0.5
-  spreadPerStability: 0.2
+  EffectController: {fileID: 1406382544099183535}
+  _automatic: 1
+  baseSpread: 0
+  spreadPerStability: 0.1
   spreadExponent: 1.5
   baseRecoilForce: {x: 0, y: 0, z: -5}
   baseRecoilTorque: {x: -2, y: 0, z: 0}
-  recoilPerStability: 0.3
+  recoilPerStability: 0.1
   recoilExponent: 1.5
   stabilityIncreasePerShot: 1
-  stabilityDecreaseRate: 2
+  stabilityDecreaseRate: 5
   overloadBurstCount: 3
   overloadBurstDelay: 0.1
+  stabilityRecoveryDelay: 0.5
+  maxAimAngle: 10
 --- !u!114 &1388889674428910371
 MonoBehaviour:
   m_ObjectHideFlags: 0

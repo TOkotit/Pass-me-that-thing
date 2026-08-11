@@ -1,3 +1,4 @@
+// LmbMachineGun.cs
 using System;
 using System.Collections;
 using Mirror;
@@ -8,7 +9,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class LmbMachineGun : ShotReaction
     {
-        [SerializeField] private TracerController tracerController;
         [Header("Spread")]
         [SerializeField] private float baseSpread = 0.5f;
         [SerializeField] private float spreadPerStability = 0.2f;
@@ -25,7 +25,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float stabilityDecreaseRate = 2f;
         [SerializeField] private int overloadBurstCount = 3;
         [SerializeField] private float overloadBurstDelay = 0.1f;
-
+        [SerializeField] private float stabilityRecoveryDelay = 0.5f;
+        
+        [Header("Aiming")]
+        [SerializeField] private float maxAimAngle = 10f;
         private float _currentStability;
         private bool _isOverloading;
 
@@ -34,7 +37,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             if (!isServer) return;
             if (IsReloading || _isOverloading) return;
 
-            if (_currentStability > 0)
+            if (_currentStability > 0 && Time.time - LastShotTime > stabilityRecoveryDelay)
             {
                 _currentStability -= stabilityDecreaseRate * Time.deltaTime;
                 if (_currentStability < 0) _currentStability = 0;
@@ -67,36 +70,17 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         public override void Act()
         {
-            Debug.Log("должен быть выстрел!");
-            if (!isServer) return;
-
-            if (Time.time - LastShotTime <= delay || CurrentAmmo <= 0 || IsReloading)
-            {
-                if (CurrentAmmo <= 0 && !IsReloading && !_isOverloading)
-                    CmdPlayEmptySound();
-                return;
-            }
+            if (!CanShoot()) return;
 
             _currentStability += stabilityIncreasePerShot;
 
-            var spread = baseSpread + Mathf.Pow(_currentStability * spreadPerStability, spreadExponent);
+            var baseDir = GetAimDirection();          
+            var shootDir = GetSpreadDirection(baseDir); 
+            Shoot(shootDir);
+
             var recoilScale = Mathf.Pow(_currentStability * recoilPerStability, recoilExponent);
             var finalRecoilForce = baseRecoilForce * (1 + recoilScale);
             var finalRecoilTorque = baseRecoilTorque * (1 + recoilScale);
-
-            var shootDir = Quaternion.Euler(
-                Random.Range(-spread, spread),
-                Random.Range(-spread, spread),
-                0
-            ) * barrel.forward;
-
-            PhysicsApplyer.ShotRaycast(barrel.position, shootDir, maxDistance, layersToShot,
-                force: force, damage: damage, toughDamage: toughnessDamage);
-            var hitPoint = tracerController.ActivateEffect(barrel.position, shootDir);
-            LastShotTime = Time.time;
-            CurrentAmmo -= 1;
-            CmdPlayParticle(hitPoint);
-            CmdPlayShotSound();
 
             if (Item && Item.Rigidbody)
             {
@@ -120,22 +104,41 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             {
                 if (CurrentAmmo <= 0) break;
                 yield return new WaitForSeconds(overloadBurstDelay);
-                var spread = baseSpread + Mathf.Pow(_currentStability * spreadPerStability, spreadExponent);
-                var shootDir = Quaternion.Euler(
-                    Random.Range(-spread, spread),
-                    Random.Range(-spread, spread),
-                    0
-                ) * barrel.forward;
-
-                PhysicsApplyer.ShotRaycast(barrel.position, shootDir, maxDistance, layersToShot,
-                    force: force, damage: damage, toughDamage: toughnessDamage);
-                var hitPoint = tracerController.ActivateEffect(barrel.position, shootDir);
-                CurrentAmmo -= 1;
-                CmdPlayParticle(hitPoint);
-                CmdPlayShotSound();
+                Shoot(GetSpreadDirection(GetAimDirection()));
             }
             _currentStability = 0;
             _isOverloading = false;
+        }
+
+        private Vector3 GetSpreadDirection(Vector3 baseDir)
+        {
+            var spread = baseSpread + Mathf.Pow(_currentStability * spreadPerStability, spreadExponent);
+            return Quaternion.Euler(Random.Range(-spread, spread), Random.Range(-spread, spread), 0) * baseDir;
+        }
+
+        protected override Vector3 GetAimDirection()
+        {
+            if (maxAimAngle <= 0f || !Item || !Item.Owner)
+                return barrel.forward;
+
+            var cam = Item.Owner.MCamera?.Camera;
+            if (!cam)
+                return barrel.forward;
+
+            var ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            Vector3 targetPoint;
+            if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, layersToShot))
+                targetPoint = hit.point;
+            else
+                targetPoint = ray.GetPoint(maxDistance);
+
+            var desiredDirection = (targetPoint - barrel.position).normalized;
+            var angle = Vector3.Angle(barrel.forward, desiredDirection);
+            if (angle <= maxAimAngle)
+                return desiredDirection;
+
+            var axis = Vector3.Cross(barrel.forward, desiredDirection).normalized;
+            return Quaternion.AngleAxis(maxAimAngle, axis) * barrel.forward;
         }
     }
 }
