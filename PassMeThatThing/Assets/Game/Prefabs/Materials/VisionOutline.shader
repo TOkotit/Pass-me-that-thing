@@ -47,7 +47,7 @@ Shader "Custom/VisionOutlineFixed"
             float _OutlineWidth;
             float _Enabled;
 
-            uniform float4 _VisionZones[64]; 
+            uniform StructuredBuffer<float4> _VisionZonesBuffer;
             uniform int _VisionZonesCount;
 
             v2f vert(appdata v)
@@ -69,16 +69,14 @@ Shader "Custom/VisionOutlineFixed"
                 if (_Enabled < 0.5)
                     discard;
 
-                int count = min(_VisionZonesCount, 64);
-
-                for (int j = 0; j < count; j++)
+                for (int j = 0; j < _VisionZonesCount; j++)
                 {
-                    float3 zoneCenter = _VisionZones[j].xyz;
-                    float zoneRadius = _VisionZones[j].w;
+                    float3 zoneCenter = _VisionZonesBuffer[j].xyz;
+                    float zoneRadius = _VisionZonesBuffer[j].w;
 
                     if (distance(i.worldPos, zoneCenter) < zoneRadius)
                     {
-                        discard; 
+                        discard;
                     }
                 }
 

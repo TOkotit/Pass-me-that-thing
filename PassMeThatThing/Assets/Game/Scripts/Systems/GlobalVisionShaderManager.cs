@@ -6,32 +6,52 @@ public class GlobalVisionShaderManager : MonoBehaviour
     public static GlobalVisionShaderManager Instance { get; private set; }
 
     private readonly List<Vector4> _activeZones = new();
-    private readonly Vector4[] _shaderData = new Vector4[64];
+    private ComputeBuffer _buffer;
+    private int _bufferCapacity;
 
-    private static readonly int VisionZonesId = Shader.PropertyToID("_VisionZones");
+    private static readonly int VisionZonesBufferId = Shader.PropertyToID("_VisionZonesBuffer");
     private static readonly int VisionZonesCountId = Shader.PropertyToID("_VisionZonesCount");
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else { Destroy(gameObject); return; }
     }
 
     public void AddZone(Vector3 position, float radius)
     {
-        if (_activeZones.Count >= 64) return;
         _activeZones.Add(new Vector4(position.x, position.y, position.z, radius));
     }
 
     private void LateUpdate()
     {
-        var count = _activeZones.Count;
-        for (var i = 0; i < count; i++)
-            _shaderData[i] = _activeZones[i];
+        int count = _activeZones.Count;
 
-        Shader.SetGlobalVectorArray(VisionZonesId, _shaderData);
+        if (count == 0)
+        {
+            Shader.SetGlobalInt(VisionZonesCountId, 0);
+            _activeZones.Clear();
+            return;
+        }
+
+        if (_buffer == null || _bufferCapacity < count)
+        {
+            _buffer?.Release();
+            _bufferCapacity = Mathf.NextPowerOfTwo(count);
+            _buffer = new ComputeBuffer(_bufferCapacity, sizeof(float) * 4);
+        }
+
+        _buffer.SetData(_activeZones, 0, 0, count);
+
+        Shader.SetGlobalBuffer(VisionZonesBufferId, _buffer);
         Shader.SetGlobalInt(VisionZonesCountId, count);
 
         _activeZones.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        _buffer?.Release();
+        _buffer = null;
     }
 }
