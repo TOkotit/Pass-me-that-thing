@@ -4,21 +4,17 @@ using Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments;
 using Mirror;
 using UnityEngine;
 
-public class NetworkOutlineShader : NetworkBehaviour
+public class OutlineShader : MonoBehaviour
 {
     [SerializeField] private float radius = 10f;
-    
-    [SyncVar] 
-    private bool _isActive = true;
-    
-    public bool IsActive => _isActive;
+
+    public bool IsActive { get; private set; } = true;
 
     private RoomController _roomController;
-    
+
     private void Start()
     {
         var currentParent = transform.parent;
-        
         while (currentParent != null)
         {
             if (currentParent.TryGetComponent(out _roomController))
@@ -31,25 +27,14 @@ public class NetworkOutlineShader : NetworkBehaviour
 
         Debug.LogWarning($"RoomController не найден в родительских объектах для {gameObject.name}");
     }
-    
-    private void OnDestroy()
-    {
-        if (_roomController != null)
-        {
-            _roomController.UnregisterLight(this);
-        }
-    }
-    
-    
-    [Server]
-    public void SetVisionState(bool state)
-    {
-        _isActive = state;
-    }
-    
+
+    private void OnDestroy() => _roomController?.UnregisterLight(this);
+
+    public void SetActiveLocal(bool state) => IsActive = state;
+
     private void Update()
     {
-        if (!_isActive) return;
+        if (!IsActive) return;
         if (GlobalVisionShaderManager.Instance == null) return;
 
         GlobalVisionShaderManager.Instance.AddZone(transform.position, radius);

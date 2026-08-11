@@ -1,57 +1,59 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
 {
     public class RoomController : MonoBehaviour
     {
+        public int RoomId { get; private set; } = -1;
         public bool IsPowerOn { get; private set; } = true;
-        
-        private readonly List<NetworkOutlineShader> _lights = new();
-        private GlobalVisionShaderManager _globalmanger;
-        public IReadOnlyList<NetworkOutlineShader> Lights => _lights;
 
+        private readonly List<OutlineShader> _lights = new();
+        public IReadOnlyList<OutlineShader> Lights => _lights;
 
-        public void Start()
+        // ВАЖНО: должен вызываться генератором уровня сразу после создания комнаты,
+        // до Start(). ID обязан быть одинаковым на сервере и у всех клиентов —
+        // то есть генерация должна быть детерминированной (один сид/один порядок).
+        public void SetRoomId(int id)
         {
-            var globalmanger = FindFirstObjectByType<GlobalVisionShaderManager>();
-            _globalmanger = globalmanger;
-            globalmanger.RegisterRoom(this);
+            RoomId = id;
         }
 
-        public void RegisterLight(NetworkOutlineShader roomLight)
+        private void Start()
         {
-            if (!_lights.Contains(roomLight))
-            {
-                _lights.Add(roomLight);
-                if (NetworkServer.active && !IsPowerOn)
-                {
-                    roomLight.SetVisionState(false);
-                }
-            }
+            if (RoomId < 0)
+                Debug.LogWarning($"RoomId не назначен для {gameObject.name} — вызовите SetRoomId() из генератора уровня.");
+
+            NetworkVisionManager.Instance.RegisterRoomLocal(RoomId, this);
         }
 
-
-        public void UnregisterLight(NetworkOutlineShader roomLight)
+        public void RegisterLight(OutlineShader roomLight)
         {
-            if (_lights.Contains(roomLight))
-                _lights.Remove(roomLight);
+            if (_lights.Contains(roomLight)) return;
+            _lights.Add(roomLight);
+            roomLight.SetActiveLocal(IsPowerOn);
         }
 
-        public void SetLightsState(bool state)
+        public void UnregisterLight(OutlineShader roomLight) => _lights.Remove(roomLight);
+
+        public void ApplyPowerState(bool state)
         {
-            foreach (var networkOutlineShader in _lights.Where(networkOutlineShader => networkOutlineShader != null))
-            {
-                networkOutlineShader.SetVisionState(state);
-            }
+            IsPowerOn = state;
+            foreach (var light in _lights.Where(l => l != null))
+                light.SetActiveLocal(state);
         }
 
-        public void OnDestroy()
+        public void RequestSetPower(bool state)
         {
-            _globalmanger.UnregisterRoom(this);
+            if (RoomId < 0) return;
+            NetworkVisionManager.Instance.SetRoomPower(RoomId, state);
+        }
+
+        private void OnDestroy()
+        {
+            if (NetworkVisionManager.Instance != null)
+                NetworkVisionManager.Instance.UnregisterRoomLocal(RoomId);
         }
     }
 }
