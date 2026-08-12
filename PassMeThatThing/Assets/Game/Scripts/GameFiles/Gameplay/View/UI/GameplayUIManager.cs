@@ -12,7 +12,7 @@ using VContainer;
 using UnityEngine;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Assets.Game.Scripts.GameFiles.UIWorld;
-using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WScreenDescription;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 
 
 namespace Game.Gameplay.View.UI
@@ -152,15 +152,19 @@ namespace Game.Gameplay.View.UI
 
         //WorldSpace
 
-        public WScreenDescriptionViewModel OpenWScreenDescription(
-            Transform parent,
-            string description)
+        public WindowDescriptionViewModel OpenWindowDescription()
         {
-            var viewModel = new WScreenDescriptionViewModel(this, Container);
+            var viewModel = new WindowDescriptionViewModel(this, Container);
 
             _worldUI.OpenWorldWindow(viewModel);
 
+
             return viewModel;
+        }
+
+        public void CloseWindowDescription(WindowDescriptionViewModel viewModel)
+        {
+            _worldUI.CloseWorldWindow(viewModel);
         }
     }
 }

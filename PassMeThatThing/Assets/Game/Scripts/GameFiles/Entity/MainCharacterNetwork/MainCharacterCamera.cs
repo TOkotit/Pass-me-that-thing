@@ -148,6 +148,14 @@ namespace MainCharacterNetwork
             _sensitivity = standardSensitivity * sensitivityPercent / 100;
         }
 
+        private void FixedUpdate()
+        {
+            if (!_isLocalPlayer || !_initialized)
+                return;
+
+            _mcLocalModel?.ReportCameraPosition(transform.position);
+        }
+
         private void OnDestroy()
         {
             _optionsManager.OnSensitivityChanged -= SetSensitivity;

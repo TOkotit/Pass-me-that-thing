@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Game.Scripts.GameFiles.UIWorld
 {
-    public abstract class WorldWindowBinder<T> : MonoBehaviour
+    public abstract class WorldWindowBinder<T> : MonoBehaviour, IWorldWindowBinder
         where T : WorldWindowViewModel
     {
         protected T ViewModel;

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Game.Entity
 {
@@ -9,9 +10,14 @@ namespace Game.Entity
 
         private bool _isDead;
 
+        private string _currentInteractableText;
+
         public event Action<int, int> OnHealthChanged;
         public event Action<bool> OnDeathChanged;
         public event Action<float> OnCameraYRotationChanged;
+        public event Action<Vector3> OnCameraPositionChanged;
+
+        public event Action<string> OnCurrentInteractableTextChanged;
 
         public int Health
         {
@@ -39,10 +45,26 @@ namespace Game.Entity
                 _isDead = value;
             }
         }
-        
+
+        public string CurrentInteractableText 
+        { 
+            get => _currentInteractableText;
+            set
+            {
+                if (_currentInteractableText != value) 
+                    OnCurrentInteractableTextChanged?.Invoke(value);
+                _currentInteractableText = value;
+            }
+        }
+
         public void ReportCameraRotation(float angleY)
         {
             OnCameraYRotationChanged?.Invoke(angleY);
+        }
+
+        public void ReportCameraPosition(Vector3 value)
+        {
+            OnCameraPositionChanged?.Invoke(value);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace Game.Gameplay.Root
 
             //world
             var uiWorldSceneRootBinder = resolver.Instantiate(_sceneWorldUIRootPrefab);
-            uiRoot.AttachSceneUI(uiWorldSceneRootBinder.gameObject);
+            //uiRoot.AttachSceneUI(uiWorldSceneRootBinder.gameObject);
 
             var uiWorldSceneRootViewModel = resolver.Resolve<WorldUIRootViewModel>();
             uiWorldSceneRootBinder.Bind(uiWorldSceneRootViewModel);
