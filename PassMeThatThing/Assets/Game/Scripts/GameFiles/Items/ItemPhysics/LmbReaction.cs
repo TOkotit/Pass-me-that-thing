@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public abstract class LmbReaction : Reaction
+    public abstract class ItemReaction : Reaction
     {
         protected PhysicalItem _item;
 

@@ -31,7 +31,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private bool _isThrown;
         [SerializedDictionary] public SerializedDictionary<Resource, float> Resources;
 
-        [SerializeField] private LmbReaction reaction;   // реакция на левую кнопку (любая)
+        [SerializeField] private ItemReaction reaction;   // реакция на левую кнопку (любая)
 
         private Outline _outline;
         private CollisionDamageDealer damageDealer;
@@ -51,7 +51,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public MainCharacter Owner { get; set; }
         public readonly SyncList<NetworkIdentity> Holders = new SyncList<NetworkIdentity>();
         public NetworkConnectionToClient ConnectionToClient { get; set; }
-        public LmbReaction Reaction => reaction;
+        public ItemReaction Reaction => reaction;
 
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 

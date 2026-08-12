@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public class LmbWireCutters : LmbReaction
+    public class LmbWireCutters : ItemReaction
     {
         public override void Act()
         {

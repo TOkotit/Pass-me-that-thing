@@ -9,7 +9,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public abstract class ShotReaction : LmbReaction
+    public abstract class ShotReaction : ItemReaction
     {
         [Inject] protected PhysicsApplyer PhysicsApplyer;
         [Inject] protected ParticlePoolManager PoolManager;

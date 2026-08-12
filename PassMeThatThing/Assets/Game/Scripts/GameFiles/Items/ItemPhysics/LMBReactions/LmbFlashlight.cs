@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public class LmbFlashlight : LmbReaction
+    public class LmbFlashlight : ItemReaction
     {
         public override void Act()
         {

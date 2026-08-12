@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public class LmbWrench : LmbReaction
+    public class LmbWrench : ItemReaction
     {
         
         public override void Act()

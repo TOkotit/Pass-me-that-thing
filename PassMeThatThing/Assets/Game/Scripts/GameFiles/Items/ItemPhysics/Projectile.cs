@@ -10,16 +10,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float startSpeed = 0f;           
         [SerializeField] private float maxSpeed = 0f;             
         [SerializeField] private ProjectileMode mode = ProjectileMode.Ballistic;
-
+        [SerializeField] private Rigidbody rb;
         [Header("Deceleration")]
-        [SerializeField] private float deceleration = 2f;         
+        [SerializeField] private float deceleration = 2f;    
 
-        private Rigidbody rb;
-
-        private void Awake()
-        {
-            rb = GetComponent<Rigidbody>();
-        }
 
         private void Start()
         {
@@ -67,7 +61,30 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                     break;
             }
         }
+        [Server]
+        public void StopProjectile()
+        {
+            RpcStopProjectile();
+            StopProjectileInternal();
+        }
 
+        [ClientRpc]
+        private void RpcStopProjectile()
+        {
+            StopProjectileInternal();
+        }
+
+        private void StopProjectileInternal()
+        {
+            if (rb)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.useGravity = false;
+                rb.isKinematic = true;      
+            }
+            enabled = false;               
+        }
         private void Update()
         {
             if (rb.linearVelocity != Vector3.zero)

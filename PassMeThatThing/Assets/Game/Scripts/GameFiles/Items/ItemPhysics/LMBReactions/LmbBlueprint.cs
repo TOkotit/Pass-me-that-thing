@@ -5,7 +5,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public class LmbBlueprint : LmbReaction
+    public class LmbBlueprint : ItemReaction
     {
         [SerializeField] private string _buildingId;
         [Inject] private LocalBuildingHandlerModel _localBuildingHandlerModel;
