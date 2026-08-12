@@ -21,6 +21,7 @@ using Game.Scripts.Systems;
 using UnityEngine.Serialization;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration;
+using Assets.Game.Scripts.GameFiles.UIWorld;
 
 namespace DI
 {
@@ -113,8 +114,11 @@ namespace DI
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);
             builder.Register<LevelGraphBuilder>(Lifetime.Singleton);
+
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
+            builder.Register<WorldUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
+
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
         }
         

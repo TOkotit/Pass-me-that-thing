@@ -1,4 +1,6 @@
-﻿using Game.Gameplay.View.UI;
+﻿using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.UIWorld;
+using Assets.Game.Scripts.GameFiles.UIWorld;
+using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Mirror;
@@ -14,7 +16,8 @@ namespace Game.Gameplay.Root
     public class GameplayEntryPoint : IStartable
     {
         private GameplayUIRootBinder _sceneUIRootPrefab;
-        
+        private WorldUIRootBinder _sceneWorldUIRootPrefab;
+
         [Inject] readonly GameManager _gameManager;
         [Inject] IObjectResolver resolver;
         
@@ -22,16 +25,14 @@ namespace Game.Gameplay.Root
         {
             Debug.Log("GameplayEntryPoint");
             _sceneUIRootPrefab = Resources.Load<GameplayUIRootBinder>("Prefabs/UI/Root/GameplayUI");
-            
-            
+            _sceneWorldUIRootPrefab = Resources.Load<WorldUIRootBinder>("Prefabs/UI/Root/WorldUI");
+
+
         }
         
         public void Start()
         {
             Debug.Log("GameplayEntryPoint.Start");
-            
-            
-            
             
             InitUI();
             
@@ -40,20 +41,27 @@ namespace Game.Gameplay.Root
             //     SpawnNetworkManagers();
             // }
             _gameManager.SetState(GameState.Gameplay);
-            
-            
         }
         
 
         private void InitUI()
         {
             var uiRoot = resolver.Resolve<UIRootView>();
+
             var uiSceneRootBinder = resolver.Instantiate(_sceneUIRootPrefab);
             uiRoot.AttachSceneUI(uiSceneRootBinder.gameObject);
 
             var uiSceneRootViewModel = resolver.Resolve<GameplayUIRootViewModel>();
             uiSceneRootBinder.Bind(uiSceneRootViewModel);
-            
+
+            //world
+            var uiWorldSceneRootBinder = resolver.Instantiate(_sceneWorldUIRootPrefab);
+            uiRoot.AttachSceneUI(uiWorldSceneRootBinder.gameObject);
+
+            var uiWorldSceneRootViewModel = resolver.Resolve<WorldUIRootViewModel>();
+            uiWorldSceneRootBinder.Bind(uiWorldSceneRootViewModel);
+
+
             var uiManager = resolver.Resolve<GameplayUIManager>();
             uiManager.OpenScreenGameplay();
         }
