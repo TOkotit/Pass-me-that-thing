@@ -14,7 +14,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
         
         public void Hit(Vector3 force, Vector3 hitPosition)
         {
-            _injuredRigidbody = rigidbodies.Where(rigidbody => !rigidbody.isKinematic)
+            _injuredRigidbody = rigidbodies
                 .OrderBy(rigidbody => Vector3.Distance(rigidbody.position, hitPosition))
                 .FirstOrDefault();
             Debug.LogWarning(_injuredRigidbody);
