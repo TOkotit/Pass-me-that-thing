@@ -40,13 +40,17 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
 
         private void FixedUpdate()
         {
-            transform.position = ViewModel.parentPos + Vector3.up * 1.5f;
+            if (ViewModel.enabled.Value)
+                transform.position = ViewModel.parentPos + Vector3.up * 1.5f;
         }
 
         public void ChangeRotation(Vector3 lookPos)
         {
-            var dir = (transform.position - lookPos).normalized;
-            transform.rotation = Quaternion.LookRotation(dir);
+            if (ViewModel.enabled.Value)
+            {
+                var dir = (transform.position - lookPos).normalized;
+                transform.rotation = Quaternion.LookRotation(dir);
+            }
         }
 
         public void ChangeText(string value)
