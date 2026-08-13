@@ -263,9 +263,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2364647274207604012}
+  - component: {fileID: 3224683437702632670}
   - component: {fileID: 7989009915996929182}
   - component: {fileID: 1032108084039664460}
+  - component: {fileID: 6468441584140739080}
   - component: {fileID: 6609596328987690964}
+  - component: {fileID: 8801093466208183907}
   m_Layer: 0
   m_Name: BigPipes
   m_TagString: Untagged
@@ -293,6 +296,27 @@ Transform:
   - {fileID: 6890673984556843464}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3224683437702632670
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6398786016326100300}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7.1047454, y: 6.148241, z: 1.6470631}
+  m_Center: {x: 0.14066243, y: 1.7442136, z: -0.32353157}
 --- !u!114 &7989009915996929182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,6 +350,23 @@ MonoBehaviour:
   waterMeshPrefab: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
   waterMeshTransform: {fileID: 2958257391534694994}
   maxWaterWidth: 10
+--- !u!114 &6468441584140739080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6398786016326100300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35cc854e0c5e7294d896eabb4192f91b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.Entity.Buildings.EventBuildings.BigPipes
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  defaultHealth: 0
+  type: 2
 --- !u!114 &6609596328987690964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,6 +384,21 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &8801093466208183907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6398786016326100300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.TargetObject
+  damagable: {fileID: 6468441584140739080}
+  priority: 0
+  damagableType: 2
 --- !u!1 &6599366479341219376
 GameObject:
   m_ObjectHideFlags: 0

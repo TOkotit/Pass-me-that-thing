@@ -5,7 +5,10 @@ using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
+using Game.Scripts.GameFiles.LevelGeneration;
+using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.UI;
+using MainCharacterNetwork;
 using Mirror;
 using ObservableCollections;
 using R3;
@@ -28,12 +31,11 @@ namespace Game.Gameplay.View.UI
         private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
-        
         private readonly GameInputManager _gameInputManager;
         
         private readonly MCLocalModel  _mcLocalModel;
         private readonly LocalWireHandlerModel _localWireHandlerModel;
-        
+        private readonly LevelOrchestrator _levelOrchestrator;
         
         private Action<int, Sprite, int> addEvent;
         private Action<int, Sprite, int> updateEvent;
@@ -51,11 +53,10 @@ namespace Game.Gameplay.View.UI
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
-            
             _gameInputManager = container.Resolve<GameInputManager>();
 
             _localWireHandlerModel = container.Resolve<LocalWireHandlerModel>();
-
+            _levelOrchestrator = container.Resolve<LevelOrchestrator>();
 
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed += RequestOpenPause;
             _gameInputManager.GameInput.Gameplay.WireMenu.performed += RequestOpenWireMenu;
@@ -153,6 +154,16 @@ namespace Game.Gameplay.View.UI
         public void RequestUnsubThrowCharge(Action<int> f)
         {
             _playerInventoryModel.OnThrowChargeChanged -= f;
+        }
+
+        public void RequestSubCameraRotation(Action<float> f)
+        {
+            _mcLocalModel.OnCameraYRotationChanged += f;
+        }
+        
+        public void RequestUnsubCameraRotation(Action<float> f)
+        {
+            _mcLocalModel.OnCameraYRotationChanged -= f;
         }
         
         public void RequestSubInteractionText(Action<bool> f)
@@ -265,6 +276,14 @@ namespace Game.Gameplay.View.UI
         public void RequestUnsubPlugImages(Action<int> f)
         {
             _localWireHandlerModel.OnWireNodeCount -= f;
+        }
+        
+        public void RequestLevelGrid(Action<LevelGrid> f)
+        {
+            if (_levelOrchestrator != null && _levelOrchestrator.levelGrid != null)
+            {
+                f?.Invoke(_levelOrchestrator.levelGrid);
+            }
         }
 
     }

@@ -11,9 +11,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         protected override void OnStartEvent()
         {
-            if (GlobalVisionShaderManager.Instance)
+            if (NetworkVisionManager.Instance)
             {
-                GlobalVisionShaderManager.Instance.SetAllRoomsStateServerOnly(false);
+                NetworkVisionManager.Instance.SetAllRoomsPower(false);
                 Debug.Log("[PowerOutageEvent] Электричество вырубилось! Лампы погасли.");
             }
 
@@ -32,9 +32,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
         [Server]
         protected override void OnStopEvent()
         {
-            if (GlobalVisionShaderManager.Instance)
+            if (NetworkVisionManager.Instance)
             {
-                GlobalVisionShaderManager.Instance.SetAllRoomsStateServerOnly(true);
+                NetworkVisionManager.Instance.SetAllRoomsPower(true);
                 Debug.Log("[PowerOutageEvent] Электричество восстановлено! Лампы горят.");
             }
 

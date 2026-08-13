@@ -1859,6 +1859,56 @@ MonoBehaviour:
   zoomDistance: 5
   cameraRoot: {fileID: 8030569220742292104}
   ragdollCamera: {fileID: 0}
+--- !u!1 &5040119421583918702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8603136291001771704}
+  - component: {fileID: 5866577686698207772}
+  m_Layer: 8
+  m_Name: ItemDescriptionHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8603136291001771704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5040119421583918702}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1761147164635753575}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5866577686698207772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5040119421583918702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28b6185ecaaac84cbf82d1c3fe5201c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.Items.PlayerInteractableDescriptionHandler
+  interval: 0.8
+  playerCamera: {fileID: 3355288843335198720}
+  interactionLayer:
+    serializedVersion: 2
+    m_Bits: 17344
+  interactionDistance: 5
 --- !u!1 &5079773065674125635
 GameObject:
   m_ObjectHideFlags: 0
@@ -4368,6 +4418,7 @@ Transform:
   - {fileID: 7222909553587988197}
   - {fileID: 5828727303805172884}
   - {fileID: 4139199191893269222}
+  - {fileID: 8603136291001771704}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5469461570505411041

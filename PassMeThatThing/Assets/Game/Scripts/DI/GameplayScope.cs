@@ -20,6 +20,8 @@ using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Systems;
 using UnityEngine.Serialization;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.LevelGeneration;
+using Assets.Game.Scripts.GameFiles.UIWorld;
 
 namespace DI
 {
@@ -49,6 +51,7 @@ namespace DI
         [SerializeField] private CraftManager craftManager;
         [SerializeField] private GlobalInventoryManager globalInventoryManager;
         [SerializeField] private ParticlePoolManager particlePoolManager;
+        [SerializeField] private LevelOrchestrator levelOrchestrator;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -73,6 +76,7 @@ namespace DI
             builder.RegisterComponent(craftManager);
             builder.RegisterComponent(globalInventoryManager);
             builder.RegisterComponent(particlePoolManager);
+            builder.RegisterComponent(levelOrchestrator);
             
             builder.Register<DamageSystem>(Lifetime.Singleton);
             
@@ -110,8 +114,11 @@ namespace DI
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);
             builder.Register<LevelGraphBuilder>(Lifetime.Singleton);
+
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
+            builder.Register<WorldUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
+
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
         }
         

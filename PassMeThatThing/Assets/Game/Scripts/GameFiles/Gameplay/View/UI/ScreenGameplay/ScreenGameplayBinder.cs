@@ -12,6 +12,8 @@ using UnityEngine;
 using Assets.Game.Scripts.Utils;
 using UnityEngine.UIElements;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
+using Game.Scripts.GameFiles.LevelGeneration.UI;
 
 
 namespace Game.Gameplay.View.UI
@@ -41,6 +43,7 @@ namespace Game.Gameplay.View.UI
         private GroupBox _gameEventsContainer;
         private Label _gameGlobalStateText;
         private Label _gameGlobalStateTimerText;
+        private MinimapView  _miniMap;
 
         private VisualElement _leftPlugImage;
         private VisualElement _rightPlugImage;
@@ -59,6 +62,7 @@ namespace Game.Gameplay.View.UI
             _gameEventsContainer = _root.Q<GroupBox>("EventsContainer");
             _gameGlobalStateText = _root.Q<Label>("PhaseLb");
             _gameGlobalStateTimerText = _root.Q<Label>("RemainingTimeLb");
+            _miniMap = _root.Q<MinimapView>("Minimap");
             _leftPlugImage = _root.Q<VisualElement>("LeftPlugImage");
             _rightPlugImage = _root.Q<VisualElement>("RightPlugImage");
             _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
@@ -79,8 +83,10 @@ namespace Game.Gameplay.View.UI
             ViewModel.InitGameEvent(Clear, AddGameEvent);
             ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
             
-            ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            ViewModel.RequestLevelGrid(SetMinimapSource);
             
+            ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            ViewModel.RequestSubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
@@ -101,6 +107,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            ViewModel.RequestUnsubCameraRotation(UpdateMiniMapRotation);
+
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
             ViewModel.RequestUnsub();
         }
@@ -270,5 +278,23 @@ namespace Game.Gameplay.View.UI
                     }
             }
         }
+
+        private void UpdateMiniMapRotation(float currentYAngle)
+        {
+            if (_miniMap == null) Debug.LogError("[UI] Не назначена миникарта");
+            _miniMap.style.rotate = new StyleRotate(new Rotate(Angle.Degrees(-currentYAngle)));
+        }
+        
+        private void SetMinimapSource(LevelGrid levelGrid)
+        {
+            if (_miniMap == null)
+            {
+                Debug.LogWarning("[UI] В UXML не найден элемент 'Minimap' типа MinimapView.");
+                return;
+            }
+
+            _miniMap.SetSource(levelGrid);
+        }
+
     }
 }

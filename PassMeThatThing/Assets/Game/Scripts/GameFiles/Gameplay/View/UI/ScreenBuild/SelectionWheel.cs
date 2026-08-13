@@ -10,7 +10,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
     {
         private readonly List<VisualElement> _segmentElements = new();
     
-        private int _segmentsCount = 3;
+        private int _segmentsCount = 10;
         private float _radius = 100f;
         private int _hoveringElemIndex = -1;
         
@@ -40,7 +40,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
         
         public void SetImageSprites(List<Sprite> sprites)
         {
-            _segmentsCount = sprites.Count;
+            //_segmentsCount = sprites.Count;
             _segmentSprites = sprites;
             
             RefreshWheel();
@@ -55,7 +55,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
 
             if (_segmentsCount <= 0) return;
 
-            _radius = contentRect.width / 8;
+            _radius = contentRect.width / 5;
             
             var stepAngle = 360f / _segmentsCount;
 

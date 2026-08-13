@@ -1,6 +1,6 @@
-Shader "Custom/VisionOutlineFixed"
+Shader "Custom/VisionOutline"
 {
-    Properties
+   Properties
     {
         _OutlineColor("Outline Color", Color) = (1,1,1,1)
         _OutlineWidth("Outline Width", Float) = 0.05
@@ -12,7 +12,7 @@ Shader "Custom/VisionOutlineFixed"
         Tags
         {
             "RenderType"="Opaque"
-            "Queue"="Transparent+1"
+            "Queue"="Transparent"
             "IgnoreProjector"="True"
         }
 
@@ -29,7 +29,9 @@ Shader "Custom/VisionOutlineFixed"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            
             #include "UnityCG.cginc"
+            #include "MultipleVision.hlsl"
 
             struct appdata
             {
@@ -47,20 +49,17 @@ Shader "Custom/VisionOutlineFixed"
             float _OutlineWidth;
             float _Enabled;
 
-            uniform float4 _VisionZones[64]; 
-            uniform int _VisionZonesCount;
-
             v2f vert(appdata v)
             {
                 v2f o;
-
-                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-                float3 worldNormal = normalize(UnityObjectToWorldNormal(v.normal));
                 
-                worldPos += worldNormal * (_OutlineWidth * 0.5);
-
-                o.pos = UnityWorldToClipPos(worldPos);
+                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.worldPos = worldPos;
+                
+                float3 worldNormal = normalize(UnityObjectToWorldNormal(v.normal));
+                worldPos += worldNormal * (_OutlineWidth * 0.5);
+                o.pos = UnityWorldToClipPos(worldPos);
+                
                 return o;
             }
 
@@ -69,18 +68,11 @@ Shader "Custom/VisionOutlineFixed"
                 if (_Enabled < 0.5)
                     discard;
 
-                int count = min(_VisionZonesCount, 64);
+                float visibility;
+                GetMultipleVision_float(i.worldPos, visibility);
 
-                for (int j = 0; j < count; j++)
-                {
-                    float3 zoneCenter = _VisionZones[j].xyz;
-                    float zoneRadius = _VisionZones[j].w;
-
-                    if (distance(i.worldPos, zoneCenter) < zoneRadius)
-                    {
-                        discard; 
-                    }
-                }
+                if (visibility > 0.01)
+                    discard;
 
                 return _OutlineColor;
             }

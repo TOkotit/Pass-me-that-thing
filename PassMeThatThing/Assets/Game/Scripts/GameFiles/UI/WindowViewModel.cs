@@ -8,10 +8,9 @@ namespace Game.UI
     /// </summary>
     public abstract class WindowViewModel : IDisposable
     {
+        private readonly Subject<WindowViewModel> _closeRequested = new();
         public Observable<WindowViewModel> CloseRequested => _closeRequested;
         public abstract string Id { get; }
-        
-        private readonly Subject<WindowViewModel> _closeRequested = new();
 
         public void RequestClose()
         {

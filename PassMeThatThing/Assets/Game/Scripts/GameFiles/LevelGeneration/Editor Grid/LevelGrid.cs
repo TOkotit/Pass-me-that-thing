@@ -21,6 +21,16 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
         
         private HashSet<Vector3Int> _occupiedCells;
         
+        public IReadOnlyCollection<Vector3Int> OccupiedCells
+        {
+            get
+            {
+                if (_occupiedCells == null) InitializeGrid();
+                return _occupiedCells;
+            }
+        }
+
+        
         private void Awake()
         {
             InitializeGrid();
@@ -34,6 +44,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
             _occupiedCells ??= new HashSet<Vector3Int>(_serializedOccupiedCells);
             
         }
+
         
         public void SetCellState(Vector3Int cellPosition, bool isOccupied)
         {

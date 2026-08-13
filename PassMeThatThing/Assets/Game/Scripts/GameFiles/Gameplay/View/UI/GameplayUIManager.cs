@@ -11,6 +11,8 @@ using Systems;
 using VContainer;
 using UnityEngine;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Assets.Game.Scripts.GameFiles.UIWorld;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 
 
 namespace Game.Gameplay.View.UI
@@ -20,13 +22,14 @@ namespace Game.Gameplay.View.UI
         private GameInputManager _gameInputManager;
 
         private GameplayUIRootViewModel rootUI;
+        private WorldUIRootViewModel _worldUI;
         
         public GameplayUIManager(IObjectResolver container) : base(container)
         {
             rootUI = Container.Resolve<GameplayUIRootViewModel>();
-            
+            _worldUI = Container.Resolve<WorldUIRootViewModel>();
+
             _gameInputManager = Container.Resolve<GameInputManager>();
-            
         }
 
         public ScreenGameplayViewModel OpenScreenGameplay()
@@ -121,8 +124,6 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
         
-        
-        
         public ScreenOptionsViewModel OpenScreenOptions()
         {
             var viewModel = new ScreenOptionsViewModel(this, Container);
@@ -147,6 +148,23 @@ namespace Game.Gameplay.View.UI
         {
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
+        }
+
+        //WorldSpace
+
+        public WindowDescriptionViewModel OpenWindowDescription()
+        {
+            var viewModel = new WindowDescriptionViewModel(this, Container);
+
+            _worldUI.OpenWorldWindow(viewModel);
+
+
+            return viewModel;
+        }
+
+        public void CloseWindowDescription(WindowDescriptionViewModel viewModel)
+        {
+            _worldUI.CloseWorldWindow(viewModel);
         }
     }
 }

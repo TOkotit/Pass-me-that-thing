@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 319741792640230851}
   - component: {fileID: 7828892963863885859}
   - component: {fileID: 5302859596028704940}
+  - component: {fileID: 5634807699319748034}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -79,3 +80,20 @@ MonoBehaviour:
   levelGrid: {fileID: 319741792640230851}
   levelContainer: {fileID: 180583881734044310}
   wallPrefab: {fileID: 9181234335979179576, guid: f39510c12e720bc40b9620addd01ebfe, type: 3}
+--- !u!114 &5634807699319748034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583043820459869596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 2131139529
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
