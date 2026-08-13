@@ -20,7 +20,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
             if (pointType == PointType.Hat)
             {
-                nail.OnHatHit(other.collider);
+                nail.OnHatHit(other);
             }
         }
 

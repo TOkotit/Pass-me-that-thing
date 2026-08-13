@@ -10,7 +10,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float startSpeed = 0f;           
         [SerializeField] private float maxSpeed = 0f;             
         [SerializeField] private ProjectileMode mode = ProjectileMode.Ballistic;
-        [SerializeField] private Rigidbody rb;
+        [SerializeField] protected Rigidbody rb;
         [Header("Deceleration")]
         [SerializeField] private float deceleration = 2f;    
 
@@ -89,6 +89,11 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             if (rb.linearVelocity != Vector3.zero)
                 transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
+        }
+
+        public void DestroyAfterDelay(float delay)
+        {
+            Destroy(gameObject, delay);
         }
     }
 }

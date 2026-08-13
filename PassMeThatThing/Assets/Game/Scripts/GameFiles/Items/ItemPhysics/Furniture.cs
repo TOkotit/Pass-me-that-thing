@@ -10,8 +10,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override DamagableModel DamagableModel { get; }
         [SerializeField] private PhysicalItem _item;
         [SerializeField] private List<PhysicalItem> _items;
-        private List<Collider> _connectedTo = new List<Collider>();
-        //private List<Collider> _connectedObjects = new List<Collider>();
+        private readonly List<Collider> _connectedTo = new List<Collider>();
+        private List<IConnector> _connections = new List<IConnector>();
+        public List<IConnector> Connections {get => _connections; set => _connections = value;}
         public override void OnDeath()
         {
             RagdollHandler.EnableRagdoll();
@@ -32,6 +33,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override void OnToughnessBreak()
         {
             RagdollHandler.EnableRagdoll();
+            foreach (var connection in _connections)
+            {
+                connection.Disconnect();
+            }
         }
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)
@@ -41,10 +46,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private void OnCollisionEnter(Collision other)
         {
-            if ((other.gameObject.CompareTag("Furniture") 
-                || other.gameObject.CompareTag("Ground")) 
-                //&& !_connectedObjects.Contains(other.collider)
-                )
+            if (other.gameObject.CompareTag("Ground"))
             {
                 _connectedTo.Add(other.collider);
             }
@@ -62,11 +64,5 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 RagdollHandler.DisableRagdoll();
             }
         }
-
-        /*public void TryConnectItem(Collider collider)
-        {
-            _connectedObjects.Add(collider);
-            _connectedTo.Remove(collider);
-        }*/
     }
 }
