@@ -52,7 +52,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public readonly SyncList<NetworkIdentity> Holders = new SyncList<NetworkIdentity>();
         public NetworkConnectionToClient ConnectionToClient { get; set; }
         public ItemReaction Reaction => reaction;
-
+        
+        private List<IConnector> _connections = new List<IConnector>();
+        public List<IConnector> Connections {get => _connections; set => _connections = value;}
         public Rigidbody[] GetHandPoints() => handleType == HandleType.OneHanded 
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };

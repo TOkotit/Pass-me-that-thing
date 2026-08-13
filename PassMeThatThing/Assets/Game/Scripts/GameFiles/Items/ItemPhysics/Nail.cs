@@ -87,26 +87,21 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 connectionTo.gameObject.SetActive(true);
                 connection.connectedBody = _hatHitItem.Rigidbody;
                 connection.gameObject.SetActive(true);
-
-                if (DamagableRegistry.TryGetDamagable(_tipPiercedItem.gameObject, out var tipDamagable) && tipDamagable is Furniture tipFurniture)
-                    tipFurniture.Connections.Add(this);
-                if (DamagableRegistry.TryGetDamagable(_hatHitItem.gameObject, out var hatDamagable) && hatDamagable is Furniture hatFurniture)
-                    hatFurniture.Connections.Add(this);
-
+                _tipPiercedItem.Connections.Add(this);
+                _hatHitItem.Connections.Add(this);
+                
                 StopProjectile();
             }
             else if (_tipInGround && _hatHitItem)
             {
                 MakeStatic(_hatHitItem);
-                if (DamagableRegistry.TryGetDamagable(_hatHitItem.gameObject, out var damagable) && damagable is Furniture furniture)
-                    furniture.Connections.Add(this);
+                _hatHitItem.Connections.Add(this);
                 StopProjectile();
             }
             else if (_tipPiercedItem && _hatInGround)
             {
                 MakeStatic(_tipPiercedItem);
-                if (DamagableRegistry.TryGetDamagable(_tipPiercedItem.gameObject, out var damagable) && damagable is Furniture furniture)
-                    furniture.Connections.Add(this);
+                _tipPiercedItem.Connections.Add(this);
                 StopProjectile();
             }
             else if (_tipPiercedItem && _hatHitItem && _tipPiercedItem == _hatHitItem)
@@ -120,10 +115,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             if (connectionTo) connectionTo.connectedBody = null;
             if (connection) connection.connectedBody = null;
 
-            if (_tipPiercedItem && DamagableRegistry.TryGetDamagable(_tipPiercedItem.gameObject, out var tipDamagable) && tipDamagable is Furniture tipFurniture)
-                tipFurniture.Connections.Remove(this);
-            if (_hatHitItem && DamagableRegistry.TryGetDamagable(_hatHitItem.gameObject, out var hatDamagable) && hatDamagable is Furniture hatFurniture)
-                hatFurniture.Connections.Remove(this);
+            _tipPiercedItem.Connections.Remove(this);
+            _hatHitItem.Connections.Remove(this);
             transform.SetParent(null);
             
             _tipPiercedItem = null;

@@ -11,8 +11,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private PhysicalItem _item;
         [SerializeField] private List<PhysicalItem> _items;
         private readonly List<Collider> _connectedTo = new List<Collider>();
-        private List<IConnector> _connections = new List<IConnector>();
-        public List<IConnector> Connections {get => _connections; set => _connections = value;}
+        public PhysicalItem Item => _item;
         public override void OnDeath()
         {
             RagdollHandler.EnableRagdoll();
@@ -33,7 +32,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override void OnToughnessBreak()
         {
             RagdollHandler.EnableRagdoll();
-            foreach (var connection in _connections)
+            foreach (var connection in _item.Connections)
             {
                 connection.Disconnect();
             }
