@@ -285,6 +285,16 @@ namespace Game.Gameplay.View.UI
                 f?.Invoke(_levelOrchestrator.levelGrid);
             }
         }
+        
+        public void RequestSubPlayerPosition(Action<Vector3> f)
+        {
+            _mcLocalModel.OnPlayerPositionChanged += f;
+        }
+        
+        public void RequestUnsubPlayerPosition(Action<Vector3> f)
+        {
+            _mcLocalModel.OnPlayerPositionChanged -= f;
+        }
 
     }
 }

@@ -15,8 +15,8 @@
             </ui:GroupBox>
         </ui:GroupBox>
         <ui:GroupBox name="EventsContainer" style="height: 593px; width: 294px; align-items: stretch; position: absolute; background-color: rgba(115, 115, 115, 0); justify-content: flex-start; top: 304px; left: auto; right: 0;"/>
-        <Game.Scripts.GameFiles.LevelGeneration.UI.MinimapView name="Minimap" grid-cells-height="20" grid-line-color="rgba(255, 255, 255, 0.08)" cell-size="19.6" grid-cells-width="20" picking-mode="Position" tabindex="0" focusable="false" enabled="true" style="transform-origin: center; height: 392px; width: 392px;"/>
-        <ui:VisualElement name="MinimapFrame" style="flex-grow: 1; top: 7px; right: 1px; position: absolute; height: 293px; width: 341px; background-image: resource(&quot;Sprites/GameplaySprites/minimap Frame&quot;); -unity-background-scale-mode: scale-to-fit;"/>
+        <Game.Scripts.GameFiles.LevelGeneration.UI.MinimapView name="Minimap" grid-cells-height="20" grid-line-color="rgba(149, 139, 139, 0.08)" cell-size="25" grid-cells-width="20" picking-mode="Position" tabindex="0" focusable="true" enabled="true" viewport-width="300" viewport-height="300" show-grid-lines="true" cell-color="rgb(45, 130, 60)" style="transform-origin: center; height: 300px; width: 300px; position: absolute; top: 2px; left: auto; right: 6px;"/>
+        <ui:VisualElement name="MinimapFrame" style="flex-grow: 1; top: -5px; right: -18px; position: absolute; height: 315px; width: 353px; background-image: resource(&quot;Sprites/GameplaySprites/minimap Frame&quot;); -unity-background-scale-mode: scale-to-fit;"/>
         <ui:GroupBox style="height: 107px; width: 516px; align-items: stretch; align-content: flex-start; align-self: flex-start; bottom: 0; position: absolute; left: auto; flex-direction: row; justify-content: space-between; font-size: 100%; right: 0;">
             <ui:Label text="Label" name="RemainingTimeLb" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); font-size: 50px;"/>
             <ui:Label text="Label" name="PhaseLb" style="flex-grow: 1; font-size: 50%; color: rgb(255, 255, 255); -unity-text-align: lower-left;"/>
@@ -31,7 +31,7 @@
         </ui:VisualElement>
         <ui:Label name="ThrowLb" style="flex-grow: 1; font-size: 100px; color: rgb(255, 255, 255); position: absolute; left: 959px; top: 540px; display: flex;"/>
     </ui:GroupBox>
-    <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex; opacity: 0; justify-content: center; background-color: rgba(0, 0, 0, 0.84); top: 2px; left: 0;">
+    <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex; opacity: 0; justify-content: center; background-color: rgba(0, 0, 0, 0.84); top: 0; left: 0;">
         <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/GameplaySprites/display&quot;); -unity-background-scale-mode: scale-to-fit; width: 1009px; align-self: center; background-position-y: top 0;">
             <ui:Label text="Pass out" style="font-size: 141px; -unity-text-align: middle-center; color: rgb(221, 92, 92); top: 467px;"/>
         </ui:VisualElement>
