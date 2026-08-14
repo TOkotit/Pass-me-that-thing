@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Ami.BroAudio;
 using Assets.Game.Scripts.GameFiles.MainMenu.View.UI.ScreenOptionsMenu;
-using AYellowpaper.SerializedCollections;
+using Assets.Game.Scripts.Systems;
 using Enums;
 using Game.Scripts.Systems;
 using Game.UI;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -32,8 +31,10 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         private Slider _sfxSlider;
 
         //video
-        private DropdownField _resolutionsDropdown;
-        private Toggle _fullscreenToggle;
+        private CustomDropdown _resolutionsDropdown;
+        private CustomDropdown _fullscreenDropdown;
+        private List<string> _screenNames = new List<string>();
+        private List<OptionsScreenMode> _screenModes = new();
 
         private List<string> _resolutionNames = new();
 
@@ -54,8 +55,8 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _musicSlider = _root.Q<Slider>("MusicAudioSlider");
             _sfxSlider = _root.Q<Slider>("SFXAudioSlider");
 
-            _resolutionsDropdown = _root.Q<DropdownField>("ResolutionDropdown");
-            _fullscreenToggle = _root.Q<Toggle>("FullscreenToggle");
+            _resolutionsDropdown = _root.Q<CustomDropdown>("ResolutionDropdown");
+            _fullscreenDropdown = _root.Q<CustomDropdown>("FullscreenDropdown");
 
             _sensitivitySlider = _root.Q<Slider>("MouseSensitivitySlider");
             _rebindsContainer = _root.Q<GroupBox>("RebindsContainer");
@@ -71,7 +72,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _sfxSlider.RegisterValueChangedCallback<float>(OnSFXSliderValueChanged);
 
             _resolutionsDropdown.RegisterValueChangedCallback<string>(OnResolutionsDropdownValueChanged);
-            _fullscreenToggle.RegisterValueChangedCallback<bool>(OnFullscreenToggleValueChanged);
+            _fullscreenDropdown.RegisterValueChangedCallback<string>(OnFullscreenValueChanged);
 
             _closeBtn.RegisterCallback<ClickEvent>(OnCloseButtonClicked);
             _saveBtn.RegisterCallback<ClickEvent>(OnSaveButtonClicked);
@@ -86,7 +87,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _sfxSlider.UnregisterValueChangedCallback<float>(OnSFXSliderValueChanged);
 
             _resolutionsDropdown.UnregisterValueChangedCallback<string>(OnResolutionsDropdownValueChanged);
-            _fullscreenToggle.UnregisterValueChangedCallback<bool>(OnFullscreenToggleValueChanged);
+            _fullscreenDropdown.UnregisterValueChangedCallback<string>(OnFullscreenValueChanged);
 
             _closeBtn.UnregisterCallback<ClickEvent>(OnCloseButtonClicked);
             _saveBtn.UnregisterCallback<ClickEvent>(OnSaveButtonClicked);
@@ -221,13 +222,24 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
                 _resolutionNames.Add(option);
             }
 
-            _resolutionsDropdown.choices = _resolutionNames;
+            _resolutionsDropdown.SetChoices(_resolutionNames);
             _resolutionsDropdown.value = _resolutionNames[currentResolutionIndex];
         }
 
-        private void UpdateFullscreenToggle(bool value)
+        private void UpdateFullscreenToggle(OptionsScreenMode value)
         {
-            _fullscreenToggle.value = value;
+            _screenNames.Clear();
+            _screenModes.Clear();
+
+            foreach (OptionsScreenMode i in Enum.GetValues(typeof(OptionsScreenMode)))
+            {
+                var option = $"{i}";
+                _screenNames.Add(option);
+                _screenModes.Add(i);
+            }
+
+            _fullscreenDropdown.SetChoices(_screenNames);
+            _fullscreenDropdown.value = value.ToString();
         }
         
         private void OnAllSliderValueChanged(ChangeEvent<float> e)
@@ -255,9 +267,9 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             ViewModel.RequestChangeResolution(_resolutionNames.IndexOf(e.newValue));
         }
 
-        private void OnFullscreenToggleValueChanged(ChangeEvent<bool> e)
+        private void OnFullscreenValueChanged(ChangeEvent<string> e)
         {
-            ViewModel.RequestChangeFullscreen(e.newValue);
+            ViewModel.RequestChangeFullscreen(_screenModes[_screenNames.IndexOf(e.newValue)]);
         }
 
         private void OnRebindStart(int inputActionIndex, int targetIndex, InputMapType type = InputMapType.Gameplay)

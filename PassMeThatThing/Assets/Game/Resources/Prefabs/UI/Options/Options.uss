@@ -1,12 +1,47 @@
 .custom-slider .unity-base-slider__tracker {
     height: 23px;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 4px;
+    border-right-width: 4px;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+    border-left-color: rgb(71, 190, 113);
+    border-right-color: rgb(71, 190, 113);
+    border-top-color: rgb(71, 190, 113);
+    border-bottom-color: rgb(71, 190, 113);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
 }
 
 .custom-slider .unity-base-slider__dragger {
-    align-self: auto;
-    translate: 0 -50%;
-    width: 18px;
-    height: 45px;
+    width: 68px;
+    height: 66px;
+    background-image: resource("Sprites/Menu/ValveIcon");
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-top: -24px;
+    transition-property: rotate;
+    transition-duration: 0.2s;
+}
+
+.custom-slider .unity-base-slider__dragger:hover {
+    width: 68px;
+    height: 66px;
+    background-image: resource("Sprites/Menu/ValveIcon");
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-top: -24px;
+    rotate: 20deg;
 }
 
 .custom-slider .unity-drager-border {
@@ -22,4 +57,112 @@
 .custom-slider .unity-slider__label {
     font-size: 52px;
     -unity-text-align: middle-left;
+    color: rgb(92, 221, 138);
+}
+
+.custom-slider .unity-slider__label:focus {
+    color: rgb(92, 221, 138);
+}
+
+.custom-slider {
+    flex-direction: column;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.custom-slider .unity-slider__input {
+    font-size: 52px;
+    -unity-text-align: middle-left;
+    color: rgb(92, 221, 138);
+    height: 70px;
+}
+
+.custom-dropdown {
+    position: relative;
+    width: 561px;
+    margin: 4px;
+}
+
+.custom-dropdown__button {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(43, 43, 43, 0);
+    border-color: rgb(30, 30, 30);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin: 0;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(92, 221, 138);
+    border-right-color: rgb(92, 221, 138);
+    border-top-color: rgb(92, 221, 138);
+    border-bottom-color: rgb(92, 221, 138);
+}
+
+.custom-dropdown__button:hover {
+    background-color: rgba(92, 221, 138, 0.396);
+}
+
+.custom-dropdown__label {
+    font-size: 42px;
+}
+
+.custom-dropdown__arrow {
+    transition: rotate 0.2s;
+    background-image: resource("Sprites/Menu/ArrowIcon");
+    width: 20px;
+    height: 20px;
+}
+
+.custom-dropdown__arrow--open {
+    rotate: 180deg;
+}
+
+.custom-dropdown__popup {
+    background-color: rgb(37, 37, 37);
+    border-color: rgb(26, 26, 26);
+    border-width: 1px;
+    border-radius: 4px;
+    z-index: 1000;
+    width: 563px;
+    height: 429px;
+    position: absolute;
+    border-left-color: rgb(92, 221, 138);
+    border-right-color: rgb(92, 221, 138);
+    border-top-color: rgb(92, 221, 138);
+    border-bottom-color: rgb(92, 221, 138);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+}
+
+.custom-dropdown__scroll-view {
+    padding: 2px;
+}
+
+.custom-dropdown__item {
+    background-color: transparent;
+    border-width: 0;
+    border-radius: 2px;
+    text-align: left;
+    padding: 6px 8px;
+    margin: 1px 0;
+    font-size: 30px;
+}
+
+.custom-dropdown__item:hover {
+    background-color: rgb(64, 64, 64);
+}
+
+.custom-dropdown__item--selected {
+    background-color: rgb(44, 93, 136);
+}
+
+.custom-toggle {
+    flex-direction: column;
 }

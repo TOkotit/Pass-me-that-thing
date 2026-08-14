@@ -1,26 +1,26 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="GameSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/GameSettings.uxml?fileID=9197481963319205126&amp;guid=7aa9f5c85035ece409b818e7b4ac7ebf&amp;type=3#GameSettings" />
-    <ui:Template name="VideoSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/VideoSettings.uxml?fileID=9197481963319205126&amp;guid=6ca14b21c3e09cf428ed0ea9e5150a8b&amp;type=3#VideoSettings" />
-    <ui:Template name="AudioSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/AudioSettings.uxml?fileID=9197481963319205126&amp;guid=00a8fea933579b64889f91a72d752b31&amp;type=3#AudioSettings" />
-    <ui:Template name="KeyboardSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/KeyboardSettings.uxml?fileID=9197481963319205126&amp;guid=5dd21f8b6b8836a4d9a0da3153fe2eb9&amp;type=3#KeyboardSettings" />
-    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/TabView.uss?fileID=7433441132597879392&amp;guid=bb1bcbddb71353645b4ef1aa61310662&amp;type=3#TabView" />
+    <ui:Template name="AudioSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/AudioSettings.uxml?fileID=9197481963319205126&amp;guid=00a8fea933579b64889f91a72d752b31&amp;type=3#AudioSettings"/>
+    <ui:Template name="GameSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/GameSettings.uxml?fileID=9197481963319205126&amp;guid=7aa9f5c85035ece409b818e7b4ac7ebf&amp;type=3#GameSettings"/>
+    <ui:Template name="KeyboardSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/ControlsSettings.uxml?fileID=9197481963319205126&amp;guid=5dd21f8b6b8836a4d9a0da3153fe2eb9&amp;type=3#ControlsSettings"/>
+    <ui:Template name="VideoSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/VideoSettings.uxml?fileID=9197481963319205126&amp;guid=6ca14b21c3e09cf428ed0ea9e5150a8b&amp;type=3#VideoSettings"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/TabView.uss?fileID=7433441132597879392&amp;guid=bb1bcbddb71353645b4ef1aa61310662&amp;type=3#TabView"/>
     <ui:TabView style="height: 100%;">
         <ui:Tab label="Game" name="Game">
-            <ui:Instance template="GameSettings" />
+            <ui:Instance template="GameSettings"/>
         </ui:Tab>
         <ui:Tab label="Video" name="Video">
-            <ui:Instance template="VideoSettings" style="width: 100%; height: 100%;" />
+            <ui:Instance template="VideoSettings" style="width: 100%; height: 100%;"/>
         </ui:Tab>
         <ui:Tab label="Audio" name="Audio">
-            <ui:Instance template="AudioSettings" style="height: 100%; width: 100%;" />
+            <ui:Instance template="AudioSettings" style="height: 100%; width: 100%;"/>
         </ui:Tab>
         <ui:Tab label="Controls" name="Controls">
-            <ui:Instance template="KeyboardSettings" />
+            <ui:Instance template="KeyboardSettings"/>
         </ui:Tab>
     </ui:TabView>
-    <ui:Button text="Close" name="CloseBtn" style="position: absolute; top: 0; left: auto; height: 139px; width: 190px; right: 0; font-size: 51px;" />
-    <ui:Button text="Save" name="SaveBtn" style="position: absolute; top: auto; left: auto; height: 139px; width: 190px; right: -2px; font-size: 51px; bottom: 4px;" />
+    <ui:Button text="" name="CloseBtn" style="position: absolute; top: 0; left: auto; height: 149px; width: 158px; right: 0; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; background-image: resource(&quot;Sprites/Menu/ReturnIcon&quot;); background-color: rgba(188, 188, 188, 0); -unity-background-scale-mode: scale-to-fit;"/>
+    <ui:Button text="Save" name="SaveBtn" style="position: absolute; top: auto; left: auto; height: 139px; width: 190px; right: -2px; font-size: 51px; bottom: 4px; background-color: rgba(188, 188, 188, 0); color: rgb(92, 221, 138);"/>
     <ui:VisualElement name="RebindBlockImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-color: rgba(53, 53, 53, 0.77); justify-content: center; visibility: hidden;">
-        <ui:Label text="press any button" style="color: rgb(255, 255, 255); font-size: 115px; -unity-text-align: middle-center; align-self: center;" />
+        <ui:Label text="press any button" style="color: rgb(255, 255, 255); font-size: 115px; -unity-text-align: middle-center; align-self: center;"/>
     </ui:VisualElement>
 </ui:UXML>

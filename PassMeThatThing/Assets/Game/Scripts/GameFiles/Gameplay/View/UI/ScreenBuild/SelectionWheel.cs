@@ -41,7 +41,6 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
         
         public void SetImageSprites(List<Sprite> sprites)
         {
-            //_segmentsCount = sprites.Count;
             _segmentSprites = sprites;
             
             RefreshWheel();
@@ -49,7 +48,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
 
         public void RefreshWheel()
         {
-            Debug.Log("RefreshWheel");
+            //Debug.Log("RefreshWheel");
             Clear();
             _segmentElements.Clear();
             _hoveringElemIndex = -1;
