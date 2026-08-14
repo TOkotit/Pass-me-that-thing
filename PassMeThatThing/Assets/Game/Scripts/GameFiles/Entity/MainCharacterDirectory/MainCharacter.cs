@@ -32,17 +32,18 @@ namespace Game.Entity
         [SerializeField] private MainCharacterView view;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private AttackAnimationIdSO attackAnimationId;
         [SerializeField] private float strength;
         [SerializeField] private MeleeAttackController meleeAttackController;
         [SerializeField] private PhysicalItemInteractionController  physicalItemInteractionController;
-        //[SerializeField] private PlayerAnimationStateController maskLayerStateController;
-
+        
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
         public MainCharacterMovement Movement => movement;
         public MainCharacterCamera MCamera => mCamera;
         public MeleeAttackController MeleeAttackController => meleeAttackController;
         public PhysicalItemInteractionController PhysicalItemInteractionController => physicalItemInteractionController;
+        public AttackAnimationIdSO AttackAnimationId => attackAnimationId;
         public float Strength => strength;
 
         [SyncVar(hook = nameof(OnIsAliveChanged))]

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using AYellowpaper.SerializedCollections;
 using Game.Entity;
 using Game.Scripts.Enums;                    
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
@@ -12,14 +13,6 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
 {
     public class MeleeAttackController : NetworkBehaviour
     {
-
-        private static Dictionary<AttackAnimationType, string> _attackIds =
-            new Dictionary<AttackAnimationType, string>()
-            {
-                { AttackAnimationType.AttackVertical1, "AttackVertical1" },
-                { AttackAnimationType.AttackHorizontal1, "AttackHorizontal1" }
-            };
-
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private Animator pivotAnimator;
         private float _swingDuration;
@@ -51,7 +44,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             if (!_currentMelee || _currentMelee.Attacks.Count <= 0) return;
             if (_attackID >= _currentMelee.Attacks.Count) _attackID = 0; 
             var currentAttackID = _currentMelee.Attacks[_attackID];
-            var currentAttack = _attackIds[currentAttackID];
+            var currentAttack = mainCharacter.AttackAnimationId.attackIds[currentAttackID];
             var swingClip = pivotAnimator.runtimeAnimatorController.animationClips
                 .FirstOrDefault(clip => clip.name == currentAttack);
             if (swingClip)
