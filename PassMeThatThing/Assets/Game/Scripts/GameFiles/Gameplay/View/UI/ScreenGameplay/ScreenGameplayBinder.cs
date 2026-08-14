@@ -34,7 +34,7 @@ namespace Game.Gameplay.View.UI
         
         
         private VisualElement _root;
-
+        private LevelGrid _levelGrid;
         private Label _healthText;
         private VisualElement _healthImage;
         private VisualElement _deathImage;
@@ -87,6 +87,7 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             ViewModel.RequestSubCameraRotation(UpdateMiniMapRotation);
+            ViewModel.RequestSubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
@@ -108,7 +109,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
             ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             ViewModel.RequestUnsubCameraRotation(UpdateMiniMapRotation);
-
+            ViewModel.RequestUnsubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
             ViewModel.RequestUnsub();
         }
@@ -282,11 +283,13 @@ namespace Game.Gameplay.View.UI
         private void UpdateMiniMapRotation(float currentYAngle)
         {
             if (_miniMap == null) Debug.LogError("[UI] Не назначена миникарта");
-            _miniMap.style.rotate = new StyleRotate(new Rotate(Angle.Degrees(-currentYAngle)));
+            _miniMap.SetRotation(-currentYAngle);
         }
         
         private void SetMinimapSource(LevelGrid levelGrid)
         {
+            _levelGrid = levelGrid;
+
             if (_miniMap == null)
             {
                 Debug.LogWarning("[UI] В UXML не найден элемент 'Minimap' типа MinimapView.");
@@ -295,6 +298,13 @@ namespace Game.Gameplay.View.UI
 
             _miniMap.SetSource(levelGrid);
         }
-
+        private void UpdateMiniMapPosition(Vector3 playerPosition)
+        {
+            if (_miniMap == null || _levelGrid == null) return;
+            
+            var cellPosition = _levelGrid.UnityGrid.WorldToCell(playerPosition);
+            
+            _miniMap.SetCenter(cellPosition);
+        }
     }
 }

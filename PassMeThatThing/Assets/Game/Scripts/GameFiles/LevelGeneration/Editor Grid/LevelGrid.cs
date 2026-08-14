@@ -8,6 +8,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
     [RequireComponent(typeof(Grid))]
     public class LevelGrid : MonoBehaviour
     {
+        
+        public struct CellData
+        {
+            public int RoomId;
+            public List<Vector3Int> Doors;
+        }
+        private Dictionary<Vector3Int, CellData> _cellDataMap;
+        
+        
         public int editorDrawRadius = 20;
         [SerializeField] private Grid _grid;
         [SerializeField] private Color emptyCellColor = Color.gray;
@@ -42,23 +51,46 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
                 _grid = GetComponent<Grid>();
 
             _occupiedCells ??= new HashSet<Vector3Int>(_serializedOccupiedCells);
+            _cellDataMap ??= new Dictionary<Vector3Int, CellData>();
             
         }
 
         
-        public void SetCellState(Vector3Int cellPosition, bool isOccupied)
+        public void SetCellState(Vector3Int cellPosition, bool isOccupied, List<Vector3Int> doorDirections = null, int roomId = -1)
         {
+            
+            
             if (_occupiedCells == null) InitializeGrid();
 
             if (isOccupied)
             {
                 _occupiedCells?.Add(cellPosition);
+                if (_cellDataMap != null)
+                {
+                    _cellDataMap[cellPosition] = new CellData 
+                    { 
+                        RoomId = roomId, 
+                        Doors = doorDirections ?? new List<Vector3Int>() 
+                    };
+                }
             }
             else
             {
                 _occupiedCells?.Remove(cellPosition);
+                _cellDataMap?.Remove(cellPosition);
             }
         }
+        
+        public bool TryGetCellData(Vector3Int cellPosition, out CellData data)
+        {
+            if (_cellDataMap != null)
+            {
+                return _cellDataMap.TryGetValue(cellPosition, out data);
+            }
+            data = default;
+            return false;
+        }
+        
         
         public bool IsCellOccupied(Vector3Int cellPosition)
         {
@@ -68,6 +100,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
         public void ClearGrid()
         {
             _occupiedCells?.Clear();
+            _cellDataMap?.Clear();
             _serializedOccupiedCells.Clear();
         }
         

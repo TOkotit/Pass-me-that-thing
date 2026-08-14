@@ -1,5 +1,6 @@
 ﻿using System;
 using DI;
+using Game.Entity;
 using Mirror;
 using Systems;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace MainCharacterNetwork
         private MainCharacterMovement _controllable;
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
-        
+        private MCLocalModel _mcLocalModel;
         private bool _subscribed; 
         private Vector3 _lastSentDirection;
         
@@ -55,9 +56,10 @@ namespace MainCharacterNetwork
         }
         
         [Inject]
-        private void Construct(GameInputManager gameInputManager)
+        private void Construct(GameInputManager gameInputManager, MCLocalModel mcLocalModel)
         {
             _gameInput = gameInputManager.GameInput;
+            _mcLocalModel = mcLocalModel;
         }
         
         public override void OnStartClient()
@@ -143,6 +145,8 @@ namespace MainCharacterNetwork
             if (!isLocalPlayer) return;
 
             ReadMovement();
+            
+            _mcLocalModel?.ReportPlayerPosition(transform.position);
             
             //TODO удалить это, как только доделаем шейдеры окончательно
             if (Input.GetKeyDown(KeyCode.V))
