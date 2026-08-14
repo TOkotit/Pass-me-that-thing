@@ -1,0 +1,29 @@
+.pause-menu_button-socket {
+    width: 500px;
+    height: 128px;
+    align-self: center;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    background-image: resource("Sprites/Menu/MenuBtn");
+}
+
+.pause-menu_button {
+    align-self: auto;
+    font-size: 45px;
+    color: rgb(92, 221, 138);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    flex-grow: 1;
+    transition-property: font-size, color;
+    transition-duration: 0.2s, 0.2s;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.pause-menu_button:hover {
+    font-size: 60px;
+    color: rgb(21, 146, 66);
+}
