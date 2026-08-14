@@ -13,3 +13,15 @@
     transition-property: scale;
     transition-timing-function: ease;
 }
+
+.socket-outline {
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}
+
+.socket-outline--selected {
+    transition-property: opacity;
+    transition-duration: 0.2s;
+    opacity: 1;
+}

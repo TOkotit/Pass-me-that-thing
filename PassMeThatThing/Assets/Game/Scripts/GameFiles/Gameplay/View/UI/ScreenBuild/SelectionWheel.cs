@@ -17,6 +17,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
         private List<Sprite> _segmentSprites = new();
 
         public event Action<int, int> OnValueChanged;
+        public event Action<int, int> OnPreviewValueChanged;
 
         public const string SegmentClassName = "selection-wheel__segment";
         public const string SelectedSegmentClassName = "selection-wheel__segment--selected";
@@ -116,6 +117,8 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
                 {
                     _segmentElements[_hoveringElemIndex].AddToClassList(SelectedSegmentClassName);
                 }
+
+                OnPreviewValueChanged?.Invoke(wheelPartIndex, _segmentsCount - 1);
             }
         }
 
