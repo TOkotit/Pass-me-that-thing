@@ -354,9 +354,10 @@ namespace Game.Scripts.GameFiles.Items
         [Command]
         private void CmdSwing()
         {
+            if (!mainCharacter.MeleeAttackController) return;
             if (Time.time - _lastSwingTime < swingCooldown) return;
             _lastSwingTime = Time.time;
-            _physicalItemInteractionController.TriggerSwing();
+            mainCharacter.MeleeAttackController.TriggerSwing();
         }
 
         

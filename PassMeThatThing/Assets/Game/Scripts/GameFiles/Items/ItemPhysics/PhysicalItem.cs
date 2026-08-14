@@ -5,6 +5,7 @@ using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
 using Game.Scripts.GameFiles.Entity.Buildings;
+using Game.Scripts.GameFiles.Entity.MainCharacterPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -27,6 +28,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private NetworkItem _network;
         [SerializeField] private bool hasToBeAligned;
         [SerializeField] private Collider collider;
+        [SerializeField] private MeleeItem meleeItem;
         [SyncVar]
         [SerializeField] private bool _isThrown;
         [SerializedDictionary] public SerializedDictionary<Resource, float> Resources;
@@ -48,6 +50,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Vector3 DefaultPosition => defaultPosition;
         public bool DoActAndSwing => doActAndSwing;
         public bool CanBeOwned => canBeOwned;
+        public MeleeItem Melee => meleeItem;
         public MainCharacter Owner { get; set; }
         public readonly SyncList<NetworkIdentity> Holders = new SyncList<NetworkIdentity>();
         public NetworkConnectionToClient ConnectionToClient { get; set; }
