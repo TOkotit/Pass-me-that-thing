@@ -6,7 +6,7 @@
         <ui:VisualElement style="position: absolute; width: 1275px; height: 776px; flex-direction: row; top: 94px; left: 308px;">
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Recipes" class="title"/>
-                <ui:ScrollView horizontal-scroller-visibility="Hidden" class="custom-scroll-view" style="flex-grow: 1;">
+                <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" class="custom-scroll-view" style="flex-grow: 1;">
                     <ui:GroupBox name="RecipesContainer" style="flex-grow: 1;"/>
                 </ui:ScrollView>
             </ui:VisualElement>

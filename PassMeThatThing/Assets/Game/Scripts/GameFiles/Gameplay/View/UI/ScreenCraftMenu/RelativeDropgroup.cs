@@ -26,13 +26,13 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenCraftMenu
             _mainButton.AddToClassList("dropgroup__button");
             Add(_mainButton);
 
-            _label = new Label("...") { name = "dropgroup-label" };
-            _label.AddToClassList("dropgroup__label");
-            _mainButton.Add(_label);
-
             _arrow = new VisualElement { name = "dropgroup-arrow" };
             _arrow.AddToClassList("dropgroup__arrow");
             _mainButton.Add(_arrow);
+
+            _label = new Label("...") { name = "dropgroup-label" };
+            _label.AddToClassList("dropgroup__label");
+            _mainButton.Add(_label);
 
             _content = new VisualElement { name = "dropgroup-content" };
             _content.AddToClassList("dropgroup__content");
