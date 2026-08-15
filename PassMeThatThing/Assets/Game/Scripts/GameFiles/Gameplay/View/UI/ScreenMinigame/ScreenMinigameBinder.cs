@@ -213,7 +213,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 inputBox.style.height = 120;
                 inputBox.style.marginTop = 30f;
 
-                inputBox.transform.scale = new Vector2(-1, 1);
+                inputBox.style.scale = new Vector2(-1, 1);
                 inputBox.style.backgroundImage = new StyleBackground(t.end);
 
 

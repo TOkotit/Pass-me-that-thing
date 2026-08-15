@@ -1,7 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Options/Options.uss?fileID=7433441132597879392&amp;guid=b029a61c8e29dda409e19c040001d6df&amp;type=3#Options" />
-    <ui:Slider label="Sensitivity" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="MouseSensitivitySlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px; visibility: visible; display: flex;" />
-    <ui:ScrollView name="ScrollView" vertical-page-size="340.92" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.28);">
-        <ui:GroupBox name="RebindsContainer" style="height: 1500px;" />
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Options/Options.uss?fileID=7433441132597879392&amp;guid=b029a61c8e29dda409e19c040001d6df&amp;type=3#Options"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/CustomScrollView.uss?fileID=7433441132597879392&amp;guid=add297b3c2d0062439dc331c8313e322&amp;type=3#CustomScrollView"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
+    <ui:Slider label="Sensitivity" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="MouseSensitivitySlider" class="custom-slider tektur-font" style="width: 1011px; align-self: center; height: 160px; visibility: visible; display: flex;"/>
+    <ui:ScrollView name="ScrollView" vertical-page-size="340.92" class="custom-scroll-view tektur-font" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.28);">
+        <ui:GroupBox name="RebindsContainer" style="height: 1500px;"/>
     </ui:ScrollView>
 </ui:UXML>

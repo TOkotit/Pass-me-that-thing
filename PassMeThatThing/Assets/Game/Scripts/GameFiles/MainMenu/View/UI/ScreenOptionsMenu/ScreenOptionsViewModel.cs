@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ami.BroAudio;
+using Assets.Game.Scripts.Systems;
 using Enums;
 using Game.Gameplay.View.UI;
 using Game.Scripts.Systems;
@@ -85,7 +86,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _optionsManager.GetAllActions();
         }
 
-        public void RequestChangeFullscreen(bool isFullscreen)
+        public void RequestChangeFullscreen(OptionsScreenMode isFullscreen)
         {
             _optionsManager.SetFullScreen(isFullscreen);
         }

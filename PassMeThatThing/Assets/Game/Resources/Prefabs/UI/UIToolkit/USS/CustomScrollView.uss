@@ -1,0 +1,65 @@
+.custom-scroll-view {
+}
+
+.custom-scroll-view .unity-base-slider__dragger {
+    background-color: rgb(45, 114, 70);
+    border-left-color: rgb(92, 221, 138);
+    border-right-color: rgb(92, 221, 138);
+    border-top-color: rgb(92, 221, 138);
+    border-bottom-color: rgb(92, 221, 138);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    border-bottom-right-radius: 9px;
+    border-bottom-left-radius: 9px;
+    position: relative;
+    left: auto;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    align-self: center;
+    scale: 1 0.98;
+}
+
+.custom-scroll-view .unity-scroller__low-button {
+    display: none;
+    visibility: visible;
+}
+
+.custom-scroll-view .unity-scroller__high-button {
+    display: none;
+}
+
+.custom-scroll-view .unity-base-slider__tracker {
+    border-left-color: rgb(92, 221, 138);
+    border-right-color: rgb(92, 221, 138);
+    border-top-color: rgb(92, 221, 138);
+    border-bottom-color: rgb(92, 221, 138);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 11px;
+    border-top-right-radius: 11px;
+    border-bottom-right-radius: 11px;
+    border-bottom-left-radius: 11px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.custom-scroll-view .unity-scroll-view__vertical-scroller {
+    width: 39px;
+    align-items: center;
+}
+
+.custom-scroll-view .unity-scroller__slider {
+    width: 28px;
+}
+
+
+
+.result-craft-image {
+    background-image: resource("Sprites/Craft/craft_result");
+}

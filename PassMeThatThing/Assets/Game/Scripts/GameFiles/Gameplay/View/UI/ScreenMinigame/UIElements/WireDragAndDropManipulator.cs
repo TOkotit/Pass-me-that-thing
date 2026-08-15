@@ -92,7 +92,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             {
                 _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
                     _box.worldBound.position.y), target.worldBound.position);
-                _box.transform.scale = new Vector2(1, 1);
+                _box.style.scale = new Vector2(1, 1);
                 _box.style.backgroundImage = new StyleBackground(_t.start);
             }
                 
@@ -182,7 +182,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             {
                 _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
                     _box.worldBound.position.y), target.worldBound.position);
-                _box.transform.scale = new Vector2(1, 1);
+                _box.style.scale = new Vector2(1, 1);
                 _box.style.backgroundImage = new StyleBackground(_t.start);
             }
                 

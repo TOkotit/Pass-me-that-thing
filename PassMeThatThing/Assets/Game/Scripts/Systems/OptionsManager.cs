@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ami.BroAudio;
+using Assets.Game.Scripts.Systems;
 using Enums;
 using Systems;
 using UnityEngine;
@@ -35,7 +36,7 @@ namespace Game.Scripts.Systems
             {
                 OptionsData = new OptionsData()
                 {
-                    isFullScreen = false,
+                    isFullScreen = 0,
                     resolutionIndex = 0,
                     language = "English",
                     mouseSensitivity = 15f,
@@ -97,7 +98,7 @@ namespace Game.Scripts.Systems
                 Resolutions[resolutionIndex].height, Screen.fullScreen);
         }
         
-        public void SetFullScreen(bool isFullScreen, bool init=false)
+        public void SetFullScreen(OptionsScreenMode isFullScreen, bool init=false)
         {
             if (!init)
                 OptionsData.isFullScreen = isFullScreen;
@@ -105,7 +106,26 @@ namespace Game.Scripts.Systems
             {
                 IsDataSaved = false;
             }
-            Screen.fullScreen = isFullScreen;
+
+            switch (isFullScreen)
+            {
+                case OptionsScreenMode.Fullscreen:
+                    {
+                        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                    }
+                    break;
+                case OptionsScreenMode.Windowed:
+                    {
+                        Screen.fullScreenMode = FullScreenMode.Windowed;
+                    }
+                    break;
+                case OptionsScreenMode.Borderless:
+                    {
+                        Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                    }
+                    break;
+            }
+            
         }
         
         //controls

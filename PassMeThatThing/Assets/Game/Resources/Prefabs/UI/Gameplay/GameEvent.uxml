@@ -1,8 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:GroupBox style="height: 100%; flex-direction: row; margin-left: 0; margin-bottom: 0; margin-right: 0; margin-top: 0; padding-right: 3px; background-image: resource(&apos;Sprites/GameplaySprites/event&apos;); -unity-background-scale-mode: stretch-to-fill; min-height: auto; max-height: 70px; background-position-x: left 0; background-position-y: top 0;">
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
+    <ui:GroupBox class="tektur-font" style="height: 100%; flex-direction: row; margin-left: 0; margin-bottom: 0; margin-right: 0; margin-top: 0; padding-right: 3px; background-image: resource(&quot;Sprites/GameplaySprites/event&quot;); -unity-background-scale-mode: stretch-to-fill; min-height: auto; max-height: 70px; background-position-x: left 0; background-position-y: top 0;">
         <ui:GroupBox name="GroupBox" style="flex-direction: row; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-bottom: 0; padding-left: 0; align-self: center; left: 19%;">
-            <ui:VisualElement name="EventImg" style="flex-grow: 0; background-color: rgb(255, 255, 255); width: 33px; height: 32px; align-self: center;" />
-            <ui:Label text="Label" name="EventLb" style="width: 127px; flex-grow: 1; font-size: 29px; -unity-text-align: middle-center; margin-left: 0; margin-bottom: 0; margin-right: 0; margin-top: 0; height: 44px; color: rgb(92, 221, 138); flex-shrink: 1;" />
+            <ui:VisualElement name="EventImg" style="flex-grow: 0; background-color: rgb(255, 255, 255); width: 33px; height: 32px; align-self: center;"/>
+            <ui:Label text="Label" name="EventLb" style="width: 127px; flex-grow: 1; font-size: 29px; -unity-text-align: middle-center; margin-left: 0; margin-bottom: 0; margin-right: 0; margin-top: 0; height: 44px; color: rgb(92, 221, 138); flex-shrink: 1;"/>
         </ui:GroupBox>
     </ui:GroupBox>
 </ui:UXML>

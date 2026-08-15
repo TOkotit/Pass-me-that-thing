@@ -16,7 +16,7 @@ namespace Game.Entity
         public event Action<bool> OnDeathChanged;
         public event Action<float> OnCameraYRotationChanged;
         public event Action<Vector3> OnCameraPositionChanged;
-
+        public event Action<Vector3> OnPlayerPositionChanged;
         public event Action<string> OnCurrentInteractableTextChanged;
 
         public int Health
@@ -65,6 +65,11 @@ namespace Game.Entity
         public void ReportCameraPosition(Vector3 value)
         {
             OnCameraPositionChanged?.Invoke(value);
+        }
+        
+        public void ReportPlayerPosition(Vector3 value)
+        {
+            OnPlayerPositionChanged?.Invoke(value);
         }
     }
 }

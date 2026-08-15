@@ -1,8 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Options/Options.uss?fileID=7433441132597879392&amp;guid=b029a61c8e29dda409e19c040001d6df&amp;type=3#Options" />
-    <ui:GroupBox style="height: 100%; justify-content: center;">
-        <ui:Slider label="All" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="AllAudioSlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px;" />
-        <ui:Slider label="Music" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="MusicAudioSlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px;" />
-        <ui:Slider label="SFX" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="SFXAudioSlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px;" />
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Options/Options.uss?fileID=7433441132597879392&amp;guid=b029a61c8e29dda409e19c040001d6df&amp;type=3#Options"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
+    <ui:GroupBox class="tektur-font" style="height: 100%; justify-content: center;">
+        <ui:Slider label="All" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="AllAudioSlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px;"/>
+        <ui:Slider label="Music" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="MusicAudioSlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px;"/>
+        <ui:Slider label="SFX" value="49.1" high-value="100" direction="Horizontal" inverted="false" name="SFXAudioSlider" class="custom-slider" style="width: 1011px; align-self: center; height: 160px;"/>
     </ui:GroupBox>
 </ui:UXML>

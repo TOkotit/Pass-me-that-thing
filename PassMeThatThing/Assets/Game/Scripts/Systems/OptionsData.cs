@@ -1,5 +1,6 @@
 using System;
 using Ami.BroAudio;
+using Assets.Game.Scripts.Systems;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Game.Scripts.Systems
     [Serializable]
     public class OptionsData
     {
-        public bool isFullScreen;
+        public OptionsScreenMode isFullScreen;
         public int resolutionIndex;
 
         public float mouseSensitivity; //% from 0 to 100

@@ -501,7 +501,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             foreach (var plate in virtualPlates)
             {
                 var globalPos = origin + plate.LocalPosition;
-                levelGrid.SetCellState(globalPos, true);
+                var doorDirs = plate.Doors.Select(d => d.GlobalDirection).ToList();
+                levelGrid.SetCellState(globalPos, true, doorDirs, instance.GetInstanceID());
+
                 data.OccupiedCells.Add(globalPos);
 
                 foreach (var door in plate.Doors)
@@ -902,7 +904,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                             foreach (var p in plates)
                             {
-                                levelGrid.SetCellState(cell + p.LocalPosition, true);
+                                var doorDirs = p.Doors.Select(d => d.GlobalDirection).ToList();
+                                levelGrid.SetCellState(cell + p.LocalPosition, true, doorDirs, instance.GetInstanceID());
                             }
                             
                             i += prefabSize - 1; 

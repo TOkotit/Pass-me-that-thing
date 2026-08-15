@@ -17,6 +17,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
         private List<Sprite> _segmentSprites = new();
 
         public event Action<int, int> OnValueChanged;
+        public event Action<int, int> OnPreviewValueChanged;
 
         public const string SegmentClassName = "selection-wheel__segment";
         public const string SelectedSegmentClassName = "selection-wheel__segment--selected";
@@ -40,7 +41,6 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
         
         public void SetImageSprites(List<Sprite> sprites)
         {
-            //_segmentsCount = sprites.Count;
             _segmentSprites = sprites;
             
             RefreshWheel();
@@ -48,7 +48,7 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
 
         public void RefreshWheel()
         {
-            Debug.Log("RefreshWheel");
+            //Debug.Log("RefreshWheel");
             Clear();
             _segmentElements.Clear();
             _hoveringElemIndex = -1;
@@ -116,6 +116,8 @@ namespace Game.Scripts.GameFiles.Gameplay.View.UI.ScreenBuild
                 {
                     _segmentElements[_hoveringElemIndex].AddToClassList(SelectedSegmentClassName);
                 }
+
+                OnPreviewValueChanged?.Invoke(wheelPartIndex, _segmentsCount - 1);
             }
         }
 
