@@ -59,9 +59,9 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _uiManager.OpenScreenGameplay();
         }
 
-        public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe>> f)
+        public void RequestUpdateRecipes(Action<Dictionary<string, List<WorkbenchItemRecipe>>> f)
         {
-            f(recipeDatabase.AllRecipes);
+            f(recipeDatabase.RecipesByCategory);
         }
 
         public void RequestCraft(string recipeId)

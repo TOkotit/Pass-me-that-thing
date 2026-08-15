@@ -12,8 +12,27 @@
             </ui:VisualElement>
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Result" class="title"/>
-                <ui:VisualElement name="CurrentResultIm" class="bordered-rect thin-bordered-rect" style="width: 168px; position: relative; height: 171px; align-self: center; align-content: flex-start; flex-grow: 0; margin-top: 66px;"/>
-                <ui:Label text="label" name="CurrentResultLb" class="bordered-rect" style="height: 315px; width: 361px; font-size: 31px; -unity-text-align: middle-center; white-space: normal; text-overflow: clip; -unity-font-style: normal; align-self: center; margin-top: 50px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(89, 185, 123);"/>
+                <ui:VisualElement name="" style="flex-direction: row; justify-content: space-evenly; height: 150px;">
+                    <ui:VisualElement name="Res1" class="resource-preview">
+                        <ui:Instance template="ResourceView"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Res2" class="resource-preview">
+                        <ui:Instance template="ResourceView"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Res3" class="resource-preview">
+                        <ui:Instance template="ResourceView"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="CurrentResultIm" class="bordered-rect thin-bordered-rect result-craft-image" style="width: 170px; position: relative; height: 170px; align-self: center; align-content: flex-start; flex-grow: 0; margin-top: 30px; margin-bottom: 30px; aspect-ratio: 1;"/>
+                <ui:VisualElement style="flex-direction: row; justify-content: space-evenly; height: 150px;">
+                    <ui:VisualElement name="Res4" class="resource-preview">
+                        <ui:Instance template="ResourceView"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Res5" class="resource-preview">
+                        <ui:Instance template="ResourceView"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label text="label" name="CurrentResultLb" class="bordered-rect" style="height: 228px; width: 361px; font-size: 31px; -unity-text-align: middle-center; white-space: normal; text-overflow: clip; -unity-font-style: normal; align-self: center; margin-top: 50px; margin-right: 0; margin-bottom: 20px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(89, 185, 123);"/>
                 <ui:Button name="CraftBtn" class="physical-button" style="height: 90px; width: 227px; font-size: 54px; position: absolute; top: 813px; left: 50%; translate: -46% 0; right: auto; -unity-text-align: middle-center; background-color: rgba(188, 188, 188, 0); background-image: resource(&quot;Sprites/Craft/big_display_btn&quot;); padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;">
                     <ui:Label text="Craft" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 70px; width: 204px; color: rgb(140, 61, 14);"/>
                 </ui:Button>

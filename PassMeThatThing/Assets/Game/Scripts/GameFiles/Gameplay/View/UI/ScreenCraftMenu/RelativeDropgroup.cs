@@ -62,5 +62,10 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenCraftMenu
             _content.style.display = DisplayStyle.None;
             _arrow.RemoveFromClassList("dropgroup__arrow--open");
         }
+
+        public void SetLabel(string text)
+        {
+            _label.text = text;
+        }
     }
 }

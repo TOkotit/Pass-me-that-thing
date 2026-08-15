@@ -85,8 +85,6 @@
     background-color: rgba(89, 185, 123, 0.412);
 }
 
-
-
 .dropgroup {
     position: relative;
     margin: 4px;
@@ -153,4 +151,16 @@
     border-right-color: rgba(26, 26, 26, 0);
     border-top-color: rgba(26, 26, 26, 0);
     border-bottom-color: rgba(26, 26, 26, 0);
+}
+
+.resource-preview {
+    aspect-ratio: 1;
+    align-self: center;
+}
+
+.resource-preview__not-success {
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
 }

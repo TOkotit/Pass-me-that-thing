@@ -14,7 +14,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 
         public List<WorkbenchItemRecipe> AllRecipes => allRecipes;
 
-        public SerializedDictionary<string, List<WorkbenchItemRecipe>> RecipesByCategory => recipesByCategoryId;
+        public Dictionary<string, List<WorkbenchItemRecipe>> RecipesByCategory => recipesByCategoryId;
 
         public WorkbenchItemRecipe GetRecipe(string id)
         {
