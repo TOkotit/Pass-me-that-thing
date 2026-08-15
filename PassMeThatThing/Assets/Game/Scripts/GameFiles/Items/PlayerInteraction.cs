@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using DI;
 using Entity;
 using Game.Entity;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
+using Game.Scripts.GameFiles.Items.Refill;
 using Mirror;
 using Systems;
 using Unity.VisualScripting;
@@ -19,7 +22,6 @@ using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Items
 {
-
     public class PlayerInteraction : NetworkBehaviour
     {
         private PlayerInventory inventory;
@@ -39,15 +41,15 @@ namespace Game.Scripts.GameFiles.Items
         [SerializeField] private LayerMask interactionLayer;
         [SerializeField] private float interactionDistance;
         [SerializeField] private float interactionTimeOut = 1f;
+
         [Header("Swing Attack")]
         [SerializeField] private float swingCooldown = 0.8f;
 
         private float _lastSwingTime = -999f;
         private bool _leftMouseHeld;
-        
+
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController PhysicalItemInteractionController => _physicalItemInteractionController;
-        
 
         [Inject]
         private void Construct(GameInputManager gameInputManager,
@@ -64,6 +66,7 @@ namespace Game.Scripts.GameFiles.Items
         }
 
         #region Unity / Mirror methods
+
         public override void OnStartLocalPlayer()
         {
             TrySubscribe();
@@ -87,22 +90,21 @@ namespace Game.Scripts.GameFiles.Items
             if (_leftMouseHeld)
             {
                 var currentItem = _physicalItemInteractionController.CurrentHeldItem;
-                if (currentItem && currentItem.Reaction && currentItem.Reaction.IsContinuous)
+                if (currentItem && currentItem.LmbReaction && currentItem.LmbReaction.IsContinuous)
                 {
-                    currentItem.Reaction.Act();
+                    currentItem.LmbReaction.Act();
                 }
             }
             if (_outlineRegistry.EnabledOutlines.Count > 1)
             {
-                for (var i = _outlineRegistry.EnabledOutlines.Count - 1 - 1; i >= 0; i--)
+                for (var i = _outlineRegistry.EnabledOutlines.Count - 2; i >= 0; i--)
                 {
                     _outlineRegistry.DisableOutline(_outlineRegistry.EnabledOutlines[i]);
                 }
             }
 
             var ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+            if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
             {
                 if (_outlineRegistry.TryGetOutline(hit.collider.gameObject, out var outline))
                 {
@@ -110,17 +112,11 @@ namespace Game.Scripts.GameFiles.Items
                 }
             }
         }
-        
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying) return;
-            
-            var identity = GetComponent<NetworkIdentity>();
-            if (!identity || !identity.isLocalPlayer) return;
-        }
+
         #endregion
 
         #region Subscribes
+
         private void TrySubscribe()
         {
             if (_gameInput == null)
@@ -128,14 +124,12 @@ namespace Game.Scripts.GameFiles.Items
                 Debug.LogError($"[{gameObject.name}] GameInput is NULL during TrySubscribe!");
                 return;
             }
-
+            _gameInput.Gameplay.Reload.performed += OnReload;
             _gameInput.Gameplay.Interact.performed += OnInteract;
-            _gameInput.Gameplay.RightMouse.canceled += OnDrop;
-            _gameInput.Gameplay.RightMouse.performed += OnDropCharge;
-
+            _gameInput.Gameplay.Drop.canceled += OnDrop;
+            _gameInput.Gameplay.Drop.performed += OnDropCharge;
             _gameInput.Gameplay.LeftMouse.performed += OnActPerformed;
             _gameInput.Gameplay.LeftMouse.canceled += OnActCanceled;
-
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
             _gameInput.Gameplay.Item3.performed += Select3;
@@ -156,16 +150,14 @@ namespace Game.Scripts.GameFiles.Items
         private void TryUnsubscribe()
         {
             if (_gameInput == null) return;
-
             try
             {
+                _gameInput.Gameplay.Reload.performed -= OnReload;
                 _gameInput.Gameplay.Interact.performed -= OnInteract;
-                _gameInput.Gameplay.RightMouse.canceled -= OnDrop;
-                _gameInput.Gameplay.RightMouse.performed -= OnDropCharge;
-
+                _gameInput.Gameplay.Drop.canceled -= OnDrop;
+                _gameInput.Gameplay.Drop.performed -= OnDropCharge;
                 _gameInput.Gameplay.LeftMouse.performed -= OnActPerformed;
                 _gameInput.Gameplay.LeftMouse.canceled -= OnActCanceled;
-
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
                 _gameInput.Gameplay.Item3.performed -= Select3;
@@ -176,9 +168,11 @@ namespace Game.Scripts.GameFiles.Items
                 Debug.LogWarning($"Failed to unsubscribe safely: {ex}");
             }
         }
+
         #endregion
 
         #region Callbacks / Handlers
+
         private void OnInteract(InputAction.CallbackContext context)
         {
             TryInteract();
@@ -186,7 +180,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnDrop(InputAction.CallbackContext context)
         {
-            _currentAction = null;
+            InterruptCurrentAction();
             Drop();
         }
 
@@ -204,6 +198,7 @@ namespace Game.Scripts.GameFiles.Items
         {
             SelectSlot(2);
         }
+
         #endregion
 
         public void Drop()
@@ -214,7 +209,6 @@ namespace Game.Scripts.GameFiles.Items
                 var hands = _physicalItemInteractionController.HandsMovement;
                 var throwForce = hands.CurrentThrowForce;
                 var canThrow = hands.CanThrow;
-
                 inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, throwForce, canThrow);
                 hands.ResetCharge();
             }
@@ -235,7 +229,6 @@ namespace Game.Scripts.GameFiles.Items
         private void TryInteract()
         {
             _currentAction = null;
-            Debug.LogWarning("Trying interaction");
             if (Time.time - _lastInteractionTime > interactionTimeOut)
             {
                 _lastInteractionTime = Time.time;
@@ -245,7 +238,7 @@ namespace Game.Scripts.GameFiles.Items
                     var worldPoint = hit.point;
                     var hitTransform = hit.collider.transform;
                     var localPoint = hitTransform.InverseTransformPoint(worldPoint);
-                    
+
                     if (hit.collider.gameObject.CompareTag("Item"))
                     {
                         TryPickUp(hit.collider, localPoint);
@@ -255,21 +248,21 @@ namespace Game.Scripts.GameFiles.Items
                         var item = _physicalItemInteractionController.CurrentHeldItem;
                         if (item)
                         {
-                            if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject,
-                                    out var interactable))
+                            if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject, out var interactable))
                                 CmdInteractWithItem(hit.collider.gameObject, item);
                         }
-                        else { TryPickUp(hit.collider, localPoint); }
+                        else
+                        {
+                            TryPickUp(hit.collider, localPoint);
+                        }
                     }
                     else if (hit.collider.gameObject.CompareTag("Player"))
                     {
                         _damagableRegistry.TryGetDamagable(hit.collider.gameObject, out var damagable);
-                        Debug.Log(damagable);
                         if (damagable && damagable != mainCharacter)
                         {
                             if (_physicalItemInteractionController.CurrentHeldItem && damagable is MainCharacter player)
                             {
-                                Debug.Log($"Попытка передать предмет. HeldItem={_physicalItemInteractionController.CurrentHeldItem}, player={player}");
                                 inventory.CmdGiveItemToPlayer(player);
                             }
                         }
@@ -289,14 +282,14 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnDropCharge(InputAction.CallbackContext context)
         {
-            _currentAction = null;
+            InterruptCurrentAction();
             _physicalItemInteractionController.ChargeDrop();
         }
 
         public void TryPickUp(Collider target, Vector3 localPoint)
         {
+            InterruptCurrentAction();
             var item = _physicalItemRegistry.GetItem(target.gameObject);
-            Debug.Log("Trying Pick Up" + target.gameObject);
             if (item == _physicalItemInteractionController.CurrentHeldItem) return;
             inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex, localPoint);
         }
@@ -304,9 +297,7 @@ namespace Game.Scripts.GameFiles.Items
         [Server]
         public void TryPickUp(PhysicalItem target, Vector3 localPoint)
         {
-            Debug.Log("Trying Pick Up" + target.gameObject);
             if (target == _physicalItemInteractionController.CurrentHeldItem) return;
-            Debug.Log(inventory);
             inventory.ServerPickUpItem(target, _playerInventoryModel.ActiveSlotIndex, localPoint);
             if (_outlineRegistry.TryGetOutline(target.gameObject, out var outline))
             {
@@ -323,18 +314,19 @@ namespace Game.Scripts.GameFiles.Items
 
         private void OnActPerformed(InputAction.CallbackContext context)
         {
+            InterruptCurrentAction();
             var currentItem = _physicalItemInteractionController.CurrentHeldItem;
             if (!currentItem) return;
 
-            if (currentItem.Reaction)
+            if (currentItem.LmbReaction)
             {
-                if (currentItem.Reaction.IsContinuous)
+                if (currentItem.LmbReaction.IsContinuous)
                 {
-                    _leftMouseHeld = true;     
+                    _leftMouseHeld = true;
                 }
                 else
                 {
-                    currentItem.Reaction.Act(); 
+                    currentItem.LmbReaction.Act();
                     if (currentItem.CanBeOwned && currentItem.DoActAndSwing)
                         CmdSwing();
                 }
@@ -350,18 +342,67 @@ namespace Game.Scripts.GameFiles.Items
         {
             _leftMouseHeld = false;
         }
-        
+
+        private void OnReload(InputAction.CallbackContext context)
+        {
+            if (!isLocalPlayer) return;
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+            if (!currentItem || !currentItem.ReloadReaction) return;
+
+            if (currentItem.ReloadReaction is IRefillable)
+                CmdTryReload();
+            else
+                currentItem.ReloadReaction.Act();
+        }
+
+        [Command]
+        private void CmdTryReload()
+        {
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+            if (!currentItem || !currentItem.ReloadReaction) return;
+
+            if (currentItem.ReloadReaction is not IRefillable refillable) return;
+            var refiller = FindRefillerFor(refillable.RefillType);
+            if (refiller == null) return;
+
+            InterruptCurrentAction();
+            _currentAction = StartCoroutine(ReloadCoroutine(refiller, refillable));
+        }
+
+        private IEnumerator ReloadCoroutine(IRefiller refiller, IRefillable refillable)
+        {
+            yield return refiller.Refill(refillable, inventory);
+            _currentAction = null;
+        }
+
+        private IRefiller FindRefillerFor(RefillType type)
+        {
+            foreach (var kvp in inventory.ServerInventory)
+            {
+                var slot = kvp.Value;
+                var item = _physicalItemRegistry.GetItems()
+                    .FirstOrDefault(i => i.Network && i.Network.instanceId == slot.instanceId);
+                if (!item || !item.ReloadReaction) continue;
+
+                if (item.ReloadReaction is IRefiller refiller && refiller.RefillType == type)
+                    return refiller;
+            }
+            return null;
+        }
+
         [Command]
         private void CmdSwing()
         {
+            InterruptCurrentAction();
+            if (!mainCharacter.MeleeAttackController) return;
             if (Time.time - _lastSwingTime < swingCooldown) return;
             _lastSwingTime = Time.time;
-            _physicalItemInteractionController.TriggerSwing();
+            mainCharacter.MeleeAttackController.TriggerSwing();
         }
 
-        
         private void SelectSlot(int index)
         {
+            InterruptCurrentAction();
             if (_physicalItemInteractionController.CurrentHeldItem && !_physicalItemInteractionController.CurrentHeldItem.CanBeOwned)
             {
                 inventory.CmdDropItem(_playerInventoryModel.ActiveSlotIndex, 0, true);
@@ -378,12 +419,22 @@ namespace Game.Scripts.GameFiles.Items
                 inventory.CmdDrawItem(index, _physicalItemInteractionController.AnimatorTransform.position);
             }
         }
+
         [Command]
         private void CmdInteractWithItem(GameObject interactableObject, PhysicalItem item)
         {
             if (InteractableRegistry.Instance.TryGetInteractable(interactableObject, out var interactable))
             {
                 interactable.InteractWithItem(item);
+            }
+        }
+
+        private void InterruptCurrentAction()
+        {
+            if (_currentAction != null)
+            {
+                StopCoroutine(_currentAction);
+                _currentAction = null;
             }
         }
     }

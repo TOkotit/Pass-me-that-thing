@@ -16,12 +16,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private float strength;
         [SerializeField] private MainCharacterMovement movement;
-        [SerializeField] private Animator pivotAnimator;
+        
         private HandsMovement _handsMovement;
-        private float _swingDuration;
         public Transform AnimatorTransform => _handsMovement.AnimatorTransform;
         public HandsMovement HandsMovement => _handsMovement;
-        public Animator PivotAnimator => pivotAnimator;
         
 
         public override void OnStartLocalPlayer()
@@ -32,10 +30,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private void Start()
         {
             _handsMovement = GetComponentInChildren<HandsMovement>();
-            var swingClip = pivotAnimator.runtimeAnimatorController.animationClips
-                .FirstOrDefault(clip => clip.name == "Swing");
-            if (swingClip)
-                _swingDuration = swingClip.length;
         }
 
         private void InjectSelf()
@@ -137,7 +131,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (_heldItem)
             {
-                // Локально возвращаем слой для мгновенной реакции
                 _heldItem.gameObject.layer = LayerMask.NameToLayer("Interactable");
                 _handsMovement.ReleaseItem(_heldItem, 0f, false);
                 _heldItem = null;
@@ -153,18 +146,6 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _heldItem.Rigidbody.MovePosition(position);
                 _heldItem.Rigidbody.MoveRotation(rotation);
             }
-        }
-        
-        public void TriggerSwing()
-        {
-            if (pivotAnimator)
-                pivotAnimator.SetTrigger("Swing");
-            StartCoroutine(StopHolding());
-        }
-        
-        private IEnumerator StopHolding()
-        {
-            yield return new WaitForSeconds(1);
         }
     }
 }

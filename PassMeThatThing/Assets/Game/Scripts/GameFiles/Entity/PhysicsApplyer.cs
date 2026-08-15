@@ -21,73 +21,116 @@ namespace Game.Scripts.GameFiles.Entity
             var ray = new Ray(position, direction);
             if (Physics.Raycast(ray, out RaycastHit hit, distance, layer))
             {
-                if (tags != null && !tags.Contains( hit.collider.tag) ) return;
-                if (IsTargetAnItem(hit.collider.gameObject, out var item))
-                {
-                    item.Rigidbody.AddForceAtPosition(force * direction, hit.point, ForceMode.Impulse);
-                }
-                Debug.Log(hit.collider.gameObject.name + " was hit " + hit.collider.tag);
-                if (IsTargetDamagable(hit.collider.gameObject, out var damagable))
-                {
-                    Debug.Log(damagable);
-                    if (damagable is ToughnessDamagable toughnessDamagable)
-                    {
-                        Debug.Log(toughnessDamagable);
-                        toughnessDamagable.Hit(hit.point, force * direction);
-                    }
-                    damageSystem.TakeDamage(damage, damagable, toughnessDamage : toughDamage);
-                }
+                if (tags != null && !tags.Contains(hit.collider.tag)) return;
+                
+                ApplyForceAndDamageToTarget(
+                    hit.collider.gameObject,
+                    force * direction,          
+                    damage,
+                    toughDamage,
+                    hit.point,
+                    callHitOnToughness: true,   
+                    forceMode: ForceMode.Impulse);
             }
         }
 
         public void ApplyForceInRadius(Vector3 position, float radius,
-            List<string> tags, float force= 0f, float damage= 0f, int toughDamage = 0, AnimationCurve forceFalloff = null)
+            List<string> tags, float force = 0f, float damage = 0f, int toughDamage = 0,
+            AnimationCurve forceFalloff = null)
         {
             var curve = forceFalloff ?? ForceFalloff;
+
             foreach (var item in physicalItemRegistry.GetItems())
             {
                 var distance = Vector3.Distance(position, item.transform.position);
                 if (distance > radius) continue;
+
                 var t = Mathf.Clamp01(distance / radius);
                 var multiplier = curve.Evaluate(t);
                 var finalForce = force * multiplier;
                 var direction = (item.transform.position - position).normalized;
-                item.Rigidbody.AddForce(finalForce * direction, ForceMode.Force);
-                
+
+                ApplyForceAndDamageToTarget(
+                    item.gameObject,
+                    finalForce * direction,
+                    damage * multiplier,
+                    toughDamage,
+                    item.transform.position,
+                    callHitOnToughness: false,  
+                    forceMode: ForceMode.Force);
             }
+
             foreach (var damagable in damagableRegistry.GetDamageables())
             {
                 var distance = Vector3.Distance(position, damagable.transform.position);
                 if (distance > radius) continue;
+
+                var t = Mathf.Clamp01(distance / radius);
+                var multiplier = curve.Evaluate(t);
+
                 if (damagable is ToughnessDamagable toughnessDamagable && toughnessDamagable.RagdollHandler)
                 {
                     var bones = toughnessDamagable.RagdollHandler.GetRigidbodies();
                     foreach (var rb in bones)
                     {
                         var boneDist = Vector3.Distance(position, rb.transform.position);
-                        var t = Mathf.Clamp01(boneDist / radius);
-                        var multiplier = curve.Evaluate(t);
-                        var finalForce = force * multiplier;
-                        var direction = (rb.transform.position - position).normalized;
-                        rb.AddForce(finalForce * direction, ForceMode.Force);
+                        var boneT = Mathf.Clamp01(boneDist / radius);
+                        var boneMultiplier = curve.Evaluate(boneT);
+                        var finalBoneForce = force * boneMultiplier;
+                        var boneDirection = (rb.transform.position - position).normalized;
+                        rb.AddForce(finalBoneForce * boneDirection, ForceMode.Force);
                     }
-                } 
-                var dist = Mathf.Clamp01(distance / radius);
-                var finalDamage = curve.Evaluate(dist);
-                damageSystem.TakeDamage(finalDamage, damagable, toughnessDamage : toughDamage);
+                }
+
+                ApplyDamageToTarget(
+                    damagable,
+                    damage * multiplier,
+                    toughDamage,
+                    callHitOnToughness: false);
             }
         }
-        
-        private PhysicalItem IsTargetAnItem(GameObject target, out PhysicalItem itemToReturn)
+
+        public void ApplyForceAndDamageToTarget(
+            GameObject target,
+            Vector3 force,
+            float damage,
+            int toughDamage,
+            Vector3 hitPoint,
+            bool callHitOnToughness = false,
+            ForceMode forceMode = ForceMode.Force)
         {
-            itemToReturn = physicalItemRegistry.TryGetItem(target, out var item);
-            return item;
+            if (!target) return;
+
+            if (physicalItemRegistry.TryGetItem(target, out var item) && item.Rigidbody != null)
+            {
+                if (forceMode == ForceMode.Impulse)
+                    item.Rigidbody.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
+                else
+                    item.Rigidbody.AddForce(force, forceMode);
+            }
+
+            if (damagableRegistry.TryGetDamagable(target, out var damagable))
+            {
+                ApplyDamageToTarget(damagable, damage, toughDamage, callHitOnToughness, hitPoint, force);
+            }
         }
 
-        private Damagable IsTargetDamagable(GameObject target, out Damagable damagableToReturn)
+        private void ApplyDamageToTarget(
+            Damagable damagable,
+            float damage,
+            int toughDamage,
+            bool callHitOnToughness,
+            Vector3 hitPoint = default,
+            Vector3 force = default)
         {
-            damagableToReturn = damagableRegistry.TryGetDamagable(target, out var damagable);
-            return damagable;
+            if (!damagable) return;
+
+            if (callHitOnToughness && damagable is ToughnessDamagable toughnessDamagable)
+            {
+                toughnessDamagable.Hit(hitPoint, force);
+            }
+
+            damageSystem.TakeDamage(damage, damagable, toughnessDamage: toughDamage);
         }
     }
 }

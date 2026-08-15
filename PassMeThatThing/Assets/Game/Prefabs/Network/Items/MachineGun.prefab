@@ -164,10 +164,13 @@ MonoBehaviour:
   _network: {fileID: 1388889674428910371}
   hasToBeAligned: 1
   collider: {fileID: 2833291483125038556}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList: []
-  reaction: {fileID: 5086735289754512083}
+  lmbReaction: {fileID: 5086735289754512083}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 5086735289754512083}
 --- !u!54 &3445057242232868048
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -261,6 +264,7 @@ MonoBehaviour:
   emptySound: {fileID: 0}
   delay: 0.1
   maxAmmo: 30
+  _refillType: 0
   EffectController: {fileID: 1406382544099183535}
   _automatic: 1
   baseSpread: 0

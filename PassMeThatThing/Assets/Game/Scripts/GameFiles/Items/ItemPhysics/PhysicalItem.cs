@@ -5,6 +5,7 @@ using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
 using Game.Scripts.GameFiles.Entity.Buildings;
+using Game.Scripts.GameFiles.Entity.MainCharacterPhysics;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -27,11 +28,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private NetworkItem _network;
         [SerializeField] private bool hasToBeAligned;
         [SerializeField] private Collider collider;
+        [SerializeField] private MeleeItem meleeItem;
         [SyncVar]
         [SerializeField] private bool _isThrown;
         [SerializedDictionary] public SerializedDictionary<Resource, float> Resources;
 
-        [SerializeField] private ItemReaction reaction;   // реакция на левую кнопку (любая)
+        [SerializeField] private ItemReaction lmbReaction;  
+        [SerializeField] private ItemReaction rmbReaction;
+        [SerializeField] private ItemReaction reloadReaction;
 
         private Outline _outline;
         private CollisionDamageDealer damageDealer;
@@ -48,10 +52,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Vector3 DefaultPosition => defaultPosition;
         public bool DoActAndSwing => doActAndSwing;
         public bool CanBeOwned => canBeOwned;
+        public MeleeItem Melee => meleeItem;
         public MainCharacter Owner { get; set; }
         public readonly SyncList<NetworkIdentity> Holders = new SyncList<NetworkIdentity>();
         public NetworkConnectionToClient ConnectionToClient { get; set; }
-        public ItemReaction Reaction => reaction;
+        public ItemReaction LmbReaction => lmbReaction;
+        public ItemReaction RmbReaction => rmbReaction;
+        public ItemReaction ReloadReaction => reloadReaction;
         
         private List<IConnector> _connections = new List<IConnector>();
         public List<IConnector> Connections {get => _connections; set => _connections = value;}
@@ -70,8 +77,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             _outline = GetComponent<Outline>();
             _networkTransform = GetComponent<NetworkTransformReliable>();
 
-            if (reaction)
-                reaction.Item = this;   
+            if (lmbReaction)
+                lmbReaction.Item = this;   
 
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnTakeDamage += RpcPlayParticlesOnHit;
