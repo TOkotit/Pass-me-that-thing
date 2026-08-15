@@ -134,6 +134,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
                     if (p.Value[ai].type == InputActionType.Button)
                     {
                         var rBtn = new RebindButton();
+                        rBtn.AddToClassList("rebind-button");
                         _rebindsContainer.Add(rBtn);
 
                         rBtn.inputActionId = ai;
@@ -153,6 +154,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
                             if (p.Value[ai].bindings[b].isComposite) continue;
 
                             var rBtn = new RebindButton();
+                            rBtn.AddToClassList("rebind-button");
                             _rebindsContainer.Add(rBtn);
 
                             rBtn.inputActionId = ai;

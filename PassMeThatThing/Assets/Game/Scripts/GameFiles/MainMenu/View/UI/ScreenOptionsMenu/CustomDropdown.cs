@@ -58,7 +58,7 @@ namespace Assets.Game.Scripts.GameFiles.MainMenu.View.UI.ScreenOptionsMenu
             _popup.style.display = DisplayStyle.None;
 
             _scrollView = new ScrollView(ScrollViewMode.Vertical);
-            _scrollView.AddToClassList("custom-dropdown__scroll-view");
+            _scrollView.AddToClassList("custom-scroll-view");
             _popup.focusable = false;
             _popup.Add(_scrollView);
 

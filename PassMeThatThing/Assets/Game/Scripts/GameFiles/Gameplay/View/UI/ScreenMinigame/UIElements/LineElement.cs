@@ -11,10 +11,9 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         private Vector2 _endPoint;
         
         
-
         public LineElement()
         {
-            //generateVisualContent += OnGenerateVisualContent;
+            
         }
         
         public LineElement(Vector2 start, Vector2 end, VectorImage image, float wireWidth)
@@ -51,19 +50,5 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 MarkDirtyRepaint();
             }
         }
-
-        //private void OnGenerateVisualContent(MeshGenerationContext mgc)
-        //{
-        //    var painter = mgc.painter2D;
-
-        //    painter.lineWidth = _lineWidth;
-        //    painter.strokeColor = _color;
-        //    painter.lineCap = LineCap.Round; 
-
-        //    painter.BeginPath();
-        //    painter.MoveTo(_startPoint);
-        //    painter.LineTo(_endPoint);
-        //    painter.Stroke();
-        //}
     }
 }

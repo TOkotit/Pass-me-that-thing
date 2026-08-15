@@ -30,6 +30,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private VisualElement _resultImg;
         private Label _resultText;
         private Button _craftButton;
+        private Button _closeButton;
 
         private void Awake()
         {
@@ -41,7 +42,9 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _resultImg = _root.Q<VisualElement>("CurrentResultIm");
             _resultText = _root.Q<Label>("CurrentResultLb");
             _craftButton = _root.Q<Button>("CraftBtn");
-            
+            _closeButton = _root.Q<Button>("CloseBtn");
+
+
         }
         
         private void Start()
@@ -54,6 +57,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _recipeContainer.selectedIndicesChanged += OnRecipeClick;
             
             _craftButton.RegisterCallback<ClickEvent>(OnCraftClick);
+            _closeButton.RegisterCallback<ClickEvent>(OnCloseClick);
         }
 
         private void OnDestroy()
@@ -62,6 +66,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
             _recipeContainer.selectedIndicesChanged -= OnRecipeClick;
             _craftButton.UnregisterCallback<ClickEvent>(OnCraftClick);
+            _closeButton.UnregisterCallback<ClickEvent>(OnCloseClick);
         }
 
         public void UpdateResources(IReadOnlyDictionary<Resource, float> d)
@@ -141,6 +146,10 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             }
             
         }
-        
+
+        public void OnCloseClick(ClickEvent e)
+        {
+            ViewModel.RequestGoToGameplay();
+        }
     }
 }
