@@ -44,30 +44,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             }
         }
 
-        [Command(requiresAuthority = false)]
-        public override void CmdReload()
-        {
-            if (IsReloading || CurrentAmmo == maxAmmo) return;
-            StopCoroutine(ReloadRoutine());
-            StartCoroutine(ReloadRoutine());
-        }
-
-        protected override IEnumerator ReloadRoutine()
-        {
-            IsReloading = true;
-            RpcReloadStart();
-            var elapsed = 0f;
-            var duration = 3f;
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-            CurrentAmmo = maxAmmo;
-            IsReloading = false;
-            RpcReloadFinish();
-        }
-
         public override void Act()
         {
             if (!CanShoot()) return;

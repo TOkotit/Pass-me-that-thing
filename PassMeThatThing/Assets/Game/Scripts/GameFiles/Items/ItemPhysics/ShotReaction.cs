@@ -2,14 +2,16 @@
 using System;
 using System.Collections;
 using Ami.BroAudio;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity;
+using Game.Scripts.GameFiles.Items.Refill;
 using Mirror;
 using UnityEngine;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public abstract class ShotReaction : ItemReaction
+    public abstract class ShotReaction : ItemReaction, IRefillable
     {
         [Inject] protected PhysicsApplyer PhysicsApplyer;
         [Inject] protected ParticlePoolManager PoolManager;
@@ -26,9 +28,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] protected float delay = 1f;
         [Header("Ammo")]
         [SerializeField] protected int maxAmmo = 30;
-        protected int CurrentAmmo;
+        [SerializeField] private RefillType _refillType;
+        protected int currentAmmo;
         protected bool IsReloading;
-
+        
         [SerializeField] protected EffectController EffectController;
         protected float LastShotTime;
 
@@ -36,6 +39,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private bool _automatic = false;
 
         public override bool IsContinuous => _automatic;
+        public RefillType RefillType { get => _refillType; }
+        public int MaxAmmo { get => maxAmmo;}
+        public int CurrentAmmo { get => currentAmmo; set => currentAmmo = value;}
+        public float ReloadTime { get; }
 
         protected virtual bool CanShoot()
         {
@@ -55,7 +62,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 force: force, damage: damage, toughDamage: toughnessDamage);
             var hitPoint = EffectController.ActivateEffect(barrel.position, direction);
             LastShotTime = Time.time;
-            CurrentAmmo -= 1;
+            currentAmmo -= 1;
             CmdPlayParticle(hitPoint);
             CmdPlayShotSound();
         }
@@ -69,24 +76,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             if (!CanShoot()) return;
             Shoot(GetAimDirection());
-        }
-
-
-        [Command(requiresAuthority = false)]
-        public virtual void CmdReload()
-        {
-            if (IsReloading || CurrentAmmo == maxAmmo) return;
-            StartCoroutine(ReloadRoutine());
-        }
-
-        protected virtual IEnumerator ReloadRoutine()
-        {
-            IsReloading = true;
-            RpcReloadStart();
-            yield return new WaitForSeconds(reloadTime);
-            CurrentAmmo = maxAmmo;
-            IsReloading = false;
-            RpcReloadFinish();
         }
 
         [ClientRpc] protected void RpcReloadStart() { }
@@ -112,7 +101,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         protected virtual void Awake()
         {
-            CurrentAmmo = maxAmmo;
+            currentAmmo = maxAmmo;
         }
     }
 }
