@@ -1,15 +1,16 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/Menu.uss?fileID=7433441132597879392&amp;guid=28f38a7baeb4497469175766ce5e74c3&amp;type=3#Menu"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
     <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.57); justify-content: center; background-image: resource(&quot;Sprites/Menu/MenuBackground&quot;); -unity-background-scale-mode: scale-to-fit; background-position-y: top 0;">
         <ui:GroupBox style="height: 522px; width: 881px; position: absolute; top: 240px; left: 510px; right: auto; bottom: auto; flex-shrink: 0; justify-content: space-around;">
             <ui:VisualElement class="pause-menu_button-socket" style="flex-grow: 0;">
-                <ui:Button text="Continue" name="ContinueBtn" class="pause-menu_button" style="-unity-slice-type: sliced;"/>
+                <ui:Button text="Continue" name="ContinueBtn" class="pause-menu_button tektur-font" style="-unity-slice-type: sliced;"/>
             </ui:VisualElement>
             <ui:VisualElement class="pause-menu_button-socket" style="flex-grow: 0;">
-                <ui:Button text="Options" name="OptionsBtn" class="pause-menu_button"/>
+                <ui:Button text="Options" name="OptionsBtn" class="pause-menu_button tektur-font"/>
             </ui:VisualElement>
             <ui:VisualElement class="pause-menu_button-socket" style="flex-grow: 0;">
-                <ui:Button text="Exit" name="ExitBtn" class="pause-menu_button"/>
+                <ui:Button text="Exit" name="ExitBtn" class="pause-menu_button tektur-font"/>
             </ui:VisualElement>
         </ui:GroupBox>
     </ui:VisualElement>

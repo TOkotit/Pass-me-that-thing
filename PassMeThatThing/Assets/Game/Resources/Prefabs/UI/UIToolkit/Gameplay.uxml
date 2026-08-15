@@ -1,8 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Gameplay/Gameplay.uss?fileID=7433441132597879392&amp;guid=e152551381caab343a416b55f7bf77d3&amp;type=3#Gameplay"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
     <ui:VisualElement name="Cursor" style="flex-grow: 0; width: 10px; height: 10px; align-self: center; flex-direction: column; align-content: center; justify-content: space-between; align-items: stretch; background-color: rgb(255, 255, 255); position: absolute; left: 50%; top: 50%; translate: -50% -50%;"/>
     <ui:VisualElement enabled="true" name="HealthVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-image: resource(&quot;Sprites/low_hp&quot;); display: none; opacity: 0; visibility: hidden;"/>
-    <ui:GroupBox style="align-self: auto; justify-content: center; align-items: auto; align-content: auto; height: 100%;">
+    <ui:GroupBox class="tektur-font" style="align-self: auto; justify-content: center; align-items: auto; align-content: auto; height: 100%;">
         <ui:GroupBox name="WirePlacementContainer" style="align-self: center; top: 89px; visibility: hidden;">
             <ui:GroupBox style="position: relative; height: 229px; width: 433px; top: auto; left: auto; align-self: center; flex-direction: row;">
                 <ui:VisualElement name="LeftPlugImage" style="flex-grow: 1; background-image: resource(&quot;Sprites/wire_plug&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: right 0; margin-right: 26px; visibility: hidden;"/>
