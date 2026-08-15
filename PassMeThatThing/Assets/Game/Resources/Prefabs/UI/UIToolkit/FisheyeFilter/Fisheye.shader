@@ -3,8 +3,9 @@ Shader "Unlit/Fisheye"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Strength ("Strength", Range(-1, 3)) = 0
-        _Radius ("Radius", Range(0.1, 2.0)) = 0.5
+        _Alpha ("Double Sphere Alpha", Float) = 0.5
+        _Chi ("Double Sphere Chi", Float) = 0.5
+        _FocalLength ("Double Sphere Focal Length", Float) = 1.0
     }
     SubShader
     {
@@ -36,8 +37,9 @@ Shader "Unlit/Fisheye"
             float4 _MainTex_TexelSize;
 
             CBUFFER_START(UnityPerMaterial)
-                float _Strength;
-                float _Radius;
+                float _Alpha;
+                float _Chi;
+                float _FocalLength;
             CBUFFER_END
 
             v2f vert (FilterVertexInput v)
@@ -70,24 +72,52 @@ Shader "Unlit/Fisheye"
                 float4 uvRect = GetFilterUVRect(i.rectIndex);
 
                 float2 uv = NormalizeUVs(i.uv, uvRect);
-                float2 center = float2(0.5, 0.5);
-                uv = uv - center;
-
+                
                 float elementWidth = uvRect.z * _MainTex_TexelSize.z;
                 float elementHeight = uvRect.w * _MainTex_TexelSize.w;
                 float aspect = elementHeight != 0.0 ? (elementWidth / elementHeight) : 1.0;
-                float2 aspectUv = uv * float2(aspect, 1.0);
 
-                float radius = length(aspectUv);
-                
-                float normalizedRadius = radius / _Radius;
+                float2 centered = uv - 0.5;
+                centered.x *= aspect;
 
-                float newRadius = pow(saturate(normalizedRadius), 1.0 + _Strength) * _Radius;
+                float cx = 0.0;
+                float cy = 0.0;
+                float fx = _FocalLength;
+                float fy = _FocalLength;
+                float alpha = _Alpha;
+                float chi = _Chi;
 
-                float2 distorted = newRadius * float2(cos(atan2(aspectUv.y, aspectUv.x)), sin(atan2(aspectUv.y, aspectUv.x)));
-                distorted = distorted / float2(aspect, 1.0);
+                float mx = (centered.x - cx) / fx;
+                float my = (centered.y - cy) / fy;
 
-                uv = distorted + center;
+                float r2 = mx * mx + my * my;
+                float beta1 = 1.0 - (2.0 * alpha - 1.0) * r2;
+                if (beta1 < 0.0) {
+                    return fixed4(0, 0, 0, 0);
+                }
+
+                float mz = (1.0 - alpha * alpha * r2) / (alpha * sqrt(beta1) + 1.0 - alpha);
+                float beta2 = mz * mz + (1.0 - chi * chi) * r2;
+
+                if (beta2 < 0.0) {
+                    return fixed4(0, 0, 0, 0);
+                }
+
+                float denom = mz * mz + r2;
+                if (denom == 0.0) {
+                    return fixed4(0, 0, 0, 0);
+                }
+
+                float3 fisheye_ray = (mz * chi + sqrt(beta2)) / denom * float3(mx, my, mz) - float3(0, 0, chi);
+
+                float rayLen = length(fisheye_ray.xy);
+                float maxLen = length(float3(mx, my, mz));
+                float normFactor = maxLen > 0.0 ? (rayLen / maxLen) : 0.0;
+
+                float2 distorted = float2(mx, my) * normFactor;
+                distorted.x /= aspect;
+
+                uv = distorted + 0.5;
 
                 if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
                 {
