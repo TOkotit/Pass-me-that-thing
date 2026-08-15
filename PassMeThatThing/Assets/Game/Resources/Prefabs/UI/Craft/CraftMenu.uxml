@@ -1,11 +1,14 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="ResourceView" src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/ResourceView.uxml?fileID=9197481963319205126&amp;guid=8c06a7cc98e3e0045b4bba114412eab0&amp;type=3#ResourceView"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/CustomScrollView.uss?fileID=7433441132597879392&amp;guid=add297b3c2d0062439dc331c8313e322&amp;type=3#CustomScrollView"/>
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/Craft.uss?fileID=7433441132597879392&amp;guid=3256edf6c0034d34babdb6aec5079c7c&amp;type=3#Craft"/>
     <ui:GroupBox name="GroupBox" style="flex-grow: 1; background-image: resource(&quot;Sprites/Craft/big_display&quot;); -unity-background-scale-mode: scale-to-fit; justify-content: space-evenly;">
         <ui:VisualElement style="position: absolute; width: 1275px; height: 776px; flex-direction: row; top: 94px; left: 308px;">
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Recipes" class="title"/>
-                <ui:ListView name="RecipesContainer" fixed-item-height="100" virtualization-method="DynamicHeight" show-border="true" class="my-custom-list" style="flex-grow: 1; padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px;"/>
+                <ui:ScrollView horizontal-scroller-visibility="Hidden" class="custom-scroll-view" style="flex-grow: 1;">
+                    <ui:GroupBox name="RecipesContainer" style="flex-grow: 1;"/>
+                </ui:ScrollView>
             </ui:VisualElement>
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
                 <ui:Label text="Result" class="title"/>
