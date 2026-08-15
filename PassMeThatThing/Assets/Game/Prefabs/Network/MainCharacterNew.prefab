@@ -4528,6 +4528,7 @@ MonoBehaviour:
   view: {fileID: 61961466200725570}
   fallDelay: 5
   stats: {fileID: 11400000, guid: 2b5855a4ab79fcb45a28f203cff5fedb, type: 2}
+  attackAnimationId: {fileID: 0}
   strength: 20
   meleeAttackController: {fileID: 8170641314587154669}
   physicalItemInteractionController: {fileID: 4772467737411900661}
@@ -4628,9 +4629,6 @@ MonoBehaviour:
     m_Bits: 0
   characterController: {fileID: 4585087161987446141}
   character: {fileID: 3471299420040406428}
-  maxHoldDistance: 2
-  holdSoftZone: 1.5
-  _itemController: {fileID: 4772467737411900661}
   footstepSound: {fileID: 1449079932796894948}
   walkFootstepInterval: 0.5
   sprintFootstepInterval: 0.3
@@ -4684,6 +4682,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  character: {fileID: 3471299420040406428}
   grabDuration: 0.25
   grabCurve:
     serializedVersion: 2
@@ -4714,19 +4713,6 @@ MonoBehaviour:
   rightArmIK: {fileID: 2027905579078375665}
   leftArmIK: {fileID: 5458271421065739569}
   grabJoint: {fileID: 1323866539399521512}
-  jointSpring: 5000
-  jointDamper: 5
-  angularSpring: 2000
-  angularDamper: 0
-  baseHoldForce: 750
-  holdDamping: 10
-  maxHoldDistance: 2
-  maxLiftMass: 250
-  maxAngularSpeed: 15
-  angularResponsiveness: 0.5
-  throwForceGrow: 5
-  maxThrowForce: 15
-  minChargeTime: 0.3
   camera: {fileID: 3355288843335198720}
   animatorTransform: {fileID: 5452809853429047121}
 --- !u!114 &4478196668402527849

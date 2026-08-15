@@ -19,9 +19,6 @@ public class MainCharacterMovement : NetworkBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private MainCharacter character;
-    [SerializeField] private float maxHoldDistance = 2.0f;
-    [SerializeField] private float holdSoftZone = 1.5f;
-    [SerializeField] private PhysicalItemInteractionController _itemController;
     
     
     [SerializeField] private SoundSource footstepSound;
@@ -44,12 +41,14 @@ public class MainCharacterMovement : NetworkBehaviour
     private float _movementMultiplier = 1.0f;
     private Vector3 _lastVelocity;
     private PhysicalItem _item;
+    private PhysicalItemInteractionController _itemController;
     public Vector3 LastVelocity => _lastVelocity;
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
 
     private void Awake()
     {
+        _itemController = character.PhysicalItemInteractionController;
         groundCheck.OnWaterTouched += OnWaterTouched;
         groundCheck.OnRunningOnItem += OnRunningOnItem;
     }
@@ -207,13 +206,13 @@ public class MainCharacterMovement : NetworkBehaviour
             var charPos = transform.position;
             var currentDist = Vector3.Distance(charPos, grabWorldPos);
 
-            if (currentDist > holdSoftZone)
+            if (currentDist > _model.MaxHoldDistance)
             {
                 var dirAway = (charPos - grabWorldPos).normalized;
                 var awayComponent = Vector3.Dot(desiredMove, dirAway);
                 if (awayComponent > 0)
                 {
-                    var t = Mathf.InverseLerp(holdSoftZone, maxHoldDistance, currentDist);
+                    var t = Mathf.InverseLerp(_model.HoldSoftZone, _model.MaxHoldDistance, currentDist);
                     var factor = 1f - t;
                     desiredMove = desiredMove - dirAway * awayComponent + dirAway * (awayComponent * factor);
                 }

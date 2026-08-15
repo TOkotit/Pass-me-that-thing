@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using DI;
+using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -14,6 +15,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 {
     public class HandsMovement : NetworkBehaviour
     {
+        [SerializeField] private MainCharacter character;
+        
         [Header("Smooth Grab")]
         [SerializeField] private float grabDuration = 0.25f;
         [SerializeField] private AnimationCurve grabCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -25,38 +28,18 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [Header("Grab Joint (non‑aligned)")]
         [SerializeField] private ConfigurableJoint grabJoint;
 
-        [Header("Joint Drive")]
-        [SerializeField] private float jointSpring = 3000f;
-        [SerializeField] private float jointDamper = 50f;
-        [SerializeField] private float angularSpring = 500f;
-        [SerializeField] private float angularDamper = 10f;
-
-        [Header("Linear Hold (aligned)")]
-        [SerializeField] private float baseHoldForce = 500f;
-        [SerializeField] private float holdDamping = 50f;
-        [SerializeField] private float maxHoldDistance = 1.5f;
-        [SerializeField] private float maxLiftMass = 15f;
-
-        [Header("Angular Hold – Aligned")]
-        [SerializeField] private float maxAngularSpeed = 20f;
-        [SerializeField] private float angularResponsiveness = 0.6f;
-
         [Header("Throwing")]
-        [SerializeField] private float throwForceGrow = 5f;
-        [SerializeField] private float maxThrowForce = 15f;
-        [SerializeField] private float minChargeTime = 0.3f;
         [SerializeField] private Camera camera;
         [SerializeField] private Transform animatorTransform;
 
         [Inject] private PlayerInventoryModel _playerInventoryModel;
 
+        private MainCharacterModel _model;
+
         public Transform AnimatorTransform => animatorTransform;
         public float CurrentThrowForce => _throwForce;
         public Vector3 LocalPoint => _localPoint;
-
-        public float JointSpring { get => jointSpring; set => jointSpring = value; }
-        public float JointDamper { get => jointDamper; set => jointDamper = value; }
-
+        
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
@@ -75,13 +58,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         private void Awake()
         {
-            var gameplayScope = LifetimeScope.Find<GameplayScope>();
-            if (gameplayScope) gameplayScope.Container.Inject(this);
             if (animatorTransform)
                 _pivotDefaultLocalPos = animatorTransform.parent.localPosition;
             if (grabJoint) grabJoint.gameObject.SetActive(false);
         }
-
+        private void Start()
+        {
+            if (!character) throw new NullReferenceException($"[{gameObject.name}] HandsMovement: character is not assigned!");
+            _model = character.MainCharacterModel;
+            if (_model == null) throw new NullReferenceException($"[{gameObject.name}] HandsMovement: MainCharacterModel is not available!");
+        }
         [Server]
         public void GrabItem(PhysicalItem item, Vector3 localPoint)
         {
@@ -175,11 +161,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         private void FixedUpdate()
         {
-            if (_isThrowing && Time.time - _chargeStartTime >= minChargeTime)
+            if (_model == null) return;
+
+            if (_isThrowing && Time.time - _chargeStartTime >= _model.MinChargeTime)
             {
-                if (_throwForce < maxThrowForce)
+                if (_throwForce < _model.MaxThrowForce)
                 {
-                    _throwForce += Time.fixedDeltaTime * throwForceGrow;
+                    _throwForce += Time.fixedDeltaTime * _model.ThrowForceGrow;
                     UpdateModel();
                 }
             }
@@ -190,7 +178,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         private void Update()
         {
-            if (!_isHolding || _heldItem == null) return;
+            if (!_isHolding || !_heldItem) return;
 
             if (_heldItem.HandleType == HandleType.Free)
             {
@@ -198,7 +186,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
             else if (_heldItem.HandleType == HandleType.OneHanded)
             {
-                if (_rightHandTargetPoint != null)
+                if (_rightHandTargetPoint)
                 {
                     rightHandIKTarget.position = _rightHandTargetPoint.position;
                     rightHandIKTarget.rotation = _rightHandTargetPoint.rotation;
@@ -212,12 +200,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             }
             else if (_heldItem.HandleType == HandleType.TwoHanded)
             {
-                if (_rightHandTargetPoint != null)
+                if (_rightHandTargetPoint)
                 {
                     rightHandIKTarget.position = _rightHandTargetPoint.position;
                     rightHandIKTarget.rotation = _rightHandTargetPoint.rotation;
                 }
-                if (_leftHandTargetPoint != null)
+                if (_leftHandTargetPoint)
                 {
                     leftHandIKTarget.position = _leftHandTargetPoint.position;
                     leftHandIKTarget.rotation = _leftHandTargetPoint.rotation;
@@ -227,23 +215,25 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         private void ManualHoldUpdateAligned()
         {
+            if (_model == null) return;
+
             var pivotPos = _holdPivot.position;
             var holderCount = Mathf.Max(1, _heldItem.Holders.Count);
-            var tooHeavy = _heldRb.mass > maxLiftMass / holderCount;
+            var tooHeavy = _heldRb.mass > _model.Strength / holderCount;
 
             var toTarget = pivotPos - _heldRb.position;
             var distance = toTarget.magnitude;
             var desiredVelocity = toTarget / Time.fixedDeltaTime;
             var linearForce = (desiredVelocity - _heldRb.linearVelocity) * _heldRb.mass / Time.fixedDeltaTime;
-            if (linearForce.magnitude > baseHoldForce)
-                linearForce = linearForce.normalized * baseHoldForce;
-            linearForce -= _heldRb.linearVelocity * (holdDamping * _heldRb.mass);
+            if (linearForce.magnitude > _model.BaseHoldForce)
+                linearForce = linearForce.normalized * _model.BaseHoldForce;
+            linearForce -= _heldRb.linearVelocity * (_model.HoldDamping * _heldRb.mass);
             if (tooHeavy) linearForce.y = 0f;
             _heldRb.AddForce(linearForce, ForceMode.Force);
 
-            if (distance > maxHoldDistance)
+            if (distance > _model.MaxHoldDistance)
             {
-                var correction = toTarget.normalized * (distance - maxHoldDistance);
+                var correction = toTarget.normalized * (distance - _model.MaxHoldDistance);
                 if (tooHeavy) correction.y = 0f;
                 _heldRb.position += correction * 0.5f;
                 _heldRb.linearVelocity = Vector3.zero;
@@ -255,9 +245,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (angle > 180f) angle -= 360f;
 
             var desiredAngularVelocity = axis * (angle * Mathf.Deg2Rad) / Time.fixedDeltaTime;
-            desiredAngularVelocity = Vector3.ClampMagnitude(desiredAngularVelocity, maxAngularSpeed);
+            desiredAngularVelocity = Vector3.ClampMagnitude(desiredAngularVelocity, _model.MaxAngularSpeed);
             _heldRb.angularVelocity = Vector3.Lerp(_heldRb.angularVelocity, desiredAngularVelocity,
-                angularResponsiveness * Time.fixedDeltaTime * 60f);
+                _model.AngularResponsiveness * Time.fixedDeltaTime * 60f);
         }
 
         private void SetupGrabJoint(PhysicalItem item, Vector3 localPoint)
@@ -270,10 +260,12 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         public void ApplyJointDrive()
         {
+            if (_model == null) return;
+
             var linearDrive = new JointDrive
             {
-                positionSpring = jointSpring,
-                positionDamper = jointDamper,
+                positionSpring = _model.JointSpring,
+                positionDamper = _model.JointDamper,
                 maximumForce = float.MaxValue
             };
             grabJoint.xDrive = linearDrive;
@@ -281,8 +273,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.zDrive = linearDrive;
             var angularDrive = new JointDrive
             {
-                positionSpring = angularSpring,
-                positionDamper = angularDamper,
+                positionSpring = _model.AngularSpring,
+                positionDamper = _model.AngularDamper,
                 maximumForce = float.MaxValue
             };
             grabJoint.angularXDrive = angularDrive;
@@ -413,7 +405,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _chargeStartTime = Time.time;
         }
 
-        public bool CanThrow => Time.time - _chargeStartTime >= minChargeTime;
+        public bool CanThrow => _model != null && Time.time - _chargeStartTime >= _model.MinChargeTime;
 
         public void ResetCharge()
         {
@@ -424,7 +416,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
 
         private void UpdateModel()
         {
-            _playerInventoryModel.ThrowCharge = (int)(_throwForce / maxThrowForce * 100);
+            if (_model != null)
+                _playerInventoryModel.ThrowCharge = (int)(_throwForce / _model.MaxThrowForce * 100);
         }
     }
 }
