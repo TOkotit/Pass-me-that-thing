@@ -19,13 +19,12 @@ namespace Game.Gameplay.View.UI.ScreenBuild
         private GameplayUIManager _uiManager;
 
         private GameInputManager _gameInput;
-        
-        private WorkbenchItemRecipeDatabase _recipeDatabase;
+
         private LocalCraftModel _localCraftModel;
         
 
-
         public CraftManager craftManager;
+        public WorkbenchItemRecipeDatabase recipeDatabase;
         public ResourceDatabase resourceDatabase;
 
         public override string Id => "ScreenCraftMenu";
@@ -39,14 +38,13 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
             _localCraftModel = container.Resolve<LocalCraftModel>();
             
-            _recipeDatabase = container.Resolve<WorkbenchItemRecipeDatabase>();
-
-
             craftManager = container.Resolve<CraftManager>();
+            recipeDatabase = container.Resolve<WorkbenchItemRecipeDatabase>();
             resourceDatabase = container.Resolve<ResourceDatabase>();
 
             _gameInput.GameInput.UI.PauseMenu.performed += OnPauseClicked;
         }
+
 
         public override void Dispose()
         {
@@ -63,7 +61,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         public void RequestUpdateRecipes(Action<List<WorkbenchItemRecipe>> f)
         {
-            f(_recipeDatabase.AllRecipes);
+            f(recipeDatabase.AllRecipes);
         }
 
         public void RequestCraft(string recipeId)

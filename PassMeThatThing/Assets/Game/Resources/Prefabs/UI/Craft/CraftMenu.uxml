@@ -1,29 +1,35 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="ResourceView" src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/ResourceView.uxml?fileID=9197481963319205126&amp;guid=8c06a7cc98e3e0045b4bba114412eab0&amp;type=3#ResourceView" />
-    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/Craft.uss?fileID=7433441132597879392&amp;guid=3256edf6c0034d34babdb6aec5079c7c&amp;type=3#Craft" />
-    <ui:GroupBox name="GroupBox" style="flex-grow: 1; background-image: resource(&apos;Sprites/Craft/big_display&apos;); -unity-background-scale-mode: scale-to-fit; justify-content: space-evenly;">
+    <ui:Template name="ResourceView" src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/ResourceView.uxml?fileID=9197481963319205126&amp;guid=8c06a7cc98e3e0045b4bba114412eab0&amp;type=3#ResourceView"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/CustomScrollView.uss?fileID=7433441132597879392&amp;guid=add297b3c2d0062439dc331c8313e322&amp;type=3#CustomScrollView"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Craft/Craft.uss?fileID=7433441132597879392&amp;guid=3256edf6c0034d34babdb6aec5079c7c&amp;type=3#Craft"/>
+    <ui:GroupBox name="GroupBox" style="flex-grow: 1; background-image: resource(&quot;Sprites/Craft/big_display&quot;); -unity-background-scale-mode: scale-to-fit; justify-content: space-evenly;">
         <ui:VisualElement style="position: absolute; width: 1275px; height: 776px; flex-direction: row; top: 94px; left: 308px;">
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
-                <ui:Label text="Recipes" class="title" />
-                <ui:ListView name="RecipesContainer" fixed-item-height="100" virtualization-method="DynamicHeight" show-border="true" class="my-custom-list" style="flex-grow: 1; padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px;" />
+                <ui:Label text="Recipes" class="title"/>
+                <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" class="custom-scroll-view" style="flex-grow: 1;">
+                    <ui:GroupBox name="RecipesContainer" style="flex-grow: 1;"/>
+                </ui:ScrollView>
             </ui:VisualElement>
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
-                <ui:Label text="Result" class="title" />
-                <ui:VisualElement name="CurrentResultIm" class="bordered-rect thin-bordered-rect" style="width: 168px; position: relative; height: 171px; align-self: center; align-content: flex-start; flex-grow: 0; margin-top: 66px;" />
-                <ui:Label text="label" name="CurrentResultLb" class="bordered-rect" style="height: 315px; width: 361px; font-size: 31px; -unity-text-align: middle-center; white-space: normal; text-overflow: clip; -unity-font-style: normal; align-self: center; margin-top: 50px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(89, 185, 123);" />
-                <ui:Button name="CraftBtn" style="height: 90px; width: 227px; font-size: 54px; position: absolute; top: 813px; left: 50%; translate: -46% 0; right: auto; -unity-text-align: middle-center; background-color: rgba(188, 188, 188, 0); background-image: resource(&apos;Sprites/Craft/big_display_btn&apos;); padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;">
-                    <ui:Label text="Craft" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 70px; width: 204px; color: rgb(140, 61, 14);" />
+                <ui:Label text="Result" class="title"/>
+                <ui:VisualElement name="CurrentResultIm" class="bordered-rect thin-bordered-rect" style="width: 168px; position: relative; height: 171px; align-self: center; align-content: flex-start; flex-grow: 0; margin-top: 66px;"/>
+                <ui:Label text="label" name="CurrentResultLb" class="bordered-rect" style="height: 315px; width: 361px; font-size: 31px; -unity-text-align: middle-center; white-space: normal; text-overflow: clip; -unity-font-style: normal; align-self: center; margin-top: 50px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(89, 185, 123);"/>
+                <ui:Button name="CraftBtn" class="physical-button" style="height: 90px; width: 227px; font-size: 54px; position: absolute; top: 813px; left: 50%; translate: -46% 0; right: auto; -unity-text-align: middle-center; background-color: rgba(188, 188, 188, 0); background-image: resource(&quot;Sprites/Craft/big_display_btn&quot;); padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;">
+                    <ui:Label text="Craft" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 70px; width: 204px; color: rgb(140, 61, 14);"/>
+                </ui:Button>
+                <ui:Button name="CloseBtn" class="physical-button" style="height: 68px; width: 149px; font-size: 54px; position: absolute; top: 817px; left: 741px; translate: -46% 0; right: auto; -unity-text-align: middle-center; background-color: rgba(188, 188, 188, 0); background-image: resource(&quot;Sprites/Craft/big_display_btn&quot;); padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;">
+                    <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/Craft/return_icon&quot;); -unity-background-scale-mode: scale-to-fit; position: absolute; height: 48px; width: 134px; top: 6px; left: 6px;"/>
                 </ui:Button>
             </ui:VisualElement>
             <ui:VisualElement class="bordered-rect" style="width: 33%; height: auto; margin-left: 5px; margin-right: 5px;">
-                <ui:Label text="Resources" class="title" />
+                <ui:Label text="Resources" class="title"/>
                 <ui:ScrollView style="flex-grow: 1;">
                     <ui:VisualElement name="ResContainer" style="flex-grow: 1; flex-wrap: wrap; flex-direction: row; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
-                        <ui:Instance template="ResourceView" />
-                        <ui:Instance template="ResourceView" />
-                        <ui:Instance template="ResourceView" />
-                        <ui:Instance template="ResourceView" />
-                        <ui:Instance template="ResourceView" />
+                        <ui:Instance template="ResourceView"/>
+                        <ui:Instance template="ResourceView"/>
+                        <ui:Instance template="ResourceView"/>
+                        <ui:Instance template="ResourceView"/>
+                        <ui:Instance template="ResourceView"/>
                     </ui:VisualElement>
                 </ui:ScrollView>
             </ui:VisualElement>

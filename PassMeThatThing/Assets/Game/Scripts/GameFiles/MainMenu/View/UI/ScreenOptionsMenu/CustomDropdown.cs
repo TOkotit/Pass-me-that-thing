@@ -14,7 +14,7 @@ namespace Assets.Game.Scripts.GameFiles.MainMenu.View.UI.ScreenOptionsMenu
         private readonly VisualElement _popup;
         private readonly ScrollView _scrollView;
 
-        private List<string> _choices = new List<string>() { "1111111111","222222","3","4","555555"};
+        private List<string> _choices = new List<string>();
         private string _value;
         private bool _isOpen;
 
@@ -58,7 +58,7 @@ namespace Assets.Game.Scripts.GameFiles.MainMenu.View.UI.ScreenOptionsMenu
             _popup.style.display = DisplayStyle.None;
 
             _scrollView = new ScrollView(ScrollViewMode.Vertical);
-            _scrollView.AddToClassList("custom-dropdown__scroll-view");
+            _scrollView.AddToClassList("custom-scroll-view");
             _popup.focusable = false;
             _popup.Add(_scrollView);
 
