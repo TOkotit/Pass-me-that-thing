@@ -11,3 +11,7 @@
     border-bottom-left-radius: 16px;
     -unity-background-scale-mode: scale-to-fit;
 }
+
+.minimap-filter-class {
+    filter: filter(url("project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/FisheyeFilter/FisheyeFilter.asset?fileID=11400000&guid=7976d43b48a7ae24e968de899ebcef6c&type=2#FisheyeFilter") -0.13 0.52 0.68);
+}
