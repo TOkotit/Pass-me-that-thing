@@ -5,63 +5,28 @@ using UnityEngine.UIElements;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.UI
 {
-    public class MinimapView : VisualElement
+    [UxmlElement("MinimapView")]
+    public partial class MinimapView : VisualElement
     {
-        public new class UxmlFactory : UxmlFactory<MinimapView, UxmlTraits> { }
- 
-        public new class UxmlTraits : VisualElement.UxmlTraits
-        {
-            private readonly UxmlFloatAttributeDescription _cellSize =
-                new() { name = "cell-size", defaultValue = 12f };
- 
-            private readonly UxmlFloatAttributeDescription _viewportWidth =
-                new() { name = "viewport-width", defaultValue = 240f };
- 
-            private readonly UxmlFloatAttributeDescription _viewportHeight =
-                new() { name = "viewport-height", defaultValue = 240f };
- 
-            private readonly UxmlBoolAttributeDescription _showGridLines =
-                new() { name = "show-grid-lines", defaultValue = true };
- 
-            private readonly UxmlColorAttributeDescription _cellColor =
-                new() { name = "cell-color", defaultValue = new Color(0.30f, 0.85f, 0.40f) };
- 
-            private readonly UxmlColorAttributeDescription _gridLineColor =
-                new() { name = "grid-line-color", defaultValue = new Color(1f, 1f, 1f, 0.08f) };
- 
-            private readonly UxmlColorAttributeDescription _backgroundColor =
-                new() { name = "background-color", defaultValue = new Color(0.08f, 0.08f, 0.08f) };
-            
-            private readonly UxmlColorAttributeDescription _wallColor =
-                new() { name = "wall-color", defaultValue = Color.white };
-            
-            public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
-            {
-                base.Init(ve, bag, cc);
-                var minimap = (MinimapView)ve;
- 
-                minimap.CellColor = _cellColor.GetValueFromBag(bag, cc);
-                minimap.GridLineColor = _gridLineColor.GetValueFromBag(bag, cc);
-                minimap.BackgroundColor = _backgroundColor.GetValueFromBag(bag, cc);
-                minimap.ShowGridLines = _showGridLines.GetValueFromBag(bag, cc);
-                minimap.WallColor = _wallColor.GetValueFromBag(bag, cc);
-                
-                minimap.SetViewportInternal(
-                    _viewportWidth.GetValueFromBag(bag, cc),
-                    _viewportHeight.GetValueFromBag(bag, cc),
-                    _cellSize.GetValueFromBag(bag, cc));
-            }
-        }
- 
+        
+        [UxmlAttribute("cell-color")]
         public Color CellColor { get; set; } = new(0.30f, 0.85f, 0.40f);
+        
+        [UxmlAttribute("grid-line-color")]
         public Color GridLineColor { get; set; } = new(1f, 1f, 1f, 0.08f);
+        
+        [UxmlAttribute("background-color")]
         public Color BackgroundColor { get; set; } = new(0.08f, 0.08f, 0.08f);
+        
+        [UxmlAttribute("wall-color")]
         public Color WallColor { get; set; } = Color.white;
- 
+        
+        [UxmlAttribute("show-grid-lines")]
         public bool ShowGridLines { get; set; } = true;
  
         private float _viewportWidth = 240f;
  
+        [UxmlAttribute("viewport-width")]
         public float ViewportWidth
         {
             get => _viewportWidth;
@@ -74,6 +39,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
  
         private float _viewportHeight = 240f;
  
+        [UxmlAttribute("viewport-height")]
         public float ViewportHeight
         {
             get => _viewportHeight;
@@ -86,6 +52,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
  
         private float _cellSize = 12f;
  
+        [UxmlAttribute("cell-size")]
         public float CellSize
         {
             get => _cellSize;
@@ -93,6 +60,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             {
                 _cellSize = Mathf.Max(1f, value);
                 MarkDirtyRepaint();
+                _mapContent.MarkDirtyRepaint(); 
+                _gridLayer.MarkDirtyRepaint();
             }
         }
  
@@ -105,31 +74,66 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
         private LevelGrid _levelGrid;
         private readonly List<Vector3Int> _cellsCache = new();
         
-        private VisualElement _mapContent;
+        private readonly VisualElement _filterContainer;
+        private readonly VisualElement _mapContent;
+        private VisualElement _gridLayer;
  
         public MinimapView()
         {
             style.position = Position.Absolute;
             style.overflow = Overflow.Hidden;
-
+            style.translate = new StyleTranslate(new Translate(Length.Percent(-50), Length.Percent(-50)));
+            
+            
             style.borderTopLeftRadius = new StyleLength(Length.Percent(50));
             style.borderTopRightRadius = new StyleLength(Length.Percent(50));
             style.borderBottomLeftRadius = new StyleLength(Length.Percent(50));
             style.borderBottomRightRadius = new StyleLength(Length.Percent(50));
-
+            
+            _filterContainer = new VisualElement
+            {
+                name = "minimap-filter-container",
+                style =
+                {
+                    flexGrow = 1,
+                    width = Length.Percent(100),
+                    height = Length.Percent(100),
+                    overflow = Overflow.Hidden, 
+                    backgroundColor = new Color(0, 0, 0, 0)
+                }
+            };
+            _filterContainer.AddToClassList("minimap-filter-class");
+            Add(_filterContainer);
+            
             _mapContent = new VisualElement
             {
+                name = "minimap-content",
                 style =
                 {
                     flexGrow = 1,
                     transformOrigin = new TransformOrigin(Length.Percent(50), Length.Percent(50))
                 }
             };
-            Add(_mapContent);
-
-            UpdateViewportSize();
+            _filterContainer.Add(_mapContent);
             
-            _mapContent.generateVisualContent += OnGenerateVisualContent;
+            _gridLayer = new VisualElement
+            {
+                name = "minimap-grid",
+                style =
+                {
+                    position = Position.Absolute,
+                    left = 0,
+                    top = 0,
+                    right = 0,
+                    bottom = 0
+                }
+            };
+            _mapContent.Add(_gridLayer);
+            
+            UpdateViewportSize();
+
+            _mapContent.generateVisualContent += OnGenerateBackgroundContent;
+            _gridLayer.generateVisualContent += OnGenerateGridContent;
         }
         
         public void SetRotation(float angleDegrees)
@@ -137,19 +141,23 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             _mapContent.style.rotate = new StyleRotate(new Rotate(Angle.Degrees(angleDegrees)));
         }
  
-        private void SetViewportInternal(float viewportWidth, float viewportHeight, float cellSize)
-        {
-            _viewportWidth = Mathf.Max(1f, viewportWidth);
-            _viewportHeight = Mathf.Max(1f, viewportHeight);
-            _cellSize = Mathf.Max(1f, cellSize);
-            UpdateViewportSize();
-        }
- 
         private void UpdateViewportSize()
         {
             style.width = _viewportWidth;
             style.height = _viewportHeight;
             MarkDirtyRepaint();
+        }
+        
+        private void UpdateGridTranslate()
+        {
+            var pivotX = _viewportWidth * 0.5f;
+            var pivotY = _viewportHeight * 0.5f;
+            var halfCell = _cellSize * 0.5f;
+
+            var offsetX = pivotX - Center.x * _cellSize - halfCell;
+            var offsetY = pivotY + Center.z * _cellSize - halfCell;
+
+            _gridLayer.style.translate = new StyleTranslate(new Translate(offsetX, offsetY));
         }
  
         public void SetCenter(Vector3Int worldCell)
@@ -160,35 +168,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             
             Center = worldCell;
             _panRemainder = Vector2.zero;
-            MarkDirtyRepaint();
-        }
- 
-        public void MoveCenter(Vector3Int cellDelta)
-        {
-            SetCenter(Center + cellDelta);
-        }
- 
-        public void Pan(Vector2 screenPixelDelta)
-        {
-            _panRemainder += screenPixelDelta;
- 
-            var cellDeltaX = Mathf.RoundToInt(_panRemainder.x / _cellSize);
-            var cellDeltaY = Mathf.RoundToInt(_panRemainder.y / _cellSize);
-            if (cellDeltaX == 0 && cellDeltaY == 0) return;
- 
-            _panRemainder -= new Vector2(cellDeltaX * _cellSize, cellDeltaY * _cellSize);
- 
-            Center += new Vector3Int(-cellDeltaX, 0, cellDeltaY);
-            _centerIsManual = true;
-            MarkDirtyRepaint();
-        }
- 
-        public void ResetAutoCenter()
-        {
-            _centerIsManual = false;
-            _panRemainder = Vector2.zero;
-            RecalculateAutoCenter();
-            MarkDirtyRepaint();
+            UpdateGridTranslate();
         }
  
         public void SetSource(LevelGrid levelGrid)
@@ -219,7 +199,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 RecalculateAutoCenter();
             }
  
-            MarkDirtyRepaint();
+            UpdateGridTranslate();
+            _gridLayer.MarkDirtyRepaint();
         }
  
         private void RecalculateAutoCenter()
@@ -245,13 +226,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
  
             Center = new Vector3Int((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
         }
- 
-        private void OnGenerateVisualContent(MeshGenerationContext ctx)
+        
+        private void OnGenerateBackgroundContent(MeshGenerationContext ctx)
         {
             if (_viewportWidth <= 0f || _viewportHeight <= 0f) return;
 
             var painter = ctx.painter2D;
-            
             var diagonal = Mathf.Sqrt(_viewportWidth * _viewportWidth + _viewportHeight * _viewportHeight);
 
             DrawFilledRect(painter, -diagonal, -diagonal, diagonal * 3f, diagonal * 3f, BackgroundColor);
@@ -260,19 +240,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             {
                 DrawGridLines(painter, diagonal);
             }
-
-            DrawOccupiedCells(painter, diagonal);
         }
  
         private void DrawGridLines(Painter2D painter, float diagonal)
         {
             var pivotX = _viewportWidth * 0.5f;
             var pivotY = _viewportHeight * 0.5f;
- 
+            var halfCell = _cellSize * 0.5f;
+
             painter.strokeColor = GridLineColor;
             painter.lineWidth = 1f;
  
-            var startX = Mod(pivotX, _cellSize);
+            var startX = Mod(pivotX - halfCell, _cellSize);
             for (var x = startX - diagonal; x <= _viewportWidth + diagonal; x += _cellSize)
             {
                 painter.BeginPath();
@@ -281,7 +260,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 painter.Stroke();
             }
  
-            var startY = Mod(pivotY, _cellSize);
+            var startY = Mod(pivotY - halfCell, _cellSize);
             for (var y = startY - diagonal; y <= _viewportHeight + diagonal; y += _cellSize)
             {
                 painter.BeginPath();
@@ -290,26 +269,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 painter.Stroke();
             }
         }
- 
-        private void DrawOccupiedCells(Painter2D painter, float diagonal)
+        
+        private void OnGenerateGridContent(MeshGenerationContext ctx)
         {
             if (_cellsCache.Count == 0) return;
 
-            var pivotX = _viewportWidth * 0.5f;
-            var pivotY = _viewportHeight * 0.5f;
-            var maxDist = (diagonal * 0.5f) + _cellSize;
-
+            var painter = ctx.painter2D;
             var padding = Mathf.Max(1f, _cellSize * 0.1f);
 
             foreach (var cell in _cellsCache)
             {
-                var localX = cell.x - Center.x;
-                var localZ = Center.z - cell.z;
-
-                var x = pivotX + localX * _cellSize;
-                var y = pivotY + localZ * _cellSize;
-
-                if (Mathf.Abs(x - pivotX) > maxDist || Mathf.Abs(y - pivotY) > maxDist) continue;
+                var x = cell.x * _cellSize;
+                var y = -cell.z * _cellSize;
 
                 DrawFilledRect(painter, x + padding, y + padding, _cellSize - padding * 2, _cellSize - padding * 2, CellColor);
             }
@@ -327,20 +298,16 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
 
             foreach (var cell in _cellsCache)
             {
-                var localX = cell.x - Center.x;
-                var localZ = Center.z - cell.z;
+                var x = cell.x * _cellSize;
+                var y = -cell.z * _cellSize;
 
-                var x = pivotX + localX * _cellSize;
-                var y = pivotY + localZ * _cellSize;
-
-                if (Mathf.Abs(x - pivotX) > maxDist || Mathf.Abs(y - pivotY) > maxDist) continue;
                 if (!_cellsDataCache.TryGetValue(cell, out var cellData)) continue;
 
                 foreach (var (dir, p1, p2) in directions)
                 {
                     var neighborCell = cell + dir;
                     var hasNeighbor = _cellsDataCache.TryGetValue(neighborCell, out var neighborData);
-                    
+
                     var isSameRoom = hasNeighbor && neighborData.RoomId == cellData.RoomId;
                     var hasDoor = cellData.Doors != null && cellData.Doors.Contains(dir);
 
