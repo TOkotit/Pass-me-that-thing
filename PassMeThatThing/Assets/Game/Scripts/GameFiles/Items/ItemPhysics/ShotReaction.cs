@@ -42,7 +42,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public RefillType RefillType { get => _refillType; }
         public int MaxAmmo { get => maxAmmo;}
         public int CurrentAmmo { get => currentAmmo; set => currentAmmo = value;}
-        public float ReloadTime { get; }
+        public float ReloadTime { get => reloadTime; }
 
         protected virtual bool CanShoot()
         {

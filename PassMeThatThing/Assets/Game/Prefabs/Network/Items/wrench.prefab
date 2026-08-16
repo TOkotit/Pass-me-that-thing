@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 6213635256034360291}
   - component: {fileID: 878781694952837987}
   - component: {fileID: 1964319016268103446}
+  - component: {fileID: 6093663108410566228}
   m_Layer: 7
   m_Name: wrench
   m_TagString: Item
@@ -220,11 +221,15 @@ MonoBehaviour:
   _network: {fileID: 1686371426209873383}
   hasToBeAligned: 1
   collider: {fileID: 1133097560999102908}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList:
     - Key: 0
       Value: 2
+  lmbReaction: {fileID: 0}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
 --- !u!114 &7803437061417197889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +324,25 @@ MonoBehaviour:
     - Key: 3
       Value: 1
   HitPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &6093663108410566228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c58063686a45ba9ee91ac734d6dcee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.MainCharacterPhysics.MeleeItem
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attacks: 0000000001000000
+  item: {fileID: 7776855572588576369}
+  damage: 20
+  toughnessDamage: 5
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0

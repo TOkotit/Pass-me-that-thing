@@ -5,6 +5,9 @@ namespace Game.Entity.Stats
     [CreateAssetMenu(fileName = "PlayerStats", menuName = "Stats/PlayerStats")]
     public class PlayerStats : ScriptableObject
     {
+        [Header("Base Health")]
+        [SerializeField] private float maxHealth = 100f;
+
         [Header("Movement")]
         [SerializeField] private float speed = 140f;
         [SerializeField] private float sprintMultiplier = 1.5f;
@@ -32,8 +35,9 @@ namespace Game.Entity.Stats
         [SerializeField] private float angularResponsiveness = 0.6f;
 
         [Header("Strength")]
-        [SerializeField] private float strength = 10f; 
-        
+        [SerializeField] private float strength = 10f;
+
+        public float MaxHealth => maxHealth;
         public float Speed => speed;
         public float SprintMultiplier => sprintMultiplier;
         public float JumpHeight => jumpHeight;

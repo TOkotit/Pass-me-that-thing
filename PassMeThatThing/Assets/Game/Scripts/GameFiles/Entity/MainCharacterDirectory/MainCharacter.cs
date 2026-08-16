@@ -33,10 +33,11 @@ namespace Game.Entity
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
         [SerializeField] private AttackAnimationIdSO attackAnimationId;
-        [SerializeField] private float strength;
         [SerializeField] private MeleeAttackController meleeAttackController;
-        [SerializeField] private PhysicalItemInteractionController  physicalItemInteractionController;
-        
+        [SerializeField] private PhysicalItemInteractionController physicalItemInteractionController;
+
+        private ClassManager _classManager;
+
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
         public MainCharacterMovement Movement => movement;
@@ -44,7 +45,7 @@ namespace Game.Entity
         public MeleeAttackController MeleeAttackController => meleeAttackController;
         public PhysicalItemInteractionController PhysicalItemInteractionController => physicalItemInteractionController;
         public AttackAnimationIdSO AttackAnimationId => attackAnimationId;
-        public float Strength => strength;
+        public float Strength => _model?.Strength ?? 0f;
 
         [SyncVar(hook = nameof(OnIsAliveChanged))]
         private bool _isAlive = true;
@@ -60,7 +61,9 @@ namespace Game.Entity
             view.Initialize();
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
-            _model.SetStats(stats);
+            _model.SetBaseStats(stats);
+
+            _classManager = new ClassManager(_model);
         }
 
         [Server]
@@ -81,12 +84,9 @@ namespace Game.Entity
         {
             movement.LockUpMovement();
             if (mCamera) mCamera.IsCameraRotating = false;
-            //maskLayerStateController.ApplyFullBody();
-            //maskLayerStateController.RpcSetFullBody();
             ragdollHandler.EnableRagdoll();
             RpcFall(impulse);
             StartCoroutine(GetUpAfterDelay(delay));
-            Debug.LogWarning(10f * Vector3.forward);
         }
 
         [ClientRpc]
@@ -106,7 +106,6 @@ namespace Game.Entity
             if (!_isAlive) return;
             movement.UnlockMovement();
             ragdollHandler.DisableRagdoll();
-            //maskLayerStateController.RpcSetBodyOnly();
             if (mCamera) mCamera.IsCameraRotating = true;
             RpcStandUp();
         }
@@ -118,15 +117,13 @@ namespace Game.Entity
             {
                 ragdollHandler.DisableRagdoll();
                 if (animator) animator.Rebind();
-                //maskLayerStateController.ApplyBodyOnly();
                 view.EnableAnimator();
                 movement.UnlockMovement();
                 movement.EnableController();
-                //view.DisableAnimator(); 
                 if (mCamera) mCamera.IsCameraRotating = true;
             });
         }
-        
+
         protected void Awake()
         {
             _toughnessModel = new ToughnessModel();
@@ -139,7 +136,7 @@ namespace Game.Entity
             Initialize();
             if (isServer)
             {
-                ServerSetMaxHealth(100, true);
+                ServerSetMaxHealth((int)_model.MaxHealth, true);
             }
             else if (isClient)
             {
@@ -154,7 +151,6 @@ namespace Game.Entity
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)
         {
-            //throw new System.NotImplementedException();
         }
 
         public override void OnDeath()
@@ -162,7 +158,6 @@ namespace Game.Entity
             if (!isServer) return;
 
             _isAlive = false;
-
             _gameoverHandler.CheckForGameOver();
 
             Fall(0);
@@ -172,7 +167,8 @@ namespace Game.Entity
 
         private void OnIsAliveChanged(bool oldValue, bool newValue)
         {
-            if (!newValue && isLocalPlayer) {
+            if (!newValue && isLocalPlayer)
+            {
                 _localModel.IsDead = true;
                 Debug.Log("[MainCharacter] OnDeath (local)");
             }
@@ -185,6 +181,7 @@ namespace Game.Entity
             _localModel.Health = currentHealth;
             _localModel.MaxHealth = maxHealth;
         }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
@@ -194,6 +191,24 @@ namespace Game.Entity
         public override void Hit(Vector3 force, Vector3 hitPosition)
         {
             ragdollHandler.Hit(force, hitPosition);
+        }
+
+        [Server]
+        public void ChangeClass(ClassStats newClass)
+        {
+            if (_classManager == null || !newClass) return;
+            _classManager.SetClass(newClass);
+            ServerSetMaxHealth((int)_model.MaxHealth, true);
+            RpcChangeClass(newClass.name);  
+        }
+
+        [ClientRpc]
+        private void RpcChangeClass(string className)
+        {
+            if (isServer) return;
+            _classManager.SetClass(className);   
+            if (isLocalPlayer)
+                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, DamagableModel.HealthPool.MaxHealth);
         }
     }
 }
