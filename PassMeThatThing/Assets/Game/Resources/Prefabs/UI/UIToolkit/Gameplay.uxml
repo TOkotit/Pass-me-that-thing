@@ -29,8 +29,21 @@
             <ui:VisualElement name="Item2Img" class="inventory-item" style="flex-grow: 1; position: absolute; top: 78px; left: 324px;"/>
             <ui:VisualElement name="Item3Img" class="inventory-item" style="flex-grow: 1; position: absolute; left: 473px; top: 76px;"/>
         </ui:GroupBox>
-        <ui:VisualElement name="PlayerHud" style="flex-grow: 1; position: absolute; height: 397px; top: 3px; width: 395px; left: -3px; background-image: resource(&quot;Sprites/GameplaySprites/player_hud&quot;); -unity-background-scale-mode: scale-to-fit; background-position-y: top 0; background-position-x: left 0;">
-            <ui:Label text="Label" name="HealthLb" style="flex-grow: 1; font-size: 35px; color: rgb(92, 221, 138); position: absolute; left: 187px; top: 13px; height: 59px; width: 125px;"/>
+        <ui:VisualElement name="PlayerHud" style="flex-grow: 1; position: absolute; height: 397px; top: 0; width: 395px; left: 0; -unity-background-scale-mode: scale-to-fit; background-position-y: top 0; background-position-x: left 0;">
+            <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/GameplaySprites/player_hud_clear&quot;);"/>
+            <ui:ProgressBar title="" value="29.4" name="Health1" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 186px; top: 35px; left: 185px; height: 19px;"/>
+            <ui:ProgressBar title="" value="100" name="Stamina" class="custom-progress-bar stamina-progress-bar" style="position: absolute; width: 126px; top: 87px; left: 179px; height: 8px;"/>
+            <ui:ProgressBar title="" value="29.4" name="Health2" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 152px; left: 136px; height: 11px;"/>
+            <ui:ProgressBar title="" value="29.4" name="Health3" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 242px; left: 136px; height: 11px;"/>
+            <ui:ProgressBar title="" value="29.4" name="Health4" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 330px; left: 136px; height: 11px;"/>
+            <ui:VisualElement name="Avatar1" class="avatar-image" style="flex-grow: 1; position: absolute; height: 86px; width: 87px; top: 25px; left: 72px;"/>
+            <ui:VisualElement name="Avatar2" class="avatar-image" style="flex-grow: 1; position: absolute; height: 59px; width: 60px; top: 154px; left: 65px;"/>
+            <ui:VisualElement name="Avatar3" class="avatar-image" style="flex-grow: 1; position: absolute; height: 59px; width: 57px; top: 242px; left: 66px;"/>
+            <ui:VisualElement name="Avatar4" class="avatar-image" style="flex-grow: 1; position: absolute; height: 59px; width: 57px; top: 331px; left: 66px;"/>
+            <ui:Label text="Label" name="name1" class="player-name" style="position: absolute; top: 4px; left: 174px;"/>
+            <ui:Label text="Label" name="name2" class="player-name" style="position: absolute; top: 127px; left: 132px;"/>
+            <ui:Label text="Label" name="name3" class="player-name" style="position: absolute; top: 218px; left: 132px;"/>
+            <ui:Label text="Label" name="name4" class="player-name" style="position: absolute; top: 306px; left: 132px;"/>
         </ui:VisualElement>
         <ui:Label name="ThrowLb" style="flex-grow: 1; font-size: 100px; color: rgb(255, 255, 255); position: absolute; left: 959px; top: 540px; display: flex;"/>
     </ui:GroupBox>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Entity;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
@@ -10,9 +12,12 @@ using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.UI;
 using MainCharacterNetwork;
 using Mirror;
+using NUnit.Framework;
 using ObservableCollections;
 using R3;
+using Root;
 using Systems;
+using UnityEditor.Networking.PlayerConnection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils;
@@ -20,6 +25,18 @@ using VContainer;
 
 namespace Game.Gameplay.View.UI
 {
+    public class PlayerViewData
+    {
+        public string name;
+        public Texture2D avatar;
+
+        public PlayerViewData(string name, Texture2D avatar)
+        {
+            this.name = name;
+            this.avatar = avatar;
+        }
+    }
+
     public class ScreenGameplayViewModel : WindowViewModel
     {
         private readonly GameplayUIManager _uiManager;
@@ -32,14 +49,18 @@ namespace Game.Gameplay.View.UI
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         private readonly GameInputManager _gameInputManager;
+
         
         private readonly MCLocalModel  _mcLocalModel;
         private readonly LocalWireHandlerModel _localWireHandlerModel;
         private readonly LevelOrchestrator _levelOrchestrator;
-        
+        private readonly ConnectedPlayers _connectedPlayers;
+
         private Action<int, Sprite, int> addEvent;
         private Action<int, Sprite, int> updateEvent;
         private Action<int> removeEvent;
+
+        public event Action<PlayerViewData, List<PlayerViewData>> OnPlayerDataChanged;
 
         public ScreenGameplayViewModel(GameplayUIManager uiManager, IObjectResolver container)
         {
@@ -57,6 +78,8 @@ namespace Game.Gameplay.View.UI
 
             _localWireHandlerModel = container.Resolve<LocalWireHandlerModel>();
             _levelOrchestrator = container.Resolve<LevelOrchestrator>();
+            _connectedPlayers = container.Resolve<ConnectedPlayers>();
+            _connectedPlayers.OnPlayersViewDataChanged += PlayersChanged;
 
             _gameInputManager.GameInput.Gameplay.PauseMenu.performed += RequestOpenPause;
             _gameInputManager.GameInput.Gameplay.WireMenu.performed += RequestOpenWireMenu;
@@ -71,6 +94,7 @@ namespace Game.Gameplay.View.UI
             _gameInputManager.GameInput.Gameplay.WireMenu.performed -= RequestOpenWireMenu;
 
             _gameInputManager.GameInput.Gameplay.CancelBuilding.performed -= CancelWirePlacement;
+            _connectedPlayers.OnPlayersViewDataChanged -= PlayersChanged;
         }
 
         public void RequestOpenPause(InputAction.CallbackContext c)
@@ -86,6 +110,37 @@ namespace Game.Gameplay.View.UI
         public void CancelWirePlacement(InputAction.CallbackContext c)
         {
             _localWireHandlerModel.CancelHighlight();
+        }
+
+        public void RequestSubPlayersInfo(Action<PlayerViewData, List<PlayerViewData>> f)
+        {
+            OnPlayerDataChanged += f;
+
+            PreparePlayerInfo();
+        }
+
+        public void RequestUnsubPlayersInfo(Action<PlayerViewData, List<PlayerViewData>> f)
+        {
+            OnPlayerDataChanged += f;
+        }
+
+        public void PlayersChanged(List<CustomRoomPlayer> l) => PreparePlayerInfo();
+
+        public void PreparePlayerInfo()
+        {
+            var local = new PlayerViewData(_connectedPlayers.localPlayer.nameText,
+                _connectedPlayers.localPlayer.avatarImage);
+
+            var others = new List<PlayerViewData>();
+            foreach (var p in _connectedPlayers.players)
+            {
+                if (!p.isLocalPlayer)
+                {
+                    others.Add(new PlayerViewData(p.nameText, p.avatarImage));
+                }
+            }
+
+            OnPlayerDataChanged?.Invoke(local, others);
         }
 
         public void RequestSubHealthUI(Action<int, int> f)

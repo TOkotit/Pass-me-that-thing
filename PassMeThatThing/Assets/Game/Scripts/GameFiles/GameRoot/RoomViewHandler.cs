@@ -9,10 +9,6 @@ namespace Root
     public class RoomViewHandler
     {
         private bool _localReadyState;
-
-        public List<CustomRoomPlayer> players=new();
-        
-        public event Action<List<CustomRoomPlayer>> OnPlayersViewDataChanged;
         
         public bool LocalReadyState
         {
@@ -25,10 +21,5 @@ namespace Root
         }
         
         public event Action<bool> LocalReadyStateChanged;
-
-        public void PlayersViewDataChanged()
-        {
-            OnPlayersViewDataChanged?.Invoke(players);
-        }
     }
 }

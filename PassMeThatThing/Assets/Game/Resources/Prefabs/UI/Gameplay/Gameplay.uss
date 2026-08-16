@@ -15,3 +15,50 @@
 .minimap-filter-class {
     filter: filter(url("project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/FisheyeFilter/FisheyeFilter.asset?fileID=11400000&guid=7976d43b48a7ae24e968de899ebcef6c&type=2#FisheyeFilter") -0.13 0.52 0.68);
 }
+
+.avatar-image {
+    aspect-ratio: 1;
+}
+
+.player-name {
+}
+
+.custom-progress-bar {
+}
+
+.custom-progress-bar .unity-progress-bar__container {
+    height: auto;
+    flex-grow: 1;
+    min-height: auto;
+    max-height: none;
+}
+
+.health-progress-bar {
+}
+
+.health-progress-bar .unity-progress-bar__background {
+    background-color: rgb(0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.health-progress-bar .unity-progress-bar__progress {
+    background-color: rgb(233, 103, 106);
+}
+
+.stamina-progress-bar {
+}
+
+.stamina-progress-bar .unity-progress-bar__background {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-color: rgb(0, 0, 0);
+}
+
+.stamina-progress-bar .unity-progress-bar__progress {
+    background-color: rgb(146, 179, 216);
+}
