@@ -4528,8 +4528,7 @@ MonoBehaviour:
   view: {fileID: 61961466200725570}
   fallDelay: 5
   stats: {fileID: 11400000, guid: 2b5855a4ab79fcb45a28f203cff5fedb, type: 2}
-  attackAnimationId: {fileID: 0}
-  strength: 20
+  attackAnimationId: {fileID: 11400000, guid: 624a7ae27f9026d47b19d1058015b7f8, type: 2}
   meleeAttackController: {fileID: 8170641314587154669}
   physicalItemInteractionController: {fileID: 4772467737411900661}
 --- !u!143 &4585087161987446141
@@ -4903,6 +4902,7 @@ MonoBehaviour:
   syncInterval: 0
   mainCharacter: {fileID: 3471299420040406428}
   pivotAnimator: {fileID: 524437659641354089}
+  comboResetTime: 1.2
 --- !u!1 &8313002827743973345
 GameObject:
   m_ObjectHideFlags: 0

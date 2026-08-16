@@ -79,6 +79,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
             if (lmbReaction)
                 lmbReaction.Item = this;   
+            if (reloadReaction)
+                reloadReaction.Item = this;
+            if (rmbReaction)
+                rmbReaction.Item = this;
 
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnTakeDamage += RpcPlayParticlesOnHit;
