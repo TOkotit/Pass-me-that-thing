@@ -34,10 +34,9 @@ public class OutlineShader : MonoBehaviour
 
     private void Update()
     {
-        if (!IsActive) return;
-        if (GlobalVisionShaderManager.Instance == null) return;
-
-        GlobalVisionShaderManager.Instance.AddZone(transform.position, radius);
+        //if (!IsActive) return;
+        //if (GlobalVisionShaderManager.Instance == null) return;
+        //GlobalVisionShaderManager.Instance.AddZone(transform.position, radius);
     }
 
     private void OnDrawGizmosSelected()
