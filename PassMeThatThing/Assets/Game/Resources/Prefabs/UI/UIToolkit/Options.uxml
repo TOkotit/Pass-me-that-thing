@@ -5,23 +5,25 @@
     <ui:Template name="VideoSettings" src="project://database/Assets/Game/Resources/Prefabs/UI/Options/VideoSettings.uxml?fileID=9197481963319205126&amp;guid=6ca14b21c3e09cf428ed0ea9e5150a8b&amp;type=3#VideoSettings"/>
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Options/Options.uss?fileID=7433441132597879392&amp;guid=b029a61c8e29dda409e19c040001d6df&amp;type=3#Options"/>
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
-    <ui:TabView class="tektur-font" style="height: 100%;">
-        <ui:Tab label="Game" name="Game">
-            <ui:Instance template="GameSettings"/>
-        </ui:Tab>
-        <ui:Tab label="Video" name="Video">
-            <ui:Instance template="VideoSettings" style="width: 100%; height: 100%;"/>
-        </ui:Tab>
-        <ui:Tab label="Audio" name="Audio">
-            <ui:Instance template="AudioSettings" style="height: 100%; width: 100%;"/>
-        </ui:Tab>
-        <ui:Tab label="Controls" name="Controls">
-            <ui:Instance template="KeyboardSettings"/>
-        </ui:Tab>
-    </ui:TabView>
-    <ui:Button text="" name="CloseBtn" style="position: absolute; top: auto; left: 37px; height: 109px; width: 108px; right: auto; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; background-image: resource(&quot;Sprites/Menu/ReturnIcon&quot;); background-color: rgba(188, 188, 188, 0); -unity-background-scale-mode: scale-to-fit; bottom: 28px;"/>
-    <ui:Button text="Save" name="SaveBtn" class="rebind-button tektur-font" style="position: absolute; top: auto; left: auto; height: 139px; width: 190px; right: 76px; font-size: 51px; bottom: 30px; color: rgb(92, 221, 138);"/>
-    <ui:VisualElement name="RebindBlockImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-color: rgba(53, 53, 53, 0.77); justify-content: center; visibility: hidden;">
-        <ui:Label text="press any button" style="color: rgb(255, 255, 255); font-size: 115px; -unity-text-align: middle-center; align-self: center;"/>
+    <ui:VisualElement style="flex-grow: 1; filter: filter(url(&quot;project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/CrtFilter/New%20Filter%20Function%20Definition.asset?fileID=11400000&amp;guid=d2c417df648045a47a47a5638d90b4e4&amp;type=2#New Filter Function Definition&quot;));">
+        <ui:TabView class="tektur-font" style="height: 100%; filter: filter();">
+            <ui:Tab label="Game" name="Game">
+                <ui:Instance template="GameSettings"/>
+            </ui:Tab>
+            <ui:Tab label="Video" name="Video">
+                <ui:Instance template="VideoSettings" style="width: 100%; height: 100%;"/>
+            </ui:Tab>
+            <ui:Tab label="Audio" name="Audio">
+                <ui:Instance template="AudioSettings" style="height: 100%; width: 100%;"/>
+            </ui:Tab>
+            <ui:Tab label="Controls" name="Controls">
+                <ui:Instance template="KeyboardSettings"/>
+            </ui:Tab>
+        </ui:TabView>
+        <ui:Button text="" name="CloseBtn" style="position: absolute; top: auto; left: 37px; height: 109px; width: 108px; right: auto; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; background-image: resource(&quot;Sprites/Menu/ReturnIcon&quot;); background-color: rgba(188, 188, 188, 0); -unity-background-scale-mode: scale-to-fit; bottom: 28px;"/>
+        <ui:Button text="Save" name="SaveBtn" class="rebind-button tektur-font" style="position: absolute; top: auto; left: auto; height: 139px; width: 190px; right: 76px; font-size: 51px; bottom: 30px; color: rgb(92, 221, 138);"/>
+        <ui:VisualElement name="RebindBlockImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-color: rgba(53, 53, 53, 0.77); justify-content: center; visibility: hidden;">
+            <ui:Label text="press any button" style="color: rgb(255, 255, 255); font-size: 115px; -unity-text-align: middle-center; align-self: center;"/>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
