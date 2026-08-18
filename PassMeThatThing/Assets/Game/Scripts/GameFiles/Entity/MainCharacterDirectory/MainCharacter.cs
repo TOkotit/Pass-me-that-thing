@@ -32,7 +32,6 @@ namespace Game.Entity
         [SerializeField] private MainCharacterView view;
         [SerializeField] private float fallDelay = 5;
         [SerializeField] private PlayerStats stats;
-        [SerializeField] private AttackAnimationIdSO attackAnimationId;
         [SerializeField] private MeleeAttackController meleeAttackController;
         [SerializeField] private PhysicalItemInteractionController physicalItemInteractionController;
 
@@ -44,7 +43,6 @@ namespace Game.Entity
         public MainCharacterCamera MCamera => mCamera;
         public MeleeAttackController MeleeAttackController => meleeAttackController;
         public PhysicalItemInteractionController PhysicalItemInteractionController => physicalItemInteractionController;
-        public AttackAnimationIdSO AttackAnimationId => attackAnimationId;
         public float Strength => _model?.Strength ?? 0f;
 
         [SyncVar(hook = nameof(OnIsAliveChanged))]

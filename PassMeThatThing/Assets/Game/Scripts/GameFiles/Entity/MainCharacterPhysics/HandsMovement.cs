@@ -74,7 +74,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             _localPoint = localPoint;
             _heldItem = item;
             _heldRb = item.Rigidbody;
-            _holdPivot = animatorTransform;
+            _holdPivot = grabJoint.transform;
             _shouldAlignRotation = item.HasToBeAligned;
 
             if (_shouldAlignRotation)
@@ -94,7 +94,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             _heldItem = item;
             _heldRb = item.Rigidbody;
-            _holdPivot = animatorTransform;
+            _holdPivot = grabJoint.transform;
             _initialLocalRotation = initRot;
             _shouldAlignRotation = align;
             _localPoint = localPoint;

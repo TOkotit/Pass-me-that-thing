@@ -114,7 +114,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6289893463516360249}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
   m_Name: 
@@ -221,13 +221,13 @@ MonoBehaviour:
   _network: {fileID: 1686371426209873383}
   hasToBeAligned: 1
   collider: {fileID: 1133097560999102908}
-  meleeItem: {fileID: 0}
+  meleeItem: {fileID: 6093663108410566228}
   _isThrown: 0
   Resources:
     _serializedList:
     - Key: 0
       Value: 2
-  lmbReaction: {fileID: 0}
+  lmbReaction: {fileID: 7803437061417197889}
   rmbReaction: {fileID: 0}
   reloadReaction: {fileID: 0}
 --- !u!114 &7803437061417197889
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6289893463516360249}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
@@ -339,8 +339,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  attacks: 0000000001000000
   item: {fileID: 7776855572588576369}
+  attackClips:
+  - {fileID: -7586747901452459382, guid: 1ecc31afbbb8e6c44a94eb8a56e83af2, type: 3}
+  - {fileID: 5969324146063737545, guid: 1ecc31afbbb8e6c44a94eb8a56e83af2, type: 3}
   damage: 20
   toughnessDamage: 5
 --- !u!1 &9034408919313911600

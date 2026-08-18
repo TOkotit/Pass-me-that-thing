@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
@@ -11,16 +9,24 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
     public class MeleeItem : NetworkBehaviour
     {
         [Inject] PhysicsApplyer physicsApplyer;
-        [SerializeField] private List<AttackAnimationType> attacks;
+
         [SerializeField] private PhysicalItem item;
+        [SerializeField] private List<AnimationClip> attackClips = new();
         [SerializeField] private float damage;
         [SerializeField] private int toughnessDamage;
-        public List<AttackAnimationType> Attacks => attacks;
+
+        public IReadOnlyList<AnimationClip> AttackClips => attackClips;
 
         private void OnTriggerEnter(Collider other)
         {
-            physicsApplyer.ApplyForceAndDamageToTarget(other.gameObject,
-                item.Rigidbody.linearVelocity,damage,toughnessDamage,
+            if (!isServer) return;
+            if (!item || !item.Rigidbody || physicsApplyer == null) return;
+
+            physicsApplyer.ApplyForceAndDamageToTarget(
+                other.gameObject,
+                item.Rigidbody.linearVelocity,
+                damage,
+                toughnessDamage,
                 transform.position);
         }
     }
