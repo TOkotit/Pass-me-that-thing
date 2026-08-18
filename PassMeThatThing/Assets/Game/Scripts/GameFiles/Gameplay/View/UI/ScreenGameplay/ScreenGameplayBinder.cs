@@ -6,15 +6,12 @@ using DG.Tweening;
 using Game.Scripts.Enums;
 using Game.UI;
 using Mirror;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using Assets.Game.Scripts.Utils;
 using UnityEngine.UIElements;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.UI;
-using static UnityEditor.Profiling.HierarchyFrameDataView;
 
 
 namespace Game.Gameplay.View.UI
