@@ -20,7 +20,7 @@ namespace Game.UI
 
         public void Dispose()
         {
-            CloseAllPopups();
+            //CloseAllPopups();
             _openedScreen.Value?.Dispose();
         }
 
@@ -61,12 +61,13 @@ namespace Game.UI
             ClosePopup(openedPopupViewModel);
         }
 
-        public void CloseAllPopups()
-        {
-            foreach (var openedPopup in _openedPopups)
-            {
-                ClosePopup(openedPopup);
-            }
-        }
+        //TODO Переделать тк тут ошибка перечисления при удалении элемента
+        //public void CloseAllPopups()
+        //{
+        //    foreach (var openedPopup in _openedPopups)
+        //    {
+        //        ClosePopup(openedPopup);
+        //    }
+        //}
     }
 }

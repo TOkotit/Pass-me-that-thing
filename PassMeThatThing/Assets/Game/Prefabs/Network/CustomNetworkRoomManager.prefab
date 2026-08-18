@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2978462208333641816}
-  - component: {fileID: 6486063903287890823}
+  - component: {fileID: 91885385300643388}
   - component: {fileID: 2124107712827089629}
   m_Layer: 0
-  m_Name: NetworkRoomManager
+  m_Name: CustomNetworkRoomManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6486063903287890823
+--- !u!114 &91885385300643388
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,9 +42,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2901786848222084306}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 615e6c6589cf9e54cad646b5a11e0529, type: 3}
+  m_Script: {fileID: 11500000, guid: cb225a48479b91e46a11ccf3c3202bfa, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.GameRoot.CustomNetworkRoomManager
   dontDestroyOnLoad: 1
   runInBackground: 1
   headlessStartMode: 0
@@ -71,8 +71,8 @@ MonoBehaviour:
   - {fileID: 2171227848627148325, guid: 36ef993a4108c4543ade54dcba032e14, type: 3}
   - {fileID: 2171227848627148325, guid: 2827b7612b5aca645a87ac7b12aceb2b, type: 3}
   - {fileID: 5751345894273795059, guid: 5615a16a743ff1d42b2ce3de6716d5dd, type: 3}
-  - {fileID: 5751345894273795059, guid: 04019111d1a2b6e429c850fa1bd4a447, type: 3}
   - {fileID: 5751345894273795059, guid: a7c54a260bbfcf444bb208d59dc0a995, type: 3}
+  - {fileID: 5751345894273795059, guid: 04019111d1a2b6e429c850fa1bd4a447, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
