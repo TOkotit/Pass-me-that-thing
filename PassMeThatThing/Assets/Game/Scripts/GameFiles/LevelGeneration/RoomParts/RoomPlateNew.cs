@@ -58,18 +58,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             return parentRoom.RoomType switch
             {
-                RoomTypeNew.CommandCenter     => new Color(0.2f, 0.8f, 0.2f, 0.4f),
+                RoomTypeNew.CommandCenter     => new Color(0f, 1f, 0f, 0.4f),
                 RoomTypeNew.Generator         => new Color(0.9f, 0.9f, 0.1f, 0.4f),
                 RoomTypeNew.Warehouse         => new Color(0.6f, 0.4f, 0.2f, 0.4f),
-                RoomTypeNew.LivingBlock       => new Color(0.2f, 0.6f, 0.8f, 0.4f),
-                RoomTypeNew.MedicalBlock      => new Color(0.9f, 0.2f, 0.2f, 0.4f),
+                RoomTypeNew.LivingBlock       => new Color(0.12f, 0.69f, 0.26f, 0.4f),
+                RoomTypeNew.MedicalBlock      => new Color(1f, 0f, 0f, 0.4f),
                 RoomTypeNew.RecoveryHangar    => new Color(1f, 0.4f, 0.7f, 0.4f),
                 RoomTypeNew.TechnicalTunnels  => new Color(0.4f, 0.4f, 0.4f, 0.4f),
-                RoomTypeNew.Laboratory        => new Color(0.6f, 0.2f, 0.8f, 0.4f),
-                RoomTypeNew.Workshop          => new Color(0.8f, 0.5f, 0.2f, 0.4f),
-                RoomTypeNew.Server            => new Color(0.1f, 0.8f, 0.9f, 0.4f),
-                RoomTypeNew.WaterPurification => new Color(0.2f, 0.4f, 0.9f, 0.4f),
-                RoomTypeNew.Armory            => new Color(0.3f, 0.3f, 0.3f, 0.4f),
+                RoomTypeNew.Laboratory        => new Color(1f, 1f, 1f, 0.4f),
+                RoomTypeNew.Workshop          => new Color(0.54f, 1f, 1f, 0.4f),
+                RoomTypeNew.Server            => new Color(0f, 0f, 0f, 0.4f),
+                RoomTypeNew.WaterPurification => new Color(0.1f, 0.3f, 1f, 0.4f),
+                RoomTypeNew.Armory            => new Color(0.9f, 0.2f, 0.3f, 0.4f),
                 RoomTypeNew.None              => new Color(0.5f, 0.5f, 0.5f, 0.4f),
                 _                             => new Color(0.5f, 0.5f, 0.5f, 0.4f)
             };
