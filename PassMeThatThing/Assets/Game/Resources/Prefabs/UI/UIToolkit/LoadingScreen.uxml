@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1; background-color: rgb(0, 0, 0); justify-content: flex-end;">
-        <ui:VisualElement style="flex-grow: 1; position: absolute; height: 252px; top: 796px; width: 268px; left: 1616px; -unity-background-scale-mode: scale-to-fit; background-image: resource(&quot;Sprites/LoadingScreen/LoadingAnimation&quot;);"/>
-        <ui:Label text="Loading..." style="color: rgb(255, 255, 255); font-size: 173px;"/>
+    <ui:VisualElement style="flex-grow: 1; background-color: rgb(0, 0, 0); justify-content: flex-end; background-image: resource(&quot;Sprites/LoadingScreen/LoadingAnimation&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0;">
+        <ui:Label text="LOADING&#10;" style="color: rgb(255, 255, 255); font-size: 93px; position: absolute; height: 150px; width: 424px; top: 798px; left: 667px; -unity-text-align: upper-right; -unity-font-definition: resource(&quot;Sprites/Fonts/Tektur[wdth,wght]&quot;);"/>
+        <ui:VisualElement style="flex-grow: 1; position: absolute; height: 200px; top: 826px; width: 205px; left: 1670px; background-image: resource(&quot;Sprites/LoadingScreen/TestAnimation&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0;"/>
     </ui:VisualElement>
 </ui:UXML>
