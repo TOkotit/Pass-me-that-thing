@@ -30,18 +30,32 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var currentPlate = childPlates[i];
                 var localPos = transform.InverseTransformPoint(currentPlate.transform.position);
                 var gridPos = grid.LocalToCell(localPos);
+                
+                var relativeRotation = Quaternion.Inverse(transform.rotation) * currentPlate.transform.rotation;
+                var plateRotation = SnapToRoomRotation(relativeRotation.eulerAngles.y);
+
 
                 plates[i] = new RoomPlateDataNew
                 {
                     localPosition = gridPos,
-                    plate = currentPlate
+                    plate = currentPlate,
+                    localRotation = plateRotation
                 };
 
                 if (currentPlate.HasDoorNorth) totalDoors++;
                 if (currentPlate.HasDoorEast) totalDoors++;
                 if (currentPlate.HasDoorSouth) totalDoors++;
                 if (currentPlate.HasDoorWest) totalDoors++;
+
             }
         }
+        
+        private static RoomRotation SnapToRoomRotation(float yEulerDegrees)
+        {
+            var normalized = ((yEulerDegrees % 360f) + 360f) % 360f;
+            var steps = Mathf.RoundToInt(normalized / 90f) % 4;
+            return (RoomRotation)steps;
+        }
+
     }
 }

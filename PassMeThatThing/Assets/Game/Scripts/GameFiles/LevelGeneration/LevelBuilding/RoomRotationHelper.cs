@@ -48,6 +48,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             return rotatedPlates;
         }
+
         
         public static VirtualPlateData[] GetRotatedPlates(LevelRoomNew room, RoomRotation rotation)
         {
@@ -58,21 +59,22 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var originalPos = originalPlates[i].localPosition;
                 var plateRef = originalPlates[i].plate;
+                var plateRotation = originalPlates[i].localRotation;
 
                 var newPos = RotateVector(originalPos, rotation);
                 var doors = new List<VirtualDoor>();
 
                 if (plateRef.HasDoorNorth)
-                    doors.Add(CreateDoor(Vector3Int.forward, rotation));
+                    doors.Add(CreateDoor(Vector3Int.forward, plateRotation, rotation));
                     
                 if (plateRef.HasDoorEast)
-                    doors.Add(CreateDoor(Vector3Int.right, rotation));
+                    doors.Add(CreateDoor(Vector3Int.right, plateRotation, rotation));
                     
                 if (plateRef.HasDoorSouth)
-                    doors.Add(CreateDoor(Vector3Int.back, rotation));
+                    doors.Add(CreateDoor(Vector3Int.back, plateRotation, rotation));
                     
                 if (plateRef.HasDoorWest)
-                    doors.Add(CreateDoor(Vector3Int.left, rotation));
+                    doors.Add(CreateDoor(Vector3Int.left, plateRotation, rotation));
 
                 rotatedPlates[i] = new VirtualPlateData
                 {
@@ -83,6 +85,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             return rotatedPlates;
         }
+
         
         private static VirtualDoor CreateDoor(Vector3Int localDir, RoomsConnectionTypes type, RoomRotation rotation)
         {
@@ -93,15 +96,22 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 Type = type
             };
         }
-        private static VirtualDoor CreateDoor(Vector3Int localDir, RoomRotation rotation)
+
+        
+        
+        private static VirtualDoor CreateDoor(Vector3Int localDir, RoomRotation plateRotation, RoomRotation roomRotation)
+
         {
+            var directionInRoomFrame = RotateVector(localDir, plateRotation);
+
+            
             return new VirtualDoor
             {
-                LocalDirection = localDir,
-                GlobalDirection = RotateVector(localDir, rotation)
+                LocalDirection = directionInRoomFrame,
+                GlobalDirection = RotateVector(directionInRoomFrame, roomRotation)
             };
+
         }
-        
         
         private static Vector3Int RotateVector(Vector3Int vector, RoomRotation rotation)
         {
@@ -114,5 +124,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => vector
             };
         }
+
     }
 }

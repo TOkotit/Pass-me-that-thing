@@ -7,5 +7,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     {
         public Vector3Int localPosition;
         public RoomPlateNew plate;
+        public RoomRotation localRotation;
     }
 }
