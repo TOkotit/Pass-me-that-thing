@@ -11,7 +11,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] private RoomPlateDataNew[] plates;
         [SerializeField] private int totalDoors;
 
-        public int DepthFromHub { get; set; }
         public RoomTypeNew RoomType => roomType;
         public int TotalDoors => totalDoors;
         public RoomPlateDataNew[] Plates => plates;

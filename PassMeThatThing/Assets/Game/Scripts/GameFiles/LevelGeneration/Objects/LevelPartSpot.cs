@@ -6,7 +6,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Objects
     public class LevelPartSpot : MonoBehaviour
     {
         public SpotType spotType;
-        public Vector3 spotSize = new Vector3(1f, 1f, 1f);
+        public Vector3 spotSize = new(1f, 1f, 1f);
         
         private void OnDrawGizmos()
         {

@@ -19,6 +19,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public List<LevelRoomNew> AttachedTunnels = new();
     }
     
+    public struct ConnectionPointNew
+    {
+        public Vector3Int GlobalPosition;
+        public Vector3Int Direction;
+        public RoomsConnectionTypes Type;
+    }
+    
+    
     public class LevelOrchestrator : MonoBehaviour
     {
         [SerializeField] private RoomDatabaseNew roomDatabase;
@@ -31,10 +39,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         private readonly System.Random _random = new();
         private List<PlacedRoomDataCluster> _allPlacedRooms = new();
-
-        // Обе стороны каждого стыка, который был успешно состыкован (комната-комната внутри кластера
-        // или комната-комната через туннель между кластерами). Используется для расстановки
-        // декоративной стены с проходом поверх реально используемых дверных проёмов.
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
 
         private static readonly Vector3Int[] SearchDirections = {
@@ -305,9 +309,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     levelGrid.SetCellState(cellPos, false);
                 }
-
-                // Откатываем и записи об использованных стыках, относящиеся к откатываемым комнатам -
-                // они были созданы TryConnectAdjacentDoorsWithinCluster в рамках этой же (неудачной) попытки.
                 _usedConnections.RemoveAll(uc => uc.Room == roomData);
 
                 _allPlacedRooms.Remove(roomData);
@@ -550,9 +551,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             connB.Direction != -connA.Direction) continue;
                         newRoomData.FreeConnections.Remove(connA);
                         otherRoom.FreeConnections.Remove(connB);
-
-                        // Стык реально используется - запоминаем обе стороны, чтобы позже
-                        // поставить на них стену с проходом.
                         _usedConnections.Add((newRoomData, connA));
                         _usedConnections.Add((otherRoom, connB));
                         break;
@@ -695,8 +693,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         allFreeConnections.Remove(foundTarget.Value);
                         startData.Room.FreeConnections.Remove(startData.Conn);
                         targetRoom.FreeConnections.Remove(targetConn);
-
-                        // Стык состыкован туннелем - запоминаем обе стороны для стены с проходом.
                         _usedConnections.Add((startData.Room, startData.Conn));
                         _usedConnections.Add((targetRoom, targetConn));
 
@@ -832,7 +828,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     startExit.Room.FreeConnections.Remove(startExit.Conn);
                     foundTarget.Value.Room.FreeConnections.Remove(foundTarget.Value.Conn);
 
-                    // Стык принудительно состыкован для связности сети - тоже запоминаем.
                     _usedConnections.Add((startExit.Room, startExit.Conn));
                     _usedConnections.Add((foundTarget.Value.Room, foundTarget.Value.Conn));
 
@@ -977,30 +972,20 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             instance.name = roomName;
             return instance;
         }
-
-        /// <summary>
-        /// Единая точка спавна "вставки" в дверной проём (глухая стена или стена с проходом) -
-        /// используется и для блокировки неиспользованных выходов, и для маркировки использованных.
-        /// </summary>
+        
         private void InstantiateDoorwayInsert(PlacedRoomDataCluster roomData, ConnectionPointNew conn, GameObject prefab, string instanceName)
         {
             if (prefab == null || roomData?.Instance == null) return;
 
             var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
             var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
-
-            // Стены не двухсторонние - разворачиваем стену лицом внутрь своей комнаты,
-            // т.е. её локальное направление (+Z по умолчанию) должно смотреть противоположно
-            // conn.Direction (которое смотрит наружу из комнаты).
+            
             var facing = -conn.Direction;
             var wallRot = Quaternion.identity;
             if (facing == Vector3Int.right) wallRot = Quaternion.Euler(0, 90, 0);
             else if (facing == Vector3Int.back) wallRot = Quaternion.Euler(0, 180, 0);
             else if (facing == Vector3Int.left) wallRot = Quaternion.Euler(0, 270, 0);
-
-            // Ориджин префаба стены - в углу слева снизу. Если встать внутри комнаты лицом
-            // к выходу (по conn.Direction), то ставить префаб нужно в левый угол проёма,
-            // поэтому дополнительно смещаем позицию на 5 в направлении "влево" от conn.Direction.
+            
             var left = new Vector3(-conn.Direction.z, 0f, conn.Direction.x);
             var wallPos = new Vector3(
                 centerWorldPos.x + conn.Direction.x * 5f + left.x * 5f,
@@ -1046,11 +1031,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
             }
         }
-
-        /// <summary>
-        /// Расставляет стены с проходом на всех стыках, которые реально были использованы
-        /// (комната-комната внутри кластера или комната-комната через туннель).
-        /// </summary>
+        
         private void PlaceUsedExitPassages()
         {
             if (wallWithPassagePrefab == null)

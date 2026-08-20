@@ -11,10 +11,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
 
         private readonly List<OutlineShader> _lights = new();
         public IReadOnlyList<OutlineShader> Lights => _lights;
-
-        // ВАЖНО: должен вызываться генератором уровня сразу после создания комнаты,
-        // до Start(). ID обязан быть одинаковым на сервере и у всех клиентов —
-        // то есть генерация должна быть детерминированной (один сид/один порядок).
+        
         public void SetRoomId(int id)
         {
             RoomId = id;
