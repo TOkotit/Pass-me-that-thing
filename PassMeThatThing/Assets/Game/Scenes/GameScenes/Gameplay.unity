@@ -359,10 +359,13 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 896693838}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 590694365}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1458056609}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &25925574
 Grid:
@@ -774,12 +777,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1337064254}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 809656904}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 95976684}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1429363731}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &34469633
 Grid:
@@ -2193,8 +2200,10 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 815915194}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1342731054}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &103702730
 Grid:
@@ -3547,6 +3556,7 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 240619654}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &203130944
 Grid:
@@ -4305,10 +4315,13 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 936779343}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 1028089620}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1582323236}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &255510792
 Grid:
@@ -4435,6 +4448,7 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 657893459}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &260299579
 Grid:
@@ -4638,6 +4652,7 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 28964590}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &284338178
 Grid:
@@ -6688,7 +6703,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6662152543530940653, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
       propertyPath: sceneId
-      value: 1470741509
+      value: 3501888725
       objectReference: {fileID: 0}
     - target: {fileID: 7755887012746823137, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
       propertyPath: m_Name
@@ -7583,6 +7598,50 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466682795}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &471864866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 471864867}
+  - component: {fileID: 471864868}
+  m_Layer: 0
+  m_Name: sp1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &471864867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 471864866}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10.61, y: 0, z: 16.93}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1977510862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &471864868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 471864866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkStartPosition
 --- !u!1 &491061578
 GameObject:
   m_ObjectHideFlags: 0
@@ -8076,8 +8135,10 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 595095080}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 2052321932}
+    localRotation: 0
   totalDoors: 1
 --- !u!156049354 &512776679
 Grid:
@@ -8273,12 +8334,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1154549856}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 1903714585}
+    localRotation: 0
   - localPosition: {x: -1, y: 0, z: 0}
     plate: {fileID: 905867254}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 2054780843}
+    localRotation: 0
   totalDoors: 4
 --- !u!156049354 &521313095
 Grid:
@@ -8454,12 +8519,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 573502703}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1728091045}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 1772503301}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1373095146}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &543561060
 Grid:
@@ -12775,10 +12844,13 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1693023982}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1188270233}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 447904187}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &837802786
 Grid:
@@ -14568,8 +14640,10 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 77030828}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 356025301}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &943148838
 Grid:
@@ -14701,8 +14775,10 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 673801302}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 1967023517}
+    localRotation: 0
   totalDoors: 1
 --- !u!156049354 &956833253
 Grid:
@@ -15239,12 +15315,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 566268696}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1777949339}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 2095423494}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1236954040}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &982210646
 Grid:
@@ -17295,6 +17375,50 @@ Transform:
   - {fileID: 1199154665}
   m_Father: {fileID: 837802784}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1192035217
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1192035218}
+  - component: {fileID: 1192035219}
+  m_Layer: 0
+  m_Name: sp2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1192035218
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1192035217}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10.61, y: 0, z: 14.21}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1977510862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1192035219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1192035217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkStartPosition
 --- !u!1 &1199154664
 GameObject:
   m_ObjectHideFlags: 0
@@ -21958,12 +22082,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 652076567}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 1298256066}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: -1}
     plate: {fileID: 2115054302}
+    localRotation: 0
   - localPosition: {x: -1, y: 0, z: -1}
     plate: {fileID: 1649545229}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &1517463392
 Grid:
@@ -23216,6 +23344,7 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1535694435}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1581273012
 Grid:
@@ -23734,6 +23863,7 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1895461841}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1621601712
 Grid:
@@ -24148,12 +24278,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 872183689}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 230057194}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 108337113}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 994712895}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &1633297463
 Grid:
@@ -24360,12 +24494,16 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1546036202}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 1942981473}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: -1}
     plate: {fileID: 434704680}
+    localRotation: 0
   - localPosition: {x: -1, y: 0, z: -1}
     plate: {fileID: 1626859481}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1638831346
 Grid:
@@ -24732,8 +24870,10 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1823498599}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 591950134}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1651403287
 Grid:
@@ -26088,10 +26228,13 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1871507023}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1218867063}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 365877126}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &1744924329
 Grid:
@@ -29517,16 +29660,22 @@ MonoBehaviour:
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1356394548}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 768466732}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: -1}
     plate: {fileID: 1242603656}
+    localRotation: 0
   - localPosition: {x: 2, y: 0, z: -1}
     plate: {fileID: 1315726077}
+    localRotation: 0
   - localPosition: {x: 2, y: 0, z: 0}
     plate: {fileID: 591125092}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 962321445}
+    localRotation: 0
   totalDoors: 4
 --- !u!156049354 &1966714386
 Grid:
@@ -30148,6 +30297,39 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4229902429359698730, guid: 20ff9226a292002498fdaa1946700c32, type: 3}
   m_PrefabInstance: {fileID: 1972511036}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1977510861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1977510862}
+  m_Layer: 0
+  m_Name: SpawnPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1977510862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977510861}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 471864867}
+  - {fileID: 1192035218}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1985034303
 GameObject:
   m_ObjectHideFlags: 0
@@ -33482,3 +33664,4 @@ SceneRoots:
   - {fileID: 569594202}
   - {fileID: 903890634}
   - {fileID: 1408393117}
+  - {fileID: 1977510862}
