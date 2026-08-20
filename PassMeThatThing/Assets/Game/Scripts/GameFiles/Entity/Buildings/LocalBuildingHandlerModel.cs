@@ -11,6 +11,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         public event Action<string> OnStartBuildPreviewById;
         public event Action OnCancelBuildPreview;
         public event Action OnConfirmBuildPreview;
+
+        public event Action OnDestroyBuilding;
         
         public void StartBuildPreview(string buildingId, string instanceId=null)
         {
@@ -28,6 +30,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         public void ConfirmBuildPreview()
         {
             OnConfirmBuildPreview?.Invoke();
+        }
+
+        public void DestroyBuilding()
+        {
+            OnDestroyBuilding?.Invoke();
         }
     }
 }

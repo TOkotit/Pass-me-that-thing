@@ -43,5 +43,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             NetworkServer.Spawn(instance);
             Debug.Log($"Spawned building {buildingData.id}");
         }
+
+        [Command(requiresAuthority = false)]
+        public void CmdDestroyBuilding(GameObject obj)
+        {
+            DestroyBuilding(obj);
+        }
+
+        [Server]
+        public void DestroyBuilding(GameObject obj)
+        {
+            NetworkServer.Destroy(obj);
+            Debug.Log($"Destroy building");
+        }
     }
 }

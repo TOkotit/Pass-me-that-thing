@@ -184,10 +184,13 @@ MonoBehaviour:
   _network: {fileID: 1686371426209873383}
   hasToBeAligned: 1
   collider: {fileID: 1133097560999102908}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList: []
-  reaction: {fileID: 6220081608871803678}
+  lmbReaction: {fileID: 6220081608871803678}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
 --- !u!114 &6213635256034360291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,6 +233,7 @@ MonoBehaviour:
       Value: 1
     - Key: 2
       Value: -1
+  HitPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &-7858528019227517261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,7 +283,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  Item: {fileID: 7776855572588576369}
   _buildingId: heavyTurret
 --- !u!1 &9034408919313911600
 GameObject:
