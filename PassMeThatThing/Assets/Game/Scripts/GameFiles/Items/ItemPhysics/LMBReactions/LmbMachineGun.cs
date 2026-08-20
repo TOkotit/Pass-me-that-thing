@@ -1,4 +1,3 @@
-// LmbMachineGun.cs
 using System;
 using System.Collections;
 using Mirror;
@@ -14,11 +13,24 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float spreadPerStability = 0.2f;
         [SerializeField] private float spreadExponent = 1.5f;
 
-        [Header("Recoil")]
+        [Header("Spread Distribution")]
+        [SerializeField] private AnimationCurve spreadDistributionCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
+        [Header("Recoil (Weapon Physics)")]
         [SerializeField] private Vector3 baseRecoilForce = new Vector3(0, 0, -5f);
         [SerializeField] private Vector3 baseRecoilTorque = new Vector3(-2f, 0, 0);
         [SerializeField] private float recoilPerStability = 0.3f;
         [SerializeField] private float recoilExponent = 1.5f;
+
+        [Header("Camera Recoil")]
+        [SerializeField] private Vector2 verticalRecoilRange = new Vector2(0.5f, 2.5f); 
+        [SerializeField] private Vector2 horizontalRecoilRange = new Vector2(-1f, 1f);  
+        [SerializeField] private AnimationCurve recoilDistributionCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
+        [Header("FOV Kick")]
+        [SerializeField] private float fovKickAmount = 2f;
+        [SerializeField] private float maxFovKick = 5f;
+        [SerializeField] private float fovKickDuration = 0.15f;
 
         [Header("Stability")]
         [SerializeField] private float stabilityIncreasePerShot = 1f;
@@ -26,9 +38,10 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private int overloadBurstCount = 3;
         [SerializeField] private float overloadBurstDelay = 0.1f;
         [SerializeField] private float stabilityRecoveryDelay = 0.5f;
-        
+
         [Header("Aiming")]
         [SerializeField] private float maxAimAngle = 10f;
+
         private float _currentStability;
         private bool _isOverloading;
 
@@ -50,8 +63,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
             _currentStability += stabilityIncreasePerShot;
 
-            var baseDir = GetAimDirection();          
-            var shootDir = GetSpreadDirection(baseDir); 
+            var baseDir = GetAimDirection();
+            var shootDir = GetSpreadDirection(baseDir);
             Shoot(shootDir);
 
             var recoilScale = Mathf.Pow(_currentStability * recoilPerStability, recoilExponent);
@@ -62,6 +75,19 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             {
                 Item.Rigidbody.AddRelativeForce(finalRecoilForce, ForceMode.Impulse);
                 Item.Rigidbody.AddRelativeTorque(finalRecoilTorque, ForceMode.Impulse);
+            }
+
+            if (Item && Item.Owner)
+            {
+                var camera = Item.Owner.MCamera;
+                if (camera)
+                {
+                    var vertical = Mathf.Lerp(verticalRecoilRange.x, verticalRecoilRange.y, recoilDistributionCurve.Evaluate(Random.value));
+                    var horizontal = Mathf.Lerp(horizontalRecoilRange.x, horizontalRecoilRange.y, recoilDistributionCurve.Evaluate(Random.value));
+
+                    camera.AddRecoil(vertical, horizontal);
+                    camera.AddFov(fovKickAmount, maxFovKick, fovKickDuration);
+                }
             }
 
             if (!_isOverloading && Item && Item.Owner && _currentStability >= Item.Owner.Strength)
@@ -89,7 +115,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private Vector3 GetSpreadDirection(Vector3 baseDir)
         {
             var spread = baseSpread + Mathf.Pow(_currentStability * spreadPerStability, spreadExponent);
-            return Quaternion.Euler(Random.Range(-spread, spread), Random.Range(-spread, spread), 0) * baseDir;
+
+            var horizontalT = spreadDistributionCurve.Evaluate(Random.value);
+            var verticalT = spreadDistributionCurve.Evaluate(Random.value);
+
+            var horizontalAngle = Mathf.Lerp(-spread, spread, horizontalT);
+            var verticalAngle = Mathf.Lerp(-spread, spread, verticalT);
+
+            return Quaternion.Euler(verticalAngle, horizontalAngle, 0) * baseDir;
         }
 
         protected override Vector3 GetAimDirection()
@@ -102,7 +135,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 return barrel.forward;
 
             var ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            Vector3 targetPoint;
+            var targetPoint = new Vector3();
             if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, layersToShot))
                 targetPoint = hit.point;
             else

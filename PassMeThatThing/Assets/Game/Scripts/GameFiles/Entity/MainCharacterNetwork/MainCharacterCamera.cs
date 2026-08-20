@@ -174,8 +174,8 @@ namespace MainCharacterNetwork
 
         public void AddRecoil(float vertical, float horizontal)
         {
-            _recoilOffset.x += vertical;
-            _recoilOffset.y += horizontal;
+            _recoilOffset.x -= vertical;
+            _recoilOffset.y -= horizontal;
         }
         
         public void AddFov(float amount, float maxIncrease, float duration)

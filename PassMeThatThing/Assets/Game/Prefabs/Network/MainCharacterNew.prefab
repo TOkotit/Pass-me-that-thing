@@ -1227,7 +1227,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7409929712340756810
 Transform:
   m_ObjectHideFlags: 0
@@ -1684,6 +1684,7 @@ GameObject:
   - component: {fileID: 1312452116837051299}
   - component: {fileID: 1008452128294786825}
   - component: {fileID: 4308959635244113436}
+  - component: {fileID: 6198680663728861849}
   m_Layer: 8
   m_Name: Camera
   m_TagString: MainCamera
@@ -1828,6 +1829,22 @@ MonoBehaviour:
   zoomDistance: 5
   cameraRoot: {fileID: 8030569220742292104}
   ragdollCamera: {fileID: 0}
+  recoilRecoverySpeed: 8
+  fovController: {fileID: 6198680663728861849}
+--- !u!114 &6198680663728861849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944095919376355543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073069a10873400cbaadd0ed03424c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainCharacterNetwork.CameraFovController
+  targetCamera: {fileID: 3355288843335198720}
+  smoothSpeed: 10
 --- !u!1 &5040119421583918702
 GameObject:
   m_ObjectHideFlags: 0

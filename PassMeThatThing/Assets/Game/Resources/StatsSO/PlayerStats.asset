@@ -12,22 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf12fcee7fa748679eda8762c1047fb1, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
+  maxHealth: 100
   speed: 15
   sprintMultiplier: 1.5
   jumpHeight: 5
   gravity: 9.81
   baseCarry: 40
-  maxHoldDistance: 3.5
-  holdSoftZone: 3
+  maxHoldDistance: 5
+  holdSoftZone: 2
   throwForceGrow: 5
   maxThrowForce: 15
   minChargeTime: 0.3
-  jointSpring: 1000
-  jointDamper: 50
-  angularSpring: 500
-  angularDamper: 10
+  jointSpring: 1200
+  jointDamper: 100
+  angularSpring: 1200
+  angularDamper: 20
   baseHoldForce: 450
   holdDamping: 3
   maxAngularSpeed: 20
   angularResponsiveness: 0.46
   strength: 100
+  baseFov: 60

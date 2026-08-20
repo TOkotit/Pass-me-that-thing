@@ -14,7 +14,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
-    public class DropBox : Damagable, Interactable
+    public class DropBox : Furniture, Interactable
     {
         static public Dictionary<GameObject, DropBox> Boxes = new Dictionary<GameObject, DropBox>();
         [SerializeField] private ItemSpawner spawner;

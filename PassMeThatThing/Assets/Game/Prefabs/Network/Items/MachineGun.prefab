@@ -270,10 +270,63 @@ MonoBehaviour:
   baseSpread: 0
   spreadPerStability: 0.1
   spreadExponent: 1.5
+  spreadDistributionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   baseRecoilForce: {x: 0, y: 0, z: -5}
   baseRecoilTorque: {x: -2, y: 0, z: 0}
   recoilPerStability: 0.1
   recoilExponent: 1.5
+  verticalRecoilRange: {x: 0.5, y: -0.1}
+  horizontalRecoilRange: {x: -0.1, y: 0.1}
+  recoilDistributionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fovKickAmount: 2
+  maxFovKick: 5
+  fovKickDuration: 1
   stabilityIncreasePerShot: 1
   stabilityDecreaseRate: 5
   overloadBurstCount: 3
