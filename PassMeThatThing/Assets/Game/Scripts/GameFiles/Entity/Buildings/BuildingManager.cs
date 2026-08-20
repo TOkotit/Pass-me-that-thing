@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -47,7 +48,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         [Command(requiresAuthority = false)]
         public void CmdDestroyBuilding(GameObject obj)
         {
-            DestroyBuilding(obj);
+            //DestroyBuilding(obj);
+            RpcScale(obj);
         }
 
         [Server]
@@ -55,6 +57,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             NetworkServer.Destroy(obj);
             Debug.Log($"Destroy building");
+        }
+
+        [ClientRpc]
+        public void RpcScale(GameObject obj)
+        {
+            if (isServer)
+                obj.transform.DOScale(0f, 0.3f).OnComplete(() => DestroyBuilding(obj));
+            else
+                obj.transform.DOScale(0f, 0.3f);
         }
     }
 }
