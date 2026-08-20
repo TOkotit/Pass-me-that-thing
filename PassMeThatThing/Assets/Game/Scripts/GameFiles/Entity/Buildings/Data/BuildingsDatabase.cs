@@ -1,3 +1,6 @@
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Data;
+using AYellowpaper.SerializedCollections;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,6 +14,8 @@ public class BuildingsDatabase : ScriptableObject
     public List<BuildingData> miniBuildings;
 
     public List<BuildingData> AllBuildings { get; set; } = new();
+
+    public SerializedDictionary<WireType, WireTypeData> wireTypeInfo;
 
     public BuildingData GetBuildingFromAll(string id)
     {

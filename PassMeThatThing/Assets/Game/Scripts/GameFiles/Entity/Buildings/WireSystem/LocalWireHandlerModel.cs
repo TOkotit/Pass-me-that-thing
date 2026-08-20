@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
@@ -10,8 +9,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
     {
         //nodeId, entryId
         private Queue<(int, int)> _highlightedNodesId = new ();
+        private List<WireType> _highlightedNodesTypes = new();
+
 
         public Queue<(int, int)> HighlightedNodesId => _highlightedNodesId;
+
+        public List<WireType> HighlightedNodesTypes => _highlightedNodesTypes;
+
 
         //nodeId, entryId
         public event Action<int, int> OnWireNodeHighlighted;
@@ -22,10 +26,29 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         //nodeId
         public event Action<int> OnWireNodeCleared;
 
-        public event Action<int> OnWireNodeCount;
+        public event Action<List<WireType>> OnTypesChanged;
 
 
-        public void HighlightNode(int nodeId, int entryId)
+        private void ClearNode(int nodeId)
+        {
+            Debug.Log($"[W] ClearNode {nodeId}");
+            OnWireNodeCleared?.Invoke(nodeId);
+        }
+
+        private void Highlight(int nodeId, int entryId)
+        {
+            Debug.Log($"[W] Highlight {nodeId}");
+            OnWireNodeHighlighted?.Invoke(nodeId, entryId);
+        }
+
+        private void MatchPair(int firstNodeId, int secondNodeId, int firstEntryId, int secondEntryId)
+        {
+            Debug.Log($"[W] MatchPair {firstNodeId} {secondNodeId}");
+            OnWireNodePairMatched?.Invoke(firstNodeId, secondNodeId, firstEntryId, secondEntryId);
+        }
+
+
+        public void HighlightNode(int nodeId, int entryId, WireType type)
         {
             Debug.Log($"[W] highlighted node {nodeId} {entryId}");
 
@@ -33,39 +56,43 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             if (_highlightedNodesId.Any(x => x.Item1 == nodeId))
             {
                 _highlightedNodesId.Clear();
-                OnWireNodeCleared?.Invoke(nodeId);
-                OnWireNodeCount?.Invoke(_highlightedNodesId.Count);
+                ClearNode(nodeId);
+
+                _highlightedNodesTypes.Clear();
+                OnTypesChanged?.Invoke(_highlightedNodesTypes);
+                
             }
             else //не выбрана
             {
                 _highlightedNodesId.Enqueue((nodeId, entryId));
-                OnWireNodeHighlighted?.Invoke(nodeId, entryId);
-                OnWireNodeCount?.Invoke(_highlightedNodesId.Count);
+                Highlight(nodeId, entryId);
+
+                _highlightedNodesTypes.Add(type);
+                OnTypesChanged?.Invoke(_highlightedNodesTypes);
 
                 if (_highlightedNodesId.Count == 2) // выбрано 2 ноды
                 {
                     var first = _highlightedNodesId.Dequeue();
                     var second = _highlightedNodesId.Dequeue();
 
-                    OnWireNodePairMatched?.Invoke(first.Item1, second.Item1, first.Item2, second.Item2);
-                    OnWireNodeCount?.Invoke(_highlightedNodesId.Count);
+                    MatchPair(first.Item1, second.Item1, first.Item2, second.Item2);
 
-                    Debug.Log($"[W] OnWireNodePairMatched?.Invoke");
+
+                    _highlightedNodesTypes.Clear();
+                    OnTypesChanged?.Invoke(_highlightedNodesTypes);
                 }
             }
             
         }
 
-        public void ClearNode(int nodeId)
-        {
-            Debug.Log($"[W] ClearNode {nodeId}");
-            OnWireNodeCleared?.Invoke(nodeId);
-        }
-
         public void CancelHighlight()
         {
             _highlightedNodesId.Clear();
-            OnWireNodeCount?.Invoke(_highlightedNodesId.Count);
+
+            _highlightedNodesTypes.Clear();
+            OnTypesChanged?.Invoke(_highlightedNodesTypes);
         }
+
+        
     }
 }

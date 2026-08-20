@@ -64,20 +64,39 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public void ClearNodeLines(WireNode firstNode)
         {
             //Todo переделать на поиск соседних а не всех
-            
             var toRemove = new List<(int, int)>();
-            foreach (var line in wireLineViewContainer)
+
+            if (firstNode.WireType == WireType.Electricity)
             {
-                if (line.Key.Item1 == firstNode.NodeId || line.Key.Item2 == firstNode.NodeId)
+                foreach (var line in wireLineViewContainer)
                 {
-                    Destroy(line.Value.gameObject);
-                    toRemove.Add(line.Key);
+                    if (line.Key.Item1 == firstNode.NodeId || line.Key.Item2 == firstNode.NodeId)
+                    {
+                        Destroy(line.Value.gameObject);
+                        toRemove.Add(line.Key);
+                    }
+                }
+
+                foreach (var line in toRemove)
+                {
+                    wireLineViewContainer.Remove(line);
                 }
             }
-
-            foreach (var line in toRemove)
+            else if (firstNode.WireType == WireType.Water)
             {
-                wireLineViewContainer.Remove(line);
+                foreach (var line in tubeViewContainer)
+                {
+                    if (line.Key.Item1 == firstNode.NodeId || line.Key.Item2 == firstNode.NodeId)
+                    {
+                        Destroy(line.Value.gameObject);
+                        toRemove.Add(line.Key);
+                    }
+                }
+
+                foreach (var line in toRemove)
+                {
+                    tubeViewContainer.Remove(line);
+                }
             }
         }
     }
