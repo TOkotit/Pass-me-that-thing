@@ -36,6 +36,9 @@ namespace Game.Entity.Stats
 
         [Header("Strength")]
         [SerializeField] private float strength = 10f;
+        [Header("Camera")]
+        [SerializeField] private float baseFov = 60f;
+        public float BaseFov => baseFov;
 
         public float MaxHealth => maxHealth;
         public float Speed => speed;

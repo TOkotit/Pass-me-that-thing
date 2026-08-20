@@ -53,7 +53,7 @@ namespace Game.Entity
         private float _maxAngularSpeed;
         private float _angularResponsiveness;
         private float _strength;
-
+        private float _baseFov;
         public float MaxHealth => _maxHealth;
         public float Speed => _speed;
         public float SprintMultiplier => _sprintMultiplier;
@@ -74,13 +74,15 @@ namespace Game.Entity
         public float MaxAngularSpeed => _maxAngularSpeed;
         public float AngularResponsiveness => _angularResponsiveness;
         public float Strength => _strength;
+        
+        public float BaseFov => _baseFov;
 
         public PlayerInteraction PlayerInteraction => _playerInteraction;
         public PlayerInventory PlayerInventory => _playerInventory;
 
-        // Инициализация базовых значений
         public void SetBaseStats(PlayerStats stats)
         {
+            _baseFov = stats.BaseFov;
             _baseMaxHealth = stats.MaxHealth;
             _baseSpeed = stats.Speed;
             _baseSprintMultiplier = stats.SprintMultiplier;

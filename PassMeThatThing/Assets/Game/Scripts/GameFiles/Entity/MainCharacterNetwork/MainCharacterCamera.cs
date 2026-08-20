@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using DI;
 using Game.Entity;
 using Game.Scripts.Enums;
@@ -8,6 +8,7 @@ using Systems;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Random = UnityEngine.Random;
 
 namespace MainCharacterNetwork
 {
@@ -23,35 +24,41 @@ namespace MainCharacterNetwork
         [SerializeField] private float zoomDistance = 5f;
         [SerializeField] private Transform cameraRoot;
         [SerializeField] private Camera ragdollCamera;
+        [Header("Recoil")]
+        [SerializeField] private float recoilRecoverySpeed = 8f;
+        [Header("FOV")]
+        [SerializeField] private CameraFovController fovController;
+
         private GameInput _gameInput;
         private OptionsManager _optionsManager;
         private MainCharacterMovementController _movementController;
         private NetworkIdentity _ownerIdentity;
         private CameraState _cameraState;
         private MCLocalModel _mcLocalModel;
+        private MainCharacter _mainCharacter;
         private float _sensitivity;
         private Vector2 _rotation;
+        private Vector2 _recoilOffset;
         private bool _initialized;
         private bool _isLocalPlayer;
         private bool _isCameraRotating = true;
         private bool _isFirstPerson = true;
         private Quaternion _originalSpineLocalRotation;
         private Coroutine _zoomRoutine;
-        
+
         public Camera Camera => mCamera;
+        public bool IsCameraRotating
+        {
+            get => _isCameraRotating;
+            set => _isCameraRotating = value;
+        }
+
         private void SwitchToRagdollCamera()
         {
             if (mCamera) mCamera.enabled = false;
             if (ragdollCamera) ragdollCamera.enabled = true;
         }
 
-        
-        public bool IsCameraRotating
-        {
-            get => _isCameraRotating;
-            set  => _isCameraRotating = value;
-        }
-        
         private void Awake()
         {
             if (!mCamera)
@@ -59,8 +66,9 @@ namespace MainCharacterNetwork
 
             _ownerIdentity = GetComponentInParent<NetworkIdentity>();
             _movementController = GetComponentInParent<MainCharacterMovementController>();
+            _mainCharacter = GetComponentInParent<MainCharacter>();
         }
-        
+
         private void Start()
         {
             _isLocalPlayer = _ownerIdentity && _ownerIdentity.isLocalPlayer;
@@ -80,17 +88,28 @@ namespace MainCharacterNetwork
                 Cursor.visible = false;
             }
 
+            if (!fovController)
+                fovController = GetComponentInChildren<CameraFovController>();
+
+            if (fovController && _mainCharacter)
+            {
+                fovController.Initialize(_mainCharacter.MainCharacterModel.BaseFov);
+            }
+            else if (fovController)
+            {
+                fovController.Initialize(60f); 
+            }
+
             _initialized = true;
         }
-        
-        
+
         [Inject]
         public void Construct(GameInputManager gameInputManager, OptionsManager optionsManager, MCLocalModel mcLocalModel)
         {
             _gameInput = gameInputManager.GameInput;
             _optionsManager = optionsManager;
             _mcLocalModel = mcLocalModel;
-            
+
             SetSensitivity(optionsManager.OptionsData.mouseSensitivity);
             _optionsManager.OnSensitivityChanged += SetSensitivity;
         }
@@ -102,7 +121,7 @@ namespace MainCharacterNetwork
 
             if (!_isCameraRotating)
                 return;
-            
+
             ReadRotation();
         }
 
@@ -114,10 +133,14 @@ namespace MainCharacterNetwork
             var inputDelta = _gameInput.Gameplay.MouseDrag.ReadValue<Vector2>();
 
             _rotation.x -= inputDelta.y * _sensitivity * 0.01f;
-            var deltaY = inputDelta.x * _sensitivity * 0.01f;
-            _rotation.y += deltaY;
+            _rotation.y += inputDelta.x * _sensitivity * 0.01f;
 
-            if (Mathf.Abs(deltaY) > 0.0001f)
+            _rotation.x += _recoilOffset.x;
+            _rotation.y += _recoilOffset.y;
+
+            _recoilOffset = Vector2.Lerp(_recoilOffset, Vector2.zero, Time.deltaTime * recoilRecoverySpeed);
+
+            if (Mathf.Abs(inputDelta.x) > 0.0001f)
             {
                 _mcLocalModel?.ReportCameraRotation(_rotation.y);
             }
@@ -128,13 +151,6 @@ namespace MainCharacterNetwork
 
             var characterRotation = Quaternion.Euler(0f, _rotation.y, 0f);
             _movementController.ControllerRotate(characterRotation);
-
-            var targetTilt = new Vector3(Mathf.Clamp(-_rotation.x * tiltMultiplier, -10f, 10f), 0f, 0f);
-            
-            /*if (_isLocalPlayer)
-            {
-                spinePivot.localRotation = Quaternion.Euler(targetTilt);
-            }*/
         }
 
         public void SetupInput(GameInput input)
@@ -154,6 +170,20 @@ namespace MainCharacterNetwork
                 return;
 
             _mcLocalModel?.ReportCameraPosition(transform.position);
+        }
+
+        public void AddRecoil(float vertical, float horizontal)
+        {
+            _recoilOffset.x += vertical;
+            _recoilOffset.y += horizontal;
+        }
+        
+        public void AddFov(float amount, float maxIncrease, float duration)
+        {
+            if (fovController)
+            {
+                fovController.AddFovKick(amount, maxIncrease, duration);
+            }
         }
 
         private void OnDestroy()
