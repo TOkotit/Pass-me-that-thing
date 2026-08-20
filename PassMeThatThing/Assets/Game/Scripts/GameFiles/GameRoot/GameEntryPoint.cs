@@ -1,6 +1,8 @@
 using System.Collections;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using DI;
 using Game.Scripts.Systems;
+using Mirror;
 using Systems;
 using UIRoot;
 using UnityEngine;
@@ -14,35 +16,38 @@ namespace Root
     public class EntryPoint : IStartable
     {
         private readonly ICoroutineRunner _coroutines;
-        readonly IUIRootView _uiRoot;
+        readonly UIRootView _uiRoot;
         readonly GameManager _gameManager;
         private readonly OptionsManager _optionsManager;
+        private readonly CustomNetworkRoomManager _roomManager;
         
         private EntryPoint(
             ICoroutineRunner coroutines,
             GameManager gameManager,
-            UIRootView uiRootPrefab,
+            UIRootView uiRoot,
+            NetworkManager roomManager,
             OptionsManager optionsManager)
         {
             _coroutines = coroutines;
             _gameManager = gameManager;
-            _uiRoot = uiRootPrefab;
+            _uiRoot = uiRoot;
             _optionsManager = optionsManager;
+
+            if (roomManager is CustomNetworkRoomManager manager)
+                _roomManager = manager;
         }
         
         public void Start()
         {
-            // _gameManager.SetState(GameState.Booting);
             _optionsManager.SetInitialSettings();
-            
+
+            HandleLoadingScreen();
         }
         
-        
-        // private IEnumerator InitialLoadRoutine()
-        // { 
-        //     yield return _gameManager.LoadMainMenu();
-        // }
-        
-        
+        private void HandleLoadingScreen()
+        {
+            _roomManager.OnClientSceneLoadStateChanged += _uiRoot.SetLoadingScreen;
+            _roomManager.OnServerSceneLoadStateChanged += _uiRoot.SetLoadingScreen;
+        }
     }
 }

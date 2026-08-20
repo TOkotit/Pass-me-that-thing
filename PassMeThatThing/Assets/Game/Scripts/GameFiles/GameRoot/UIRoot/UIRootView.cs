@@ -13,6 +13,13 @@ namespace UIRoot
             HideLoadingScreen();
         }
 
+        public void SetLoadingScreen(bool v)
+        {
+            _loadingScreen.SetActive(v);
+            _uiSceneContainer.gameObject.SetActive(!v);
+            Debug.Log($"[CNRM] SetLoadingScreen {v} screnCont {!v}");
+        }
+
         public void ShowLoadingScreen()
         {
             _loadingScreen.SetActive(true);

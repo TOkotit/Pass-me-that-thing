@@ -6,8 +6,6 @@ using DG.Tweening;
 using Game.Scripts.Enums;
 using Game.UI;
 using Mirror;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using Assets.Game.Scripts.Utils;
 using UnityEngine.UIElements;
@@ -35,7 +33,7 @@ namespace Game.Gameplay.View.UI
         
         private VisualElement _root;
         private LevelGrid _levelGrid;
-        private Label _healthText;
+        private ProgressBar _health1;
         private VisualElement _healthImage;
         private VisualElement _deathImage;
         private Label _throwChargeText;
@@ -49,12 +47,15 @@ namespace Game.Gameplay.View.UI
         private VisualElement _rightPlugImage;
         private GroupBox _wirePlacementContainer;
 
+        private VisualElement _localPlayerAvatar;
+        private List<VisualElement> _otherPlayerAvatars = new();
+
         private void Awake()
         {
 
             _root = uiDocument.rootVisualElement;
 
-            _healthText = _root.Q<Label>("HealthLb");
+            _health1 = _root.Q<ProgressBar>("Health1");
             _healthImage = _root.Q<VisualElement>("HealthVisualImg");
             _deathImage = _root.Q<VisualElement>("DeathVisualImg");
             _throwChargeText = _root.Q<Label>("ThrowLb");
@@ -66,12 +67,19 @@ namespace Game.Gameplay.View.UI
             _leftPlugImage = _root.Q<VisualElement>("LeftPlugImage");
             _rightPlugImage = _root.Q<VisualElement>("RightPlugImage");
             _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
+
+            _localPlayerAvatar = _root.Q<VisualElement>("Avatar1");
+
+            for (var i = 2; i <= 4; i++)
+            {
+                _otherPlayerAvatars.Add(_root.Q<VisualElement>($"Avatar{i}"));
+            }
         }
 
         private void Start()
         {
             ViewModel.RequestSubHealthUI(UpdateCurrHealthUI);
-            
+            ViewModel.RequestSubPlayersInfo(UpdatePlayerInfo);
             ViewModel.RequestSubDeathUI(UpdateDeathUI);
 
             ViewModel.RequestSubActiveSlot(SetActiveItemSlot);
@@ -98,7 +106,7 @@ namespace Game.Gameplay.View.UI
         private void OnDestroy()
         {
             ViewModel.RequestUnsubHealthUI(UpdateCurrHealthUI);
-            
+            ViewModel.RequestUnsubPlayersInfo(UpdatePlayerInfo);
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
 
             ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
@@ -119,7 +127,26 @@ namespace Game.Gameplay.View.UI
             Debug.Log($"[UI] new hp {newValue}");
 
             _healthImage.style.opacity = (1 - (float)newValue / maxHealth) * 0.4f;
-            _healthText.text = newValue.ToString();
+            _health1.value = (float)newValue / maxHealth * 100;
+        }
+
+        private void UpdatePlayerInfo(PlayerViewData local, List<PlayerViewData> others)
+        {
+            _localPlayerAvatar.style.backgroundImage = new StyleBackground(local.avatar);
+
+            for (var i=0; i < _otherPlayerAvatars.Count; i++)
+            {
+                if (i < others.Count)
+                {
+                    _otherPlayerAvatars[i].style.backgroundImage = new StyleBackground(others[i].avatar);
+                }
+                else
+                {
+                    _otherPlayerAvatars[i].style.backgroundImage = new StyleBackground();
+                }
+            }
+
+
         }
         
         private void UpdateDeathUI(bool isDead)

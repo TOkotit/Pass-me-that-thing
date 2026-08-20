@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using Game.Gameplay.View.UI;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.UI;
 using Mirror;
-using ObservableCollections;
-using R3;
 using Root;
-using Systems;
-using UnityEngine;
-using Utils;
 using VContainer;
 
 namespace Game.MainMenu.View.UI.ScreenMainMenu
@@ -19,21 +13,16 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         public override string Id =>  "ScreenLobby";
         
         private readonly LobbyUIManager _uiManager;
-        private readonly GameManager _gameManager;
-        private readonly ICoroutineRunner _coroutines;
         
         private readonly NetworkRoomManager _networkRoomManager;
         private readonly NetworkIdentity _networkIdentity;
 
         private readonly RoomViewHandler _roomViewHandler;
-        
-        private readonly CompositeDisposable _subscriptions = new();
+        private readonly ConnectedPlayers _connectedPlayers;
 
         public ScreenLobbyViewModel(LobbyUIManager uiManager, IObjectResolver container)
         {
             _uiManager = uiManager;
-            _gameManager =  container.Resolve<GameManager>();
-            _coroutines = container.Resolve<ICoroutineRunner>();
 
             if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
             {
@@ -41,6 +30,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             }
             _networkIdentity = container.Resolve<NetworkIdentity>();
             _roomViewHandler = container.Resolve<RoomViewHandler>();
+            _connectedPlayers = container.Resolve<ConnectedPlayers>();
         }
         
         public void RequestGoOffline()
@@ -62,14 +52,14 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         
         public void RequestSubPlayerView(Action<List<CustomRoomPlayer>> f)
         {
-            f(_roomViewHandler.players);
-            
-            _roomViewHandler.OnPlayersViewDataChanged += f;
+            f(_connectedPlayers.players);
+
+            _connectedPlayers.OnPlayersViewDataChanged += f;
         }
         
         public void RequestUnsubPlayerView(Action<List<CustomRoomPlayer>> f)
         {
-            _roomViewHandler.OnPlayersViewDataChanged -= f;
+            _connectedPlayers.OnPlayersViewDataChanged -= f;
         }
     }
 }

@@ -19,22 +19,25 @@ public class MainMenuEntryPoint : IStartable
     private MainMenuUIRootBinder _sceneUIRootPrefab;
     
     private readonly GameManager _gameManager;
-    
-    public void Start()
-    {
-        Debug.Log("MainMenuEntryPoint.Start");
-        
-        _gameManager.SetState(GameState.Menu);
-    }
+    private readonly UIRootView _rootView;
 
     public MainMenuEntryPoint(IObjectResolver resolver)
     {
         Debug.Log("MainMenuEntryPoint");
         _sceneUIRootPrefab = Resources.Load<MainMenuUIRootBinder>("Prefabs/UI/Root/MainMenuUI");
-        _gameManager =  resolver.Resolve<GameManager>();
-        
-        
+        _gameManager = resolver.Resolve<GameManager>();
+        _rootView = resolver.Resolve<UIRootView>();
+
         InitUI(resolver);
+    }
+
+    public void Start()
+    {
+        Debug.Log("MainMenuEntryPoint.Start");
+        
+        _gameManager.SetState(GameState.Menu);
+
+        //_rootView.HideLoadingScreen();
     }
     
     private void InitUI(IObjectResolver resolver)

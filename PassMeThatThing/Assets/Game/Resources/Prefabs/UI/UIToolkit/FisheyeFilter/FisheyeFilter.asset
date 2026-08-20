@@ -14,12 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.FilterFunctionDefinition
   m_FilterName: fisheye
   m_Parameters:
-  - m_Name: Strength
+  - m_Name: Alpha
     m_InterpolationDefaultValue:
       m_Type: 0
       m_FloatValue: 0
       m_ColorValue: {r: 0, g: 0, b: 0, a: 0}
-  - m_Name: Radius
+  - m_Name: Chi
+    m_InterpolationDefaultValue:
+      m_Type: 0
+      m_FloatValue: 0
+      m_ColorValue: {r: 0, g: 0, b: 0, a: 0}
+  - m_Name: Focal Length
     m_InterpolationDefaultValue:
       m_Type: 0
       m_FloatValue: 0
@@ -29,9 +34,11 @@ MonoBehaviour:
     m_PassIndex: 0
     m_ParameterBindings:
     - m_Index: 0
-      m_Name: _Strength
+      m_Name: _Alpha
     - m_Index: 1
-      m_Name: _Radius
+      m_Name: _Chi
+    - m_Index: 2
+      m_Name: _FocalLength
     m_ReadMargins:
       m_Left: 0
       m_Top: 0

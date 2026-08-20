@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2901786848222084306
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2978462208333641816}
+  - component: {fileID: 91885385300643388}
+  - component: {fileID: 2124107712827089629}
+  m_Layer: 0
+  m_Name: CustomNetworkRoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2978462208333641816
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901786848222084306}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &91885385300643388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901786848222084306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb225a48479b91e46a11ccf3c3202bfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.GameRoot.CustomNetworkRoomManager
+  dontDestroyOnLoad: 1
+  runInBackground: 1
+  headlessStartMode: 0
+  editorAutoStart: 0
+  sendRate: 60
+  offlineScene: Assets/Game/Scenes/GameScenes/MainMenu.unity
+  onlineScene: Assets/Game/Scenes/GameScenes/Lobby.unity
+  offlineSceneLoadDelay: 15.7
+  transport: {fileID: 2124107712827089629}
+  networkAddress: localhost
+  maxConnections: 100
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 7528151646145926360, guid: 2f1297b5cb36ee74b8ea4ec82c14bf0d, type: 3}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  spawnPrefabs:
+  - {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
+  - {fileID: 8090700475096468142, guid: 076bc048e732e104d9bb0a59c30ad253, type: 3}
+  - {fileID: 8090700475096468142, guid: 58d0c80be7eff2e41be1e3d1e09451c4, type: 3}
+  - {fileID: 2171227848627148325, guid: ba60ad0f12b646046b97bf89cf0ed604, type: 3}
+  - {fileID: 2171227848627148325, guid: 51f170da5157cb647b631188d9a80f63, type: 3}
+  - {fileID: 2171227848627148325, guid: 36ef993a4108c4543ade54dcba032e14, type: 3}
+  - {fileID: 2171227848627148325, guid: 2827b7612b5aca645a87ac7b12aceb2b, type: 3}
+  - {fileID: 5751345894273795059, guid: 5615a16a743ff1d42b2ce3de6716d5dd, type: 3}
+  - {fileID: 5751345894273795059, guid: a7c54a260bbfcf444bb208d59dc0a995, type: 3}
+  - {fileID: 5751345894273795059, guid: 04019111d1a2b6e429c850fa1bd4a447, type: 3}
+  exceptionsDisconnect: 1
+  snapshotSettings:
+    bufferTimeMultiplier: 2
+    bufferLimit: 32
+    catchupNegativeThreshold: -1
+    catchupPositiveThreshold: 1
+    catchupSpeed: 0.019999999552965164
+    slowdownSpeed: 0.03999999910593033
+    driftEmaDuration: 1
+    dynamicAdjustment: 1
+    dynamicAdjustmentTolerance: 1
+    deliveryTimeEmaDuration: 2
+  evaluationMethod: 0
+  evaluationInterval: 3
+  timeInterpolationGui: 0
+  showRoomGUI: 1
+  minPlayers: 1
+  roomPlayerPrefab: {fileID: 4477889837780908918, guid: d73ade5a6d8e7924d82a97a610dc2afd, type: 3}
+  RoomScene: Assets/Game/Scenes/GameScenes/Lobby.unity
+  GameplayScene: Assets/Game/Scenes/GameScenes/Gameplay.unity
+  _allPlayersReady: 0
+  clientIndex: 0
+--- !u!114 &2124107712827089629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901786848222084306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 7777
+  NoDelay: 1
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000

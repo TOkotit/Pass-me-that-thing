@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using DI;
 using Mirror;
 using Steamworks;
@@ -16,6 +17,9 @@ namespace Root
         [SerializeField] private bool isSteam;
         
         [Inject] private RoomViewHandler _viewHandler;
+        [Inject] private ConnectedPlayers _players;
+
+
 
         private void Awake()
         {
@@ -33,15 +37,18 @@ namespace Root
         public override void OnStartClient()
         {
             base.OnStartClient();
-            _viewHandler.players.Add(this);
-            _viewHandler.PlayersViewDataChanged();
+            _players.players.Add(this);
+            if (isLocalPlayer)
+                _players.localPlayer = this;
+
+            _players.PlayersViewDataChanged();
         }
 
         public override void OnStopClient()
         {
             base.OnStopClient();
-            _viewHandler.players.Remove(this);
-            _viewHandler.PlayersViewDataChanged();
+            _players.players.Remove(this);
+            _players.PlayersViewDataChanged();
         }
 
         #region Steam Name and Image
@@ -104,7 +111,7 @@ namespace Root
                 }
             }
 
-            _viewHandler.PlayersViewDataChanged();
+            _players.PlayersViewDataChanged();
         }
         
         private Texture2D GetSteamAvatarAsTexture(int imageId)
@@ -150,12 +157,12 @@ namespace Root
 
         public override void IndexChanged(int oldIndex, int newIndex)
         {
-            _viewHandler.PlayersViewDataChanged();
+            _players.PlayersViewDataChanged();
         }
 
         public override void ReadyStateChanged(bool oldReadyState, bool newReadyState)
         {
-            _viewHandler.PlayersViewDataChanged();
+            _players.PlayersViewDataChanged();
         }
 
         public void SetReady(bool readyState)
