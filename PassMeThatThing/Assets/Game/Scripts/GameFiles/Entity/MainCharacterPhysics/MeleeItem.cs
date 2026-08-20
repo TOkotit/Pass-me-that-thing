@@ -14,20 +14,23 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private List<AnimationClip> attackClips = new();
         [SerializeField] private float damage;
         [SerializeField] private int toughnessDamage;
-
+        [SerializeField] private float impactMultiplier = 1f; 
+        
         public IReadOnlyList<AnimationClip> AttackClips => attackClips;
 
         private void OnTriggerEnter(Collider other)
         {
             if (!isServer) return;
             if (!item || !item.Rigidbody || physicsApplyer == null) return;
+            var impulse = item.Rigidbody.mass * item.Rigidbody.linearVelocity * impactMultiplier;
 
             physicsApplyer.ApplyForceAndDamageToTarget(
                 other.gameObject,
-                item.Rigidbody.linearVelocity,
+                impulse,
                 damage,
                 toughnessDamage,
-                transform.position);
+                transform.position,
+                forceMode: ForceMode.Impulse);
         }
     }
 }

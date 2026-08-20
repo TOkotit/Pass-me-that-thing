@@ -16,7 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
     public class HandsMovement : NetworkBehaviour
     {
         [SerializeField] private MainCharacter character;
-        
+
         [Header("Smooth Grab")]
         [SerializeField] private float grabDuration = 0.25f;
         [SerializeField] private AnimationCurve grabCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -25,7 +25,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private TwoBoneIKConstraint rightArmIK;
         [SerializeField] private TwoBoneIKConstraint leftArmIK;
 
-        [Header("Grab Joint (non‑aligned)")]
+        [Header("Grab Joint (non-aligned)")]
         [SerializeField] private ConfigurableJoint grabJoint;
 
         [Header("Throwing")]
@@ -39,7 +39,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public Transform AnimatorTransform => animatorTransform;
         public float CurrentThrowForce => _throwForce;
         public Vector3 LocalPoint => _localPoint;
-        
+
         private bool _isThrowing;
         private float _chargeStartTime;
         private float _throwForce;
@@ -61,20 +61,31 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (animatorTransform)
                 _pivotDefaultLocalPos = animatorTransform.parent.localPosition;
             if (grabJoint) grabJoint.gameObject.SetActive(false);
+            DisableIK();
         }
+
+        private void DisableIK()
+        {
+            if (rightArmIK) rightArmIK.weight = 0f;
+            if (leftArmIK) leftArmIK.weight = 0f;
+            if (rightHandIKTarget) rightHandIKTarget.gameObject.SetActive(false);
+            if (leftHandIKTarget) leftHandIKTarget.gameObject.SetActive(false);
+        }
+
         private void Start()
         {
             if (!character) throw new NullReferenceException($"[{gameObject.name}] HandsMovement: character is not assigned!");
             _model = character.MainCharacterModel;
             if (_model == null) throw new NullReferenceException($"[{gameObject.name}] HandsMovement: MainCharacterModel is not available!");
         }
+
         [Server]
         public void GrabItem(PhysicalItem item, Vector3 localPoint)
         {
             _localPoint = localPoint;
             _heldItem = item;
             _heldRb = item.Rigidbody;
-            _holdPivot = grabJoint.transform;
+            _holdPivot = animatorTransform;
             _shouldAlignRotation = item.HasToBeAligned;
 
             if (_shouldAlignRotation)
@@ -94,7 +105,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             _heldItem = item;
             _heldRb = item.Rigidbody;
-            _holdPivot = grabJoint.transform;
+            _holdPivot = animatorTransform;
             _initialLocalRotation = initRot;
             _shouldAlignRotation = align;
             _localPoint = localPoint;
@@ -172,8 +183,13 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 }
             }
 
-            if (_isHolding && _heldRb && _holdPivot && isServer && _shouldAlignRotation)
-                ManualHoldUpdateAligned();
+            if (_isHolding && _heldRb && _holdPivot && isServer)
+            {
+                if (_shouldAlignRotation)
+                    ManualHoldUpdateAligned();
+                else
+                    ManualHoldUpdateJoint();
+            }
         }
 
         private void Update()
@@ -250,6 +266,41 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _model.AngularResponsiveness * Time.fixedDeltaTime * 60f);
         }
 
+        private void ManualHoldUpdateJoint()
+        {
+            if (_model == null) return;
+
+            var pivotPos = _holdPivot.position;
+            var toTarget = pivotPos - _heldRb.position;
+            var distance = toTarget.magnitude;
+
+            var forward = _holdPivot.forward;
+            var right = _holdPivot.right;
+            var up = _holdPivot.up;
+
+            var forwardOffset = Vector3.Dot(toTarget, forward);
+            var sideOffset = Vector3.Dot(toTarget, right);
+            var upOffset = Vector3.Dot(toTarget, up);
+
+            var force = (_model.JointSpring * toTarget - _model.HoldDamping * _heldRb.linearVelocity) * _heldRb.mass;
+            force = Vector3.ClampMagnitude(force, _model.BaseHoldForce);
+            _heldRb.AddForce(force, ForceMode.Force);
+
+            if (forwardOffset < 0f)
+            {
+                var pushForce = forward * (-forwardOffset * _model.JointSpring * 2f);
+                pushForce = Vector3.ClampMagnitude(pushForce, _model.BaseHoldForce * 2f);
+                _heldRb.AddForce(pushForce, ForceMode.Force);
+            }
+
+            if (distance > _model.MaxHoldDistance)
+            {
+                var correction = toTarget.normalized * (distance - _model.MaxHoldDistance);
+                _heldRb.position += correction * 0.5f;
+                _heldRb.linearVelocity = Vector3.zero;
+            }
+        }
+
         private void SetupGrabJoint(PhysicalItem item, Vector3 localPoint)
         {
             grabJoint.connectedBody = _heldRb;
@@ -271,6 +322,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             grabJoint.xDrive = linearDrive;
             grabJoint.yDrive = linearDrive;
             grabJoint.zDrive = linearDrive;
+
             var angularDrive = new JointDrive
             {
                 positionSpring = _model.AngularSpring,

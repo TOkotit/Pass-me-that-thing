@@ -73,6 +73,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -94,9 +96,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1785749020288827084
 BoxCollider:
@@ -208,16 +212,20 @@ MonoBehaviour:
   universalPoint: {fileID: 2035920568844150800}
   leftHandPoint: {fileID: 0}
   rightHandPoint: {fileID: 0}
-  defaultPosition: {x: 0, y: 0, z: -0.2}
+  defaultPosition: {x: 0, y: 0, z: -0.8}
   canBeOwned: 0
   doActAndSwing: 0
   rigidBody: {fileID: 6503836219789275439}
   _network: {fileID: -5156394863142476493}
   hasToBeAligned: 0
   collider: {fileID: 1785749020288827084}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList: []
+  lmbReaction: {fileID: 0}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
 --- !u!54 &6503836219789275439
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -226,7 +234,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8250647852364672582}
   serializedVersion: 5
-  m_Mass: 150
+  m_Mass: 25
   m_LinearDamping: 0
   m_AngularDamping: 0.2
   m_CenterOfMass: {x: 0, y: -0.5, z: 0}
@@ -315,6 +323,7 @@ MonoBehaviour:
   syncInterval: 0
   pointToSpawn: {fileID: 2770885197003126325}
   item: {fileID: 0}
+  craftSound: {fileID: 0}
   reserveItemPoolManager: {fileID: 0}
 --- !u!114 &1926687953490457674
 MonoBehaviour:

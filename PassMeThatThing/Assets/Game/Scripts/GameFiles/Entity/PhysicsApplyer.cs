@@ -101,7 +101,7 @@ namespace Game.Scripts.GameFiles.Entity
         {
             if (!target) return;
 
-            if (physicalItemRegistry.TryGetItem(target, out var item) && item.Rigidbody != null)
+            if (physicalItemRegistry.TryGetItem(target, out var item) && item.Rigidbody)
             {
                 if (forceMode == ForceMode.Impulse)
                     item.Rigidbody.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
