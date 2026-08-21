@@ -25,6 +25,12 @@ namespace Game.Scripts.GameFiles.Items
         [Command(requiresAuthority = false)] 
         private void CmdInteractWithObject()
         {
+            ServerSpawnObject();
+        }
+
+        [Server]
+        public void ServerSpawnObject()
+        {
             var itemToDrop = _itemPoolManager.CreateNewObject(item.Id);
             itemToDrop.transform.position = pointToSpawn.position;
 
@@ -33,6 +39,7 @@ namespace Game.Scripts.GameFiles.Items
             RpcCraftPlaySound();
             //RpcInteractWithObject();
         }
+
 
         [ClientRpc]
         public void RpcInteractWithObject()
