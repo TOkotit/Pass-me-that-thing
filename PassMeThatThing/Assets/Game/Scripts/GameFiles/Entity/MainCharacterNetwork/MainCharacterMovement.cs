@@ -13,7 +13,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-public class MainCharacterMovement : NetworkBehaviour
+public class MainCharacterMovement : NetworkBehaviour, IControllable
 {
     [SerializeField] private GroundCheck groundCheck;
     [SerializeField] private LayerMask groundMask;

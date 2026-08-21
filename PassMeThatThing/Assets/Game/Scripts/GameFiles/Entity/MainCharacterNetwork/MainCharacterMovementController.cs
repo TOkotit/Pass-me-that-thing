@@ -1,6 +1,7 @@
 ﻿using System;
 using DI;
 using Game.Entity;
+using Game.Scripts.GameFiles.Entity.MainCharacterDirectory;
 using Mirror;
 using Systems;
 using UnityEngine;
@@ -13,55 +14,51 @@ namespace MainCharacterNetwork
 {
     public class MainCharacterMovementController : NetworkBehaviour
     {
-        //TODO удалить это, как только доделаем шейдеры окончательно
         [SerializeField] private UniversalRendererData rendererData;
         private ScriptableRendererFeature _visionFeature;
         private ScriptableRendererFeature _outlineFeature;
         private bool _isVisionEnabled = false;
-        
-        
-        
-        private MainCharacterMovement _controllable;
+
+        private IControllable _controllable;
+        private IControllable _defaultControllable;
         private MainCharacterCamera _mainCamera;
         private GameInput _gameInput;
         private MCLocalModel _mcLocalModel;
-        private bool _subscribed; 
+        private bool _subscribed;
         private Vector3 _lastSentDirection;
-        
-        
+
         private void Awake()
         {
-            _controllable = GetComponentInChildren<MainCharacterMovement>();
-
-            if (!_controllable)
-                Debug.LogError("IControllable not found on player");
+            var movement = GetComponentInChildren<IControllable>();
+            if (movement != null)
+            {
+                _controllable = movement;
+                _defaultControllable = movement;
+            }
+            else
+            {
+                Debug.LogError("MainCharacterMovement not found on player");
+            }
 
             _mainCamera = GetComponentInChildren<MainCharacterCamera>(true);
-
             if (!_mainCamera)
                 Debug.LogWarning("MainCharacterCamera not found in children");
         }
-        
-        
-        //TODO удалить как только закончим делать шейдеры
+
         private void Start()
         {
-            
-            // Ищем фичи по имени, которое мы задали в Inspector
             _visionFeature = rendererData.rendererFeatures.Find(f => f.name == "VisionEffect");
             _outlineFeature = rendererData.rendererFeatures.Find(f => f.name == "GlobalOutlines");
-        
-            // При старте выключаем, чтобы не мешало
             SetVisionState(false);
         }
-        
+
         [Inject]
         private void Construct(GameInputManager gameInputManager, MCLocalModel mcLocalModel)
         {
             _gameInput = gameInputManager.GameInput;
             _mcLocalModel = mcLocalModel;
         }
-        
+
         public override void OnStartClient()
         {
             if (isLocalPlayer) return;
@@ -78,7 +75,7 @@ namespace MainCharacterNetwork
                 rb.useGravity = false;
             }
         }
-        
+
         public override void OnStartLocalPlayer()
         {
             _gameInput.Gameplay.Enable();
@@ -86,7 +83,7 @@ namespace MainCharacterNetwork
             if (_mainCamera)
             {
                 _mainCamera.gameObject.SetActive(true);
-                _mainCamera.SetupInput(_gameInput); 
+                _mainCamera.SetupInput(_gameInput);
             }
 
             TrySubscribe();
@@ -94,7 +91,7 @@ namespace MainCharacterNetwork
 
         private void OnEnable()
         {
-            if (isLocalPlayer) 
+            if (isLocalPlayer)
                 TrySubscribe();
         }
 
@@ -102,14 +99,15 @@ namespace MainCharacterNetwork
         {
             if (isLocalPlayer)
                 TryUnsubscribe();
-            
+
             SetVisionState(false);
         }
 
         private void TrySubscribe()
         {
             if (_subscribed) return;
-            if (_gameInput == null) {
+            if (_gameInput == null)
+            {
                 Debug.LogError($"[{gameObject.name}] GameInput is NULL during TrySubscribe!");
                 return;
             }
@@ -118,9 +116,8 @@ namespace MainCharacterNetwork
             _gameInput.Gameplay.Sprint.started += OnSprintStarted;
             _gameInput.Gameplay.Sprint.canceled += OnSprintCanceled;
             _subscribed = true;
-            Debug.Log($"<color=green>[{gameObject.name}] Subscribed to Input successfully");
         }
-        
+
         private void TryUnsubscribe()
         {
             if (!_subscribed) return;
@@ -131,7 +128,6 @@ namespace MainCharacterNetwork
                 _gameInput.Gameplay.Jump.performed -= OnJumpPerformed;
                 _gameInput.Gameplay.Sprint.started -= OnSprintStarted;
                 _gameInput.Gameplay.Sprint.canceled -= OnSprintCanceled;
-                
             }
             catch (Exception ex)
             {
@@ -139,38 +135,32 @@ namespace MainCharacterNetwork
             }
             _subscribed = false;
         }
-        
+
         private void Update()
         {
             if (!isLocalPlayer) return;
 
             ReadMovement();
-            
             _mcLocalModel?.ReportPlayerPosition(transform.position);
-            
-            //TODO удалить это, как только доделаем шейдеры окончательно
+
             if (Input.GetKeyDown(KeyCode.V))
             {
                 _isVisionEnabled = !_isVisionEnabled;
                 SetVisionState(_isVisionEnabled);
             }
-            
         }
-        
-        
-        //TODO удалить это, как только доделаем шейдеры окончательно
+
         private void SetVisionState(bool state)
         {
-            if (_visionFeature != null) _visionFeature.SetActive(state);
-            if (_outlineFeature != null) _outlineFeature.SetActive(state);
+            if (_visionFeature) _visionFeature.SetActive(state);
+            if (_outlineFeature) _outlineFeature.SetActive(state);
         }
-        
+
         private void ReadMovement()
         {
-            if (_gameInput == null || !_mainCamera) return;
+            if (_gameInput == null || !_mainCamera || _controllable == null) return;
 
             var input = _gameInput.Gameplay.Movement.ReadValue<Vector2>();
-
             var cam = _mainCamera.transform;
 
             var forward = cam.forward;
@@ -186,44 +176,54 @@ namespace MainCharacterNetwork
 
             if (moveDirection == _lastSentDirection && moveDirection == Vector3.zero)
                 return;
+
             _controllable.Move(moveDirection);
             _lastSentDirection = moveDirection;
         }
-        
-        
+
         private void OnJumpPerformed(InputAction.CallbackContext context)
         {
-            Debug.Log($"[{gameObject.name}] Jump input received!");
-            _controllable.Jump();
+            _controllable?.Jump();
         }
 
         private void OnSprintStarted(InputAction.CallbackContext context)
         {
-            _controllable.SetSprinting(true);
+            _controllable?.SetSprinting(true);
         }
 
         private void OnSprintCanceled(InputAction.CallbackContext context)
         {
-            _controllable.SetSprinting(false);
+            _controllable?.SetSprinting(false);
         }
-        
+
         public void ControllerRotate(Quaternion rotation)
         {
-            _controllable.Rotate(rotation);
+            _controllable?.Rotate(rotation);
         }
-        
-        
-        // ================== DI ==================
-        
+
+        public void SetControllable(IControllable newControllable)
+        {
+            if (newControllable != null)
+            {
+                _controllable = newControllable;
+                _lastSentDirection = Vector3.zero;
+            }
+        }
+
+        public void ResetToDefaultControllable()
+        {
+            _controllable = _defaultControllable;
+            _lastSentDirection = Vector3.zero;
+        }
+
         private void OnDestroy()
         {
             SetVisionState(false);
-            
+
             if (isLocalPlayer && _gameInput != null)
             {
                 TryUnsubscribe();
                 _gameInput.Gameplay.Disable();
-                Debug.Log("Local GameInput disposed");
             }
         }
     }
