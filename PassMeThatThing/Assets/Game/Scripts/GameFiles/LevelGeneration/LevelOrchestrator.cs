@@ -3,7 +3,9 @@ using System.Linq;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
+using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
@@ -37,7 +39,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         private const int MAX_CLUSTER_PLACEMENT_ATTEMPTS = 15; 
         
-        private readonly System.Random _random = new();
+        private System.Random _random;
         private List<PlacedRoomDataCluster> _allPlacedRooms = new();
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
 
@@ -53,8 +55,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             public int Depth;
         }
         
-        public void GeneratePhysicalLevel(List<RoomCluster> clusters)
+        public void GeneratePhysicalLevel(List<RoomCluster> clusters, int seed)
         {
+            _random = new System.Random(seed);
             ClearLevel();
 
             if (clusters == null || clusters.Count == 0) return;
@@ -67,7 +70,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
 
             var nonCoreClusters = clusters.Skip(1).ToList();
-            var dirs = SearchDirections.OrderBy(_ => _random.Next()).ToList();
+            var dirs = GetShuffled(SearchDirections);
 
             for (var i = 0; i < nonCoreClusters.Count; i++)
             {
@@ -80,6 +83,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             BlockUnusedExits();
             PlaceUsedExitPassages();
             Debug.Log($"[ГЕНЕРАЦИЯ ЗАВЕРШЕНА] Всего кластеров: {clusters.Count}. Всего размещено комнат: {_allPlacedRooms.Count}.");
+        }
+        
+        private void Shuffle<T>(IList<T> list)
+        {
+            var n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                var k = _random.Next(n + 1);
+                (list[k], list[n]) = (list[n], list[k]);
+            }
+        }
+
+        private List<T> GetShuffled<T>(IEnumerable<T> source)
+        {
+            var list = source.ToList();
+            Shuffle(list);
+            return list;
         }
         
         private void ClearLevel()
@@ -106,7 +127,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var commandCenterNode = coreCluster.Rooms.FirstOrDefault(r => r.Type == RoomTypeNew.CommandCenter);
                 if (commandCenterNode == null) return false;
 
-                var candidates = roomDatabase.GetSuitableRooms(commandCenterNode.Type, 1, false);
+                var candidates = roomDatabase.GetSuitableRooms(commandCenterNode.Type, 1, false).OrderBy(r => r.name).ToList();
                 if (candidates.Count == 0) return false;
 
                 var prefab = candidates[_random.Next(candidates.Count)];
@@ -500,6 +521,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             instance.name = roomName;
 
+            if (Application.isPlaying && NetworkServer.active)
+            {
+                NetworkServer.Spawn(instance.gameObject);
+            }
+
             var data = new PlacedRoomDataCluster 
             { 
                 Instance = instance, 
@@ -848,6 +874,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             var sortedPrefabs = tunnelPrefabs
                 .OrderByDescending(p => RoomRotationHelper.GetRotatedPlates(p, RoomRotation.Deg0).Length)
+                .ThenBy(p => p.name)
                 .ToList();
 
             var i = 0;
@@ -965,6 +992,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
                 }
+                
             #else
                 instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
             #endif
@@ -992,24 +1020,31 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 baseWorldPos.y,
                 centerWorldPos.z + conn.Direction.z * 5f + left.z * 5f
             );
+            
+            GameObject instance;
+            
 
             #if UNITY_EDITOR
                 if (!Application.isPlaying)
                 {
-                    var instance = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, roomData.Instance.transform);
+                    instance = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, roomData.Instance.transform);
                     instance.transform.SetPositionAndRotation(wallPos, wallRot);
-                    instance.name = instanceName;
                 }
                 else
                 {
-                    var instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
-                    instance.name = instanceName;
+                    instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
                 }
             #else
-                var instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
-                instance.name = instanceName;
+                instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
             #endif
+            
+            
+            instance.name = instanceName;
 
+            if (Application.isPlaying && NetworkServer.active)
+            {
+                NetworkServer.Spawn(instance);
+            }
 
         }
         

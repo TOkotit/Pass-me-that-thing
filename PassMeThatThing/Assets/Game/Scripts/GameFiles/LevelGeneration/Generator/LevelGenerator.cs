@@ -12,16 +12,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
     
     public class LevelGenerator
     {
-        private readonly Random _random = new();
+        private readonly Random _random;
         private readonly LevelGraphConfig _config;
         private readonly int _targetRoomCount;
         
         private int _nextNodeId = 0;
         private int _medicalBlockCount = 0;
 
-        public LevelGenerator(LevelGraphConfig config)
+        public LevelGenerator(LevelGraphConfig config, int seed)
         {
             _config = config;
+            _random = new Random(seed);
+            
             var minRoomsRequired = Math.Max(config.MinRooms, 7);
             _targetRoomCount = _random.Next(minRoomsRequired, config.MaxRooms + 1);
         }
