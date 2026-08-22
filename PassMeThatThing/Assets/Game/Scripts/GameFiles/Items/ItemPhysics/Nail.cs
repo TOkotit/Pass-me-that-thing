@@ -52,7 +52,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             }
         }
 
-        public void OnHatHit(Collision other)
+        public void OnHatHit(Collider other)
         {
             if (other.gameObject.CompareTag("Ground"))
             {

@@ -10,12 +10,12 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private Nail nail; 
         [SerializeField] private PointType pointType;
 
-        private void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
             
             if (pointType == PointType.Tip)
             {
-                nail.OnTipHit(other.collider);
+                nail.OnTipHit(other);
             }
 
             if (pointType == PointType.Hat)

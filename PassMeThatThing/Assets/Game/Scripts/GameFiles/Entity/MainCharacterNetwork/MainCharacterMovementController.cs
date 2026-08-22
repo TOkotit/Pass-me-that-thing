@@ -1,7 +1,7 @@
 ﻿using System;
 using DI;
 using Game.Entity;
-using Game.Scripts.GameFiles.Entity.MainCharacterDirectory;
+using Game.Scripts.GameFiles.Entity.MainCharacterNetwork;
 using Mirror;
 using Systems;
 using UnityEngine;
@@ -115,6 +115,8 @@ namespace MainCharacterNetwork
             _gameInput.Gameplay.Jump.performed += OnJumpPerformed;
             _gameInput.Gameplay.Sprint.started += OnSprintStarted;
             _gameInput.Gameplay.Sprint.canceled += OnSprintCanceled;
+            _gameInput.Gameplay.Control.started += OnControlStarted;
+            _gameInput.Gameplay.Control.canceled += OnControlCanceled;
             _subscribed = true;
         }
 
@@ -128,6 +130,8 @@ namespace MainCharacterNetwork
                 _gameInput.Gameplay.Jump.performed -= OnJumpPerformed;
                 _gameInput.Gameplay.Sprint.started -= OnSprintStarted;
                 _gameInput.Gameplay.Sprint.canceled -= OnSprintCanceled;
+                _gameInput.Gameplay.Control.started -= OnControlStarted;
+                _gameInput.Gameplay.Control.canceled -= OnControlCanceled;
             }
             catch (Exception ex)
             {
@@ -200,7 +204,15 @@ namespace MainCharacterNetwork
         {
             _controllable?.Rotate(rotation);
         }
+        private void OnControlStarted(InputAction.CallbackContext context)
+        {
+            _controllable?.Control(true);
+        }
 
+        private void OnControlCanceled(InputAction.CallbackContext context)
+        {
+            _controllable?.Control(false);
+        }
         public void SetControllable(IControllable newControllable)
         {
             if (newControllable != null)

@@ -13,26 +13,35 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public override DamagableModel DamagableModel => _model;
 
         [Header("Collision Damage")]
-        [SerializeField] private float collisionDamageThreshold = 5f;      // минимальная скорость удара для получения урона
-        [SerializeField] private float collisionDamageMultiplier = 1f;     // множитель урона от превышения порога
-        [SerializeField] private float flatDamageReduction = 0f;           // плоское снижение урона (для прочных предметов)
+        [SerializeField] private float collisionDamageThreshold = 5f;
+        [SerializeField] private float collisionDamageMultiplier = 1f;
+        [SerializeField] private float flatDamageReduction = 0f;
 
         [SerializeField] private PhysicalItem _item;
-        [SerializeField] private List<PhysicalItem> _items;
+        [SerializeField] private List<PhysicalItem> _items = new List<PhysicalItem>();
         private readonly List<Collider> _connectedTo = new List<Collider>();
         private string _savedTag = "Item";
+
         public PhysicalItem Item => _item;
 
         public override void OnDeath()
         {
-            RagdollHandler.EnableRagdoll();
+            RagdollHandler?.EnableRagdoll();
+
             foreach (var item in _items)
             {
-                item.gameObject.SetActive(true);
-                item.transform.SetParent(null);
+                if (item)
+                {
+                    item.gameObject.SetActive(true);
+                    item.transform.SetParent(null);
+                }
             }
-            if (_item.gameObject != gameObject) Destroy(_item.gameObject);
-            Destroy(gameObject);
+            _items.Clear();
+
+            if (_item && _item.gameObject != gameObject)
+                NetworkServer.Destroy(_item.gameObject);
+
+            NetworkServer.Destroy(gameObject);
         }
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
@@ -41,11 +50,15 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         public override void OnToughnessBreak()
         {
-            RagdollHandler.EnableRagdoll();
+            RagdollHandler?.EnableRagdoll();
             tag = _savedTag;
-            foreach (var connection in _item.Connections)
+
+            if (_item && _item.Connections != null)
             {
-                connection.Disconnect();
+                foreach (var connection in _item.Connections)
+                {
+                    connection?.Disconnect();
+                }
             }
         }
 
@@ -88,7 +101,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             {
                 _savedTag = tag;
                 tag = "Ground";
-                RagdollHandler.DisableRagdoll();
+                RagdollHandler?.DisableRagdoll();
             }
         }
     }

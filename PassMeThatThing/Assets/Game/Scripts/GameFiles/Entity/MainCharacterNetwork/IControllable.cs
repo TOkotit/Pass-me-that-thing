@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.Entity.MainCharacterDirectory
+namespace Game.Scripts.GameFiles.Entity.MainCharacterNetwork
 {
     public interface IControllable
     {
@@ -14,5 +14,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterDirectory
         void EnableController();
         Vector3 GetCurrentVelocity();
         Vector3 LastVelocity { get; }
+
+        void Control(bool isPressed);
     }
 }

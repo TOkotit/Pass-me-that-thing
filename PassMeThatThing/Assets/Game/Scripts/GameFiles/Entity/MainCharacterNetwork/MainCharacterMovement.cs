@@ -12,6 +12,7 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using IControllable = Game.Scripts.GameFiles.Entity.MainCharacterNetwork.IControllable;
 
 public class MainCharacterMovement : NetworkBehaviour, IControllable
 {
@@ -43,6 +44,11 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
     private PhysicalItem _item;
     private PhysicalItemInteractionController _itemController;
     public Vector3 LastVelocity => _lastVelocity;
+    public void Control(bool isPressed)
+    {
+        throw new NotImplementedException();
+    }
+
     public void DisableController() => characterController.enabled = false;
     public void EnableController() => characterController.enabled = true;
 

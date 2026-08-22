@@ -21,6 +21,11 @@ namespace Entity
         [SyncVar(hook = nameof(OnSyncedMaxToughnessChanged))]
         private int _syncedMaxToughness;
 
+        protected virtual void Awake()
+        {
+            if (_toughnessModel == null)
+                _toughnessModel = new ToughnessModel();
+        }
 
         protected virtual void Start()
         {
