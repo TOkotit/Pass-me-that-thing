@@ -20,8 +20,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
             LogRegisteredSpawnPrefabs();
         }
         
-
-        
         private void LogRegisteredSpawnPrefabs()
         {
             Debug.Log($"[CNRM] spawnPrefabs.Count = {spawnPrefabs.Count}");
@@ -59,7 +57,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
                 {
                     var generator = new LevelGenerator(new LevelGraphConfig(), defaultTestSeed);
                     var clusters = generator.GenerateClusters();
-                    if (clusters != null && clusters.Count > 0)
+                    if (clusters is { Count: > 0 })
                     {
                         orchestrator.GeneratePhysicalLevel(clusters, defaultTestSeed);
                     }

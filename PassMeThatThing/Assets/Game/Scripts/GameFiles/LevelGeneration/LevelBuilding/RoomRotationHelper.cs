@@ -14,9 +14,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     public static class RoomRotationHelper
     {
-        public static VirtualPlateData[] GetRotatedPlates(LevelRoomNew room, RoomRotation rotation)
+        public static VirtualPlateData[] GetRotatedPlates(RoomDataEntry room, RoomRotation rotation)
         {
-            var originalPlates = room.Plates;
+            var originalPlates = room.RoomComponent.Plates;
             var rotatedPlates = new VirtualPlateData[originalPlates.Length];
 
             for (var i = 0; i < originalPlates.Length; i++)

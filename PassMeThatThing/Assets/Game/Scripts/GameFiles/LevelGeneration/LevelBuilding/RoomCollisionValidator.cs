@@ -5,11 +5,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 {
     public static class RoomCollisionValidator
     {
-        public static bool IsPlacementValid(LevelGrid grid, LevelRoomNew room, RoomRotation rotation, Vector3Int origin)
+        public static bool IsPlacementValid(LevelGrid grid, RoomDataEntry entry, RoomRotation rotation, Vector3Int origin)
         {
-            if (grid == null || room == null) return false;
+            if (!grid || !entry.PrefabGameObject || !entry.RoomComponent) return false;
 
-            var rotatedPlates = RoomRotationHelper.GetRotatedPlates(room, rotation);
+            var rotatedPlates = RoomRotationHelper.GetRotatedPlates(entry, rotation);
 
             for (var i = 0; i < rotatedPlates.Length; i++)
             {
