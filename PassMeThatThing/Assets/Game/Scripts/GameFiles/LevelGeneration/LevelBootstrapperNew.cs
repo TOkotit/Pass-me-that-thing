@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
-    public class LevelBootstrapperNew : MonoBehaviour
+    public class LevelBootstrapperNew : NetworkBehaviour
     {
         [SerializeField] private LevelOrchestrator orchestrator;
         [SerializeField] private LevelGraphConfig graphConfig = new LevelGraphConfig();
@@ -16,6 +17,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [ContextMenu("Generate Level")]
         public void Generate()
         {
+            
             if (orchestrator == null)
             {
                 Debug.LogError("[СБОЙ] Ссылка на LevelOrchestrator не назначена в инспекторе.");

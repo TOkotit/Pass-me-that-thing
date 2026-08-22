@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Scripts.Enums;
@@ -28,21 +29,31 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public RoomsConnectionTypes Type;
     }
     
-    
-    public class LevelOrchestrator : MonoBehaviour
+    [RequireComponent(typeof(NetworkIdentity))]
+    public class LevelOrchestrator : NetworkBehaviour
     {
         [SerializeField] private RoomDatabaseNew roomDatabase;
         [SerializeField] public LevelGrid levelGrid;
         [SerializeField] private Transform levelContainer;
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private GameObject wallWithPassagePrefab;
+        [SerializeField] private int defaultTestSeed = 12345;
         
+        
+        public static Transform ActiveLevelContainer { get; private set; }
+
+        private void Awake()
+        {
+            ActiveLevelContainer = levelContainer;
+        }
+
+
         private const int MAX_CLUSTER_PLACEMENT_ATTEMPTS = 15; 
         
         private System.Random _random;
         private List<PlacedRoomDataCluster> _allPlacedRooms = new();
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
-
+        private List<GameObject> _placedWalls = new();
         private static readonly Vector3Int[] SearchDirections = {
             new(1, 0, 0), new(-1, 0, 0),
             new(0, 0, 1), new(0, 0, -1)
@@ -83,6 +94,35 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             BlockUnusedExits();
             PlaceUsedExitPassages();
             Debug.Log($"[ГЕНЕРАЦИЯ ЗАВЕРШЕНА] Всего кластеров: {clusters.Count}. Всего размещено комнат: {_allPlacedRooms.Count}.");
+
+            SpawnGeneratedLevelOverNetwork();
+        }
+        
+        private void SpawnGeneratedLevelOverNetwork()
+        {
+            if (!NetworkServer.active || _allPlacedRooms.Count == 0) return;
+
+            var spawnedCount = 0;
+
+            foreach (var cluster in _allPlacedRooms)
+            {
+                NetworkServer.Spawn(cluster.Instance.gameObject);
+                spawnedCount++;
+                
+                foreach (var tunnel in cluster.AttachedTunnels)
+                {
+                    NetworkServer.Spawn(tunnel.gameObject);
+                    spawnedCount++;
+                }
+            }
+            
+            foreach (var wall in _placedWalls)
+            {
+                NetworkServer.Spawn(wall);
+                spawnedCount++;
+            }
+            Debug.Log($"[СПАВН-СЕРВЕР] Финальный спавн уровня: {spawnedCount} объектов " +
+                      $"(всего в NetworkServer.spawned: {NetworkServer.spawned.Count}).");
         }
         
         private void Shuffle<T>(IList<T> list)
@@ -108,14 +148,25 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             levelGrid.ClearGrid();
             _allPlacedRooms.Clear();
             _usedConnections.Clear();
-
+            _placedWalls.Clear();
             if (levelContainer != null)
             {
                 for (var i = levelContainer.childCount - 1; i >= 0; i--)
                 {
                     var child = levelContainer.GetChild(i).gameObject;
-                    if (Application.isPlaying) Destroy(child);
-                    else DestroyImmediate(child);
+
+                    if (NetworkServer.active && child.TryGetComponent<NetworkIdentity>(out _))
+                    {
+                        NetworkServer.Destroy(child);
+                    }
+                    else if (Application.isPlaying)
+                    {
+                        Destroy(child);
+                    }
+                    else
+                    {
+                        DestroyImmediate(child);
+                    }
                 }
             }
         }
@@ -336,8 +387,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (roomData.Instance != null)
                 {
-                    if (Application.isPlaying) Destroy(roomData.Instance.gameObject);
-                    else DestroyImmediate(roomData.Instance.gameObject);
+                    foreach (var tunnel in roomData.AttachedTunnels)
+                    {
+                        if (tunnel != null)
+                        {
+                            if (Application.isPlaying) Destroy(tunnel.gameObject);
+                            else DestroyImmediate(tunnel.gameObject);
+                        }
+                    }
+    
+                    var go = roomData.Instance.gameObject;
+                    if (Application.isPlaying) Destroy(go);
+                    else DestroyImmediate(go);
                 }
             }
             
@@ -503,32 +564,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => Quaternion.identity
             };
 
-            LevelRoomNew instance;
-
-            #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    instance = (LevelRoomNew)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, levelContainer);
-                    instance.transform.SetPositionAndRotation(worldPos, rotQuat);
-                }
-                else
-                {
-                    instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-                }
-            #else
-                instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-            #endif
-
-            instance.name = roomName;
-
-            if (Application.isPlaying && NetworkServer.active)
-            {
-                NetworkServer.Spawn(instance.gameObject);
-            }
-
+            var instanceGo = Instantiate(prefab.gameObject, worldPos, rotQuat, levelContainer);
+            instanceGo.name = roomName;
+            
+            var instanceComponent = instanceGo.GetComponent<LevelRoomNew>();
+            
             var data = new PlacedRoomDataCluster 
             { 
-                Instance = instance, 
+                Instance = instanceComponent, 
                 Prefab = prefab,
                 Origin = origin,
                 Rotation = rotation,
@@ -541,7 +584,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var globalPos = origin + plate.LocalPosition;
                 var doorDirs = plate.Doors.Select(d => d.GlobalDirection).ToList();
-                levelGrid.SetCellState(globalPos, true, doorDirs, instance.GetInstanceID());
+                levelGrid.SetCellState(globalPos, true, doorDirs, instanceComponent.GetInstanceID());
 
                 data.OccupiedCells.Add(globalPos);
 
@@ -980,25 +1023,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => Quaternion.identity
             };
 
-            LevelRoomNew instance;
+            var instanceGo = Instantiate(prefab.gameObject, worldPos, rotQuat, levelContainer);
+            instanceGo.name = roomName;
 
-            #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    instance = (LevelRoomNew)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, levelContainer);
-                    instance.transform.SetPositionAndRotation(worldPos, rotQuat);
-                }
-                else
-                {
-                    instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-                }
-                
-            #else
-                instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-            #endif
-
-            instance.name = roomName;
-            return instance;
+            return instanceGo.GetComponent<LevelRoomNew>();
         }
         
         private void InstantiateDoorwayInsert(PlacedRoomDataCluster roomData, ConnectionPointNew conn, GameObject prefab, string instanceName)
@@ -1021,31 +1049,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 centerWorldPos.z + conn.Direction.z * 5f + left.z * 5f
             );
             
-            GameObject instance;
-            
-
-            #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    instance = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, roomData.Instance.transform);
-                    instance.transform.SetPositionAndRotation(wallPos, wallRot);
-                }
-                else
-                {
-                    instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
-                }
-            #else
-                instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
-            #endif
-            
-            
+            var instance = Instantiate(prefab, wallPos, wallRot, levelContainer);
             instance.name = instanceName;
-
-            if (Application.isPlaying && NetworkServer.active)
-            {
-                NetworkServer.Spawn(instance);
-            }
-
+            _placedWalls.Add(instance);
         }
         
         private void BlockUnusedExits()

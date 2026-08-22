@@ -1,11 +1,14 @@
 using Game.Scripts.Enums;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
     
     [RequireComponent(typeof(Grid))]
-    public class LevelRoomNew : MonoBehaviour
+    [RequireComponent(typeof(NetworkIdentity))]
+
+    public class LevelRoomNew : NetworkBehaviour
     {
         [SerializeField] private RoomTypeNew roomType;
         [SerializeField] private RoomPlateDataNew[] plates;
@@ -15,6 +18,28 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public int TotalDoors => totalDoors;
         public RoomPlateDataNew[] Plates => plates;
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            ReparentToLevelContainer();
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            ReparentToLevelContainer();
+        }
+
+        private void ReparentToLevelContainer()
+        {
+            var container = LevelOrchestrator.ActiveLevelContainer;
+            if (container != null && transform.parent != container)
+            {
+                transform.SetParent(container, true);
+            }
+        }
+
+        
         [ContextMenu("Compile Room")]
         public void CompileRoom()
         {

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 319741792640230851}
   - component: {fileID: 7828892963863885859}
   - component: {fileID: 5302859596028704940}
-  - component: {fileID: 5634807699319748034}
+  - component: {fileID: 3355080230730633783}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -76,12 +76,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e29422f9bb8401e9c403cd8c71387b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomDatabase: {fileID: 11400000, guid: e18b2113ca5b7284baa14c8470f9f3fd, type: 2}
   levelGrid: {fileID: 319741792640230851}
   levelContainer: {fileID: 180583881734044310}
   wallPrefab: {fileID: 6287735420220308057, guid: 83dfb68398f1d5d46a4c1a71197ee60c, type: 3}
   wallWithPassagePrefab: {fileID: 3670171128644518833, guid: ddca5eeb262083e4fb3189c46b6aa864, type: 3}
---- !u!114 &5634807699319748034
+  defaultTestSeed: 12345
+--- !u!114 &3355080230730633783
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

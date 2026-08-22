@@ -13,6 +13,34 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
         public event Action<bool> OnClientSceneLoadStateChanged;
         [SerializeField] private int defaultTestSeed = 12345;
         
+        
+        public override void Awake()
+        {
+            base.Awake();
+            LogRegisteredSpawnPrefabs();
+        }
+        
+
+        
+        private void LogRegisteredSpawnPrefabs()
+        {
+            Debug.Log($"[CNRM] spawnPrefabs.Count = {spawnPrefabs.Count}");
+            foreach (var prefab in spawnPrefabs)
+            {
+                if (prefab == null)
+                {
+                    Debug.LogWarning("[CNRM] В списке spawnPrefabs есть пустой (null) элемент!");
+                    continue;
+                }
+
+                var identity = prefab.GetComponent<NetworkIdentity>();
+                Debug.Log(identity != null
+                    ? $"[CNRM] Prefab '{prefab.name}' assetId={identity.assetId}"
+                    : $"[CNRM] Prefab '{prefab.name}' - НЕТ NetworkIdentity на корне!");
+            }
+        }
+
+        
         public override void OnServerChangeScene(string newSceneName)
         {
             base.OnServerChangeScene(newSceneName);
@@ -24,7 +52,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
 
         public override void OnServerSceneChanged(string sceneName)
         {
-            /*
             if (sceneName == GameplayScene)
             {
                 var orchestrator = FindObjectOfType<LevelOrchestrator>();
@@ -46,7 +73,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
                     Debug.LogError("[CNRM] LevelOrchestrator не найден на сцене!");
                 }
             }
-            */
             
             base.OnServerSceneChanged(sceneName);
         
