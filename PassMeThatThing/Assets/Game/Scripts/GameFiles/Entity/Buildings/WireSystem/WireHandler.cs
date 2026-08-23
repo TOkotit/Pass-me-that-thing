@@ -16,7 +16,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [Inject] private LocalWireHandlerModel _handlerModel;
         [Inject] private WireManager _wireManager;
 
-        //[Inject] private GameplayUIManager _gameplayUIManager;
 
         private void Start()
         {
@@ -56,7 +55,5 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         {
             _wireManager.CmdClearConnectionsOfNode(nodeId);
         }
-        
-        
     }
 }

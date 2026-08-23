@@ -13,6 +13,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
     public class BuildingHandler : NetworkBehaviour
     {
         [SerializeField] private LayerMask groundLayer;
+        [SerializeField] private LayerMask buildingLayer;
         [SerializeField] private GameObject defaultBuildingPreview; 
         [SerializeField] private Camera camera;
 
@@ -42,6 +43,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _handlerModel.OnStartBuildPreviewById += StartBuildingPreviewById;
                 _handlerModel.OnConfirmBuildPreview += ConfirmBuilding;
                 _handlerModel.OnCancelBuildPreview += CancelBuildingPreview;
+
+                _handlerModel.OnDestroyBuilding += DestroyBuilding;
                 
                 _inputManager.GameInput.Gameplay.Zoom.performed += ZoomOnperformed;
             }
@@ -56,7 +59,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _handlerModel.OnStartBuildPreviewById -= StartBuildingPreviewById;
                 _handlerModel.OnConfirmBuildPreview -= ConfirmBuilding;
                 _handlerModel.OnCancelBuildPreview -= CancelBuildingPreview;
-                
+
+                _handlerModel.OnDestroyBuilding -= DestroyBuilding;
+
                 _inputManager.GameInput.Gameplay.Zoom.performed -= ZoomOnperformed;
             }
         }
@@ -66,7 +71,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             if (_buildingPreview != null)
             {
-                //buildingPreview.transform.Rotate(new Vector3(0f, 1f, 0f), _rotateStep * obj.ReadValue<Vector2>().y); 
                 _previewRotation += _rotateStep * obj.ReadValue<Vector2>().y;
             }
             
@@ -122,7 +126,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _buildingPreview = Instantiate(defaultBuildingPreview);
             }
 
-            //buildingPreview.SetActive(true);
             OpenBuildingPreviewScreen();
         }
 
@@ -156,9 +159,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             _currentBuildingId = "";
             if (_buildingPreview != null)
                 Destroy(_buildingPreview.gameObject);
-            //buildingPreview.SetActive(false);
             CloseBuildingPreviewScreen();
         }
         
+        public void DestroyBuilding()
+        {
+            var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+
+            if (Physics.Raycast(ray, out var hit, _previewDistance, buildingLayer))
+            {
+                _buildingManager.CmdDestroyBuilding(hit.collider.gameObject);
+            }
+        }
+
     }
 }

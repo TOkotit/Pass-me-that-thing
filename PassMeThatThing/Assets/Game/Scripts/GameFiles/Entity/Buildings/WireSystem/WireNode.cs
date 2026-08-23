@@ -67,7 +67,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         public void EntryInteracted(int entryId)
         {
-            _handlerModel.HighlightNode(NodeId, entryId);
+            _handlerModel.HighlightNode(NodeId, entryId, wireType);
         }
     }
 }

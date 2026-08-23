@@ -1,5 +1,7 @@
 ﻿using Mirror;
 using System;
+using Game.Scripts.GameFiles.LevelGeneration;
+using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,7 +11,34 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
     {
         public event Action<bool> OnServerSceneLoadStateChanged;
         public event Action<bool> OnClientSceneLoadStateChanged;
+        [SerializeField] private int defaultTestSeed = 12345;
+        
+        
+        public override void Awake()
+        {
+            base.Awake();
+            LogRegisteredSpawnPrefabs();
+        }
+        
+        private void LogRegisteredSpawnPrefabs()
+        {
+            Debug.Log($"[CNRM] spawnPrefabs.Count = {spawnPrefabs.Count}");
+            foreach (var prefab in spawnPrefabs)
+            {
+                if (prefab == null)
+                {
+                    Debug.LogWarning("[CNRM] В списке spawnPrefabs есть пустой (null) элемент!");
+                    continue;
+                }
 
+                var identity = prefab.GetComponent<NetworkIdentity>();
+                Debug.Log(identity != null
+                    ? $"[CNRM] Prefab '{prefab.name}' assetId={identity.assetId}"
+                    : $"[CNRM] Prefab '{prefab.name}' - НЕТ NetworkIdentity на корне!");
+            }
+        }
+
+        
         public override void OnServerChangeScene(string newSceneName)
         {
             base.OnServerChangeScene(newSceneName);
@@ -21,6 +50,28 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
 
         public override void OnServerSceneChanged(string sceneName)
         {
+            if (sceneName == GameplayScene)
+            {
+                var orchestrator = FindObjectOfType<LevelOrchestrator>();
+                if (orchestrator != null)
+                {
+                    var generator = new LevelGenerator(new LevelGraphConfig(), defaultTestSeed);
+                    var clusters = generator.GenerateClusters();
+                    if (clusters is { Count: > 0 })
+                    {
+                        orchestrator.GeneratePhysicalLevel(clusters, defaultTestSeed);
+                    }
+                    else
+                    {
+                        Debug.LogError("[CNRM] Не удалось сгенерировать кластеры для уровня.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("[CNRM] LevelOrchestrator не найден на сцене!");
+                }
+            }
+            
             base.OnServerSceneChanged(sceneName);
         
             Debug.Log($"[CNRM] OnServerSceneChanged {sceneName}");
@@ -41,6 +92,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
 
         public override void OnClientSceneChanged()
         {
+            
             base.OnClientSceneChanged();
 
             if (NetworkServer.active) return;

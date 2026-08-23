@@ -1,25 +1,36 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
+using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
     public class PlacedRoomDataCluster
     {
-        public LevelRoomNew Instance;
-        public LevelRoomNew Prefab;
+        public LevelRoomNew RoomComponent;
+        public GameObject Prefab;
         public Vector3Int Origin;
         public RoomRotation Rotation;
         public RoomCluster Cluster;
         public List<ConnectionPointNew> FreeConnections = new();
         public List<Vector3Int> OccupiedCells = new();
-        public List<LevelRoomNew> AttachedTunnels = new();
+        public List<GameObject> AttachedTunnels = new();
     }
     
-    public class LevelOrchestrator : MonoBehaviour
+    public struct ConnectionPointNew
+    {
+        public Vector3Int GlobalPosition;
+        public Vector3Int Direction;
+        public RoomsConnectionTypes Type;
+    }
+    
+    [RequireComponent(typeof(NetworkIdentity))]
+    public class LevelOrchestrator : NetworkBehaviour
     {
         [SerializeField] private RoomDatabaseNew roomDatabase;
         [SerializeField] public LevelGrid levelGrid;
@@ -27,16 +38,20 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private GameObject wallWithPassagePrefab;
         
+        public static Transform ActiveLevelContainer { get; private set; }
+
+        private void Awake()
+        {
+            ActiveLevelContainer = levelContainer;
+        }
+
+
         private const int MAX_CLUSTER_PLACEMENT_ATTEMPTS = 15; 
         
-        private readonly System.Random _random = new();
+        private System.Random _random;
         private List<PlacedRoomDataCluster> _allPlacedRooms = new();
-
-        // Обе стороны каждого стыка, который был успешно состыкован (комната-комната внутри кластера
-        // или комната-комната через туннель между кластерами). Используется для расстановки
-        // декоративной стены с проходом поверх реально используемых дверных проёмов.
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
-
+        private List<GameObject> _placedWalls = new();
         private static readonly Vector3Int[] SearchDirections = {
             new(1, 0, 0), new(-1, 0, 0),
             new(0, 0, 1), new(0, 0, -1)
@@ -49,8 +64,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             public int Depth;
         }
         
-        public void GeneratePhysicalLevel(List<RoomCluster> clusters)
+        public void GeneratePhysicalLevel(List<RoomCluster> clusters, int seed)
         {
+            if (!isServer) return;
+            
+            _random = new System.Random(seed);
             ClearLevel();
 
             if (clusters == null || clusters.Count == 0) return;
@@ -63,7 +81,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
 
             var nonCoreClusters = clusters.Skip(1).ToList();
-            var dirs = SearchDirections.OrderBy(_ => _random.Next()).ToList();
+            var dirs = GetShuffled(SearchDirections);
 
             for (var i = 0; i < nonCoreClusters.Count; i++)
             {
@@ -76,6 +94,103 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             BlockUnusedExits();
             PlaceUsedExitPassages();
             Debug.Log($"[ГЕНЕРАЦИЯ ЗАВЕРШЕНА] Всего кластеров: {clusters.Count}. Всего размещено комнат: {_allPlacedRooms.Count}.");
+
+            SpawnGeneratedLevelOverNetwork();
+        }
+        
+        private void SpawnGeneratedLevelOverNetwork()
+        {
+            if (!NetworkServer.active || _allPlacedRooms.Count == 0) return;
+
+            foreach (var cell in levelGrid.OccupiedCells)
+            {
+                if (levelGrid.TryGetCellData(cell, out var data))
+                {
+                    RpcSyncGridCell(cell, data.Doors.ToArray(), data.RoomId);
+                }
+            }
+            
+            var spawnedCount = 0;
+
+            foreach (var cluster in _allPlacedRooms)
+            {
+                NetworkServer.Spawn(cluster.Prefab);
+                RpcSnapObject(cluster.Prefab, cluster.Prefab.transform.position, cluster.Prefab.transform.rotation);
+                spawnedCount++;
+        
+                foreach (var tunnel in cluster.AttachedTunnels)
+                {
+                    NetworkServer.Spawn(tunnel);
+                    RpcSnapObject(tunnel, tunnel.transform.position, tunnel.transform.rotation);
+                    spawnedCount++;
+                }
+            }
+    
+            foreach (var wall in _placedWalls)
+            {
+                NetworkServer.Spawn(wall);
+                RpcSnapObject(wall, wall.transform.position, wall.transform.rotation);
+                spawnedCount++;
+            }
+            Debug.Log($"[СПАВН-СЕРВЕР] Финальный спавн уровня: {spawnedCount} объектов " +
+                      $"(всего в NetworkServer.spawned: {NetworkServer.spawned.Count}).");
+        }
+        
+        private void Shuffle<T>(IList<T> list)
+        {
+            var n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                var k = _random.Next(n + 1);
+                (list[k], list[n]) = (list[n], list[k]);
+            }
+        }
+
+        private List<T> GetShuffled<T>(IEnumerable<T> source)
+        {
+            var list = source.ToList();
+            Shuffle(list);
+            return list;
+        }
+        
+        [ClientRpc]
+        private void RpcSnapObjectToGrid(GameObject obj)
+        {
+            if (obj == null || levelGrid == null || levelGrid.UnityGrid == null) return;
+    
+            if (levelContainer != null)
+            {
+                obj.transform.SetParent(levelContainer, true);
+            }
+
+            var cellPosition = levelGrid.UnityGrid.WorldToCell(obj.transform.position);
+    
+            var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(cellPosition);
+            var baseWorldPos = levelGrid.UnityGrid.CellToWorld(cellPosition);
+            var snappedPos = new Vector3(centerWorldPos.x, baseWorldPos.y, centerWorldPos.z);
+    
+            obj.transform.position = snappedPos;
+        }
+        
+        [ClientRpc]
+        private void RpcSyncGridCell(Vector3Int cellPosition, Vector3Int[] doorDirections, int roomId)
+        {
+            levelGrid.SetCellState(cellPosition, true, doorDirections.ToList(), roomId);
+        }
+
+        [ClientRpc]
+        private void RpcSnapObject(GameObject obj, Vector3 worldPos, Quaternion rotation)
+        {
+            if (obj == null) return;
+    
+            if (levelContainer != null)
+            {
+                obj.transform.SetParent(levelContainer, true);
+            }
+    
+            obj.transform.position = worldPos;
+            obj.transform.rotation = rotation;
         }
         
         private void ClearLevel()
@@ -83,14 +198,25 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             levelGrid.ClearGrid();
             _allPlacedRooms.Clear();
             _usedConnections.Clear();
-
+            _placedWalls.Clear();
             if (levelContainer != null)
             {
                 for (var i = levelContainer.childCount - 1; i >= 0; i--)
                 {
                     var child = levelContainer.GetChild(i).gameObject;
-                    if (Application.isPlaying) Destroy(child);
-                    else DestroyImmediate(child);
+
+                    if (NetworkServer.active && child.TryGetComponent<NetworkIdentity>(out _))
+                    {
+                        NetworkServer.Destroy(child);
+                    }
+                    else if (Application.isPlaying)
+                    {
+                        Destroy(child);
+                    }
+                    else
+                    {
+                        DestroyImmediate(child);
+                    }
                 }
             }
         }
@@ -102,11 +228,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var commandCenterNode = coreCluster.Rooms.FirstOrDefault(r => r.Type == RoomTypeNew.CommandCenter);
                 if (commandCenterNode == null) return false;
 
-                var candidates = roomDatabase.GetSuitableRooms(commandCenterNode.Type, 1, false);
+                var candidates = roomDatabase.GetSuitableRooms(commandCenterNode.Type, 1, false).OrderBy(r => r.PrefabGameObject.name).ToList();
                 if (candidates.Count == 0) return false;
 
-                var prefab = candidates[_random.Next(candidates.Count)];
-                var commandCenterData = InstantiateAndRegisterRoom(prefab, Vector3Int.zero, RoomRotation.Deg0, coreCluster, "Room_Core_CommandCenter");
+                var entry = candidates[_random.Next(candidates.Count)];
+                var commandCenterData = InstantiateAndRegisterRoom(entry, Vector3Int.zero, RoomRotation.Deg0, coreCluster);
 
                 var remainingRooms = coreCluster.Rooms.Where(r => r != commandCenterNode).ToList();
                 var placedCoreRooms = new List<PlacedRoomDataCluster> { commandCenterData };
@@ -145,7 +271,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 var prefab = candidates[_random.Next(candidates.Count)];
                 var rotation = (RoomRotation)_random.Next(4);
-                var startData = InstantiateAndRegisterRoom(prefab, origin.Value, rotation, cluster, $"Room_ClusterStart_{startNode.Type}");
+                var startData = InstantiateAndRegisterRoom(prefab, origin.Value, rotation, cluster);
 
                 var placedClusterRooms = new List<PlacedRoomDataCluster> { startData };
                 var success = true;
@@ -174,7 +300,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             if (clusters == null || clusters.Count < 2) return;
 
-            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.Prefab.RoomType == RoomTypeNew.CommandCenter);
+            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
             var originCell = commandCenterRoom?.Origin ?? Vector3Int.zero;
 
             RoomCluster farthestCluster = null;
@@ -235,21 +361,21 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             foreach (var exit in exitOptions)
             {
-                foreach (var prefab in hangarCandidates.OrderBy(_ => _random.Next()))
+                foreach (var entry in hangarCandidates.OrderBy(_ => _random.Next()))
                 {
                     for (var r = 0; r < 4; r++)
                     {
                         var rot = (RoomRotation)r;
-                        var plates = RoomRotationHelper.GetRotatedPlates(prefab, rot);
+                        var plates = RoomRotationHelper.GetRotatedPlates(entry, rot);
                         var match = FindMatchingConnection(plates, exit.Conn);
                         if (!match.HasValue) continue;
 
                         var targetCell = exit.Conn.GlobalPosition + exit.Conn.Direction;
                         var origin = targetCell - match.Value.LocalPosition;
 
-                        if (!RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin)) continue;
+                        if (!RoomCollisionValidator.IsPlacementValid(levelGrid, entry, rot, origin)) continue;
 
-                        var hangarData = InstantiateAndRegisterRoom(prefab, origin, rot, farthestCluster, "Room_RecoveryHangar");
+                        var hangarData = InstantiateAndRegisterRoom(entry, origin, rot, farthestCluster);
                         return;
                     }
                 }
@@ -305,17 +431,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     levelGrid.SetCellState(cellPos, false);
                 }
-
-                // Откатываем и записи об использованных стыках, относящиеся к откатываемым комнатам -
-                // они были созданы TryConnectAdjacentDoorsWithinCluster в рамках этой же (неудачной) попытки.
                 _usedConnections.RemoveAll(uc => uc.Room == roomData);
 
                 _allPlacedRooms.Remove(roomData);
 
-                if (roomData.Instance != null)
+                if (roomData.RoomComponent != null)
                 {
-                    if (Application.isPlaying) Destroy(roomData.Instance.gameObject);
-                    else DestroyImmediate(roomData.Instance.gameObject);
+                    foreach (var tunnel in roomData.AttachedTunnels)
+                    {
+                        if (tunnel)
+                        {
+                            if (Application.isPlaying) Destroy(tunnel);
+                            else DestroyImmediate(tunnel);
+                        }
+                    }
+    
+                    var go = roomData.RoomComponent.gameObject;
+                    if (Application.isPlaying) Destroy(go);
+                    else DestroyImmediate(go);
                 }
             }
             
@@ -332,18 +465,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 .SelectMany(r => r.OccupiedCells)
                 .ToHashSet();
 
-            var validPlacements = new List<(LevelRoomNew prefab, ConnectionPointNew parentConn, RoomRotation rot, Vector3Int origin)>();
+            var validPlacements = new List<(RoomDataEntry entry, ConnectionPointNew parentConn, RoomRotation rot, Vector3Int origin)>();
 
             foreach (var parentData in clusterPlacedRooms)
             {
-                foreach (var prefab in candidates)
+                foreach (var entry in candidates)
                 {
                     foreach (var parentConn in parentData.FreeConnections.ToList())
                     {
                         for (var r = 0; r < 4; r++)
                         {
                             var rot = (RoomRotation)r;
-                            var plates = RoomRotationHelper.GetRotatedPlates(prefab, rot);
+                            var plates = RoomRotationHelper.GetRotatedPlates(entry, rot);
                             var match = FindMatchingConnection(plates, parentConn);
 
                             if (match.HasValue)
@@ -351,11 +484,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                                 var targetCell = parentConn.GlobalPosition + parentConn.Direction;
                                 var origin = targetCell - match.Value.LocalPosition;
 
-                                if (RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, origin))
+                                if (RoomCollisionValidator.IsPlacementValid(levelGrid, entry, rot, origin))
                                 {
-                                    if (IsSpaceIsolatedFromOtherClusters(origin, prefab, rot, otherClustersCells, 1))
+                                    if (IsSpaceIsolatedFromOtherClusters(origin, entry, rot, otherClustersCells, 1))
                                     {
-                                        validPlacements.Add((prefab, parentConn, rot, origin));
+                                        validPlacements.Add((entry, parentConn, rot, origin));
                                     }
                                 }
                             }
@@ -368,17 +501,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var selected = validPlacements.First();
 
-            var newRoomData = InstantiateAndRegisterRoom(selected.prefab, selected.origin, selected.rot, cluster, $"Room_{nodeToPlace.Type}");
+            var newRoomData = InstantiateAndRegisterRoom(selected.entry, selected.origin, selected.rot, cluster);
 
             clusterPlacedRooms.Add(newRoomData);
             return true;
         }
         
-        private Vector3Int? FindFreeSpaceAroundCore(List<LevelRoomNew> candidates, Vector3Int preferredDirection)
+        private Vector3Int? FindFreeSpaceAroundCore(List<RoomDataEntry> candidates, Vector3Int preferredDirection)
         {
             if (_allPlacedRooms.Count == 0) return Vector3Int.zero;
 
-            var coreRoom = _allPlacedRooms.FirstOrDefault(r => r.Prefab.RoomType == RoomTypeNew.CommandCenter);
+            var coreRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
             if (coreRoom == null) return null;
 
             var coreCells = _allPlacedRooms
@@ -442,11 +575,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             return null;
         }
         
-        private bool IsSpaceIsolatedFromOtherClusters(Vector3Int origin, LevelRoomNew prefab, RoomRotation rotation, HashSet<Vector3Int> otherClustersCells, int minDistance = 1)
+        private bool IsSpaceIsolatedFromOtherClusters(Vector3Int origin, RoomDataEntry entry, RoomRotation rotation, HashSet<Vector3Int> otherClustersCells, int minDistance = 1)
         {
             if (otherClustersCells.Count == 0) return true;
 
-            var plates = RoomRotationHelper.GetRotatedPlates(prefab, rotation);
+            var plates = RoomRotationHelper.GetRotatedPlates(entry, rotation);
             foreach (var plate in plates)
             {
                 var globalPos = origin + plate.LocalPosition;
@@ -467,7 +600,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         }
         
 
-        private PlacedRoomDataCluster InstantiateAndRegisterRoom(LevelRoomNew prefab, Vector3Int origin, RoomRotation rotation, RoomCluster cluster, string roomName)
+        private PlacedRoomDataCluster InstantiateAndRegisterRoom(RoomDataEntry entry, Vector3Int origin, RoomRotation rotation, RoomCluster cluster)
         {
             var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(origin);
             var baseWorldPos = levelGrid.UnityGrid.CellToWorld(origin);
@@ -481,40 +614,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => Quaternion.identity
             };
 
-            LevelRoomNew instance;
-
-            #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    instance = (LevelRoomNew)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, levelContainer);
-                    instance.transform.SetPositionAndRotation(worldPos, rotQuat);
-                }
-                else
-                {
-                    instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-                }
-            #else
-                instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-            #endif
-
-            instance.name = roomName;
-
+            var instanceGo = Instantiate(entry.PrefabGameObject, worldPos, rotQuat, levelContainer);
+            
             var data = new PlacedRoomDataCluster 
             { 
-                Instance = instance, 
-                Prefab = prefab,
+                RoomComponent = entry.RoomComponent, 
+                Prefab = instanceGo,
                 Origin = origin,
                 Rotation = rotation,
                 Cluster = cluster
             };
 
-            var virtualPlates = RoomRotationHelper.GetRotatedPlates(prefab, rotation);
+            var virtualPlates = RoomRotationHelper.GetRotatedPlates(entry, rotation);
 
             foreach (var plate in virtualPlates)
             {
                 var globalPos = origin + plate.LocalPosition;
                 var doorDirs = plate.Doors.Select(d => d.GlobalDirection).ToList();
-                levelGrid.SetCellState(globalPos, true, doorDirs, instance.GetInstanceID());
+                levelGrid.SetCellState(globalPos, true, doorDirs, entry.RoomComponent.GetInstanceID());
 
                 data.OccupiedCells.Add(globalPos);
 
@@ -550,9 +667,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             connB.Direction != -connA.Direction) continue;
                         newRoomData.FreeConnections.Remove(connA);
                         otherRoom.FreeConnections.Remove(connB);
-
-                        // Стык реально используется - запоминаем обе стороны, чтобы позже
-                        // поставить на них стену с проходом.
                         _usedConnections.Add((newRoomData, connA));
                         _usedConnections.Add((otherRoom, connB));
                         break;
@@ -583,7 +697,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var allFreeConnections = new List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)>();
             foreach (var roomData in _allPlacedRooms)
             {
-                if (roomData.Prefab.RoomType is RoomTypeNew.CommandCenter or RoomTypeNew.RecoveryHangar)
+                if (roomData.RoomComponent.RoomType is RoomTypeNew.CommandCenter or RoomTypeNew.RecoveryHangar)
                     continue;
 
                 allFreeConnections.AddRange(roomData.FreeConnections.Select(conn => (roomData, conn)));
@@ -604,7 +718,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
         private void ConnectFreeExitPairs(
             List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> allFreeConnections,
-            List<LevelRoomNew> tunnelPrefabs,
+            List<RoomDataEntry> tunnelPrefabs,
             Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks,
             bool preferUnlinked)
         {
@@ -695,8 +809,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         allFreeConnections.Remove(foundTarget.Value);
                         startData.Room.FreeConnections.Remove(startData.Conn);
                         targetRoom.FreeConnections.Remove(targetConn);
-
-                        // Стык состыкован туннелем - запоминаем обе стороны для стены с проходом.
                         _usedConnections.Add((startData.Room, startData.Conn));
                         _usedConnections.Add((targetRoom, targetConn));
 
@@ -718,9 +830,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             setB.Add(a);
         }
 
-        private void EnsureAllClustersConnected(List<LevelRoomNew> tunnelPrefabs, Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+        private void EnsureAllClustersConnected(List<RoomDataEntry> tunnelPrefabs, Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
         {
-            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.Prefab.RoomType == RoomTypeNew.CommandCenter);
+            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
             if (commandCenterRoom == null) return;
 
             var coreCluster = commandCenterRoom.Cluster;
@@ -832,7 +944,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     startExit.Room.FreeConnections.Remove(startExit.Conn);
                     foundTarget.Value.Room.FreeConnections.Remove(foundTarget.Value.Conn);
 
-                    // Стык принудительно состыкован для связности сети - тоже запоминаем.
                     _usedConnections.Add((startExit.Room, startExit.Conn));
                     _usedConnections.Add((foundTarget.Value.Room, foundTarget.Value.Conn));
 
@@ -849,10 +960,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
         }
         
-        private void PlaceTunnelsAlongPath(List<Vector3Int> path, List<LevelRoomNew> tunnelPrefabs, PlacedRoomDataCluster ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
+        private void PlaceTunnelsAlongPath(List<Vector3Int> path, List<RoomDataEntry> tunnelPrefabs, PlacedRoomDataCluster ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
         {
             var sortedPrefabs = tunnelPrefabs
                 .OrderByDescending(p => RoomRotationHelper.GetRotatedPlates(p, RoomRotation.Deg0).Length)
+                .ThenBy(p => p.PrefabGameObject.name)
                 .ToList();
 
             var i = 0;
@@ -868,12 +980,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var placed = false;
                 var prevCell = i == 0 ? startConn.GlobalPosition : path[i - 1];
 
-                foreach (var prefab in sortedPrefabs)
+                foreach (var enrty in sortedPrefabs)
                 {
                     for (var r = 0; r < 4; r++)
                     {
                         var rot = (RoomRotation)r;
-                        var plates = RoomRotationHelper.GetRotatedPlates(prefab, rot);
+                        var plates = RoomRotationHelper.GetRotatedPlates(enrty, rot);
                         var prefabSize = plates.Length;
 
                         if (i + prefabSize > path.Count) continue;
@@ -922,9 +1034,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             matchPath = false;
                         }
 
-                        if (matchPath && hasPrevDoor && hasNextDoor && RoomCollisionValidator.IsPlacementValid(levelGrid, prefab, rot, cell))
+                        if (matchPath && hasPrevDoor && hasNextDoor && RoomCollisionValidator.IsPlacementValid(levelGrid, enrty, rot, cell))
                         {
-                            var instance = InstantiateTunnel(prefab, cell, rot, "PathTunnel");
+                            var instance = InstantiateTunnel(enrty, cell, rot);
                             ownerData.AttachedTunnels.Add(instance);
 
                             foreach (var p in plates)
@@ -944,7 +1056,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
         }
 
-        private LevelRoomNew InstantiateTunnel(LevelRoomNew prefab, Vector3Int origin, RoomRotation rotation, string roomName)
+        private GameObject InstantiateTunnel(RoomDataEntry entry, Vector3Int origin, RoomRotation rotation)
         {
             var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(origin);
             var baseWorldPos = levelGrid.UnityGrid.CellToWorld(origin);
@@ -958,74 +1070,33 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => Quaternion.identity
             };
 
-            LevelRoomNew instance;
-
-            #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    instance = (LevelRoomNew)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, levelContainer);
-                    instance.transform.SetPositionAndRotation(worldPos, rotQuat);
-                }
-                else
-                {
-                    instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-                }
-            #else
-                instance = Instantiate(prefab, worldPos, rotQuat, levelContainer);
-            #endif
-
-            instance.name = roomName;
-            return instance;
+            var instanceGo = Instantiate(entry.PrefabGameObject, worldPos, rotQuat, levelContainer);
+            return instanceGo;
         }
-
-        /// <summary>
-        /// Единая точка спавна "вставки" в дверной проём (глухая стена или стена с проходом) -
-        /// используется и для блокировки неиспользованных выходов, и для маркировки использованных.
-        /// </summary>
+        
         private void InstantiateDoorwayInsert(PlacedRoomDataCluster roomData, ConnectionPointNew conn, GameObject prefab, string instanceName)
         {
-            if (prefab == null || roomData?.Instance == null) return;
+            if (prefab == null || roomData?.RoomComponent == null) return;
 
             var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
             var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
-
-            // Стены не двухсторонние - разворачиваем стену лицом внутрь своей комнаты,
-            // т.е. её локальное направление (+Z по умолчанию) должно смотреть противоположно
-            // conn.Direction (которое смотрит наружу из комнаты).
+            
             var facing = -conn.Direction;
             var wallRot = Quaternion.identity;
             if (facing == Vector3Int.right) wallRot = Quaternion.Euler(0, 90, 0);
             else if (facing == Vector3Int.back) wallRot = Quaternion.Euler(0, 180, 0);
             else if (facing == Vector3Int.left) wallRot = Quaternion.Euler(0, 270, 0);
-
-            // Ориджин префаба стены - в углу слева снизу. Если встать внутри комнаты лицом
-            // к выходу (по conn.Direction), то ставить префаб нужно в левый угол проёма,
-            // поэтому дополнительно смещаем позицию на 5 в направлении "влево" от conn.Direction.
+            
             var left = new Vector3(-conn.Direction.z, 0f, conn.Direction.x);
             var wallPos = new Vector3(
                 centerWorldPos.x + conn.Direction.x * 5f + left.x * 5f,
                 baseWorldPos.y,
                 centerWorldPos.z + conn.Direction.z * 5f + left.z * 5f
             );
-
-            #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    var instance = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, roomData.Instance.transform);
-                    instance.transform.SetPositionAndRotation(wallPos, wallRot);
-                    instance.name = instanceName;
-                }
-                else
-                {
-                    var instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
-                    instance.name = instanceName;
-                }
-            #else
-                var instance = Instantiate(prefab, wallPos, wallRot, roomData.Instance.transform);
-                instance.name = instanceName;
-            #endif
-
-
+            
+            var instance = Instantiate(prefab, wallPos, wallRot, levelContainer);
+            instance.name = instanceName;
+            _placedWalls.Add(instance);
         }
         
         private void BlockUnusedExits()
@@ -1038,7 +1109,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             foreach (var roomData in _allPlacedRooms)
             {
-                if (roomData.Instance == null) continue;
+                if (roomData.RoomComponent == null) continue;
 
                 foreach (var conn in roomData.FreeConnections)
                 {
@@ -1046,11 +1117,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
             }
         }
-
-        /// <summary>
-        /// Расставляет стены с проходом на всех стыках, которые реально были использованы
-        /// (комната-комната внутри кластера или комната-комната через туннель).
-        /// </summary>
+        
         private void PlaceUsedExitPassages()
         {
             if (wallWithPassagePrefab == null)
@@ -1061,7 +1128,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             foreach (var (roomData, conn) in _usedConnections)
             {
-                if (roomData.Instance == null) continue;
+                if (roomData.RoomComponent == null) continue;
 
                 InstantiateDoorwayInsert(roomData, conn, wallWithPassagePrefab, "UsedExitPassageWall");
             }

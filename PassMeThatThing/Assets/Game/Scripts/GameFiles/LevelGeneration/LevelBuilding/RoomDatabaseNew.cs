@@ -4,49 +4,56 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
+    
+    [System.Serializable]
+    public struct RoomDataEntry
+    {
+        public GameObject PrefabGameObject;
+        public LevelRoomNew RoomComponent;
+    }
+    
     [CreateAssetMenu(fileName = "RoomDatabaseNew", menuName = "Level Generation/Room Database New")]
-
     public class RoomDatabaseNew : ScriptableObject
     {
-        public List<LevelRoomNew> commandCenterRooms = new();
-        public List<LevelRoomNew> generatorRooms = new();
-        public List<LevelRoomNew> warehouseRooms = new();
-        public List<LevelRoomNew> livingBlockRooms = new();
-        public List<LevelRoomNew> medicalBlockRooms = new();
-        public List<LevelRoomNew> recoveryHangarRooms = new();
-        public List<LevelRoomNew> technicalTunnelsRooms = new();
+        public List<RoomDataEntry> commandCenterRooms = new();
+        public List<RoomDataEntry> generatorRooms = new();
+        public List<RoomDataEntry> warehouseRooms = new();
+        public List<RoomDataEntry> livingBlockRooms = new();
+        public List<RoomDataEntry> medicalBlockRooms = new();
+        public List<RoomDataEntry> recoveryHangarRooms = new();
+        public List<RoomDataEntry> technicalTunnelsRooms = new();
+        public List<RoomDataEntry> laboratoryRooms = new();
+        public List<RoomDataEntry> workshopRooms = new();
+        public List<RoomDataEntry> serverRooms = new();
+        public List<RoomDataEntry> waterPurificationRooms = new();
+        public List<RoomDataEntry> armoryRooms = new();
         
-        public List<LevelRoomNew> laboratoryRooms = new();
-        public List<LevelRoomNew> workshopRooms = new();
-        public List<LevelRoomNew> serverRooms = new();
-        public List<LevelRoomNew> waterPurificationRooms = new();
-        public List<LevelRoomNew> armoryRooms = new();
-        
-        public List<LevelRoomNew> GetSuitableRooms(RoomTypeNew type, int requiredConnections, bool exactMatch = true)
+        public List<RoomDataEntry> GetSuitableRooms(RoomTypeNew type, int requiredConnections, bool exactMatch = true)
         {
             var targetList = GetTargetList(type);
-            var suitableRooms = new List<LevelRoomNew>();
+            var suitableRooms = new List<RoomDataEntry>();
 
             if (targetList == null || targetList.Count == 0)
                 return suitableRooms;
 
-            foreach (var room in targetList)
+            foreach (var entry in targetList)
             {
-                if (room == null) continue;
+                if (entry.PrefabGameObject == null || entry.RoomComponent == null) continue;
                 
                 var connectionsMatch = exactMatch 
-                    ? room.TotalDoors == requiredConnections 
-                    : room.TotalDoors >= requiredConnections;
+                    ? entry.RoomComponent.TotalDoors == requiredConnections 
+                    : entry.RoomComponent.TotalDoors >= requiredConnections;
 
                 if (connectionsMatch)
                 {
-                    suitableRooms.Add(room);
+                    suitableRooms.Add(entry);
                 }
             }
 
             return suitableRooms;
         }
-        private List<LevelRoomNew> GetTargetList(RoomTypeNew type)
+        
+        private List<RoomDataEntry> GetTargetList(RoomTypeNew type)
         {
             return type switch
             {
@@ -65,5 +72,37 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _ => null
             };
         }
+        
+        
+        private void OnValidate()
+        {
+            FillComponents(commandCenterRooms);
+            FillComponents(generatorRooms);
+            FillComponents(warehouseRooms);
+            FillComponents(livingBlockRooms);
+            FillComponents(medicalBlockRooms);
+            FillComponents(recoveryHangarRooms);
+            FillComponents(technicalTunnelsRooms);
+            FillComponents(laboratoryRooms);
+            FillComponents(workshopRooms);
+            FillComponents(serverRooms);
+            FillComponents(waterPurificationRooms);
+            FillComponents(armoryRooms);
+        }
+        
+        private void FillComponents(List<RoomDataEntry> entries)
+        {
+            for (var i = 0; i < entries.Count; i++)
+            {
+                var entry = entries[i];
+                if (entry.PrefabGameObject != null && entry.RoomComponent == null)
+                {
+                    entry.RoomComponent = entry.PrefabGameObject.GetComponent<LevelRoomNew>();
+                    entries[i] = entry;
+                }
+            }
+        }
+        
+
     }
 }

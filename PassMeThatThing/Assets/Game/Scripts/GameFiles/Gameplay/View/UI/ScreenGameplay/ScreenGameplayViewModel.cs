@@ -40,10 +40,12 @@ namespace Game.Gameplay.View.UI
         private readonly CompositeDisposable _subscriptions = new();
         public override string Id => "ScreenGameplay";
 
+
         private readonly PlayerInventoryModel  _playerInventoryModel;
         private readonly ItemDatabase _itemDatabase;
         private readonly GameRandomEventManager _gameRandomEventManager;
         private readonly GameEventsDatabase _gameEventsDatabase;
+        private readonly BuildingsDatabase _buildingsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         private readonly GameInputManager _gameInputManager;
 
@@ -57,8 +59,11 @@ namespace Game.Gameplay.View.UI
         private Action<int, Sprite, int> updateEvent;
         private Action<int> removeEvent;
 
+        public BuildingsDatabase BuildingsDatabase => _buildingsDatabase;
+
         public event Action<PlayerViewData, List<PlayerViewData>> OnPlayerDataChanged;
 
+        
         public ScreenGameplayViewModel(GameplayUIManager uiManager, IObjectResolver container)
         {
             _uiManager = uiManager;
@@ -66,7 +71,8 @@ namespace Game.Gameplay.View.UI
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
             _itemDatabase =  container.Resolve<ItemDatabase>();
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
-            
+            _buildingsDatabase = container.Resolve<BuildingsDatabase>();
+
             _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
@@ -318,16 +324,16 @@ namespace Game.Gameplay.View.UI
         }
 
 
-        public void RequestSubPlugImages(Action<int> f)
+        public void RequestSubPlugImages(Action<List<WireType>> f)
         {
-            f(_localWireHandlerModel.HighlightedNodesId.Count);
+            f(_localWireHandlerModel.HighlightedNodesTypes);
 
-            _localWireHandlerModel.OnWireNodeCount += f;
+            _localWireHandlerModel.OnTypesChanged += f;
         }
 
-        public void RequestUnsubPlugImages(Action<int> f)
+        public void RequestUnsubPlugImages(Action<List<WireType>> f)
         {
-            _localWireHandlerModel.OnWireNodeCount -= f;
+            _localWireHandlerModel.OnTypesChanged -= f;
         }
         
         public void RequestLevelGrid(Action<LevelGrid> f)

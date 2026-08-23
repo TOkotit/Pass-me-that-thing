@@ -16,7 +16,6 @@ using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.Highlight;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
-using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Systems;
 using UnityEngine.Serialization;
 using Game.Scripts.GameFiles.GameRandomEvents;
@@ -35,7 +34,6 @@ namespace DI
         [SerializeField] private EnemyDatabase enemyDatabase;
         [SerializeField] private BuildingsDatabase buildingDatabase;
         [SerializeField] private TurretDatabase turretDatabase;
-        [SerializeField] private ItemRarityDatabase rarityDatabase;
         
         [SerializeField] private ResourceDatabase resourceDatabase;
         [SerializeField] private WorkbenchItemRecipeDatabase recipeDatabase;
@@ -65,7 +63,6 @@ namespace DI
             builder.RegisterInstance(turretDatabase);
             builder.RegisterInstance(resourceDatabase);
             builder.RegisterInstance(recipeDatabase);
-            builder.RegisterInstance(rarityDatabase);
             //managers
             builder.RegisterComponent(eventManager);
             builder.RegisterComponent(globalStageManager);
@@ -113,8 +110,6 @@ namespace DI
             builder.Register<PlayerReadyManager>(Lifetime.Singleton);
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);
-            builder.Register<LevelGraphBuilder>(Lifetime.Singleton);
-
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<WorldUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);

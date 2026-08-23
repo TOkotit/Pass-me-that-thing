@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 811935546557072925}
+  - component: {fileID: 1178500607034241600}
   - component: {fileID: -3322169256855734479}
   - component: {fileID: 4178338692339059825}
   - component: {fileID: -5185724171136630408}
-  m_Layer: 7
+  m_Layer: 13
   m_Name: PipeNodeSplitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,6 +41,27 @@ Transform:
   - {fileID: 2419573291761872795}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1178500607034241600
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2171227848627148325}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.413762, y: 2.0150402, z: 4.4030156}
+  m_Center: {x: -0.029277138, y: 1.0021927, z: -0.0055708815}
 --- !u!114 &-3322169256855734479
 MonoBehaviour:
   m_ObjectHideFlags: 0

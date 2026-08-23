@@ -12,6 +12,7 @@ using UnityEngine.UIElements;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.UI;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 
 
 namespace Game.Gameplay.View.UI
@@ -43,6 +44,8 @@ namespace Game.Gameplay.View.UI
         private Label _gameGlobalStateTimerText;
         private MinimapView  _miniMap;
 
+        private VisualElement _leftPlugSocketImage;
+        private VisualElement _rightPlugSocketImage;
         private VisualElement _leftPlugImage;
         private VisualElement _rightPlugImage;
         private GroupBox _wirePlacementContainer;
@@ -64,6 +67,9 @@ namespace Game.Gameplay.View.UI
             _gameGlobalStateText = _root.Q<Label>("PhaseLb");
             _gameGlobalStateTimerText = _root.Q<Label>("RemainingTimeLb");
             _miniMap = _root.Q<MinimapView>("Minimap");
+
+            _leftPlugSocketImage = _root.Q<VisualElement>("LeftPlugSocketImage");
+            _rightPlugSocketImage = _root.Q<VisualElement>("RightPlugSocketImage");
             _leftPlugImage = _root.Q<VisualElement>("LeftPlugImage");
             _rightPlugImage = _root.Q<VisualElement>("RightPlugImage");
             _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
@@ -273,16 +279,20 @@ namespace Game.Gameplay.View.UI
                 
         }
 
-        public void UpdatePlugImages(int wireCount)
+        public void UpdatePlugImages(List<WireType> types)
         {
-            switch (wireCount)
+            switch (types.Count)
             {
                 case 0:
                     {
-                        _leftPlugImage.DOShake(0.2f).OnComplete(() =>
+                        _leftPlugSocketImage.DOPunch(new Vector3(0f, 10f, 0f), 0.2f).OnComplete(() =>
                         {
                             _leftPlugImage.visible = false;
                             _rightPlugImage.visible = false;
+
+                            _leftPlugSocketImage.visible = false;
+                            _rightPlugSocketImage.visible = false;
+
                             _wirePlacementContainer.visible = false;
                         });
                         break;
@@ -290,15 +300,21 @@ namespace Game.Gameplay.View.UI
                 case 1:
                     {
                         _wirePlacementContainer.visible = true;
+                        _leftPlugSocketImage.visible = true;
                         _leftPlugImage.visible = true;
-                        _leftPlugImage.DOShake(0.2f);
+                        _leftPlugImage.style.backgroundImage = new StyleBackground(
+                            ViewModel.BuildingsDatabase.wireTypeInfo[types[0]].wireTypeImage);
+
+                        _leftPlugSocketImage.DOPunch(new Vector3(0f, 10f, 0f), 0.2f);
                         break;
                     }
                 case 2:
                     {
-
+                        _rightPlugSocketImage.visible = true;
                         _rightPlugImage.visible = true;
-                        _rightPlugImage.DOShake(0.2f).OnComplete(() => 
+                        _rightPlugImage.style.backgroundImage = new StyleBackground(
+                            ViewModel.BuildingsDatabase.wireTypeInfo[types[1]].wireTypeImage);
+                        _rightPlugSocketImage.DOPunch(new Vector3(0f, 10f, 0f), 0.2f).OnComplete(() => 
                             {
                                 _wirePlacementContainer.visible = false;
                             });
