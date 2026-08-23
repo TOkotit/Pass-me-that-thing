@@ -4,9 +4,7 @@ using System.Linq;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
-using Mirror;
 using UnityEngine;
-using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
@@ -29,8 +27,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public RoomsConnectionTypes Type;
     }
     
-    [RequireComponent(typeof(NetworkIdentity))]
-    public class LevelOrchestrator : NetworkBehaviour
+    public class LevelOrchestrator : MonoBehaviour
     {
         [SerializeField] private RoomDatabaseNew roomDatabase;
         [SerializeField] public LevelGrid levelGrid;
@@ -44,7 +41,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             ActiveLevelContainer = levelContainer;
         }
-
 
         private const int MAX_CLUSTER_PLACEMENT_ATTEMPTS = 15; 
         
@@ -66,8 +62,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         public void GeneratePhysicalLevel(List<RoomCluster> clusters, int seed)
         {
-            if (!isServer) return;
-            
             _random = new System.Random(seed);
             ClearLevel();
 
@@ -76,7 +70,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var coreCluster = clusters[0];
             if (!PlaceCoreCluster(coreCluster))
             {
-                Debug.LogError("[СБОЙ] Не удалось разместить ядро после нескольких попыток.");
+                Debug.LogError("[GENERATOR] Can't place the core after a few attempts.");
                 return;
             }
 
@@ -93,47 +87,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             BlockUnusedExits();
             PlaceUsedExitPassages();
-            Debug.Log($"[ГЕНЕРАЦИЯ ЗАВЕРШЕНА] Всего кластеров: {clusters.Count}. Всего размещено комнат: {_allPlacedRooms.Count}.");
 
-            SpawnGeneratedLevelOverNetwork();
-        }
-        
-        private void SpawnGeneratedLevelOverNetwork()
-        {
-            if (!NetworkServer.active || _allPlacedRooms.Count == 0) return;
-
-            foreach (var cell in levelGrid.OccupiedCells)
-            {
-                if (levelGrid.TryGetCellData(cell, out var data))
-                {
-                    RpcSyncGridCell(cell, data.Doors.ToArray(), data.RoomId);
-                }
-            }
-            
-            var spawnedCount = 0;
-
-            foreach (var cluster in _allPlacedRooms)
-            {
-                NetworkServer.Spawn(cluster.Prefab);
-                RpcSnapObject(cluster.Prefab, cluster.Prefab.transform.position, cluster.Prefab.transform.rotation);
-                spawnedCount++;
-        
-                foreach (var tunnel in cluster.AttachedTunnels)
-                {
-                    NetworkServer.Spawn(tunnel);
-                    RpcSnapObject(tunnel, tunnel.transform.position, tunnel.transform.rotation);
-                    spawnedCount++;
-                }
-            }
-    
-            foreach (var wall in _placedWalls)
-            {
-                NetworkServer.Spawn(wall);
-                RpcSnapObject(wall, wall.transform.position, wall.transform.rotation);
-                spawnedCount++;
-            }
-            Debug.Log($"[СПАВН-СЕРВЕР] Финальный спавн уровня: {spawnedCount} объектов " +
-                      $"(всего в NetworkServer.spawned: {NetworkServer.spawned.Count}).");
+            Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_allPlacedRooms.Count}.");
         }
         
         private void Shuffle<T>(IList<T> list)
@@ -154,44 +109,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             return list;
         }
         
-        [ClientRpc]
-        private void RpcSnapObjectToGrid(GameObject obj)
-        {
-            if (obj == null || levelGrid == null || levelGrid.UnityGrid == null) return;
-    
-            if (levelContainer != null)
-            {
-                obj.transform.SetParent(levelContainer, true);
-            }
-
-            var cellPosition = levelGrid.UnityGrid.WorldToCell(obj.transform.position);
-    
-            var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(cellPosition);
-            var baseWorldPos = levelGrid.UnityGrid.CellToWorld(cellPosition);
-            var snappedPos = new Vector3(centerWorldPos.x, baseWorldPos.y, centerWorldPos.z);
-    
-            obj.transform.position = snappedPos;
-        }
-        
-        [ClientRpc]
-        private void RpcSyncGridCell(Vector3Int cellPosition, Vector3Int[] doorDirections, int roomId)
-        {
-            levelGrid.SetCellState(cellPosition, true, doorDirections.ToList(), roomId);
-        }
-
-        [ClientRpc]
-        private void RpcSnapObject(GameObject obj, Vector3 worldPos, Quaternion rotation)
-        {
-            if (obj == null) return;
-    
-            if (levelContainer != null)
-            {
-                obj.transform.SetParent(levelContainer, true);
-            }
-    
-            obj.transform.position = worldPos;
-            obj.transform.rotation = rotation;
-        }
         
         private void ClearLevel()
         {
@@ -199,25 +116,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             _allPlacedRooms.Clear();
             _usedConnections.Clear();
             _placedWalls.Clear();
-            if (levelContainer != null)
+            if (!levelContainer) return;
+            for (var i = levelContainer.childCount - 1; i >= 0; i--)
             {
-                for (var i = levelContainer.childCount - 1; i >= 0; i--)
-                {
-                    var child = levelContainer.GetChild(i).gameObject;
+                var child = levelContainer.GetChild(i).gameObject;
 
-                    if (NetworkServer.active && child.TryGetComponent<NetworkIdentity>(out _))
-                    {
-                        NetworkServer.Destroy(child);
-                    }
-                    else if (Application.isPlaying)
-                    {
-                        Destroy(child);
-                    }
-                    else
-                    {
-                        DestroyImmediate(child);
-                    }
-                }
+                if (Application.isPlaying)
+                    Destroy(child);
+                else
+                    DestroyImmediate(child);
             }
         }
         
@@ -236,6 +143,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 var remainingRooms = coreCluster.Rooms.Where(r => r != commandCenterNode).ToList();
                 var placedCoreRooms = new List<PlacedRoomDataCluster> { commandCenterData };
+
 
                 var success = true;
                 foreach (var roomNode in remainingRooms)
@@ -293,7 +201,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 UndoClusterPlacement(placedClusterRooms);
             }
             
-            Debug.LogWarning($"[КЛАСТЕР] Не удалось разместить кластер после {MAX_CLUSTER_PLACEMENT_ATTEMPTS} попыток.");
+            Debug.LogWarning($"[GENERATOR] Failed to link cluster after {MAX_CLUSTER_PLACEMENT_ATTEMPTS} attempts.");
         }
         
         private void PlaceRecoveryHangar(List<RoomCluster> clusters)
@@ -342,14 +250,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             if (farthestCluster == null)
             {
-                Debug.LogWarning("[АНГАР] Не нашлось кластера со свободным выходом для ангара эвакуации.");
+                Debug.LogWarning("[GENERATOR] No cluster with a free exit was found for the evacuation hangar.");
                 return;
             }
 
             var hangarCandidates = roomDatabase.GetSuitableRooms(RoomTypeNew.RecoveryHangar, 1, false);
             if (hangarCandidates.Count == 0)
             {
-                Debug.LogWarning("[АНГАР] В базе данных нет префабов RecoveryHangar.");
+                Debug.LogWarning("[GENERATOR] There are no RecoveryHangar prefabs in the database.");
                 return;
             }
 
@@ -381,7 +289,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
             }
 
-            Debug.LogWarning("[АНГАР] Не удалось состыковать ангар эвакуации со свободным выходом самого дальнего кластера.");
+            Debug.LogWarning("[GENERATOR] It was not possible to dock the evacuation hangar with the free exit of the farthest cluster.");
         }
 
         private static int GridDistance(Vector3Int a, Vector3Int b)
@@ -435,21 +343,16 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 _allPlacedRooms.Remove(roomData);
 
-                if (roomData.RoomComponent != null)
+                if (!roomData.RoomComponent) continue;
+                foreach (var tunnel in roomData.AttachedTunnels.Where(tunnel => tunnel))
                 {
-                    foreach (var tunnel in roomData.AttachedTunnels)
-                    {
-                        if (tunnel)
-                        {
-                            if (Application.isPlaying) Destroy(tunnel);
-                            else DestroyImmediate(tunnel);
-                        }
-                    }
-    
-                    var go = roomData.RoomComponent.gameObject;
-                    if (Application.isPlaying) Destroy(go);
-                    else DestroyImmediate(go);
+                    if (Application.isPlaying) Destroy(tunnel);
+                    else DestroyImmediate(tunnel);
                 }
+    
+                var go = roomData.RoomComponent.gameObject;
+                if (Application.isPlaying) Destroy(go);
+                else DestroyImmediate(go);
             }
             
             placedRoomsToUndo.Clear();
@@ -479,18 +382,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             var plates = RoomRotationHelper.GetRotatedPlates(entry, rot);
                             var match = FindMatchingConnection(plates, parentConn);
 
-                            if (match.HasValue)
-                            {
-                                var targetCell = parentConn.GlobalPosition + parentConn.Direction;
-                                var origin = targetCell - match.Value.LocalPosition;
+                            if (!match.HasValue) continue;
+                            var targetCell = parentConn.GlobalPosition + parentConn.Direction;
+                            var origin = targetCell - match.Value.LocalPosition;
 
-                                if (RoomCollisionValidator.IsPlacementValid(levelGrid, entry, rot, origin))
-                                {
-                                    if (IsSpaceIsolatedFromOtherClusters(origin, entry, rot, otherClustersCells, 1))
-                                    {
-                                        validPlacements.Add((entry, parentConn, rot, origin));
-                                    }
-                                }
+                            if (!RoomCollisionValidator.IsPlacementValid(levelGrid, entry, rot, origin)) continue;
+                            if (IsSpaceIsolatedFromOtherClusters(origin, entry, rot, otherClustersCells, 1))
+                            {
+                                validPlacements.Add((entry, parentConn, rot, origin));
                             }
                         }
                     }
@@ -507,7 +406,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             return true;
         }
         
-        private Vector3Int? FindFreeSpaceAroundCore(List<RoomDataEntry> candidates, Vector3Int preferredDirection)
+                private Vector3Int? FindFreeSpaceAroundCore(List<RoomDataEntry> candidates, Vector3Int preferredDirection)
         {
             if (_allPlacedRooms.Count == 0) return Vector3Int.zero;
 
@@ -544,7 +443,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     foreach (var dist in distances)
                     {
-                        // Отсчет дистанции строго по прямой по сетке
                         var targetCell = cell + dir * dist;
 
                         foreach (var prefab in candidates.OrderBy(_ => _random.Next()))
@@ -598,6 +496,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
             return true;
         }
+
         
 
         private PlacedRoomDataCluster InstantiateAndRegisterRoom(RoomDataEntry entry, Vector3Int origin, RoomRotation rotation, RoomCluster cluster)
@@ -624,6 +523,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 Rotation = rotation,
                 Cluster = cluster
             };
+
 
             var virtualPlates = RoomRotationHelper.GetRotatedPlates(entry, rotation);
 
@@ -674,6 +574,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
             }
         }
+
 
         private (Vector3Int LocalPosition, RoomsConnectionTypes Type)? FindMatchingConnection(VirtualPlateData[] plates, ConnectionPointNew parentConn)
         {
@@ -830,7 +731,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             setB.Add(a);
         }
 
-        private void EnsureAllClustersConnected(List<RoomDataEntry> tunnelPrefabs, Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+                private void EnsureAllClustersConnected(List<RoomDataEntry> tunnelPrefabs, Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
         {
             var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
             if (commandCenterRoom == null) return;
@@ -867,7 +768,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (ownExits.Count == 0)
                 {
-                    Debug.LogWarning("[ТОННЕЛИ] У изолированного кластера не осталось свободных выходов - не удалось подключить к сети.");
+                    Debug.LogWarning("[GENERATOR] The isolated cluster had no free ports left—connection to the network failed.");
                     continue;
                 }
 
@@ -878,7 +779,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (reachableExits.Count == 0)
                 {
-                    Debug.LogWarning("[ТОННЕЛИ] У подключенной части сети не осталось свободных выходов - некуда тянуть туннель.");
+                    Debug.LogWarning("[GENERATOR] The connected part of the network has no free ports left—there is nowhere to extend the tunnel to.\n\n");
                     continue;
                 }
 
@@ -955,12 +856,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (!connected)
                 {
-                    Debug.LogWarning("[ТОННЕЛИ] Не удалось принудительно подключить изолированный кластер к сети.");
+                    Debug.LogWarning("[GENERATOR] Failed to forcibly connect the isolated cluster to the network.");
                 }
             }
         }
         
-        private void PlaceTunnelsAlongPath(List<Vector3Int> path, List<RoomDataEntry> tunnelPrefabs, PlacedRoomDataCluster ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
+                private void PlaceTunnelsAlongPath(List<Vector3Int> path, List<RoomDataEntry> tunnelPrefabs, PlacedRoomDataCluster ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
         {
             var sortedPrefabs = tunnelPrefabs
                 .OrderByDescending(p => RoomRotationHelper.GetRotatedPlates(p, RoomRotation.Deg0).Length)
@@ -1103,7 +1004,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             if (wallPrefab == null)
             {
-                Debug.LogError("[ГЕНЕРАЦИЯ] Префаб стены не назначен.");
+                Debug.LogError("[GENERATOR] Wall prefab not assigned.");
                 return;
             }
 
@@ -1116,13 +1017,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     InstantiateDoorwayInsert(roomData, conn, wallPrefab, "BlockedExitWall");
                 }
             }
+ 
         }
         
         private void PlaceUsedExitPassages()
         {
             if (wallWithPassagePrefab == null)
             {
-                Debug.LogError("[ГЕНЕРАЦИЯ] Префаб стены с проходом не назначен.");
+                Debug.LogError("[GENERATOR] Префаб стены с проходом не назначен.");
                 return;
             }
 

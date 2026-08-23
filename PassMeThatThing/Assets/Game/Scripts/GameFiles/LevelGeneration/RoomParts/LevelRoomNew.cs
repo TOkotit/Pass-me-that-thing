@@ -6,7 +6,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 {
     
     [RequireComponent(typeof(Grid))]
-    [RequireComponent(typeof(NetworkIdentity))]
 
     public class LevelRoomNew : NetworkBehaviour
     {

@@ -4,6 +4,7 @@ using Game.Scripts.GameFiles.LevelGeneration;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Game.Scripts.GameFiles.GameRoot
 {
@@ -12,32 +13,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
         public event Action<bool> OnServerSceneLoadStateChanged;
         public event Action<bool> OnClientSceneLoadStateChanged;
         [SerializeField] private int defaultTestSeed = 12345;
-        
-        
-        public override void Awake()
-        {
-            base.Awake();
-            LogRegisteredSpawnPrefabs();
-        }
-        
-        private void LogRegisteredSpawnPrefabs()
-        {
-            Debug.Log($"[CNRM] spawnPrefabs.Count = {spawnPrefabs.Count}");
-            foreach (var prefab in spawnPrefabs)
-            {
-                if (prefab == null)
-                {
-                    Debug.LogWarning("[CNRM] В списке spawnPrefabs есть пустой (null) элемент!");
-                    continue;
-                }
-
-                var identity = prefab.GetComponent<NetworkIdentity>();
-                Debug.Log(identity != null
-                    ? $"[CNRM] Prefab '{prefab.name}' assetId={identity.assetId}"
-                    : $"[CNRM] Prefab '{prefab.name}' - НЕТ NetworkIdentity на корне!");
-            }
-        }
-
         
         public override void OnServerChangeScene(string newSceneName)
         {
@@ -52,24 +27,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
         {
             if (sceneName == GameplayScene)
             {
-                var orchestrator = FindObjectOfType<LevelOrchestrator>();
-                if (orchestrator != null)
-                {
-                    var generator = new LevelGenerator(new LevelGraphConfig(), defaultTestSeed);
-                    var clusters = generator.GenerateClusters();
-                    if (clusters is { Count: > 0 })
-                    {
-                        orchestrator.GeneratePhysicalLevel(clusters, defaultTestSeed);
-                    }
-                    else
-                    {
-                        Debug.LogError("[CNRM] Не удалось сгенерировать кластеры для уровня.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("[CNRM] LevelOrchestrator не найден на сцене!");
-                }
+                GenerateLevelDeterministic("Server");
             }
             
             base.OnServerSceneChanged(sceneName);
@@ -96,10 +54,45 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
             base.OnClientSceneChanged();
 
             if (NetworkServer.active) return;
-
+            
+            var sceneName = SceneManager.GetActiveScene().path;
+            if (sceneName == GameplayScene)
+            {
+                Debug.Log($"[CNRM]<color=green> ВЫзов генерации на клиенте, попытка");
+                GenerateLevelDeterministic("Client");
+            }
+            else
+            {
+                Debug.Log($"[CNRM]<color=red> sceneName: {sceneName}, need: {GameplayScene}");
+            }
+            
             Debug.Log("[CNRM] OnClientSceneChanged");
             
             OnClientSceneLoadStateChanged?.Invoke(false);
         }
+        
+        private void GenerateLevelDeterministic(string who)
+        {
+            var orchestrator = FindObjectOfType<LevelOrchestrator>();
+            if (orchestrator == null)
+            {
+                Debug.LogError($"[CNRM] ({who}) LevelOrchestrator не найден на сцене!");
+                return;
+            }
+ 
+            var generator = new LevelGenerator(new LevelGraphConfig(), defaultTestSeed);
+            var clusters = generator.GenerateClusters();
+ 
+            if (clusters is { Count: > 0 })
+            {
+                orchestrator.GeneratePhysicalLevel(clusters, defaultTestSeed);
+                Debug.Log($"[CNRM] ({who}) Уровень сгенерирован, seed={defaultTestSeed}, комнат в кластерах={clusters.Count}.");
+            }
+            else
+            {
+                Debug.LogError($"[CNRM] ({who}) Не удалось сгенерировать кластеры для уровня.");
+            }
+        }
+
     }
 }

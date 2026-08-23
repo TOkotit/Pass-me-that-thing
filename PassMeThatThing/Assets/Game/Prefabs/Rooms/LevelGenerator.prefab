@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 319741792640230851}
   - component: {fileID: 7828892963863885859}
   - component: {fileID: 5302859596028704940}
-  - component: {fileID: 3355080230730633783}
   m_Layer: 0
   m_Name: LevelGenerator
   m_TagString: Untagged
@@ -76,28 +75,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e29422f9bb8401e9c403cd8c71387b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
   roomDatabase: {fileID: 11400000, guid: e18b2113ca5b7284baa14c8470f9f3fd, type: 2}
   levelGrid: {fileID: 319741792640230851}
   levelContainer: {fileID: 180583881734044310}
   wallPrefab: {fileID: 3094793412624863810, guid: 12fc79c04c5ca0b46a14981a30b34816, type: 3}
   wallWithPassagePrefab: {fileID: 3670171128644518833, guid: 5ebdbc3586cb7e3438348bd668a8a785, type: 3}
---- !u!114 &3355080230730633783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4583043820459869596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
-  sceneId: 0
-  _assetId: 2131139529
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
