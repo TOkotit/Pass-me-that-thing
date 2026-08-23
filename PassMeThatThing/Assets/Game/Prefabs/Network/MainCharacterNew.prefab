@@ -4379,6 +4379,7 @@ GameObject:
   - component: {fileID: 1449079932796894948}
   - component: {fileID: 2157982894449120892}
   - component: {fileID: 8170641314587154669}
+  - component: {fileID: 7420071182345406038}
   m_Layer: 8
   m_Name: MainCharacterNew
   m_TagString: Player
@@ -4505,6 +4506,7 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 100
   type: 0
+  statusEffectHandler: {fileID: 7420071182345406038}
   ragdollHandler: {fileID: 2157982894449120892}
   movement: {fileID: 651297173663608658}
   mCamera: {fileID: 4308959635244113436}
@@ -4779,7 +4781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagable: {fileID: 3471299420040406428}
+  damageable: {fileID: 0}
   priority: 5
   damagableType: 0
 --- !u!114 &9049365366940597573
@@ -4888,6 +4890,22 @@ MonoBehaviour:
   mainCharacter: {fileID: 3471299420040406428}
   pivotAnimator: {fileID: 524437659641354089}
   comboResetTime: 1.2
+--- !u!114 &7420071182345406038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7528151646145926360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7c9a2a0ba61499a88b4d3d464487e8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.StatusEffectHandler
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  owner: {fileID: 3471299420040406428}
 --- !u!1 &8313002827743973345
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,8 @@
 using System;
 using System.Collections;
+using Entity;
+using Game.Entity;
+using Game.Scripts.GameFiles.Entity.StatusEffects;
 using Mirror;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -23,14 +26,18 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float recoilExponent = 1.5f;
 
         [Header("Camera Recoil")]
-        [SerializeField] private Vector2 verticalRecoilRange = new Vector2(0.5f, 2.5f); 
-        [SerializeField] private Vector2 horizontalRecoilRange = new Vector2(-1f, 1f);  
+        [SerializeField] private Vector2 verticalRecoilRange = new Vector2(0.5f, 2.5f);
+        [SerializeField] private Vector2 horizontalRecoilRange = new Vector2(-1f, 1f);
         [SerializeField] private AnimationCurve recoilDistributionCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
         [Header("FOV Kick")]
         [SerializeField] private float fovKickAmount = 2f;
         [SerializeField] private float maxFovKick = 5f;
         [SerializeField] private float fovKickDuration = 0.15f;
+
+        [Header("Movement Slow on Shoot")]
+        [SerializeField] private float slowDuration = 0.5f;   
+        [SerializeField] private float slowFactor = 0.2f;    
 
         [Header("Stability")]
         [SerializeField] private float stabilityIncreasePerShot = 1f;
@@ -87,6 +94,12 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
                     camera.AddRecoil(vertical, horizontal);
                     camera.AddFov(fovKickAmount, maxFovKick, fovKickDuration);
+                }
+
+                if (Item.Owner && Item.Owner.StatusEffectHandler)
+                {
+                    var slow = new SlowStatusEffect(slowDuration, slowFactor);
+                    Item.Owner.StatusEffectHandler.AddEffect(slow);
                 }
             }
 

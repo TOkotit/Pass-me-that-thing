@@ -225,7 +225,7 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
             }
         }
         var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
-        var currentSpeed = _model.Speed * (_movementMultiplier / holderCount);
+        var currentSpeed = _model.Speed * (_movementMultiplier / holderCount) * _model.ExternalSpeedMultiplier;
         if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
 
         characterController.Move(desiredMove * (currentSpeed * Time.fixedDeltaTime));
