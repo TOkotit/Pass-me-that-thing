@@ -11,6 +11,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
     public class Workbench : NetworkBehaviour, Interactable
     {
+        // [SerializeField] private WorkbenchItemRecipe recipe;
         [SerializeField] private ItemSpawner spawner;
         
         [Inject] private LocalCraftModel _craftModel;
