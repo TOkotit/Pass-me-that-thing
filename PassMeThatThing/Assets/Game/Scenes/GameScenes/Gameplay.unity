@@ -318,6 +318,7 @@ GameObject:
   - component: {fileID: 25925576}
   - component: {fileID: 25925573}
   - component: {fileID: 25925575}
+  - component: {fileID: 25925577}
   m_Layer: 0
   m_Name: Room_5_TechnicalTunnels
   m_TagString: Untagged
@@ -355,14 +356,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 896693838}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 590694365}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1458056609}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &25925574
 Grid:
@@ -437,6 +444,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &25925577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25925571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3605974120
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &27360281
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,6 +754,7 @@ GameObject:
   - component: {fileID: 34469635}
   - component: {fileID: 34469632}
   - component: {fileID: 34469634}
+  - component: {fileID: 34469636}
   m_Layer: 0
   m_Name: Room_17_RecoveryHangar
   m_TagString: Untagged
@@ -770,16 +795,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 6
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1337064254}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 809656904}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 95976684}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1429363731}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &34469633
 Grid:
@@ -854,6 +886,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &34469636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34469630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 2504703614
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &47141527
 GameObject:
   m_ObjectHideFlags: 0
@@ -2151,6 +2200,7 @@ GameObject:
   - component: {fileID: 103702732}
   - component: {fileID: 103702729}
   - component: {fileID: 103702731}
+  - component: {fileID: 103702733}
   m_Layer: 0
   m_Name: Room_4_WaterPurification
   m_TagString: Untagged
@@ -2189,12 +2239,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 11
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 815915194}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1342731054}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &103702730
 Grid:
@@ -2269,6 +2324,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &103702733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103702727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 426490254
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &108337112
 GameObject:
   m_ObjectHideFlags: 0
@@ -3508,6 +3580,7 @@ GameObject:
   - component: {fileID: 203130946}
   - component: {fileID: 203130943}
   - component: {fileID: 203130945}
+  - component: {fileID: 203130947}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -3543,10 +3616,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 240619654}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &203130944
 Grid:
@@ -3621,6 +3698,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &203130947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203130941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 129111632
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &230057193
 GameObject:
   m_ObjectHideFlags: 0
@@ -4263,6 +4357,7 @@ GameObject:
   - component: {fileID: 255510794}
   - component: {fileID: 255510791}
   - component: {fileID: 255510793}
+  - component: {fileID: 255510795}
   m_Layer: 0
   m_Name: Room_12_Armory
   m_TagString: Untagged
@@ -4301,14 +4396,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 1
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 936779343}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 1028089620}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1582323236}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &255510792
 Grid:
@@ -4383,6 +4484,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &255510795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255510789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3439847031
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &260299576
 GameObject:
   m_ObjectHideFlags: 0
@@ -4396,6 +4514,7 @@ GameObject:
   - component: {fileID: 260299581}
   - component: {fileID: 260299578}
   - component: {fileID: 260299580}
+  - component: {fileID: 260299582}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -4431,10 +4550,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 657893459}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &260299579
 Grid:
@@ -4509,6 +4632,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &260299582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260299576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1247929268
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &271807361
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4599,6 +4739,7 @@ GameObject:
   - component: {fileID: 284338180}
   - component: {fileID: 284338177}
   - component: {fileID: 284338179}
+  - component: {fileID: 284338181}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -4634,10 +4775,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 28964590}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &284338178
 Grid:
@@ -4712,6 +4857,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &284338181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284338175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3418633710
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &289089713
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8115,6 +8277,7 @@ GameObject:
   - component: {fileID: 512776681}
   - component: {fileID: 512776678}
   - component: {fileID: 512776680}
+  - component: {fileID: 512776682}
   m_Layer: 0
   m_Name: Room_3_LivingBlock
   m_TagString: Untagged
@@ -8154,12 +8317,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 4
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 595095080}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 2052321932}
+    localRotation: 0
   totalDoors: 1
 --- !u!156049354 &512776679
 Grid:
@@ -8234,6 +8402,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &512776682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512776676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1897660857
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &517963070
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8309,6 +8494,7 @@ GameObject:
   - component: {fileID: 521313097}
   - component: {fileID: 521313094}
   - component: {fileID: 521313096}
+  - component: {fileID: 521313098}
   m_Layer: 0
   m_Name: Room_1_Generator
   m_TagString: Untagged
@@ -8351,16 +8537,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 2
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1154549856}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 1903714585}
+    localRotation: 0
   - localPosition: {x: -1, y: 0, z: 0}
     plate: {fileID: 905867254}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 2054780843}
+    localRotation: 0
   totalDoors: 4
 --- !u!156049354 &521313095
 Grid:
@@ -8435,6 +8628,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &521313098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521313092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 805683569
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &529245398
 GameObject:
   m_ObjectHideFlags: 0
@@ -8491,6 +8701,7 @@ GameObject:
   - component: {fileID: 543561062}
   - component: {fileID: 543561059}
   - component: {fileID: 543561061}
+  - component: {fileID: 543561063}
   m_Layer: 0
   m_Name: Room_15_Server
   m_TagString: Untagged
@@ -8532,16 +8743,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 10
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 573502703}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1728091045}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 1772503301}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1373095146}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &543561060
 Grid:
@@ -8616,6 +8834,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &543561063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543561057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3333864783
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &547654549
 GameObject:
   m_ObjectHideFlags: 0
@@ -12816,6 +13051,7 @@ GameObject:
   - component: {fileID: 837802788}
   - component: {fileID: 837802785}
   - component: {fileID: 837802787}
+  - component: {fileID: 837802789}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -12853,14 +13089,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1693023982}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1188270233}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 447904187}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &837802786
 Grid:
@@ -12935,6 +13177,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &837802789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837802783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1240502179
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &852857064
 GameObject:
   m_ObjectHideFlags: 0
@@ -14610,6 +14869,7 @@ GameObject:
   - component: {fileID: 943148840}
   - component: {fileID: 943148837}
   - component: {fileID: 943148839}
+  - component: {fileID: 943148841}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -14646,12 +14906,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 77030828}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 356025301}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &943148838
 Grid:
@@ -14726,6 +14991,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &943148841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943148835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 4221474608
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &956833250
 GameObject:
   m_ObjectHideFlags: 0
@@ -14739,6 +15021,7 @@ GameObject:
   - component: {fileID: 956833255}
   - component: {fileID: 956833252}
   - component: {fileID: 956833254}
+  - component: {fileID: 956833256}
   m_Layer: 0
   m_Name: Room_9_LivingBlock
   m_TagString: Untagged
@@ -14779,12 +15062,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 4
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 673801302}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 1967023517}
+    localRotation: 0
   totalDoors: 1
 --- !u!156049354 &956833253
 Grid:
@@ -14859,6 +15147,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &956833256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956833250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3116604561
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &958971338
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15277,6 +15582,7 @@ GameObject:
   - component: {fileID: 982210648}
   - component: {fileID: 982210645}
   - component: {fileID: 982210647}
+  - component: {fileID: 982210649}
   m_Layer: 0
   m_Name: Room_8_Workshop
   m_TagString: Untagged
@@ -15317,16 +15623,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 9
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 566268696}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1777949339}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 2095423494}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 1236954040}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &982210646
 Grid:
@@ -15401,6 +15714,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &982210649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982210643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 653967224
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &993226612
 GameObject:
   m_ObjectHideFlags: 0
@@ -21990,6 +22320,7 @@ GameObject:
   - component: {fileID: 1517463394}
   - component: {fileID: 1517463391}
   - component: {fileID: 1517463393}
+  - component: {fileID: 1517463395}
   m_Layer: 0
   m_Name: Room_2_Warehouse
   m_TagString: Untagged
@@ -22036,16 +22367,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 3
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 652076567}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 1298256066}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: -1}
     plate: {fileID: 2115054302}
+    localRotation: 0
   - localPosition: {x: -1, y: 0, z: -1}
     plate: {fileID: 1649545229}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &1517463392
 Grid:
@@ -22120,6 +22458,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1517463395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1517463389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1938970413
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1524683047
 GameObject:
   m_ObjectHideFlags: 0
@@ -23259,6 +23614,7 @@ GameObject:
   - component: {fileID: 1581273014}
   - component: {fileID: 1581273011}
   - component: {fileID: 1581273013}
+  - component: {fileID: 1581273015}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -23294,10 +23650,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1535694435}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1581273012
 Grid:
@@ -23372,6 +23732,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1581273015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581273009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1837295582
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1582323233
 GameObject:
   m_ObjectHideFlags: 0
@@ -23652,6 +24029,67 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1590674293}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1595139875
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.7449908
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.3520254
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9359905
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -138.777
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860478430458328196, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3230417185334896228, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: m_Name
+      value: ClassSwitch (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498066463068602929, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
+      propertyPath: sceneId
+      value: 2817490676
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
 --- !u!1 &1618416248
 GameObject:
   m_ObjectHideFlags: 0
@@ -23777,6 +24215,7 @@ GameObject:
   - component: {fileID: 1621601714}
   - component: {fileID: 1621601711}
   - component: {fileID: 1621601713}
+  - component: {fileID: 1621601715}
   m_Layer: 0
   m_Name: Room_11_TechnicalTunnels
   m_TagString: Untagged
@@ -23812,10 +24251,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1895461841}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1621601712
 Grid:
@@ -23890,6 +24333,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1621601715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621601709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3036977657
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1625936999
 GameObject:
   m_ObjectHideFlags: 0
@@ -24183,6 +24643,7 @@ GameObject:
   - component: {fileID: 1633297465}
   - component: {fileID: 1633297462}
   - component: {fileID: 1633297464}
+  - component: {fileID: 1633297466}
   m_Layer: 0
   m_Name: Room_0_CommandCenter
   m_TagString: Untagged
@@ -24226,16 +24687,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 1
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 872183689}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 230057194}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: 1}
     plate: {fileID: 108337113}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 994712895}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &1633297463
 Grid:
@@ -24310,6 +24778,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1633297466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633297460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3412449763
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &1634959674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24393,6 +24878,7 @@ GameObject:
   - component: {fileID: 1638831348}
   - component: {fileID: 1638831345}
   - component: {fileID: 1638831347}
+  - component: {fileID: 1638831349}
   m_Layer: 0
   m_Name: Room_13_Warehouse
   m_TagString: Untagged
@@ -24438,16 +24924,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 3
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1546036202}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 1942981473}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: -1}
     plate: {fileID: 434704680}
+    localRotation: 0
   - localPosition: {x: -1, y: 0, z: -1}
     plate: {fileID: 1626859481}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1638831346
 Grid:
@@ -24522,6 +25015,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1638831349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638831343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 3806467152
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &1643545341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24774,6 +25284,7 @@ GameObject:
   - component: {fileID: 1651403289}
   - component: {fileID: 1651403286}
   - component: {fileID: 1651403288}
+  - component: {fileID: 1651403290}
   m_Layer: 0
   m_Name: PathTunnel
   m_TagString: Untagged
@@ -24810,12 +25321,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 7
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1823498599}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 591950134}
+    localRotation: 0
   totalDoors: 2
 --- !u!156049354 &1651403287
 Grid:
@@ -24890,6 +25406,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1651403290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651403284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 2369119892
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1659943345
 GameObject:
   m_ObjectHideFlags: 0
@@ -26128,6 +26661,7 @@ GameObject:
   - component: {fileID: 1744924331}
   - component: {fileID: 1744924328}
   - component: {fileID: 1744924330}
+  - component: {fileID: 1744924332}
   m_Layer: 0
   m_Name: Room_14_WaterPurification
   m_TagString: Untagged
@@ -26167,14 +26701,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 11
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1871507023}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 1218867063}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 1}
     plate: {fileID: 365877126}
+    localRotation: 0
   totalDoors: 3
 --- !u!156049354 &1744924329
 Grid:
@@ -26249,6 +26789,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1744924332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744924326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1978697405
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &1745384532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29544,6 +30101,7 @@ GameObject:
   - component: {fileID: 1966714388}
   - component: {fileID: 1966714385}
   - component: {fileID: 1966714387}
+  - component: {fileID: 1966714389}
   m_Layer: 0
   m_Name: Room_10_LivingBlock
   m_TagString: Untagged
@@ -29596,20 +30154,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0605979cfd2c4e81ad37c5066891c419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roomType: 4
   plates:
   - localPosition: {x: 0, y: 0, z: 0}
     plate: {fileID: 1356394548}
+    localRotation: 0
   - localPosition: {x: 0, y: 0, z: -1}
     plate: {fileID: 768466732}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: -1}
     plate: {fileID: 1242603656}
+    localRotation: 0
   - localPosition: {x: 2, y: 0, z: -1}
     plate: {fileID: 1315726077}
+    localRotation: 0
   - localPosition: {x: 2, y: 0, z: 0}
     plate: {fileID: 591125092}
+    localRotation: 0
   - localPosition: {x: 1, y: 0, z: 0}
     plate: {fileID: 962321445}
+    localRotation: 0
   totalDoors: 4
 --- !u!156049354 &1966714386
 Grid:
@@ -29684,6 +30251,23 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1966714389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1966714383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1839735589
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1966741164
 GameObject:
   m_ObjectHideFlags: 0
@@ -33565,3 +34149,4 @@ SceneRoots:
   - {fileID: 569594202}
   - {fileID: 903890634}
   - {fileID: 1408393117}
+  - {fileID: 1595139875}
