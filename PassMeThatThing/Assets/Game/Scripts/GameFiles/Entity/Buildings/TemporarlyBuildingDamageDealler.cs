@@ -40,7 +40,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             }
         }
 
-        private Damagable FindDamagableInHierarchy(GameObject obj)
+        private Damageable FindDamagableInHierarchy(GameObject obj)
         {
             var t = obj.transform;
             while (t)

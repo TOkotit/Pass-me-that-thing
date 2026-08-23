@@ -16,7 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         private MainCharacter _player;
         private Camera _playerCamera;
         public Camera Camera => _playerCamera;
-        public void Setup(Damagable mainCharacter, Dictionary<string, Rigidbody> playerBoneDict)
+        public void Setup(Damageable mainCharacter, Dictionary<string, Rigidbody> playerBoneDict)
         {
             if (mainCharacter is MainCharacter mc)
             {

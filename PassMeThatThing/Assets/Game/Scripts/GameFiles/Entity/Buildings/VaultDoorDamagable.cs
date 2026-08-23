@@ -6,7 +6,7 @@ using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings
 {
-    public class VaultDoorDamagable : Damagable
+    public class VaultDoorDamageable : Damageable
     {
         [Inject] private VaultDoorDamagableModel _model;
         [Inject] private DamagableRegistry _damagableRegistry;

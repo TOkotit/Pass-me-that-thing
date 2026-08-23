@@ -1,5 +1,6 @@
 ﻿using DI;
 using Enums;
+using Game.Scripts.GameFiles.Entity;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -7,18 +8,11 @@ using VContainer.Unity;
 
 namespace Entity
 {
-    /// <summary>
-    /// Хост считает хп у себя в DamagableModel обновляет syncHealth
-    /// хуки syncHealth обновляют damagableModel на клиентах
-    /// 
-    /// Хост выполняет OnHealthChanged при срабатываний событий DamagableModel
-    /// Клиенты выполняют OnHealthChanged при срабатывании хуков
-    /// </summary>
-    public abstract class Damagable : NetworkBehaviour
+    public abstract class Damageable : NetworkBehaviour
     {
         [SerializeField] protected int defaultHealth;
         [SerializeField] protected DamagableType type;
-        
+        [SerializeField] protected StatusEffectHandler statusEffectHandler;
         [Inject] protected DamagableRegistry Registry { get; private set; }
         
         [SyncVar(hook = nameof(OnSyncedHealthChanged))]
@@ -28,11 +22,12 @@ namespace Entity
         private int _syncedMaxHealth;
         
         public abstract DamagableModel DamagableModel { get; }
+        public StatusEffectHandler StatusEffectHandler => statusEffectHandler;
         
         public DamagableType Type => type;
         protected virtual void Start()
         {
-            Debug.LogWarning("Damagable: Start " + gameObject.name);
+            Debug.LogWarning("Damageable: Start " + gameObject.name);
             if (isServer)
             {
                 if (DamagableModel.HealthPool == null)

@@ -17,7 +17,7 @@ using VContainer.Unity;
 
 namespace Game.Entity
 {
-    public class MainCharacter : ToughnessDamagable
+    public class MainCharacter : ToughnessDamageable
     {
         [Inject] private DamagableRegistry _damagableRegistry;
         [Inject] private MainCharacterModel _model;

@@ -8,7 +8,7 @@ using VContainer;
 
 namespace MainCharacter_old
 {
-    public class MainCharacter_old : Damagable
+    public class MainCharacter_old : Damageable
     {
         private MainCharacterModel_old _mainCharacterModel;
         [Inject] private CharacterController _characterController;

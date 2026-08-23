@@ -7,7 +7,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
-    public class Furniture : ToughnessDamagable
+    public class Furniture : ToughnessDamageable
     {
         [Inject] protected DamagableModel _model;
         public override DamagableModel DamagableModel => _model;

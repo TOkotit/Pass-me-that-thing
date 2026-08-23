@@ -13,7 +13,7 @@ using VContainer.Unity;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
-    public class Enemy : ToughnessDamagable
+    public class Enemy : ToughnessDamageable
     {
         [SerializeField] protected TargetDetector targetDetector;
         [SerializeField] protected EnemyMovementController movementController;

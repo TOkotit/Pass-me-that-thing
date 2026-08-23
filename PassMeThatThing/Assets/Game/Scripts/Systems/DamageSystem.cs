@@ -11,7 +11,7 @@ namespace Game.Scripts.Systems
     public class DamageSystem
     {
         public bool TakeDamage(float damage, 
-            Damagable damageable, 
+            Damageable damageable, 
             SerializedDictionary<DamagableType, float> damageTypes = null,
             int toughnessDamage = 0,
             Action callback = null)
@@ -28,7 +28,7 @@ namespace Game.Scripts.Systems
             int finalDamage = (int)(damage * multiplier);
             damageable.ServerTakeDamage(finalDamage);
 
-            if (toughnessDamage > 0 && damageable is ToughnessDamagable tough)
+            if (toughnessDamage > 0 && damageable is ToughnessDamageable tough)
             {
                 tough.ServerReduceToughness(toughnessDamage);
             }

@@ -6,7 +6,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
     /// <summary>
     /// базовый класс для всего что может построить игрок и что могут сломать мобы
     /// </summary>
-    public class Building : Damagable
+    public class Building : Damageable
     {
         protected BuildingModel BuildingModel;
         protected BuildingData BuildingData;

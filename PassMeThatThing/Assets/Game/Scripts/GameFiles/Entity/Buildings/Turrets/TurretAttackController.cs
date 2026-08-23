@@ -18,7 +18,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
 
         public void AttackRay(float damage, TargetObject target)
         {
-            _damageSystem.TakeDamage(damage, target.Damagable, damageTypes);
+            _damageSystem.TakeDamage(damage, target.Damageable, damageTypes);
         }
 
         

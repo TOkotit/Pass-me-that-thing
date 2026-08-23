@@ -1,6 +1,7 @@
 using Entity;
 using Game.Entity.Stats;
 using Game.Scripts.GameFiles.Items;
+using UnityEngine;
 using VContainer;
 
 namespace Game.Entity
@@ -31,8 +32,9 @@ namespace Game.Entity
         private float _baseMaxAngularSpeed;
         private float _baseAngularResponsiveness;
         private float _baseStrength;
+        private float _baseFov;
 
-        // Текущие значения (после применения класса)
+        // Текущие значения 
         private float _maxHealth;
         private float _speed;
         private float _sprintMultiplier;
@@ -53,7 +55,8 @@ namespace Game.Entity
         private float _maxAngularSpeed;
         private float _angularResponsiveness;
         private float _strength;
-        private float _baseFov;
+        private float _externalSpeedMultiplier = 1f;
+
         public float MaxHealth => _maxHealth;
         public float Speed => _speed;
         public float SprintMultiplier => _sprintMultiplier;
@@ -74,8 +77,13 @@ namespace Game.Entity
         public float MaxAngularSpeed => _maxAngularSpeed;
         public float AngularResponsiveness => _angularResponsiveness;
         public float Strength => _strength;
-        
         public float BaseFov => _baseFov;
+
+        public float ExternalSpeedMultiplier
+        {
+            get => _externalSpeedMultiplier;
+            set => _externalSpeedMultiplier = Mathf.Max(0f, value);
+        }
 
         public PlayerInteraction PlayerInteraction => _playerInteraction;
         public PlayerInventory PlayerInventory => _playerInventory;
@@ -132,7 +140,7 @@ namespace Game.Entity
             _strength = _baseStrength;
         }
 
-        // Методы для применения множителей (вызываются ClassManager)
+        // Методы для применения множителей 
         public void ApplyMultipliers(ClassStats classStats)
         {
             _maxHealth = _baseMaxHealth + classStats.maxHealthBonus;

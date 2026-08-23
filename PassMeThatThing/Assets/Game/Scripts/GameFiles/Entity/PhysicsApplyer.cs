@@ -68,7 +68,7 @@ namespace Game.Scripts.GameFiles.Entity
                 var t = Mathf.Clamp01(distance / radius);
                 var multiplier = curve.Evaluate(t);
 
-                if (damagable is ToughnessDamagable toughnessDamagable && toughnessDamagable.RagdollHandler)
+                if (damagable is ToughnessDamageable toughnessDamagable && toughnessDamagable.RagdollHandler)
                 {
                     var bones = toughnessDamagable.RagdollHandler.GetRigidbodies();
                     foreach (var rb in bones)
@@ -116,21 +116,21 @@ namespace Game.Scripts.GameFiles.Entity
         }
 
         private void ApplyDamageToTarget(
-            Damagable damagable,
+            Damageable damageable,
             float damage,
             int toughDamage,
             bool callHitOnToughness,
             Vector3 hitPoint = default,
             Vector3 force = default)
         {
-            if (!damagable) return;
+            if (!damageable) return;
 
-            if (callHitOnToughness && damagable is ToughnessDamagable toughnessDamagable)
+            if (callHitOnToughness && damageable is ToughnessDamageable toughnessDamagable)
             {
                 toughnessDamagable.Hit(hitPoint, force);
             }
 
-            damageSystem.TakeDamage(damage, damagable, toughnessDamage: toughDamage);
+            damageSystem.TakeDamage(damage, damageable, toughnessDamage: toughDamage);
         }
     }
 }

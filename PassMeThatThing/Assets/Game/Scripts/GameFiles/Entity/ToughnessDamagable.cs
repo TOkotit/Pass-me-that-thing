@@ -9,7 +9,7 @@ namespace Entity
     /// <summary>
     /// 
     /// </summary>
-    public abstract class ToughnessDamagable : Damagable
+    public abstract class ToughnessDamageable : Damageable
     {
         protected ToughnessModel _toughnessModel;
         [SerializeField] protected RagdollHandler ragdollHandler;

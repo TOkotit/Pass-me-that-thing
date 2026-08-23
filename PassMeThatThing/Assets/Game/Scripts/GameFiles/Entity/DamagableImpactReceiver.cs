@@ -11,13 +11,13 @@ namespace Game.Entity
         [SerializeField] private float baseMass = 5f;                 // эталонная масса для нормализации
         [SerializeField] private float nonPhysicalMultiplier = 0.3f;  // множитель урона для стен/нефизических объектов
         [SerializeField] private float nonPhysicalTresholdMultiplier = 1f; // множитель порога для стен 
-        [SerializeField] private Damagable _damagable;
+        [SerializeField] private Damageable damageable;
 
-        public void SetDamagable(Damagable damagable) => _damagable = damagable;
+        public void SetDamagable(Damageable damageable) => this.damageable = damageable;
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (!_damagable || _damagable.DamagableModel?.HealthPool == null)
+            if (!damageable || damageable.DamagableModel?.HealthPool == null)
                 return;
 
             float velocity = collision.relativeVelocity.magnitude;
@@ -42,7 +42,7 @@ namespace Game.Entity
                 return;
 
             int damage = (int)(velocity * damageMultiplier * massMultiplier);
-            _damagable.ServerTakeDamage(damage);
+            damageable.ServerTakeDamage(damage);
         }
     }
 }

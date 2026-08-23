@@ -8,36 +8,36 @@ namespace Entity
     public class DamagableRegistry
     {
         public static DamagableRegistry Instance { get; private set; }
-        private Dictionary<GameObject, Damagable> _damagableObjects = new Dictionary<GameObject, Damagable>();
-        public List<Damagable> GetDamageables() => _damagableObjects.Values.ToList();
+        private Dictionary<GameObject, Damageable> _damagableObjects = new Dictionary<GameObject, Damageable>();
+        public List<Damageable> GetDamageables() => _damagableObjects.Values.ToList();
         public DamagableRegistry()
         {
             Instance = this;
         }
         
-        public void Register(Damagable damagable)
+        public void Register(Damageable damageable)
         {
-            var damagableObject = damagable.gameObject;
+            var damagableObject = damageable.gameObject;
             if (!_damagableObjects.ContainsKey(damagableObject))
-                _damagableObjects.Add(damagableObject, damagable); 
-            Debug.Log($"Damagable: {damagable.gameObject.name} has been registered");
+                _damagableObjects.Add(damagableObject, damageable); 
+            Debug.Log($"Damageable: {damageable.gameObject.name} has been registered");
         }
-        public void Register(GameObject gameObject,Damagable damagable)
+        public void Register(GameObject gameObject,Damageable damageable)
         {
             if (!_damagableObjects.ContainsKey(gameObject))
-                _damagableObjects.Add(gameObject, damagable); 
-            Debug.Log($"Damagable: {damagable.gameObject.name} has been registered");
+                _damagableObjects.Add(gameObject, damageable); 
+            Debug.Log($"Damageable: {damageable.gameObject.name} has been registered");
         }
         
-        public void Unregister(Damagable damagable)
+        public void Unregister(Damageable damageable)
         {
-            var damagableObject = damagable.gameObject;
+            var damagableObject = damageable.gameObject;
             if (_damagableObjects.ContainsKey(damagableObject))
                 _damagableObjects.Remove(damagableObject);
             
         }
 
-        public Damagable TryGetDamagable(GameObject damagable, out Damagable item)
+        public Damageable TryGetDamagable(GameObject damagable, out Damageable item)
         {
             if (_damagableObjects.ContainsKey(damagable))
             {
