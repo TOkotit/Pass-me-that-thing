@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.Entity.Enemy;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Mirror;
 using UnityEngine;
 
@@ -8,11 +10,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemySpawner : NetworkBehaviour
     {
-        [SerializeField] private List<Transform> zombieSpawnPositions;
+        //[SerializeField] private List<Transform> zombieSpawnPositions;
         [SerializeField] private int enemyLimit;
         private int _enemyCount;
         
-        public List<Transform> ZombieSpawnPositions => zombieSpawnPositions;
+        //public List<Transform> ZombieSpawnPositions => zombieSpawnPositions;
+
+        private List<EnemySpawnPoint> _enemySpawnPositions = new();
 
         public int EnemyCount
         {
@@ -20,6 +24,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             set => _enemyCount = value;
         }
 
+        [Server]
+        public void RegisterSpawnpoint(EnemySpawnPoint sp)
+        {
+            _enemySpawnPositions.Add(sp);
+        }
+
+        [Server]
+        public void UnRegisterSpawnpoint(EnemySpawnPoint sp)
+        {
+            _enemySpawnPositions.Remove(sp);
+        }
 
         [Server]
         public void SpawnEnemy(Vector3 pos, EnemyData enemyData)
@@ -38,7 +53,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public void SpawnWave(List<EnemyData> enemiesData)
         {
             //Debug.Log($"Spawning wave of: {enemyData.Id}");
-            var positions = zombieSpawnPositions;
+            var positions = _enemySpawnPositions;
             
             //if (enemyData.Id == "zombie")
             //{
@@ -47,7 +62,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             for (var i = 0; i < positions.Count && i < enemiesData.Count; i++)
             {
-                SpawnEnemy(positions[i].position, enemiesData[i]);
+                SpawnEnemy(positions[i].transform.position, enemiesData[i]);
 
                 //if (_enemyCount < enemyLimit)
                 //{
