@@ -19,7 +19,7 @@ namespace Game.Gameplay.View.UI
 {
     public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
     {
-        private Color selectedColor = CustomColorUtils.FromHex("5CDD8A");
+        private Color selectedColor = CustomColorUtils.FromHex("1C452B");
         private Color noSelectionColor = new Color(1f, 1f, 1f, 0f);
         
         private int _activeSlotIndex = -1;
