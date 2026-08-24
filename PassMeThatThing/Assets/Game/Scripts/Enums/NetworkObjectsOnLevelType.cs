@@ -7,6 +7,7 @@ namespace Game.Scripts.Enums
         CutWireTerminal,
         BoxWithItems,
         EnemiesSpawner,
+        Workbench,
         Door,
         Other
     }
