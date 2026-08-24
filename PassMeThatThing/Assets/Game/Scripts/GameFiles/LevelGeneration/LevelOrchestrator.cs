@@ -90,8 +90,29 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             BlockUnusedExits();
             PlaceUsedExitPassages();
             networkObjectsOrchestrator.SpawnNetworkObjects(AllLevelSpots);
+            BakeNavMeshes();
             Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_allPlacedRooms.Count}.");
         }
+        
+        private void BakeNavMeshes()
+        {
+            foreach (var roomData in _allPlacedRooms)
+            {
+                var room = roomData.RoomComponent;
+                if (room == null) continue;
+
+                var surface = room.NavMeshSurface;
+                if (surface == null)
+                {
+                    Debug.LogWarning($"[GENERATOR] У комнаты {room.name} не задан NavMeshSurface, навмеш не запечён.");
+                    continue;
+                }
+
+                surface.BuildNavMesh();
+            }
+        }
+
+        
         
         private void Shuffle<T>(IList<T> list)
         {

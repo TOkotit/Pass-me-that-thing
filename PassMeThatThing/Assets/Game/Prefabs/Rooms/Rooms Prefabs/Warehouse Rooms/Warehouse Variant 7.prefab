@@ -443,6 +443,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4931996299046518409, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
   m_PrefabInstance: {fileID: 4909150004410532609}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3982338869281411632 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8315001647185039665, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
+  m_PrefabInstance: {fileID: 4909150004410532609}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
 --- !u!114 &4480929691548979557 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8795451161117741668, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
@@ -623,6 +634,10 @@ PrefabInstance:
       propertyPath: totalDoors
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5931013953064351819, guid: 81c89feb1bf73e8429c4780a90541f4c, type: 3}
+      propertyPath: navMeshSurface
+      value: 
+      objectReference: {fileID: 3982338869281411632}
     - target: {fileID: 5931013953064351819, guid: 81c89feb1bf73e8429c4780a90541f4c, type: 3}
       propertyPath: plates.Array.size
       value: 4
