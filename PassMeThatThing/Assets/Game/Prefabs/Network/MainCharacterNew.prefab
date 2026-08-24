@@ -5298,12 +5298,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  ceilingLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  wallsLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  floorTag: Floor
+  ceilingTag: Ceiling
+  wallTag: Wall
   defaultPreviewMat: {fileID: 2100000, guid: 91fa4f4a5cec656428f01dc740583b11, type: 2}
   collisionPreviewMat: {fileID: 2100000, guid: eafa36ec3de2ea24089f6d5872bfdea7, type: 2}
   buildingLayer:

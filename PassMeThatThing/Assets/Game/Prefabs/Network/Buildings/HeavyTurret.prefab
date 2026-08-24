@@ -89,8 +89,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 2.02, z: 1}
-  m_Center: {x: 0, y: 1.39, z: 0}
+  m_Size: {x: 1, y: 1.2638791, z: 3.5991652}
+  m_Center: {x: 0, y: 0.066788316, z: 1.9611882}
 --- !u!114 &7207250266534300093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,6 +120,7 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 0
   type: 2
+  statusEffectHandler: {fileID: 0}
   targetDetector: {fileID: 1716954208764301076}
   turretAttackController: {fileID: 637298468266342329}
   inputPort: {fileID: 806358862158522439}
@@ -139,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagable: {fileID: 6460587441261525797}
+  damageable: {fileID: 0}
   priority: 0
   damagableType: 2
 --- !u!114 &1716954208764301076
@@ -224,7 +225,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6286794996758443890}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -234,7 +235,7 @@ Transform:
   - {fileID: 7670972971362828833}
   - {fileID: 6854388206126515711}
   m_Father: {fileID: 3593213558545181655}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!120 &6552646445704832505
 LineRenderer:
   serializedVersion: 3

@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings;
 using Game.Gameplay.View.UI;
-using Game.Scripts.GameFiles.Entity.Buildings.Misc.Craft;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using R3;
@@ -18,8 +19,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         [SerializeField] private float previewDistance = 30f;
 
         [SerializeField] private LayerMask groundLayer;
-        [SerializeField] private LayerMask ceilingLayer;
-        [SerializeField] private LayerMask wallsLayer;
+
+        [SerializeField] private string floorTag;
+        [SerializeField] private string ceilingTag;
+        [SerializeField] private string wallTag;
 
         [SerializeField] private Material defaultPreviewMat;
         [SerializeField] private Material collisionPreviewMat;
@@ -35,7 +38,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         
         [Inject] private GameInputManager  _inputManager;
         [Inject] private GameplayUIManager _gameplayUIManager;
-        
+
+        private TagHandle _floorTag;
+        private TagHandle _ceilingTag;
+        private TagHandle _wallTag;
+
         private string _currentBuildingId;
         private BuildingData _currentBuildingData;
 
@@ -43,14 +50,27 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         private bool _preview;
         private float _previewRotation;
 
-        private PreviewCollisionHandler _currentCollisionHandler;
+        private List<TagHandle> _currentBuildingPlacementTags = new();
+        private bool _isPlaced = new();
+
+        private PreviewBuildingHandler _currentBuildingHandler;
         private LayerMask _collisionLayer;
-        private ReactiveProperty<bool> _isCollided = new();
+        private bool _isCollided;
+
+        private ReactiveProperty<bool> _isBuildValid = new();
         private CompositeDisposable _subs = new();
+
+        private void Awake()
+        {
+            _floorTag = TagHandle.GetExistingTag(floorTag);
+            _wallTag = TagHandle.GetExistingTag(wallTag);
+            _ceilingTag = TagHandle.GetExistingTag(ceilingTag);
+
+            _collisionLayer = groundLayer;
+        }
 
         private void Start()
         {
-            _collisionLayer = groundLayer | ceilingLayer | wallsLayer;
             if (isLocalPlayer)
             { 
                 _handlerModel.OnStartBuildPreviewById += StartBuildingPreviewById;
@@ -62,7 +82,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _inputManager.GameInput.Gameplay.Zoom.performed += ZoomOnperformed;
 
 
-                _subs.Add(_isCollided.Subscribe(ChangeMaterials));
+                _subs.Add(_isBuildValid.Subscribe(ChangeMaterials));
             }
         }
 
@@ -114,28 +134,37 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             if (_preview)
             {
                 var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-                //TODO проверка на потолок стены пол
-                if (Physics.Raycast(ray, out var hit, previewDistance, groundLayer))
+
+                if (Physics.Raycast(ray, out var hit, previewDistance, _collisionLayer))
                 {
                     _buildingPreview.transform.position = hit.point;
 
-                    //_buildingPreview.transform.rotation
-                    //    = Quaternion.FromToRotation(Vector3.up, hit.normal)
-
-                    //    * Quaternion.AngleAxis(_previewRotation, Vector3.up);
                     _buildingPreview.transform.rotation
-                        =
-                        Quaternion.LookRotation(hit.normal, Vector2.up)
+                        = Quaternion.AngleAxis(_previewRotation, hit.normal)
+                        * Quaternion.LookRotation(hit.normal, Vector3.up);
 
-                        * Quaternion.AngleAxis(_previewRotation, hit.normal);
-
+                    _isPlaced = false;
+                    foreach (var t in _currentBuildingPlacementTags)
+                    {
+                        if (hit.collider.gameObject.CompareTag(t))
+                        {
+                            _isPlaced = true;
+                            break;
+                        }
+                    }
 
                     if (_currentBuildingData.isCollisionChecking)
                     {
-                        _isCollided.Value = Physics.CheckBox(_currentCollisionHandler.BoxCenter.position,
-                        _currentCollisionHandler.BoxHalfExtends,
+                        _isCollided = Physics.CheckBox(_currentBuildingHandler.BoxCenter.position,
+                        _currentBuildingHandler.BoxHalfExtends,
                         _buildingPreview.transform.rotation,
                         _collisionLayer);
+
+                        _isBuildValid.Value = _isPlaced && !_isCollided;
+                    }
+                    else
+                    {
+                        _isBuildValid.Value = _isPlaced;
                     }
                 }
             }
@@ -143,14 +172,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         private void ChangeMaterials(bool v)
         {
-            foreach (var r in _currentCollisionHandler.Renderers)
+            foreach (var r in _currentBuildingHandler.Renderers)
             {
                 var currentMaterials = r.materials;
                 var newMaterialsArray = new Material[currentMaterials.Length];
 
                 for (int i = 0; i < newMaterialsArray.Length; i++)
                 {
-                    newMaterialsArray[i] = v ? collisionPreviewMat : defaultPreviewMat;
+                    newMaterialsArray[i] = v ? defaultPreviewMat : collisionPreviewMat;
                 }
 
                 r.materials = newMaterialsArray;
@@ -173,42 +202,41 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             _currentBuildingData = _buildingDatabase.GetBuildingFromAll(buildingId);
             _preview = true;
             enabled = true;
-
-            if (_currentBuildingData.rotationType == Enums.BuildingRotationType.Locked)
-                _previewRotation = 0f;
-
+            
+            //спавн
             var prevPrefab = _currentBuildingData.previewPrefab;
-
             if (prevPrefab != null)
                 _buildingPreview = Instantiate(prevPrefab);
             else
                 _buildingPreview = Instantiate(defaultBuildingPreview);
 
-            if (_currentBuildingData.isCollisionChecking)
-            {
-                _buildingPreview.TryGetComponent(out _currentCollisionHandler);
-            }
+            //вращение
+            if (_currentBuildingData.rotationType == Enums.BuildingRotationType.Locked)
+                _previewRotation = 0f;
+
+            //расположение
+            _currentBuildingPlacementTags.Clear();
+            if (_currentBuildingData.placementType.HasFlag(BuildingPlacementType.Floor))
+                _currentBuildingPlacementTags.Add(_floorTag);
+
+            if (_currentBuildingData.placementType.HasFlag(BuildingPlacementType.Walls))
+                _currentBuildingPlacementTags.Add(_wallTag);
+
+            if (_currentBuildingData.placementType.HasFlag(BuildingPlacementType.Ceiling))
+                _currentBuildingPlacementTags.Add(_ceilingTag);
+
+            //коллизии и расположение
+            _buildingPreview.TryGetComponent(out _currentBuildingHandler);
 
             OpenBuildingPreviewScreen();
         }
 
         public void ConfirmBuilding()
         {
-            //var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            if (!_isBuildValid.Value) return;
 
             var rotation = _buildingPreview.transform.rotation;
             var position = _buildingPreview.transform.position;
-            
-            //if (Physics.Raycast(ray, out var hit, previewDistance, groundLayer))
-            //{
-            //    position = hit.point;
-
-            //    rotation = _buildingPreview.transform.rotation;
-            //}
-
-            if (_currentBuildingData.isCollisionChecking
-                && _isCollided.Value) return;
-                
 
             _buildingManager.CmdSpawnBuilding(position, rotation, _currentBuildingId);
 

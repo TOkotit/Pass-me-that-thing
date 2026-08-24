@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace Assets.Game.Scripts.GameFiles.Entity.Buildings
 {
-    public class PreviewCollisionHandler : MonoBehaviour
+    public class PreviewBuildingHandler : MonoBehaviour
     {
         [SerializeField] private List<Renderer> renderers;
-
+        [Header("Collision")]
         [SerializeField] private Vector3 boxHalfExtends;
         [SerializeField] private Transform boxCenter;
 
