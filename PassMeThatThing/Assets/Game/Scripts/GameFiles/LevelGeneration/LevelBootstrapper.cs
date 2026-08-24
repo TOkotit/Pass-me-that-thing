@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
-    public class LevelBootstrapperNew : NetworkBehaviour
+    public class LevelBootstrapper : NetworkBehaviour
     {
         [SerializeField] private LevelOrchestrator orchestrator;
         [SerializeField] private LevelGraphConfig graphConfig = new LevelGraphConfig();

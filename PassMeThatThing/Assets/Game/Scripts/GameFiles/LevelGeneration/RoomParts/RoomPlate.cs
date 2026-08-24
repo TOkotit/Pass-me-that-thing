@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
-    public class RoomPlateNew : MonoBehaviour 
+    public class RoomPlate : MonoBehaviour 
     {
         public Color doorColor = Color.red;
         
         [SerializeField] private Grid parentGrid = null;
-        [SerializeField] private LevelRoomNew parentRoom = null;
+        [SerializeField] private LevelRoom parentRoom = null;
         public bool HasDoorNorth;
         public bool HasDoorEast;  
         public bool HasDoorSouth; 
@@ -19,7 +19,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             if (parentGrid == null)
                 parentGrid = GetComponentInParent<Grid>();
             if (parentRoom == null)
-                parentRoom = GetComponentInParent<LevelRoomNew>();
+                parentRoom = GetComponentInParent<LevelRoom>();
                 
             var cellSize = parentGrid != null ? parentGrid.cellSize.x : 1f;
             var oldMatrix = Gizmos.matrix;

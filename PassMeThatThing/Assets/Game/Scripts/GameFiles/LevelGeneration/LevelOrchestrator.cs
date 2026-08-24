@@ -10,7 +10,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 {
     public class PlacedRoomDataCluster
     {
-        public LevelRoomNew RoomComponent;
+        public LevelRoom RoomComponent;
         public GameObject Prefab;
         public Vector3Int Origin;
         public RoomRotation Rotation;
@@ -29,8 +29,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     public class LevelOrchestrator : MonoBehaviour
     {
-        [SerializeField] private RoomDatabaseNew roomDatabase;
+        [SerializeField] private RoomDatabase roomDatabase;
         [SerializeField] public LevelGrid levelGrid;
+        [SerializeField] public NetworkObjectsOrchestrator  networkObjectsOrchestrator;
         [SerializeField] private Transform levelContainer;
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private GameObject wallWithPassagePrefab;
@@ -48,6 +49,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private List<PlacedRoomDataCluster> _allPlacedRooms = new();
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
         private List<GameObject> _placedWalls = new();
+        public List<NetworkObjectSpot> AllLevelSpots { get; private set; } = new();
         private static readonly Vector3Int[] SearchDirections = {
             new(1, 0, 0), new(-1, 0, 0),
             new(0, 0, 1), new(0, 0, -1)
@@ -87,7 +89,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             BlockUnusedExits();
             PlaceUsedExitPassages();
-
+            networkObjectsOrchestrator.SpawnNetworkObjects(AllLevelSpots);
             Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_allPlacedRooms.Count}.");
         }
         
@@ -115,6 +117,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             levelGrid.ClearGrid();
             _allPlacedRooms.Clear();
             _usedConnections.Clear();
+            AllLevelSpots.Clear();
             _placedWalls.Clear();
             if (!levelContainer) return;
             for (var i = levelContainer.childCount - 1; i >= 0; i--)
@@ -358,7 +361,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             placedRoomsToUndo.Clear();
         }
         
-        private bool TryPlaceRoomInCluster(RoomNodeNew nodeToPlace, List<PlacedRoomDataCluster> clusterPlacedRooms, RoomCluster cluster)
+        private bool TryPlaceRoomInCluster(RoomNode nodeToPlace, List<PlacedRoomDataCluster> clusterPlacedRooms, RoomCluster cluster)
         {
             var candidates = roomDatabase.GetSuitableRooms(nodeToPlace.Type, 1, false)
                 .OrderBy(_ => _random.Next()).ToList();
@@ -514,6 +517,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             };
 
             var instanceGo = Instantiate(entry.PrefabGameObject, worldPos, rotQuat, levelContainer);
+            AllLevelSpots.AddRange(entry.RoomComponent.NetworkObjects);
             
             var data = new PlacedRoomDataCluster 
             { 

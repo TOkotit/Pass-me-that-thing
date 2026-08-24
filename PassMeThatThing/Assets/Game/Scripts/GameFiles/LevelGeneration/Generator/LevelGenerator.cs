@@ -7,7 +7,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
     
     public class RoomCluster
     {
-        public List<RoomNodeNew> Rooms { get; set; } = new();
+        public List<RoomNode> Rooms { get; set; } = new();
     }
     
     public class LevelGenerator
@@ -96,9 +96,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
             return cluster;
         }
-        private RoomNodeNew CreateNode(RoomTypeNew type)
+        private RoomNode CreateNode(RoomTypeNew type)
         {
-            return new RoomNodeNew(_nextNodeId++, type);
+            return new RoomNode(_nextNodeId++, type);
         }
 
         private const int MinClusterSize = 2;
