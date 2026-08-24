@@ -259,10 +259,13 @@ MonoBehaviour:
   _network: {fileID: 7096747882219086433}
   hasToBeAligned: 1
   collider: {fileID: 1548522528971783998}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList: []
-  reaction: {fileID: 6631078976074416674}
+  lmbReaction: {fileID: 6631078976074416674}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
 --- !u!114 &-8397382942150081517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,7 +315,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  Item: {fileID: 68794050071123796}
 --- !u!1001 &3722227120530960707
 PrefabInstance:
   m_ObjectHideFlags: 0

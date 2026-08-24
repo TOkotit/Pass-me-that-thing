@@ -15,6 +15,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         public void OnCollisionEnter(Collision other)
         {
+
+
+
             if (EventTerminalsRegistry.Instance.TryGetItem(other.gameObject, out var terminal))
             {
                 Debug.Log($"<color=orange>Collision Enter {nameof(LmbFlashlight)}");
