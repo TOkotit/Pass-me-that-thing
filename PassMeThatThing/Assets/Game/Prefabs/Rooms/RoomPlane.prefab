@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4
   m_IsActive: 1
 --- !u!4 &4931996299046518409
 Transform:
@@ -201,6 +201,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 818503861963224306, guid: ae50eb9617534ff4c82cd2616d7885f4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -226,6 +230,10 @@ PrefabInstance:
     - target: {fileID: 6287735420220308057, guid: 83dfb68398f1d5d46a4c1a71197ee60c, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6287735420220308057, guid: 83dfb68398f1d5d46a4c1a71197ee60c, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6631927178343686371, guid: 83dfb68398f1d5d46a4c1a71197ee60c, type: 3}
       propertyPath: m_LocalPosition.x
