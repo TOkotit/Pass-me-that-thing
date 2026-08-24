@@ -1,6 +1,7 @@
 ﻿using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 using Game.Entity;
 using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
         [SerializeField] private LayerMask interactionLayer;
         [SerializeField] private float interactionDistance;
 
-
+        [Inject] private WireManager _wiremanager;
         [Inject] private MCLocalModel _localModel;
         [Inject] private PhysicalItemRegistry _physicalItemRegistry;
         [Inject] private GameplayUIManager _gameplayUIManager;
@@ -68,6 +69,18 @@ namespace Assets.Game.Scripts.GameFiles.Items
                     OpenWindow();
 
                     _localModel.CurrentInteractableText = "Interact"; //заглушка
+                }
+                else if (hit.collider.gameObject.CompareTag("WireNode"))
+                {
+                    var wireNode = hit.collider.gameObject.GetComponentInParent<WireNode>();
+
+                    if (wireNode.NetId == -1) return;
+
+                    OpenWindow();
+
+                    var net = _wiremanager.WireNetsData[wireNode.NetId];
+
+                    _localModel.CurrentInteractableText = $"{net.availableQuantity}/{net.requiredQuantity}";
                 }
                 else
                 {

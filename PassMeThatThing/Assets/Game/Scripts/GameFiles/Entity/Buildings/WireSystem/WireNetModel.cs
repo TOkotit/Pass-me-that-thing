@@ -11,12 +11,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public int id;
         public List<int> nodesId = new();
         public List<int> portsId = new();
-        
-        public float availableQuantity;
-        public float requiredQuantity;
+
+        private float availableQuantity;
+        private float requiredQuantity;
 
         public bool IsNetWorking => availableQuantity >= requiredQuantity &&  availableQuantity != 0;
-        
+
+        public float AvailableQuantity => availableQuantity;
+        public float RequiredQuantity => requiredQuantity;
+
         public WireNetModel(int id, WireManager wireManager)
         {
             this.id = id;
@@ -62,8 +65,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             {
                _wireManager.PortNodes[wireNode].OnWireNetWorkingStateChanged(IsNetWorking);
             }
-            
+
+            _wireManager.WireNetsData[id] = new WireNetNetworkData(availableQuantity, requiredQuantity);
+
+
             Debug.Log($"[W] Net {id} Value {availableQuantity}/{requiredQuantity}");
         }
+
+
     }
 }
