@@ -12,7 +12,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
     {
         public event Action<bool> OnServerSceneLoadStateChanged;
         public event Action<bool> OnClientSceneLoadStateChanged;
-        [SerializeField] private int defaultTestSeed = 12345;
+        [SerializeField] private int defaultTestSeed = 787872;
         
         public override void OnServerChangeScene(string newSceneName)
         {

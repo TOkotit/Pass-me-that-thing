@@ -7,7 +7,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     [RequireComponent(typeof(Grid))]
 
-    public class LevelRoomNew : NetworkBehaviour
+    public class LevelRoomNew : MonoBehaviour
     {
         [SerializeField] private RoomTypeNew roomType;
         [SerializeField] private RoomPlateDataNew[] plates;
@@ -17,15 +17,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public int TotalDoors => totalDoors;
         public RoomPlateDataNew[] Plates => plates;
 
-        public override void OnStartClient()
+        public void Awake()
         {
-            base.OnStartClient();
-            ReparentToLevelContainer();
-        }
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
             ReparentToLevelContainer();
         }
 
