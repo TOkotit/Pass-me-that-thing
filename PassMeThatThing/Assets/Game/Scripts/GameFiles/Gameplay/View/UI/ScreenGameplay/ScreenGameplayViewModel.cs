@@ -137,7 +137,8 @@ namespace Game.Gameplay.View.UI
             var others = new List<PlayerViewData>();
             foreach (var p in _connectedPlayers.players)
             {
-                if (!p.isLocalPlayer)
+                //TODO переделать на нормальное
+                if (p.nameText != _connectedPlayers.localPlayer.nameText)
                 {
                     others.Add(new PlayerViewData(p.nameText, p.avatarImage));
                 }

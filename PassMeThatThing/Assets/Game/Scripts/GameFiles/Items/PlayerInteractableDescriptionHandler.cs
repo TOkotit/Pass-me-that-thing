@@ -61,8 +61,12 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
-                    var item = _physicalItemRegistry.GetItem(hit.collider.gameObject);
-                    _localModel.CurrentInteractableText = item.Network.ItemData.Id;
+                    //var item = _physicalItemRegistry.GetItem(hit.collider.gameObject);
+                    var item = hit.collider.gameObject.GetComponentInParent<PhysicalItem>();
+                    if (item != null)
+                    {
+                        _localModel.CurrentInteractableText = item.Network.ItemData.Id;
+                    }
                 }
                 else if (hit.collider.gameObject.CompareTag("Door"))
                 {
