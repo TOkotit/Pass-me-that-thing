@@ -79,5 +79,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7755887012746823137, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      insertIndex: 7
+      addedObject: {fileID: 5319519749348330018}
   m_SourcePrefab: {fileID: 100100000, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+--- !u!1 &2142466573717394994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7755887012746823137, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+  m_PrefabInstance: {fileID: 8510083496692536275}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5319519749348330018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142466573717394994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52090560c72404cae57c85bb6af4f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.LevelGeneration.NetworkObjectPlacement
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0

@@ -40,8 +40,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     continue;
 
                 var type = spot.NetworkObjectsOnLevelType;
-                if (!_networkObjectsDatabase.NetworkObjectsOnLevelSpots
-                        .TryGetValue(type, out var prefab))
+                if (!_networkObjectsDatabase.TryGetPrefab(type, out var prefab))
                 {
                     Debug.LogWarning(
                         $"[NETWORK] Prefab for type {type} not found in NetworkObjectsDatabase.");
@@ -52,8 +51,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 
                 createdObject.transform.position = spot.transform.position;
                 createdObject.transform.rotation = spot.transform.rotation;
-                createdObject.transform.localScale = spot.transform.localScale;
-
                 var placement = createdObject.GetComponent<NetworkObjectPlacement>();
 
                 if (placement == null)
@@ -120,23 +117,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var objectTransform = placement.transform;
 
-            // Переносим network object в локальный контейнер клиента.
             objectTransform.SetParent(container, false);
-
-            // Позиция спота может быть локальной относительно его parent,
-            // поэтому сначала получаем его world transform,
-            // а затем переводим его в координаты контейнера.
+            
             objectTransform.localPosition =
                 container.InverseTransformPoint(spot.transform.position);
 
             objectTransform.localRotation =
                 Quaternion.Inverse(container.rotation) *
                 spot.transform.rotation;
-
-            // В твоей текущей структуре spot обычно является дочерним
-            // контейнера, поэтому localScale можно сохранить напрямую.
-            objectTransform.localScale = spot.transform.localScale;
-
             return true;
         }
         
