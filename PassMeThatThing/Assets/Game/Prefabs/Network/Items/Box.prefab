@@ -304,8 +304,15 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 50
   type: 3
+  statusEffectHandler: {fileID: 0}
+  ragdollHandler: {fileID: 0}
+  collisionDamageThreshold: 20
+  collisionDamageMultiplier: 1
+  flatDamageReduction: 0
+  _item: {fileID: 8049544123810257994}
+  _items: []
   spawner: {fileID: 2369948073378594094}
-  networkItem: {fileID: 0}
+  networkItem: {fileID: -5156394863142476493}
 --- !u!114 &2369948073378594094
 MonoBehaviour:
   m_ObjectHideFlags: 0
