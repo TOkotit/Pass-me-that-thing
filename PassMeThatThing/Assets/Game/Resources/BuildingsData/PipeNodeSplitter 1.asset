@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e632c0b2356337f489f36b7341013b34, type: 3}
-  m_Name: SingleTurret
+  m_Name: PipeNodeSplitter 1
   m_EditorClassIdentifier: 
-  id: singleTurret
-  buildingName: singleTurret
-  worldPrefab: {fileID: 5751345894273795059, guid: 5615a16a743ff1d42b2ce3de6716d5dd, type: 3}
-  buildingImage: {fileID: 21300000, guid: ecc7c17b6768f5049b4a1183ae41dcf4, type: 3}
-  previewPrefab: {fileID: 5751345894273795059, guid: b99f02df60bfbb14a9525f1b0ed8051b, type: 3}
+  id: pipeNodeSplitter
+  buildingName: 
+  worldPrefab: {fileID: 2171227848627148325, guid: 2827b7612b5aca645a87ac7b12aceb2b, type: 3}
+  buildingImage: {fileID: 21300000, guid: 5225e11d9137adb44a865fd1dff30b61, type: 3}
+  previewPrefab: {fileID: 2171227848627148325, guid: 2e7de8560623ce54bb3a235a04787383, type: 3}
   placementType: -1
   rotationType: 1
-  isCollisionChecking: 1
+  isCollisionChecking: 0
   isDamagable: 0
-  maxHealth: 123
+  maxHealth: 0

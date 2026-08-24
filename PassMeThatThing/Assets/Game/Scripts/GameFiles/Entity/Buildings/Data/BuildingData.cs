@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.Turrets;
 using UnityEngine;
 
@@ -10,6 +11,12 @@ public class BuildingData : ScriptableObject
     public GameObject worldPrefab; 
     public Sprite buildingImage;
     public GameObject previewPrefab;
+
+    [Header("Building Options")]
+    public BuildingPlacementType placementType;
+    public BuildingRotationType rotationType;
+    public bool isCollisionChecking;
+    public bool isDamagable;
 
     [Header("Building Stats")]
     public int maxHealth;
