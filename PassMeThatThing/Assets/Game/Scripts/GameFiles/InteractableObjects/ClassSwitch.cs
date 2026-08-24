@@ -31,10 +31,14 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Examples
 
         public void InteractWithItem(PhysicalItem item) { }
 
-        public void OnStartClient()
+        public override void OnStartClient()
         {
             base.OnStartClient();
             InteractableRegistry.Instance.Register(gameObject, this);
+            if (!InteractableRegistry.Instance.TryGetInteractable(gameObject, out Interactable interactable))
+            {
+                Debug.LogError("Interactable not found");
+            }
         }
     }
 }

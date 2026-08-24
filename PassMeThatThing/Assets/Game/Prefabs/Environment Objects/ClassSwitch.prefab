@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 190640847638841521}
   - component: {fileID: 2958572723412187958}
   - component: {fileID: 3930498462779715306}
+  - component: {fileID: 1350020623017880633}
+  - component: {fileID: 8453800754934856199}
   m_Layer: 7
   m_Name: Cube
   m_TagString: Door
@@ -130,6 +132,40 @@ MonoBehaviour:
   syncInterval: 0
   newClass: {fileID: 11400000, guid: 17f4b848eb8f7fb44bb0050fdf858c7b, type: 2}
   changeForLocalPlayer: 1
+--- !u!114 &1350020623017880633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001034891969389375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &8453800754934856199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001034891969389375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d92905cc4164562b1a52dbca9e3c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.Highlight.OutlineHandler
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _outline: {fileID: 1350020623017880633}
 --- !u!1 &3230417185334896228
 GameObject:
   m_ObjectHideFlags: 0

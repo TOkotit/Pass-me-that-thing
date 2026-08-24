@@ -11520,6 +11520,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 693389620}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &722458100 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+  m_PrefabInstance: {fileID: 2032674768}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &726467008
 GameObject:
   m_ObjectHideFlags: 0
@@ -13064,6 +13069,7 @@ Transform:
   - {fileID: 692412045}
   - {fileID: 1606582552}
   - {fileID: 1816401213}
+  - {fileID: 722458100}
   - {fileID: 1567804314}
   - {fileID: 182425031}
   - {fileID: 420824096}
@@ -27307,7 +27313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6662152543530940653, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
       propertyPath: sceneId
-      value: 1470741509
+      value: 3153347147
       objectReference: {fileID: 0}
     - target: {fileID: 7755887012746823137, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
       propertyPath: m_Name
@@ -30081,6 +30087,83 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032035527}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &2032674768
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 807402107}
+    m_Modifications:
+    - target: {fileID: 2802623381365814376, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: outlineColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802623381365814376, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: outlineColor.g
+      value: 0.48699313
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802623381365814376, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: outlineColor.r
+      value: 0.9559748
+      objectReference: {fileID: 0}
+    - target: {fileID: 3505892995384287723, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: item
+      value: 
+      objectReference: {fileID: 11400000, guid: 9d3ceb921f1e29642bd1a34bfa1d78b1, type: 2}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272286886975108910, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6662152543530940653, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: sceneId
+      value: 1470741509
+      objectReference: {fileID: 0}
+    - target: {fileID: 7755887012746823137, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
+      propertyPath: m_Name
+      value: Cardboard Box (Closed) (9)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 26b340adf07616f498777aba36c82ed4, type: 3}
 --- !u!1 &2045136332
 GameObject:
   m_ObjectHideFlags: 0
