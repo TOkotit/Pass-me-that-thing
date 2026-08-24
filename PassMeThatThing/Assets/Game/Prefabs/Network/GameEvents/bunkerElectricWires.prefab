@@ -315,6 +315,7 @@ GameObject:
   - component: {fileID: 6244049236306731574}
   - component: {fileID: 5748782531132076936}
   - component: {fileID: 6532971872521347822}
+  - component: {fileID: -5375425646137256716}
   - component: {fileID: 2601856279654359222}
   m_Layer: 0
   m_Name: bunkerElectricWires
@@ -371,6 +372,21 @@ MonoBehaviour:
   _baseTriggerChance: 0.2
   eventType: 4
   terminal: {fileID: 5454080473861667871}
+--- !u!114 &-5375425646137256716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7297448871904005542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52090560c72404cae57c85bb6af4f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.LevelGeneration.NetworkObjectPlacement
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &2601856279654359222
 MonoBehaviour:
   m_ObjectHideFlags: 0

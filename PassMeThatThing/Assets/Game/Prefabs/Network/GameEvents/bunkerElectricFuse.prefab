@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 7603418193904371600}
   - component: {fileID: 4685936342748123686}
   - component: {fileID: 385060330208022780}
+  - component: {fileID: 9117396589593124687}
   - component: {fileID: 1354507709533912287}
   m_Layer: 0
-  m_Name: bunkerElectricFuse 1
+  m_Name: bunkerElectricFuse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.75, y: 1.75, z: 1.75}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1886979718562190136}
@@ -66,6 +67,21 @@ MonoBehaviour:
   _baseTriggerChance: 1
   eventType: 3
   terminal: {fileID: 3982310896894284200}
+--- !u!114 &9117396589593124687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2846667079904869649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52090560c72404cae57c85bb6af4f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.LevelGeneration.NetworkObjectPlacement
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &1354507709533912287
 MonoBehaviour:
   m_ObjectHideFlags: 0

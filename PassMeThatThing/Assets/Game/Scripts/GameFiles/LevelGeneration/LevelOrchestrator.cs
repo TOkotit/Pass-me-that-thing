@@ -517,11 +517,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             };
 
             var instanceGo = Instantiate(entry.PrefabGameObject, worldPos, rotQuat, levelContainer);
-            AllLevelSpots.AddRange(entry.RoomComponent.NetworkObjects);
+            var spawnedRoomComponent = instanceGo.GetComponent<LevelRoom>();
+                AllLevelSpots.AddRange(spawnedRoomComponent.NetworkObjects);
             
             var data = new PlacedRoomDataCluster 
             { 
-                RoomComponent = entry.RoomComponent, 
+                RoomComponent = spawnedRoomComponent, 
                 Prefab = instanceGo,
                 Origin = origin,
                 Rotation = rotation,

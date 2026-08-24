@@ -12,7 +12,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
     {
         public event Action<bool> OnServerSceneLoadStateChanged;
         public event Action<bool> OnClientSceneLoadStateChanged;
-        private int defaultTestSeed = 787872;
+        private int defaultTestSeed = 12345;
         
         public override void OnServerChangeScene(string newSceneName)
         {
