@@ -27,7 +27,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
         {
             if (sceneName == GameplayScene)
             {
-                GenerateLevelDeterministic("Server");
+                //GenerateLevelDeterministic("Server");
             }
             
             base.OnServerSceneChanged(sceneName);
@@ -59,7 +59,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
             if (sceneName == GameplayScene)
             {
                 Debug.Log($"[CNRM]<color=green> ВЫзов генерации на клиенте, попытка");
-                GenerateLevelDeterministic("Client");
+                //GenerateLevelDeterministic("Client");
             }
             else
             {
