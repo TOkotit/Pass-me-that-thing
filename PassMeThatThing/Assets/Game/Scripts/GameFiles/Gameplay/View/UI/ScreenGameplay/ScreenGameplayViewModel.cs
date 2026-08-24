@@ -124,7 +124,7 @@ namespace Game.Gameplay.View.UI
 
         public void RequestUnsubPlayersInfo(Action<PlayerViewData, List<PlayerViewData>> f)
         {
-            OnPlayerDataChanged += f;
+            OnPlayerDataChanged -= f;
         }
 
         public void PlayersChanged(List<CustomRoomPlayer> l) => PreparePlayerInfo();
