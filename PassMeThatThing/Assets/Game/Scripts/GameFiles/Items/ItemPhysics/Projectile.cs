@@ -5,6 +5,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class Projectile : NetworkBehaviour
     {
+        
         [Header("Common")]
         [SerializeField] private float speed = 20f;               
         [SerializeField] private float startSpeed = 0f;           

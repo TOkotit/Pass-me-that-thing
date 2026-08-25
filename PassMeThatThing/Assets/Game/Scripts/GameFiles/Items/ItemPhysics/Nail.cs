@@ -2,6 +2,8 @@ using System;
 using Entity;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
+using DI;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
@@ -20,7 +22,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private bool _hatInGround;
 
         private void Awake()
-        {
+        { 
             propCollider.enabled = false;
         }
 
@@ -34,18 +36,18 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 return;
             }
 
-            if (Registry.TryGetItem(other.gameObject, out PhysicalItem item))
+            if (Registry != null && Registry.TryGetItem(other.gameObject, out var item))
             {
                 _tipPiercedItem = item;
                 _tipInGround = false;
 
-                if (DamagableRegistry.TryGetDamagable(item.gameObject, out var damagable))
+                if (DamagableRegistry != null && DamagableRegistry.TryGetDamagable(item.gameObject, out var damagable))
                 {
                     if (damagable is not Furniture)
                         damagable.ServerTakeDamage(damage);
                 }
             }
-            else if (DamagableRegistry.TryGetDamagable(other.gameObject, out var damagable))
+            else if (DamagableRegistry != null && DamagableRegistry.TryGetDamagable(other.gameObject, out var damagable))
             {
                 if (damagable is not Furniture)
                     damagable.ServerTakeDamage(damage);
@@ -62,7 +64,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 return;
             }
 
-            if (Registry.TryGetItem(other.gameObject, out PhysicalItem item))
+            if (Registry != null && Registry.TryGetItem(other.gameObject, out var item))
             {
                 _hatHitItem = item;
                 _hatInGround = false;
@@ -115,8 +117,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             if (connectionTo) connectionTo.connectedBody = null;
             if (connection) connection.connectedBody = null;
 
-            _tipPiercedItem.Connections.Remove(this);
-            _hatHitItem.Connections.Remove(this);
+            if (_tipPiercedItem) _tipPiercedItem.Connections.Remove(this);
+            if (_hatHitItem) _hatHitItem.Connections.Remove(this);
             transform.SetParent(null);
             
             _tipPiercedItem = null;
@@ -130,7 +132,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         private void MakeStatic(PhysicalItem item)
         {
             if (!item) return;
-            if (DamagableRegistry.TryGetDamagable(item.gameObject, out var damagable))
+            if (DamagableRegistry != null && DamagableRegistry.TryGetDamagable(item.gameObject, out var damagable))
             {
                 if (damagable is Furniture furniture)
                     furniture.TryConnectTo();

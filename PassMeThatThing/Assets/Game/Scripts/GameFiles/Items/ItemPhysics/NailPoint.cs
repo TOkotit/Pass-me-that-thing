@@ -23,7 +23,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 nail.OnHatHit(other);
             }
         }
-
+        
         private enum PointType
         {
             Hat,

@@ -20,19 +20,17 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private MainCharacter character;
-    
+    [SerializeField] private Animator animator; 
     
     [SerializeField] private SoundSource footstepSound;
     [SerializeField] private float walkFootstepInterval = 0.5f;
     [SerializeField] private float sprintFootstepInterval = 0.3f;
     private float _footstepTimer;
-    
-    
+
     [Inject] private DamagableRegistry _damagableRegistry;
     private MainCharacterModel _model => character.MainCharacterModel;
     public Vector3 CurrentVelocity => characterController ? characterController.velocity : Vector3.zero;
 
-    
     [SyncVar]
     private bool isCharacterCanMove = true;
     private bool _isSprinting = false;
@@ -44,6 +42,7 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
     private PhysicalItem _item;
     private PhysicalItemInteractionController _itemController;
     public Vector3 LastVelocity => _lastVelocity;
+    
     public void Control(bool isPressed)
     {
         throw new NotImplementedException();
@@ -57,6 +56,9 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
         _itemController = character.PhysicalItemInteractionController;
         groundCheck.OnWaterTouched += OnWaterTouched;
         groundCheck.OnRunningOnItem += OnRunningOnItem;
+
+        if (!animator)
+            Debug.LogWarning($"[{gameObject.name}] Animator не назначен в MainCharacterMovement");
     }
 
     private void OnRunningOnItem()
@@ -66,12 +68,14 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
             character.CmdFall(2, new Vector3());
         }
     }
+
     public Vector3 GetCurrentVelocity()
     {
         var velocity = _moveDirection * (_isSprinting ? _model.Speed * _model.SprintMultiplier : _model.Speed);
-        velocity.y = _velocity.y; 
+        velocity.y = _velocity.y;
         return velocity;
     }
+
     public void SetMovementMultiplier(PhysicalItem item)
     {
         _movementMultiplier = Mathf.Min(1f, _model.BaseCarry / item.Rigidbody.mass);
@@ -80,22 +84,22 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
 
     public void ResetMovementMultiplier()
     {
-        _movementMultiplier = 1;   
+        _movementMultiplier = 1;
         _item = null;
     }
-    
+
     public Vector3 Velocity
     {
         get => _velocity;
         set => _velocity = value;
     }
 
-
     public Vector3 MoveDirection
     {
         get => _moveDirection;
         set => _moveDirection = value;
     }
+
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (_damagableRegistry.TryGetDamagable(hit.gameObject, out var damagable) && damagable is MainCharacter otherCharacter)
@@ -110,6 +114,7 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
             }
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log($"<color=red>[ERROR]</color> Impact with {collision.gameObject.name}");
@@ -123,15 +128,15 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
         {
             return;
         }
-        
+
         if (impactSpeed > 10f)
         {
             var stunDuration = Mathf.Min(impactSpeed / 5f, 5f);
-            character.CmdFall(stunDuration,new Vector3());
+            character.CmdFall(stunDuration, new Vector3());
         }
     }
 
-   public override void OnStartClient()
+    public override void OnStartClient()
     {
         if (!isLocalPlayer)
         {
@@ -153,6 +158,7 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
             _lastWaterDrop = Time.time;
         }
     }
+
     public void LockUpMovement()
     {
         isCharacterCanMove = false;
@@ -165,40 +171,43 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
         isCharacterCanMove = true;
         Debug.Log("MOVE UNLOCKED");
     }
-    
-    
+
     public void Rotate(Quaternion rotation)
     {
         transform.rotation = rotation;
     }
 
-    
     public void Jump()
     {
         if (groundCheck.IsGrounded)
             _velocity.y = _model.JumpHeight;
     }
-    
+
     public void SetSprinting(bool isSprinting)
     {
         _isSprinting = isSprinting;
     }
-    
+
     private void FixedUpdate()
     {
         if (!isLocalPlayer || !characterController.enabled) return;
+
         var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
-        var currentSpeed = _model.Speed * (_movementMultiplier / holderCount);if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
+        var currentSpeed = _model.Speed * (_movementMultiplier / holderCount) * _model.ExternalSpeedMultiplier;
+        if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
+
         var horizontalVelocity = _moveDirection.normalized * currentSpeed;
         _lastVelocity = horizontalVelocity + Vector3.up * _velocity.y;
-        
+
         MoveInternal();
         ApplyGravity();
         HandleFootsteps();
+        UpdateAnimator(); 
+
         if (groundCheck.IsGrounded && _velocity.y < 0f)
             _velocity.y = -2f;
     }
-    
+
     private void MoveInternal()
     {
         if (!isCharacterCanMove || !characterController.enabled) return;
@@ -224,25 +233,25 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
                 }
             }
         }
+
         var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
         var currentSpeed = _model.Speed * (_movementMultiplier / holderCount) * _model.ExternalSpeedMultiplier;
         if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
 
         characterController.Move(desiredMove * (currentSpeed * Time.fixedDeltaTime));
     }
-    
+
     private void ApplyGravity()
     {
         if (!isCharacterCanMove || !characterController.enabled) return;
         _velocity += Vector3.down * (_model.Gravity * Time.fixedDeltaTime);
         characterController.Move(_velocity * Time.fixedDeltaTime);
     }
-    
-    
+
     private void HandleFootsteps()
     {
         var isMoving = _moveDirection.sqrMagnitude > 0.01f;
-    
+
         if (groundCheck.IsGrounded && isMoving)
         {
             _footstepTimer -= Time.fixedDeltaTime;
@@ -254,10 +263,24 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
         }
         else
         {
-            _footstepTimer = 0f; 
+            _footstepTimer = 0f;
         }
     }
-    
+
+    private void UpdateAnimator()
+    {
+        if (!animator) return;
+
+        var currentSpeed = 0f;
+        if (_moveDirection.sqrMagnitude > 0.01f) {
+            var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
+            currentSpeed = _model.Speed * (_movementMultiplier / holderCount) * _model.ExternalSpeedMultiplier;
+            if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
+        }
+
+        animator.SetFloat("Speed", currentSpeed);
+    }
+
     [Command]
     private void CmdPlayFootstepSound()
     {
