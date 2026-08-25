@@ -17,7 +17,7 @@ namespace Game.UI
         
         public void OpenPopup(WindowViewModel viewModel)
         {
-            var prefabPath = GetPrefabPath(viewModel);
+            var prefabPath = GetPopupPrefabPath(viewModel);
             var prefab = Resources.Load<GameObject>(prefabPath);
             var createdPopup = Instantiate(prefab, _popupsContainer);
             var binder = createdPopup.GetComponent<IWindowBinder>();
@@ -57,6 +57,11 @@ namespace Game.UI
         private static string GetPrefabPath(WindowViewModel viewModel)
         {
             return $"Prefabs/UI/{viewModel.Id}";
+        }
+
+        private static string GetPopupPrefabPath(WindowViewModel viewModel)
+        {
+            return $"Prefabs/UI/Popups/{viewModel.Id}";
         }
     }
 }
