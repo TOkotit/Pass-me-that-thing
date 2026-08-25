@@ -11,7 +11,7 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
 {
     public class PopupDescriptionViewModel : WindowViewModel
     {
-        private GameplayUIManager _gameplayUIManager;
+        private readonly GameplayUIManager _gameplayUIManager;
         private readonly MCLocalModel _mcLocalModel;
 
         public ReactiveProperty<bool> enabled = new();
@@ -23,15 +23,6 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
         {
             _gameplayUIManager = gameplayUIManager;
             _mcLocalModel = container.Resolve<MCLocalModel>();
-        }
-
-        public void RequestSubCameraPos(Action<Vector3> f)
-        {
-            _mcLocalModel.OnCameraPositionChanged += f;
-        }
-        public void RequestUnSubCameraPos(Action<Vector3> f)
-        {
-            _mcLocalModel.OnCameraPositionChanged -= f;
         }
 
         public void RequestSubDescriptionText(Action<string> f)

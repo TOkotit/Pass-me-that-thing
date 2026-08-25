@@ -12,11 +12,6 @@ namespace Game.UI
     public class PopupBinder<T> : WindowBinder<T>
         where T : WindowViewModel
     {
-        
-        protected virtual void OnCloseButtonClick()
-        {
-            ViewModel.RequestClose();
-        }
-        
+
     }
 }

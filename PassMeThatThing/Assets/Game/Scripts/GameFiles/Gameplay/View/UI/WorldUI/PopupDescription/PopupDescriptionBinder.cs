@@ -1,7 +1,6 @@
 ﻿using DG.Tweening;
 using Game.UI;
 using R3;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,20 +25,17 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
 
         private void Start()
         {
-
             _subs.Add(ViewModel.enabled.Subscribe(SetVisibility));
             _subs.Add(ViewModel.screenPos.Subscribe(UpdatePosition));
-
-            ViewModel.RequestSubCameraPos(ChangeRotation);
 
             ViewModel.RequestSubDescriptionText(ChangeText);
         }
 
         private void OnDestroy()
         {
-            ViewModel.RequestUnSubCameraPos(ChangeRotation);
-            ViewModel.RequestUnSubDescriptionText(ChangeText);
             _subs.Dispose();
+
+            ViewModel.RequestUnSubDescriptionText(ChangeText);
         }
 
         public void UpdatePosition(Vector3 pos)
@@ -61,15 +57,6 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
                 {
                     _container.visible = v;
                 });
-            }
-        }
-
-        public void ChangeRotation(Vector3 lookPos)
-        {
-            if (ViewModel.enabled.Value)
-            {
-                var dir = (transform.position - lookPos).normalized;
-                transform.rotation = Quaternion.LookRotation(dir);
             }
         }
 
