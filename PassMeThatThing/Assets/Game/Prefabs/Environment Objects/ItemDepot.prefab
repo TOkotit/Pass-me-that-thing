@@ -11,8 +11,11 @@ GameObject:
   - component: {fileID: 3244969918374929680}
   - component: {fileID: 7712599349424922092}
   - component: {fileID: 1015015799306898242}
+  - component: {fileID: -7264842629246503088}
   - component: {fileID: 8214497308888841449}
   - component: {fileID: 1211103160667216620}
+  - component: {fileID: 1600982829011797290}
+  - component: {fileID: 6524011601328239971}
   m_Layer: 0
   m_Name: ItemDepot
   m_TagString: Untagged
@@ -74,6 +77,18 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &-7264842629246503088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4538177488738633520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.AutoGameplayScopeInjector
 --- !u!114 &8214497308888841449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,7 +104,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  storage: {fileID: 0}
+  storage: {fileID: 6524011601328239971}
 --- !u!114 &1211103160667216620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +123,36 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &1600982829011797290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4538177488738633520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52090560c72404cae57c85bb6af4f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.LevelGeneration.NetworkObjectPlacement
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!114 &6524011601328239971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4538177488738633520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1774c9d20dbb4d18a644884157978910, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.Buildings.Misc.MainResourceStorage
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!1001 &3280019432653865082
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,14 +1,17 @@
-﻿using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
+﻿using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 using Game.Entity;
 using Game.Gameplay.View.UI;
+using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
-using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using VContainer;
 
 namespace Assets.Game.Scripts.GameFiles.Items
 {
-    public class PlayerInteractableDescriptionHandler : MonoBehaviour
+    //TODO мб потом сделать не на игроке этот класс а камеру получать как то по другому
+    public class PlayerInteractableDescriptionHandler : NetworkBehaviour
     {
         [SerializeField] private float interval = 0.3f;
         [SerializeField] private Camera playerCamera;
@@ -16,34 +19,50 @@ namespace Assets.Game.Scripts.GameFiles.Items
         [SerializeField] private LayerMask interactionLayer;
         [SerializeField] private float interactionDistance;
 
-
+        [Inject] private WireManager _wiremanager;
         [Inject] private MCLocalModel _localModel;
         [Inject] private PhysicalItemRegistry _physicalItemRegistry;
         [Inject] private GameplayUIManager _gameplayUIManager;
 
-        private WindowDescriptionViewModel _currentDescription;
+        private PopupDescriptionViewModel _currentDescription;
         private Transform _currentTransform;
         private float _timer;
 
 
         private void Start()
         {
-            _currentDescription = _gameplayUIManager.OpenWindowDescription();
-            _currentDescription.enabled.Value = false;
+            if (isLocalPlayer)
+            {
+                _currentDescription = _gameplayUIManager.OpenPopupDescription();
+                _currentDescription.enabled.Value = false;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
         private void OnDestroy()
         {
-            _gameplayUIManager.CloseWindowDescription(_currentDescription);
+            if (isLocalPlayer)
+            {
+                _gameplayUIManager.ClosePopupDescription(_currentDescription);
+            }
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            _timer += Time.fixedDeltaTime;
+            _timer += Time.deltaTime;
 
             if (_timer >= interval)
             {
                 GetDescription();
                 _timer = 0f;
+            }
+
+            if (_currentDescription.enabled.Value)
+            {
+                _currentDescription.screenPos.Value 
+                    = playerCamera.WorldToScreenPoint(_currentTransform.position);
             }
         }
 
@@ -60,8 +79,12 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
-                    var item = _physicalItemRegistry.GetItem(hit.collider.gameObject);
-                    _localModel.CurrentInteractableText = item.Network.ItemData.Id;
+                    //var item = _physicalItemRegistry.GetItem(hit.collider.gameObject);
+                    var item = hit.collider.gameObject.GetComponentInParent<PhysicalItem>();
+                    if (item != null)
+                    {
+                        _localModel.CurrentInteractableText = item.Network.ItemData.Id;
+                    }
                 }
                 else if (hit.collider.gameObject.CompareTag("Door"))
                 {
@@ -69,23 +92,38 @@ namespace Assets.Game.Scripts.GameFiles.Items
 
                     _localModel.CurrentInteractableText = "Interact"; //заглушка
                 }
+                else if (hit.collider.gameObject.CompareTag("WireNode"))
+                {
+                    var wireNode = hit.collider.gameObject.GetComponentInParent<WireNode>();
+
+                    if (wireNode.NetId == -1) return;
+
+                    OpenWindow();
+
+                    var net = _wiremanager.WireNetsData[wireNode.NetId];
+
+                    _localModel.CurrentInteractableText = $"{net.availableQuantity}/{net.requiredQuantity}";
+                }
                 else
                 {
-                    _currentTransform = null;
-                    _currentDescription.enabled.Value = false;
+                    CloseWindow();
                 }
             }
             else
             {
-                _currentTransform = null;
-                _currentDescription.enabled.Value = false;
+                CloseWindow();
             }
         }
 
         private void OpenWindow()
         {
-            _currentDescription.parentPos = _currentTransform.position;
             _currentDescription.enabled.Value = true;
+        }
+
+        private void CloseWindow()
+        {
+            _currentDescription.enabled.Value = false;
+            _currentTransform = null;
         }
 
     }

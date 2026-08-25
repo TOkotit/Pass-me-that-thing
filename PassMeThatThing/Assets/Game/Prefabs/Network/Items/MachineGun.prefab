@@ -107,6 +107,9 @@ GameObject:
   - component: {fileID: 1388889674428910371}
   - component: {fileID: 2833291483125038556}
   - component: {fileID: 1779960031621699863}
+  - component: {fileID: 7947506528768295690}
+  - component: {fileID: 3011918908626554960}
+  - component: {fileID: 1596847164667920979}
   m_Layer: 7
   m_Name: MachineGun
   m_TagString: Item
@@ -260,8 +263,8 @@ MonoBehaviour:
   force: 5
   reloadTime: 5
   toughnessDamage: 1
-  shotSound: {fileID: 0}
-  emptySound: {fileID: 0}
+  shotSound: {fileID: 7947506528768295690}
+  emptySound: {fileID: 3011918908626554960}
   delay: 0.1
   maxAmmo: 30
   _refillType: 4
@@ -385,6 +388,86 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.AutoGameplayScopeInjector
+--- !u!114 &7947506528768295690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912904147735164467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 47c7001ab5b961d41bc62056d699180c, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 2912904147735164467}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
+--- !u!114 &3011918908626554960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912904147735164467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 178586468349f8c43960ccbde966fa97, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 2912904147735164467}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
+--- !u!114 &1596847164667920979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912904147735164467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkRigidbodyReliable
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 6181099747316425347}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!1 &3982902725580917472
 GameObject:
   m_ObjectHideFlags: 0

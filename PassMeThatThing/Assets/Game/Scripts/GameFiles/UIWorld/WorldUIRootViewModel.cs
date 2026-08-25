@@ -19,7 +19,7 @@ namespace Assets.Game.Scripts.GameFiles.UIWorld
 
         public void Dispose()
         {
-           // CloseAllWorldWindows();
+           CloseAllWorldWindows();
         }
 
         public void OpenWorldWindow(WorldWindowViewModel worldWindowViewModel)
@@ -48,13 +48,17 @@ namespace Assets.Game.Scripts.GameFiles.UIWorld
             }
         }
 
-        //TODO Переделать тк тут ошибка перечисления при удалении элемента
-        //public void CloseAllWorldWindows()
-        //{
-        //    foreach (var openedWindow in _openedWorldWindows)
-        //    {
-        //        CloseWorldWindow(openedWindow);
-        //    }
-        //}
+        public void CloseAllWorldWindows()
+        {
+            foreach (var openedWindow in _openedWorldWindows)
+            {
+                _worldWindowsSubs[openedWindow]?.Dispose();
+                _worldWindowsSubs.Remove(openedWindow);
+
+                openedWindow.Dispose();
+            }
+            _openedWorldWindows.Clear();
+        }
+        
     }
 }

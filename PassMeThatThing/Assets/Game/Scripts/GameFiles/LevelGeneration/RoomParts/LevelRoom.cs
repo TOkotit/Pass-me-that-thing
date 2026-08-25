@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Game.Scripts.Enums;
 using Mirror;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
@@ -7,16 +9,20 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     [RequireComponent(typeof(Grid))]
 
-    public class LevelRoomNew : MonoBehaviour
+    public class LevelRoom : MonoBehaviour
     {
         [SerializeField] private RoomTypeNew roomType;
-        [SerializeField] private RoomPlateDataNew[] plates;
+        [SerializeField] private RoomPlateData[] plates;
         [SerializeField] private int totalDoors;
+        [SerializeField] private List<NetworkObjectSpot> networkObjects;
+        [SerializeField] private NavMeshSurface navMeshSurface;
 
         public RoomTypeNew RoomType => roomType;
         public int TotalDoors => totalDoors;
-        public RoomPlateDataNew[] Plates => plates;
-
+        public RoomPlateData[] Plates => plates;
+        public List<NetworkObjectSpot> NetworkObjects => networkObjects;
+        public NavMeshSurface NavMeshSurface => navMeshSurface;
+        
         public void Awake()
         {
             ReparentToLevelContainer();
@@ -36,8 +42,19 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public void CompileRoom()
         {
             var grid = GetComponent<Grid>();
-            var childPlates = GetComponentsInChildren<RoomPlateNew>();
-            plates = new RoomPlateDataNew[childPlates.Length];
+            
+            var childNetworkObjects = GetComponentsInChildren<NetworkObjectSpot>();
+            networkObjects = new List<NetworkObjectSpot>(childNetworkObjects);
+            
+            navMeshSurface = GetComponentInChildren<NavMeshSurface>(true);
+            if (navMeshSurface == null)
+            {
+                Debug.LogWarning($"[LEVEL ROOM] {name}: NavMeshSurface не найден среди дочерних объектов.");
+            }
+
+            
+            var childPlates = GetComponentsInChildren<RoomPlate>();
+            plates = new RoomPlateData[childPlates.Length];
 
             totalDoors = 0;
 
@@ -51,7 +68,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var plateRotation = SnapToRoomRotation(relativeRotation.eulerAngles.y);
 
 
-                plates[i] = new RoomPlateDataNew
+                plates[i] = new RoomPlateData
                 {
                     localPosition = gridPos,
                     plate = currentPlate,

@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7692286255237286319}
   - component: {fileID: 6047540026133206467}
-  - component: {fileID: 2838856858374329527}
-  - component: {fileID: 2967320836965162047}
   - component: {fileID: 3857860957196794647}
+  - component: {fileID: 2838856858374329527}
+  - component: {fileID: -7100770818084667900}
   m_Layer: 0
   m_Name: SteamManager
   m_TagString: Untagged
@@ -47,6 +47,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef4bffeda13d7a748973ff9204401c07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3857860957196794647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8501554493249593984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992264c95d574d2a82dad69ee170d77d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2838856858374329527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +75,7 @@ MonoBehaviour:
   Timeout: 25
   AllowSteamRelay: 1
   UseNextGenSteamNetworking: 1
---- !u!114 &2967320836965162047
+--- !u!114 &-7100770818084667900
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -72,9 +84,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8501554493249593984}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 615e6c6589cf9e54cad646b5a11e0529, type: 3}
+  m_Script: {fileID: 11500000, guid: cb225a48479b91e46a11ccf3c3202bfa, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.GameRoot.CustomNetworkRoomManager
   dontDestroyOnLoad: 1
   runInBackground: 1
   headlessStartMode: 0
@@ -82,7 +94,7 @@ MonoBehaviour:
   sendRate: 60
   offlineScene: Assets/Game/Scenes/GameScenes/MainMenu.unity
   onlineScene: Assets/Game/Scenes/GameScenes/Lobby.unity
-  offlineSceneLoadDelay: 0
+  offlineSceneLoadDelay: 15.7
   transport: {fileID: 2838856858374329527}
   networkAddress: localhost
   maxConnections: 100
@@ -101,8 +113,23 @@ MonoBehaviour:
   - {fileID: 2171227848627148325, guid: 36ef993a4108c4543ade54dcba032e14, type: 3}
   - {fileID: 2171227848627148325, guid: 2827b7612b5aca645a87ac7b12aceb2b, type: 3}
   - {fileID: 5751345894273795059, guid: 5615a16a743ff1d42b2ce3de6716d5dd, type: 3}
-  - {fileID: 5751345894273795059, guid: 04019111d1a2b6e429c850fa1bd4a447, type: 3}
   - {fileID: 5751345894273795059, guid: a7c54a260bbfcf444bb208d59dc0a995, type: 3}
+  - {fileID: 5751345894273795059, guid: 04019111d1a2b6e429c850fa1bd4a447, type: 3}
+  - {fileID: 6527752004207200107, guid: 6d9c5dbecce91bc4983561fc43cccdf2, type: 3}
+  - {fileID: 2846667079904869649, guid: 62445982172fbc449b85ac290d0e3950, type: 3}
+  - {fileID: 7297448871904005542, guid: 34f3ff73087a7f84a82dee8a141a4383, type: 3}
+  - {fileID: 4673320206830382082, guid: e390cbb8effb70e40bb711b147d78350, type: 3}
+  - {fileID: 2524953091719616870, guid: e0dfaa8acfc20144ca72479d63f9c81b, type: 3}
+  - {fileID: 1672148612370213582, guid: 6a5f4d4fe810c804699798e06af8dc9f, type: 3}
+  - {fileID: 3338119055510144492, guid: 9a12c1e25b2efcd43a0bdbec1f592ec4, type: 3}
+  - {fileID: 640968627428783139, guid: e80e6ef149e5b4a4f87c7078becfe0e8, type: 3}
+  - {fileID: 7622662745195241351, guid: de5d476e2c59e254eb6920a1198d0607, type: 3}
+  - {fileID: 2142466573717394994, guid: 235ed6de2ab3921489576bbb24342ae6, type: 3}
+  - {fileID: 4391265785159332863, guid: 3e5a82cb91f2a7e4d80c8417e418b541, type: 3}
+  - {fileID: 7874411275608914721, guid: 029a50e2872c95f4c9900f3f0c4408ba, type: 3}
+  - {fileID: 4027153380528010803, guid: 8cbaf494e3042e245bba991817f2c952, type: 3}
+  - {fileID: 4538177488738633520, guid: 2a54419466e2e854a90f83c7f8ad260b, type: 3}
+  - {fileID: 3230417185334896228, guid: 498ddc566afbd8b4d823348933422bb5, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -125,15 +152,3 @@ MonoBehaviour:
   GameplayScene: Assets/Game/Scenes/GameScenes/Gameplay.unity
   _allPlayersReady: 0
   clientIndex: 0
---- !u!114 &3857860957196794647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8501554493249593984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 992264c95d574d2a82dad69ee170d77d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

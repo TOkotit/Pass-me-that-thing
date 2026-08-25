@@ -190,13 +190,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5736361267670602938}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 150, y: 150, z: 150}
+  m_LocalScale: {x: 1.751, y: 1.751, z: 1.751}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1138074897954558612}
-  m_LocalEulerAnglesHint: {x: -45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!33 &7552064767084653841
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -367,6 +367,7 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 0
   type: 2
+  statusEffectHandler: {fileID: 0}
 --- !u!114 &6609596328987690964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,7 +397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.TargetObject
-  damagable: {fileID: 6468441584140739080}
+  damageable: {fileID: 0}
   priority: 0
   damagableType: 2
 --- !u!1 &6599366479341219376

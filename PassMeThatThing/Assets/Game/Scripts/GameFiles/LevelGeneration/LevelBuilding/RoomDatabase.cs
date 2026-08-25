@@ -9,11 +9,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     public struct RoomDataEntry
     {
         public GameObject PrefabGameObject;
-        public LevelRoomNew RoomComponent;
+        public LevelRoom RoomComponent;
     }
     
     [CreateAssetMenu(fileName = "RoomDatabaseNew", menuName = "Level Generation/Room Database New")]
-    public class RoomDatabaseNew : ScriptableObject
+    public class RoomDatabase : ScriptableObject
     {
         public List<RoomDataEntry> commandCenterRooms = new();
         public List<RoomDataEntry> generatorRooms = new();
@@ -97,7 +97,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var entry = entries[i];
                 if (entry.PrefabGameObject != null && entry.RoomComponent == null)
                 {
-                    entry.RoomComponent = entry.PrefabGameObject.GetComponent<LevelRoomNew>();
+                    entry.RoomComponent = entry.PrefabGameObject.GetComponent<LevelRoom>();
                     entries[i] = entry;
                 }
             }

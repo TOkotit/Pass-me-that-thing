@@ -3,22 +3,22 @@ using Game.Scripts.Enums;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 {
-    public class RoomNodeNew
+    public class RoomNode
     {
         public int NodeId; 
         public int DepthFromHub;
         
         public RoomTypeNew Type; 
         
-        public List<RoomNodeNew> ConnectedNodes = new();
+        public List<RoomNode> ConnectedNodes = new();
         
-        public RoomNodeNew(int nodeId, RoomTypeNew type)
+        public RoomNode(int nodeId, RoomTypeNew type)
         {
             NodeId = nodeId;
             Type = type;
         }
         
-        public void Connect(RoomNodeNew other)
+        public void Connect(RoomNode other)
         {
             if (!ConnectedNodes.Contains(other))
             {

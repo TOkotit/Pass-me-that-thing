@@ -20,13 +20,13 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterNetwork.View
 
         private void Update()
         {
+            /*
             Debug.LogWarning(animator);
             if (animator)
             {
                 Debug.LogWarning($"Animator enabled: {animator.enabled}, state: {animator.GetCurrentAnimatorStateInfo(0).fullPathHash}, speed: {animator.GetFloat("Speed")}");
             }
-
-            
+            */
         }
 
         public void Initialize()

@@ -329,6 +329,7 @@ MonoBehaviour:
   _network: {fileID: 1686371426209873383}
   hasToBeAligned: 1
   collider: {fileID: 1133097560999102908}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList:
@@ -336,7 +337,9 @@ MonoBehaviour:
       Value: 1
     - Key: 2
       Value: 1
-  reaction: {fileID: 5360242618368386419}
+  lmbReaction: {fileID: 5360242618368386419}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
 --- !u!114 &4913154011383626854
 MonoBehaviour:
   m_ObjectHideFlags: 0

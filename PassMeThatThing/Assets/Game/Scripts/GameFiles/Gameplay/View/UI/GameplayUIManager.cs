@@ -13,6 +13,7 @@ using UnityEngine;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Assets.Game.Scripts.GameFiles.UIWorld;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
 
 
 namespace Game.Gameplay.View.UI
@@ -148,6 +149,22 @@ namespace Game.Gameplay.View.UI
         {
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
+        }
+        //World Popup
+
+        public PopupDescriptionViewModel OpenPopupDescription()
+        {
+            var viewModel = new PopupDescriptionViewModel(this, Container);
+
+            rootUI.OpenPopup(viewModel);
+
+
+            return viewModel;
+        }
+
+        public void ClosePopupDescription(PopupDescriptionViewModel viewModel)
+        {
+            rootUI.ClosePopup(viewModel);
         }
 
         //WorldSpace

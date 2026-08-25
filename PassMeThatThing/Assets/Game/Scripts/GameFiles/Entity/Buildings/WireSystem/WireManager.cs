@@ -10,15 +10,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [SerializeField] private WireVisualizer wireVisualizer;
         [SerializeField] private LayerMask obstacleLayer;
         //[SerializeField] private float maxDistance;
+
         
-        
-        private Dictionary<int, WireNode> allNodes = new ();
+        private SyncDictionary<int, WireNode> allNodes = new ();
 
         private Dictionary<int, WireNodePort> portNodes = new ();
         
         private Dictionary<int, List<int>> nodeConnections = new ();
 
         private Dictionary<int, WireNetModel> wireNets = new ();
+        private SyncDictionary<int, WireNetNetworkData> _wireNetsData = new();
 
         private Dictionary<int, WireNodeEntry> _entryObjects = new();
 
@@ -29,11 +30,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private int _lastNetIdCounter;
         private int _lastEntryIdCounter;
 
-        public Dictionary<int, WireNode> AllNodes => allNodes;
+        public SyncDictionary<int, WireNode> AllNodes => allNodes;
         public Dictionary<int, WireNodePort> PortNodes => portNodes;
         public Dictionary<int, List<int>> NodeConnections => nodeConnections;
         public Dictionary<int, WireNetModel> WireNets => wireNets;
+        public SyncDictionary<int, WireNetNetworkData> WireNetsData => _wireNetsData;
         public Dictionary<int, WireNodeEntry> EntryObjects => _entryObjects;
+
+        
 
         [Server]
         public void RegisterNode(WireNode wireNode)
@@ -86,9 +90,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             _lastNetIdCounter++;
             
             WireNets.Add(_lastNetIdCounter, new WireNetModel(_lastNetIdCounter, this));
+            _wireNetsData.Add(_lastNetIdCounter, new WireNetNetworkData());
 
             return _lastNetIdCounter;
         }
+
         
         [Command(requiresAuthority = false)]
         public void CmdMakeConnection(int prevNodeId, int nextNodeId, int firstEntryId, int secondEntryId)

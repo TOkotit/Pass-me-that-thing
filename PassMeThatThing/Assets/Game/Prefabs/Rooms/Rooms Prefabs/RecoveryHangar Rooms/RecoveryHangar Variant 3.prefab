@@ -1,5 +1,67 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &879262690789777336
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2588069811685019801}
+    m_Modifications:
+    - target: {fileID: 4242544538884173414, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_Name
+      value: ZombieSpawnPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.4300003
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+--- !u!4 &6506866468439114846 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6232643605021957094, guid: 2fe9aef09046d154b90f5f6f2ddcba82, type: 3}
+  m_PrefabInstance: {fileID: 879262690789777336}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3220788283211284675
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16,6 +78,10 @@ PrefabInstance:
       propertyPath: totalDoors
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5931013953064351819, guid: 81c89feb1bf73e8429c4780a90541f4c, type: 3}
+      propertyPath: navMeshSurface
+      value: 
+      objectReference: {fileID: 1513071733619310369}
     - target: {fileID: 5931013953064351819, guid: 81c89feb1bf73e8429c4780a90541f4c, type: 3}
       propertyPath: plates.Array.size
       value: 1
@@ -187,9 +253,23 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7714444548817842588, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4931996299046518409, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 6506866468439114846}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
+--- !u!114 &1513071733619310369 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8315001647185039665, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}
+  m_PrefabInstance: {fileID: 7465652379712531984}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
 --- !u!114 &2131587406244674676 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8795451161117741668, guid: b49ccbd0980b73f4688366d25ff9e283, type: 3}

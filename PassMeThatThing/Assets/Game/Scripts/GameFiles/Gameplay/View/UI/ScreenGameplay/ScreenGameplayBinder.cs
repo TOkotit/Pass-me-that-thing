@@ -19,7 +19,7 @@ namespace Game.Gameplay.View.UI
 {
     public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
     {
-        private Color selectedColor = CustomColorUtils.FromHex("5CDD8A");
+        private Color selectedColor = CustomColorUtils.FromHex("1C452B");
         private Color noSelectionColor = new Color(1f, 1f, 1f, 0f);
         
         private int _activeSlotIndex = -1;
@@ -53,6 +53,9 @@ namespace Game.Gameplay.View.UI
         private VisualElement _localPlayerAvatar;
         private List<VisualElement> _otherPlayerAvatars = new();
 
+        private Label _localPlayerName;
+        private List<Label> _otherPlayerNames = new();
+
         private void Awake()
         {
 
@@ -79,6 +82,13 @@ namespace Game.Gameplay.View.UI
             for (var i = 2; i <= 4; i++)
             {
                 _otherPlayerAvatars.Add(_root.Q<VisualElement>($"Avatar{i}"));
+            }
+
+            _localPlayerName = _root.Q<Label>("name1");
+
+            for (var i = 2; i <= 4; i++)
+            {
+                _otherPlayerNames.Add(_root.Q<Label>($"name{i}"));
             }
         }
 
@@ -139,16 +149,19 @@ namespace Game.Gameplay.View.UI
         private void UpdatePlayerInfo(PlayerViewData local, List<PlayerViewData> others)
         {
             _localPlayerAvatar.style.backgroundImage = new StyleBackground(local.avatar);
+            _localPlayerName.text = local.name;
 
             for (var i=0; i < _otherPlayerAvatars.Count; i++)
             {
                 if (i < others.Count)
                 {
                     _otherPlayerAvatars[i].style.backgroundImage = new StyleBackground(others[i].avatar);
+                    _otherPlayerNames[i].text = others[i].name;
                 }
                 else
                 {
                     _otherPlayerAvatars[i].style.backgroundImage = new StyleBackground();
+                    _otherPlayerNames[i].text = "-";
                 }
             }
 

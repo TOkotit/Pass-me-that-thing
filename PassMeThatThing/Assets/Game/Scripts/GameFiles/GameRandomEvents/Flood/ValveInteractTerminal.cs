@@ -16,23 +16,22 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         //refs
         [SerializeField] private FloodEvent floodEvent;
         [SerializeField] private WireNodePort port;
-
-        //valve rotation
-        [SerializeField] private Transform pivot;
         
         //view
         [SerializeField] private Outline outline;
         [SerializeField] private ParticleSystem impactParticles;
         [SerializeField] private SoundSource valveSound = default;
 
-        private Quaternion _initRotation;
+        private Vector3 _initEulerAngles;
+        private float _currentYOffset;
         private float _rotationProggress;
 
         public Outline Outline { get => outline; set => outline = value; }
 
         private void Awake()
         {
-            _initRotation = pivot.rotation;
+            _initEulerAngles = transform.localEulerAngles;
+            _currentYOffset = 0f;
         }
 
         [Server]
@@ -111,17 +110,21 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         {
             _rotationProggress = 0f;
 
-            var startRotation = pivot.rotation;
-            var targetRotation = Quaternion.AngleAxis(newAngle, pivot.forward) * _initRotation;
+            float startAngle = _currentYOffset;
 
             while (_rotationProggress < rotationTime)
             {
                 _rotationProggress += Time.deltaTime;
                 var progressInPercantage = _rotationProggress / rotationTime;
 
-                pivot.rotation = Quaternion.Slerp(startRotation, targetRotation, progressInPercantage);
+                _currentYOffset = Mathf.Lerp(startAngle, newAngle, progressInPercantage);
+                transform.localEulerAngles = new Vector3(_initEulerAngles.x, _initEulerAngles.y + _currentYOffset, _initEulerAngles.z);
+                
                 yield return null;
             }
+
+            _currentYOffset = newAngle;
+            transform.localEulerAngles = new Vector3(_initEulerAngles.x, _initEulerAngles.y + _currentYOffset, _initEulerAngles.z);
         }
 
         [ClientRpc]

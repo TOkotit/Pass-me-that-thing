@@ -20,7 +20,7 @@ namespace Game.UI
 
         public void Dispose()
         {
-            //CloseAllPopups();
+            CloseAllPopups();
             _openedScreen.Value?.Dispose();
         }
 
@@ -49,8 +49,7 @@ namespace Game.UI
                 popupViewModel.Dispose();
                 _openedPopups.Remove(popupViewModel);
 
-                var popupSubscription = _popupSubscriptions[popupViewModel];
-                popupSubscription?.Dispose();
+                _popupSubscriptions[popupViewModel]?.Dispose();
                 _popupSubscriptions.Remove(popupViewModel);
             }
         }
@@ -61,13 +60,16 @@ namespace Game.UI
             ClosePopup(openedPopupViewModel);
         }
 
-        //TODO Переделать тк тут ошибка перечисления при удалении элемента
-        //public void CloseAllPopups()
-        //{
-        //    foreach (var openedPopup in _openedPopups)
-        //    {
-        //        ClosePopup(openedPopup);
-        //    }
-        //}
+        public void CloseAllPopups()
+        {
+            foreach (var openedPopup in _openedPopups)
+            {
+                _popupSubscriptions[openedPopup]?.Dispose();
+                _popupSubscriptions.Remove(openedPopup);
+
+                openedPopup.Dispose();
+            }
+            _openedPopups.Clear();
+        }
     }
 }
