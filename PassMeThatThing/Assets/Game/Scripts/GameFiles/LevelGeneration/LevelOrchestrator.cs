@@ -643,17 +643,50 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 allFreeConnections.AddRange(roomData.FreeConnections.Select(conn => (roomData, conn)));
             }
 
+            var clusterLinks = new Dictionary<RoomCluster, HashSet<RoomCluster>>();
+
+            ConnectAdjacentDoorsGlobally(allFreeConnections, clusterLinks);
+
             var tunnelPrefabs = roomDatabase.GetSuitableRooms(RoomType.TechnicalTunnels, 1, false);
             if (tunnelPrefabs == null || tunnelPrefabs.Count == 0) return;
 
-            var clusterLinks = new Dictionary<RoomCluster, HashSet<RoomCluster>>();
-
-           
             ConnectFreeExitPairs(allFreeConnections, tunnelPrefabs, clusterLinks, preferUnlinked: true);
-            
             ConnectFreeExitPairs(allFreeConnections, tunnelPrefabs, clusterLinks, preferUnlinked: false);
-            
             EnsureAllClustersConnected(tunnelPrefabs, clusterLinks);
+        }
+        
+        private void ConnectAdjacentDoorsGlobally(
+            List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> allFreeConnections,
+            Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+        {
+            for (var i = allFreeConnections.Count - 1; i >= 0; i--)
+            {
+                var connAData = allFreeConnections[i];
+        
+                for (var j = i - 1; j >= 0; j--)
+                {
+                    var connBData = allFreeConnections[j];
+            
+                    if (connAData.Conn.GlobalPosition + connAData.Conn.Direction == connBData.Conn.GlobalPosition &&
+                        connBData.Conn.Direction == -connAData.Conn.Direction)
+                    {
+                        connAData.Room.FreeConnections.Remove(connAData.Conn);
+                        connBData.Room.FreeConnections.Remove(connBData.Conn);
+                
+                        _usedConnections.Add((connAData.Room, connAData.Conn));
+                        _usedConnections.Add((connBData.Room, connBData.Conn));
+
+                        if (connAData.Room.Cluster != connBData.Room.Cluster)
+                        {
+                            RegisterClusterLink(clusterLinks, connAData.Room.Cluster, connBData.Room.Cluster);
+                        }
+
+                        allFreeConnections.RemoveAt(i);
+                        allFreeConnections.RemoveAt(j);
+                        break;
+                    }
+                }
+            }
         }
 
         private void ConnectFreeExitPairs(
@@ -719,7 +752,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     {
                         var nextCell = curr.Cell + dir;
                         if (visited.Contains(nextCell)) continue;
-                        if (levelGrid.IsCellOccupied(nextCell) && !targetDict.ContainsKey(nextCell)) continue;
+        
+                        if (levelGrid.IsCellOccupied(nextCell)) continue; 
+        
                         visited.Add(nextCell);
                         queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
                     }
