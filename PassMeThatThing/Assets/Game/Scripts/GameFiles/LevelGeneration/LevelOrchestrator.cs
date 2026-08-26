@@ -47,9 +47,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         private System.Random _random;
         private List<PlacedRoomDataCluster> _allPlacedRooms = new();
+        private List<RoomCluster> _clusters = new();
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
         private List<GameObject> _placedWalls = new();
         public List<NetworkObjectSpot> AllLevelSpots { get; private set; } = new();
+
+        // Read-only доступ для LevelGrid и прочих потребителей: количество, типы,
+        // кластеры и расположение комнат — единый источник истины, без дублирования.
+        public IReadOnlyList<PlacedRoomDataCluster> AllPlacedRooms => _allPlacedRooms;
+        public IReadOnlyList<RoomCluster> Clusters => _clusters;
         private static readonly Vector3Int[] SearchDirections = {
             new(1, 0, 0), new(-1, 0, 0),
             new(0, 0, 1), new(0, 0, -1)
@@ -68,6 +74,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             ClearLevel();
 
             if (clusters == null || clusters.Count == 0) return;
+
+            _clusters = new List<RoomCluster>(clusters);
 
             var coreCluster = clusters[0];
             if (!PlaceCoreCluster(coreCluster))
@@ -137,6 +145,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             levelGrid.ClearGrid();
             _allPlacedRooms.Clear();
+            _clusters.Clear();
             _usedConnections.Clear();
             AllLevelSpots.Clear();
             _placedWalls.Clear();
@@ -156,7 +165,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             for (var attempt = 0; attempt < MAX_CLUSTER_PLACEMENT_ATTEMPTS; attempt++)
             {
-                var commandCenterNode = coreCluster.Rooms.FirstOrDefault(r => r.Type == RoomTypeNew.CommandCenter);
+                var commandCenterNode = coreCluster.Rooms.FirstOrDefault(r => r.Type == RoomType.CommandCenter);
                 if (commandCenterNode == null) return false;
 
                 var candidates = roomDatabase.GetSuitableRooms(commandCenterNode.Type, 1, false).OrderBy(r => r.PrefabGameObject.name).ToList();
@@ -232,7 +241,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             if (clusters == null || clusters.Count < 2) return;
 
-            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
+            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomType.CommandCenter);
             var originCell = commandCenterRoom?.Origin ?? Vector3Int.zero;
 
             RoomCluster farthestCluster = null;
@@ -278,7 +287,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 return;
             }
 
-            var hangarCandidates = roomDatabase.GetSuitableRooms(RoomTypeNew.RecoveryHangar, 1, false);
+            var hangarCandidates = roomDatabase.GetSuitableRooms(RoomType.RecoveryHangar, 1, false);
             if (hangarCandidates.Count == 0)
             {
                 Debug.LogWarning("[GENERATOR] There are no RecoveryHangar prefabs in the database.");
@@ -434,7 +443,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             if (_allPlacedRooms.Count == 0) return Vector3Int.zero;
 
-            var coreRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
+            var coreRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomType.CommandCenter);
             if (coreRoom == null) return null;
 
             var coreCells = _allPlacedRooms
@@ -557,7 +566,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var globalPos = origin + plate.LocalPosition;
                 var doorDirs = plate.Doors.Select(d => d.GlobalDirection).ToList();
-                levelGrid.SetCellState(globalPos, true, doorDirs, entry.RoomComponent.GetInstanceID());
+                // Раньше тут был entry.RoomComponent.GetInstanceID() — это ID префаба,
+                // общий для всех комнат одного типа. Из-за этого миникарта не рисовала
+                // стену между двумя соседними комнатами одного типа (isSameRoom = true).
+                // Берём ID именно заспавненного инстанса.
+                levelGrid.SetCellState(globalPos, true, doorDirs, spawnedRoomComponent.GetInstanceID(), spawnedRoomComponent.RoomType);
 
                 data.OccupiedCells.Add(globalPos);
 
@@ -624,13 +637,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var allFreeConnections = new List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)>();
             foreach (var roomData in _allPlacedRooms)
             {
-                if (roomData.RoomComponent.RoomType is RoomTypeNew.CommandCenter or RoomTypeNew.RecoveryHangar)
+                if (roomData.RoomComponent.RoomType is RoomType.CommandCenter or RoomType.RecoveryHangar)
                     continue;
 
                 allFreeConnections.AddRange(roomData.FreeConnections.Select(conn => (roomData, conn)));
             }
 
-            var tunnelPrefabs = roomDatabase.GetSuitableRooms(RoomTypeNew.TechnicalTunnels, 1, false);
+            var tunnelPrefabs = roomDatabase.GetSuitableRooms(RoomType.TechnicalTunnels, 1, false);
             if (tunnelPrefabs == null || tunnelPrefabs.Count == 0) return;
 
             var clusterLinks = new Dictionary<RoomCluster, HashSet<RoomCluster>>();
@@ -700,7 +713,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         break;
                     }
 
-                    if (curr.Depth >= 6) continue;
+                    if (curr.Depth >= 10) continue;
 
                     foreach (var dir in SearchDirections)
                     {
@@ -725,27 +738,135 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     }
                     path.Reverse();
 
-                    if (path.Count <= 10)
+                    if (path.Count <= 14)
                     {
                         var targetRoom = foundTarget.Value.Room;
                         var targetConn = foundTarget.Value.Conn;
 
-                        PlaceTunnelsAlongPath(path, tunnelPrefabs, startData.Room, startData.Conn, targetConn);
-                        RegisterClusterLink(clusterLinks, startCluster, targetRoom.Cluster);
+                        if (TryPlaceTunnelsAlongPath(path, tunnelPrefabs, startData.Room, startData.Conn, targetConn))
+                        {
+                            RegisterClusterLink(clusterLinks, startCluster, targetRoom.Cluster);
 
-                        allFreeConnections.Remove(foundTarget.Value);
-                        startData.Room.FreeConnections.Remove(startData.Conn);
-                        targetRoom.FreeConnections.Remove(targetConn);
-                        _usedConnections.Add((startData.Room, startData.Conn));
-                        _usedConnections.Add((targetRoom, targetConn));
+                            allFreeConnections.Remove(foundTarget.Value);
+                            allFreeConnections.Remove(startData); // Безопасное удаление по ссылке
+                            
+                            startData.Room.FreeConnections.Remove(startData.Conn);
+                            targetRoom.FreeConnections.Remove(targetConn);
+                            _usedConnections.Add((startData.Room, startData.Conn));
+                            _usedConnections.Add((targetRoom, targetConn));
 
-                        allFreeConnections.RemoveAt(i);
-                        connected = true;
+                            connected = true;
+                        }
                     }
                 }
 
                 if (!connected) i++;
             }
+        }
+        
+        private bool TryPlaceTunnelsAlongPath(List<Vector3Int> path, List<RoomDataEntry> tunnelPrefabs, PlacedRoomDataCluster ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
+        {
+            var sortedPrefabs = tunnelPrefabs
+                .OrderByDescending(p => RoomRotationHelper.GetRotatedPlates(p, RoomRotation.Deg0).Length)
+                .ThenBy(p => p.PrefabGameObject.name)
+                .ToList();
+
+            var instantiatedTunnels = new List<GameObject>();
+            var modifiedCells = new List<Vector3Int>();
+
+            var i = 0;
+            while (i < path.Count)
+            {
+                var cell = path[i];
+                if (levelGrid.IsCellOccupied(cell)) 
+                {
+                    i++;
+                    continue; 
+                }
+
+                var placed = false;
+                var prevCell = i == 0 ? startConn.GlobalPosition : path[i - 1];
+
+                foreach (var enrty in sortedPrefabs)
+                {
+                    for (var r = 0; r < 4; r++)
+                    {
+                        var rot = (RoomRotation)r;
+                        var plates = RoomRotationHelper.GetRotatedPlates(enrty, rot);
+                        var prefabSize = plates.Length;
+
+                        if (i + prefabSize > path.Count) continue;
+
+                        var matchPath = true;
+                        var hasPrevDoor = false;
+                        var hasNextDoor = false;
+                        
+                        var expectedPathCells = new HashSet<Vector3Int>();
+                        for (var j = 0; j < prefabSize; j++) expectedPathCells.Add(path[i + j]);
+
+                        var nextCellAfterPrefab = (i + prefabSize == path.Count) ? endConn.GlobalPosition : path[i + prefabSize];
+                        var lastPrefabCell = path[i + prefabSize - 1];
+                        var actualPrefabCells = new HashSet<Vector3Int>();
+
+                        foreach (var p in plates)
+                        {
+                            var globalPos = cell + p.LocalPosition;
+                            actualPrefabCells.Add(globalPos);
+
+                            if (globalPos == cell)
+                            {
+                                var dirToPrev = prevCell - cell;
+                                if (p.Doors.Any(d => d.GlobalDirection == dirToPrev)) hasPrevDoor = true;
+                            }
+
+                            if (globalPos == lastPrefabCell)
+                            {
+                                var dirToNext = nextCellAfterPrefab - lastPrefabCell;
+                                if (p.Doors.Any(d => d.GlobalDirection == dirToNext)) hasNextDoor = true;
+                            }
+                        }
+
+                        if (!expectedPathCells.SetEquals(actualPrefabCells)) matchPath = false;
+
+                        if (matchPath && hasPrevDoor && hasNextDoor && RoomCollisionValidator.IsPlacementValid(levelGrid, enrty, rot, cell))
+                        {
+                            var instance = InstantiateTunnel(enrty, cell, rot);
+                            instantiatedTunnels.Add(instance);
+
+                            foreach (var p in plates)
+                            {
+                                var globalPos = cell + p.LocalPosition;
+                                var doorDirs = p.Doors.Select(d => d.GlobalDirection).ToList();
+                                levelGrid.SetCellState(globalPos, true, doorDirs, instance.GetInstanceID(), RoomType.TechnicalTunnels);
+                                modifiedCells.Add(globalPos);
+                            }
+                            
+                            i += prefabSize - 1; 
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (placed) break;
+                }
+
+                if (!placed)
+                {
+                    foreach (var tunnel in instantiatedTunnels)
+                    {
+                        if (Application.isPlaying) Destroy(tunnel);
+                        else DestroyImmediate(tunnel);
+                    }
+                    foreach (var modifiedCell in modifiedCells)
+                    {
+                        levelGrid.SetCellState(modifiedCell, false);
+                    }
+                    return false;
+                }
+                i++;
+            }
+
+            ownerData.AttachedTunnels.AddRange(instantiatedTunnels);
+            return true;
         }
 
         private static void RegisterClusterLink(Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks, RoomCluster a, RoomCluster b)
@@ -759,7 +880,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 private void EnsureAllClustersConnected(List<RoomDataEntry> tunnelPrefabs, Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
         {
-            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomTypeNew.CommandCenter);
+            var commandCenterRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomComponent.RoomType == RoomType.CommandCenter);
             if (commandCenterRoom == null) return;
 
             var coreCluster = commandCenterRoom.Cluster;
@@ -969,7 +1090,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             foreach (var p in plates)
                             {
                                 var doorDirs = p.Doors.Select(d => d.GlobalDirection).ToList();
-                                levelGrid.SetCellState(cell + p.LocalPosition, true, doorDirs, instance.GetInstanceID());
+                                levelGrid.SetCellState(cell + p.LocalPosition, true, doorDirs, instance.GetInstanceID(), RoomType.TechnicalTunnels);
                             }
                             
                             i += prefabSize - 1; 

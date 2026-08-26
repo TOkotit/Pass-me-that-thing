@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
@@ -8,20 +11,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
     [RequireComponent(typeof(Grid))]
     public class LevelGrid : MonoBehaviour
     {
-        
         public struct CellData
         {
             public int RoomId;
             public List<Vector3Int> Doors;
+            public RoomType RoomType;
+
         }
+
         private Dictionary<Vector3Int, CellData> _cellDataMap;
-        
-        
         public int editorDrawRadius = 20;
         [SerializeField] private Grid _grid;
         [SerializeField] private Color emptyCellColor = Color.gray;
         [SerializeField] private Color occupiedCellColor = Color.green;
+
+        [SerializeField] private LevelOrchestrator levelOrchestrator;
         
+        public static LevelGrid Instance { get; private set; }
+        public LevelOrchestrator Orchestrator => levelOrchestrator;
         
         [SerializeField, HideInInspector] 
         private List<Vector3Int> _serializedOccupiedCells = new();
@@ -39,11 +46,58 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
             }
         }
 
+
         
         private void Awake()
         {
+            Instance = this;
+
+            if (levelOrchestrator == null)
+                levelOrchestrator = FindObjectOfType<LevelOrchestrator>();
+
             InitializeGrid();
         }
+        
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+        
+        public IReadOnlyList<PlacedRoomDataCluster> AllPlacedRooms =>
+            levelOrchestrator != null ? levelOrchestrator.AllPlacedRooms : Array.Empty<PlacedRoomDataCluster>();
+
+        public IReadOnlyList<RoomCluster> Clusters =>
+            levelOrchestrator != null ? levelOrchestrator.Clusters : Array.Empty<RoomCluster>();
+        public int TotalRoomCount => AllPlacedRooms.Count;
+
+        public int ClusterCount => Clusters.Count;
+
+        public Dictionary<RoomType, int> GetRoomTypeCounts()
+        {
+            var counts = new Dictionary<RoomType, int>();
+
+            foreach (var roomData in AllPlacedRooms)
+            {
+                if (roomData.RoomComponent == null) continue;
+
+                var type = roomData.RoomComponent.RoomType;
+                counts.TryGetValue(type, out var current);
+                counts[type] = current + 1;
+            }
+
+            return counts;
+        }
+
+        public IEnumerable<PlacedRoomDataCluster> GetRoomsByType(RoomType type)
+        {
+            return AllPlacedRooms.Where(r => r.RoomComponent != null && r.RoomComponent.RoomType == type);
+        }
+
+        public IEnumerable<PlacedRoomDataCluster> GetRoomsInCluster(RoomCluster cluster)
+        {
+            return AllPlacedRooms.Where(r => r.Cluster == cluster);
+        }
+
 
         public void InitializeGrid()
         {
@@ -56,7 +110,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
         }
 
         
-        public void SetCellState(Vector3Int cellPosition, bool isOccupied, List<Vector3Int> doorDirections = null, int roomId = -1)
+        public void SetCellState(Vector3Int cellPosition, bool isOccupied, List<Vector3Int> doorDirections = null, int roomId = -1, RoomType roomType = RoomType.None)
         {
             
             
@@ -70,7 +124,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
                     _cellDataMap[cellPosition] = new CellData 
                     { 
                         RoomId = roomId, 
-                        Doors = doorDirections ?? new List<Vector3Int>() 
+                        Doors = doorDirections ?? new List<Vector3Int>(),
+                        RoomType = roomType
                     };
                 }
             }
@@ -80,6 +135,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
                 _cellDataMap?.Remove(cellPosition);
             }
         }
+
+
         
         public bool TryGetCellData(Vector3Int cellPosition, out CellData data)
         {
@@ -90,13 +147,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
             data = default;
             return false;
         }
+
         
         
         public bool IsCellOccupied(Vector3Int cellPosition)
         {
             return _occupiedCells != null && _occupiedCells.Contains(cellPosition);
         }
-        
+
         public void ClearGrid()
         {
             _occupiedCells?.Clear();
@@ -112,9 +170,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
             }
             
             #if UNITY_EDITOR
-                        UnityEditor.EditorUtility.SetDirty(this);
+                UnityEditor.EditorUtility.SetDirty(this);
             #endif
         }
+
         
 
         private void OnDrawGizmos()
@@ -151,5 +210,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
                 }
             }
         }
+
     }
 }

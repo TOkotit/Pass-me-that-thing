@@ -11,13 +11,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
     public class LevelRoom : MonoBehaviour
     {
-        [SerializeField] private RoomTypeNew roomType;
+        [SerializeField] private RoomType roomType;
         [SerializeField] private RoomPlateData[] plates;
         [SerializeField] private int totalDoors;
         [SerializeField] private List<NetworkObjectSpot> networkObjects;
         [SerializeField] private NavMeshSurface navMeshSurface;
 
-        public RoomTypeNew RoomType => roomType;
+        public RoomType RoomType => roomType;
         public int TotalDoors => totalDoors;
         public RoomPlateData[] Plates => plates;
         public List<NetworkObjectSpot> NetworkObjects => networkObjects;

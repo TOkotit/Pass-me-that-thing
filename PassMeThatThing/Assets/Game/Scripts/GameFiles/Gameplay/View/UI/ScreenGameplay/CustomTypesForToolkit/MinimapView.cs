@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,7 +11,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
     {
         
         [UxmlAttribute("cell-color")]
-        public Color CellColor { get; set; } = new(0.30f, 0.85f, 0.40f);
+        public Color CellColor { get; set; } = new(0.5f, 0.5f, 0.5f, 0.4f);
         
         [UxmlAttribute("grid-line-color")]
         public Color GridLineColor { get; set; } = new(1f, 1f, 1f, 0.08f);
@@ -25,6 +26,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
         public bool ShowGridLines { get; set; } = true;
  
         private float _viewportWidth = 240f;
+
  
         [UxmlAttribute("viewport-width")]
         public float ViewportWidth
@@ -49,6 +51,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 UpdateViewportSize();
             }
         }
+
  
         private float _cellSize = 12f;
  
@@ -84,11 +87,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             style.overflow = Overflow.Hidden;
             style.translate = new StyleTranslate(new Translate(Length.Percent(-50), Length.Percent(-50)));
             
-            
             style.borderTopLeftRadius = new StyleLength(Length.Percent(50));
             style.borderTopRightRadius = new StyleLength(Length.Percent(50));
             style.borderBottomLeftRadius = new StyleLength(Length.Percent(50));
             style.borderBottomRightRadius = new StyleLength(Length.Percent(50));
+
             
             _filterContainer = new VisualElement
             {
@@ -159,8 +162,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
 
             _gridLayer.style.translate = new StyleTranslate(new Translate(offsetX, offsetY));
         }
+
  
-        public void SetCenter(Vector3Int worldCell)
+                public void SetCenter(Vector3Int worldCell)
         {
             _centerIsManual = true;
 
@@ -282,7 +286,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 var x = cell.x * _cellSize;
                 var y = -cell.z * _cellSize;
 
-                DrawFilledRect(painter, x + padding, y + padding, _cellSize - padding * 2, _cellSize - padding * 2, CellColor);
+                var fillColor = _cellsDataCache.TryGetValue(cell, out var cellData)
+                    ? GetRoomTypeColor(cellData.RoomType)
+                    : CellColor;
+
+                DrawFilledRect(painter, x + padding, y + padding, _cellSize - padding * 2, _cellSize - padding * 2, fillColor);
             }
 
             painter.strokeColor = WallColor;
@@ -345,6 +353,27 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
         {
             return a - b * Mathf.Floor(a / b);
         }
+
+        private static Color GetRoomTypeColor(RoomType roomType)
+        {
+            return roomType switch
+            {
+                RoomType.CommandCenter     => new Color(0f, 1f, 0f, 0.4f),
+                RoomType.Generator         => new Color(0.9f, 0.9f, 0.1f, 0.4f),
+                RoomType.Warehouse         => new Color(0.6f, 0.4f, 0.2f, 0.4f),
+                RoomType.LivingBlock       => new Color(0.12f, 0.69f, 0.26f, 0.4f),
+                RoomType.MedicalBlock      => new Color(1f, 0f, 0f, 0.4f),
+                RoomType.RecoveryHangar    => new Color(1f, 0.4f, 0.7f, 0.4f),
+                RoomType.TechnicalTunnels  => new Color(0.4f, 0.4f, 0.4f, 0.4f),
+                RoomType.Laboratory        => new Color(1f, 1f, 1f, 0.4f),
+                RoomType.Workshop          => new Color(0.54f, 1f, 1f, 0.4f),
+                RoomType.Server            => new Color(0f, 0f, 0f, 0.4f),
+                RoomType.WaterPurification => new Color(0.1f, 0.3f, 1f, 0.4f),
+                RoomType.Armory            => new Color(0.9f, 0.2f, 0.3f, 0.4f),
+                RoomType.None              => new Color(0.5f, 0.5f, 0.5f, 0.4f),
+                _                             => new Color(0.5f, 0.5f, 0.5f, 0.4f)
+            };
+        }
  
         private static void DrawFilledRect(Painter2D painter, float x, float y, float width, float height, Color color)
         {
@@ -359,5 +388,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             painter.ClosePath();
             painter.Fill();
         }
+
     }
 }

@@ -28,7 +28,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public List<RoomDataEntry> waterPurificationRooms = new();
         public List<RoomDataEntry> armoryRooms = new();
         
-        public List<RoomDataEntry> GetSuitableRooms(RoomTypeNew type, int requiredConnections, bool exactMatch = true)
+        public List<RoomDataEntry> GetSuitableRooms(RoomType type, int requiredConnections, bool exactMatch = true)
         {
             var targetList = GetTargetList(type);
             var suitableRooms = new List<RoomDataEntry>();
@@ -53,22 +53,22 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             return suitableRooms;
         }
         
-        private List<RoomDataEntry> GetTargetList(RoomTypeNew type)
+        private List<RoomDataEntry> GetTargetList(RoomType type)
         {
             return type switch
             {
-                RoomTypeNew.CommandCenter => commandCenterRooms,
-                RoomTypeNew.Generator => generatorRooms,
-                RoomTypeNew.Warehouse => warehouseRooms,
-                RoomTypeNew.LivingBlock => livingBlockRooms,
-                RoomTypeNew.MedicalBlock => medicalBlockRooms,
-                RoomTypeNew.RecoveryHangar => recoveryHangarRooms,
-                RoomTypeNew.TechnicalTunnels => technicalTunnelsRooms,
-                RoomTypeNew.Laboratory => laboratoryRooms,
-                RoomTypeNew.Workshop => workshopRooms,
-                RoomTypeNew.Server => serverRooms,
-                RoomTypeNew.WaterPurification => waterPurificationRooms,
-                RoomTypeNew.Armory => armoryRooms,
+                RoomType.CommandCenter => commandCenterRooms,
+                RoomType.Generator => generatorRooms,
+                RoomType.Warehouse => warehouseRooms,
+                RoomType.LivingBlock => livingBlockRooms,
+                RoomType.MedicalBlock => medicalBlockRooms,
+                RoomType.RecoveryHangar => recoveryHangarRooms,
+                RoomType.TechnicalTunnels => technicalTunnelsRooms,
+                RoomType.Laboratory => laboratoryRooms,
+                RoomType.Workshop => workshopRooms,
+                RoomType.Server => serverRooms,
+                RoomType.WaterPurification => waterPurificationRooms,
+                RoomType.Armory => armoryRooms,
                 _ => null
             };
         }

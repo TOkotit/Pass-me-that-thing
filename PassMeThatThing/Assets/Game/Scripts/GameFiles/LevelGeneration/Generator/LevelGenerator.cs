@@ -89,14 +89,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         {
             var cluster = new RoomCluster();
 
-            cluster.Rooms.Add(CreateNode(RoomTypeNew.CommandCenter));
-            cluster.Rooms.Add(CreateNode(RoomTypeNew.Generator));
-            cluster.Rooms.Add(CreateNode(RoomTypeNew.Warehouse));
-            cluster.Rooms.Add(CreateNode(RoomTypeNew.LivingBlock));
+            cluster.Rooms.Add(CreateNode(RoomType.CommandCenter));
+            cluster.Rooms.Add(CreateNode(RoomType.Generator));
+            cluster.Rooms.Add(CreateNode(RoomType.Warehouse));
+            cluster.Rooms.Add(CreateNode(RoomType.LivingBlock));
 
             return cluster;
         }
-        private RoomNode CreateNode(RoomTypeNew type)
+        private RoomNode CreateNode(RoomType type)
         {
             return new RoomNode(_nextNodeId++, type);
         }
@@ -130,22 +130,22 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             return sizes;
         }
         
-        private List<RoomTypeNew> BuildMandatoryPool()
+        private List<RoomType> BuildMandatoryPool()
         {
-            var pool = new List<RoomTypeNew>
+            var pool = new List<RoomType>
             {
-                RoomTypeNew.Laboratory,
-                RoomTypeNew.Armory,
-                RoomTypeNew.Workshop,
-                RoomTypeNew.MedicalBlock
+                RoomType.Laboratory,
+                RoomType.Armory,
+                RoomType.Workshop,
+                RoomType.MedicalBlock
             };
 
             if (_medicalBlockCount < 2) _medicalBlockCount++;
 
-            var events = new List<RoomTypeNew>
+            var events = new List<RoomType>
             {
-                RoomTypeNew.Server,
-                RoomTypeNew.WaterPurification
+                RoomType.Server,
+                RoomType.WaterPurification
             };
 
             if (_targetRoomCount >= 20)
@@ -161,32 +161,32 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             return pool;
         }
 
-        private RoomTypeNew GetRandomRepeatableRoom(RoomCluster currentCluster)
+        private RoomType GetRandomRepeatableRoom(RoomCluster currentCluster)
         {
-            var types = new List<RoomTypeNew>
+            var types = new List<RoomType>
             {
-                RoomTypeNew.LivingBlock, RoomTypeNew.LivingBlock,
-                RoomTypeNew.Warehouse, RoomTypeNew.Warehouse
+                RoomType.LivingBlock, RoomType.LivingBlock,
+                RoomType.Warehouse, RoomType.Warehouse
             };
 
-            if (!currentCluster.Rooms.Exists(r => r.Type == RoomTypeNew.Workshop))
+            if (!currentCluster.Rooms.Exists(r => r.Type == RoomType.Workshop))
             {
-                types.Add(RoomTypeNew.Workshop);
+                types.Add(RoomType.Workshop);
             }
 
-            if (!currentCluster.Rooms.Exists(r => r.Type == RoomTypeNew.Armory))
+            if (!currentCluster.Rooms.Exists(r => r.Type == RoomType.Armory))
             {
-                types.Add(RoomTypeNew.Armory);
+                types.Add(RoomType.Armory);
             }
 
-            if (_medicalBlockCount < 2 && !currentCluster.Rooms.Exists(r => r.Type == RoomTypeNew.MedicalBlock))
+            if (_medicalBlockCount < 2 && !currentCluster.Rooms.Exists(r => r.Type == RoomType.MedicalBlock))
             {
-                types.Add(RoomTypeNew.MedicalBlock);
+                types.Add(RoomType.MedicalBlock);
             }
 
             var selected = types[_random.Next(types.Count)];
 
-            if (selected == RoomTypeNew.MedicalBlock)
+            if (selected == RoomType.MedicalBlock)
             {
                 _medicalBlockCount++;
             }

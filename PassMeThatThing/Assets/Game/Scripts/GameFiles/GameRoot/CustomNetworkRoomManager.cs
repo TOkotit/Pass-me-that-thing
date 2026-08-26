@@ -12,7 +12,10 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
     {
         public event Action<bool> OnServerSceneLoadStateChanged;
         public event Action<bool> OnClientSceneLoadStateChanged;
-        private int defaultTestSeed = 12345;
+        
+        
+        [SerializeField] private bool useRandomSeed = true;
+        [SerializeField] private int customSeed = 12345;
         
         public override void OnServerChangeScene(string newSceneName)
         {
@@ -79,14 +82,16 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
                 Debug.LogError($"[CNRM] ({who}) LevelOrchestrator не найден на сцене!");
                 return;
             }
+
+            int activeSeed = useRandomSeed ? UnityEngine.Random.Range(int.MinValue, int.MaxValue) : customSeed;
  
-            var generator = new LevelGenerator(new LevelGraphConfig(), defaultTestSeed);
+            var generator = new LevelGenerator(new LevelGraphConfig(), activeSeed);
             var clusters = generator.GenerateClusters();
  
             if (clusters is { Count: > 0 })
             {
-                orchestrator.GeneratePhysicalLevel(clusters, defaultTestSeed);
-                Debug.Log($"[CNRM] ({who}) Уровень сгенерирован, seed={defaultTestSeed}, комнат в кластерах={clusters.Count}.");
+                orchestrator.GeneratePhysicalLevel(clusters, activeSeed);
+                Debug.Log($"[CNRM] ({who}) Уровень сгенерирован, seed={activeSeed}, комнат в кластерах={clusters.Count}.");
             }
             else
             {

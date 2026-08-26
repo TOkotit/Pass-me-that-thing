@@ -8,11 +8,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         public int NodeId; 
         public int DepthFromHub;
         
-        public RoomTypeNew Type; 
+        public RoomType Type; 
         
         public List<RoomNode> ConnectedNodes = new();
         
-        public RoomNode(int nodeId, RoomTypeNew type)
+        public RoomNode(int nodeId, RoomType type)
         {
             NodeId = nodeId;
             Type = type;
