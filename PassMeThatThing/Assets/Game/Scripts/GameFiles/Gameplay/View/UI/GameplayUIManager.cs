@@ -14,6 +14,7 @@ using Game.Scripts.GameFiles.GameRandomEvents;
 using Assets.Game.Scripts.GameFiles.UIWorld;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
+using Game.Scripts.GameFiles.Entity.Enemy;
 
 
 namespace Game.Gameplay.View.UI
@@ -150,8 +151,8 @@ namespace Game.Gameplay.View.UI
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
         }
-        //World Popup
 
+        //World Popup
         public PopupDescriptionViewModel OpenPopupDescription()
         {
             var viewModel = new PopupDescriptionViewModel(this, Container);
@@ -169,9 +170,24 @@ namespace Game.Gameplay.View.UI
 
         //WorldSpace
 
-        public WindowDescriptionViewModel OpenWindowDescription()
+        //public WindowDescriptionViewModel OpenWindowDescription()
+        //{
+        //    var viewModel = new WindowDescriptionViewModel(this, Container);
+
+        //    _worldUI.OpenWorldWindow(viewModel);
+
+
+        //    return viewModel;
+        //}
+
+        //public void CloseWindowDescription(WindowDescriptionViewModel viewModel)
+        //{
+        //    _worldUI.CloseWorldWindow(viewModel);
+        //}
+
+        public WindowEnemyViewViewModel OpenWindowEnemyView(EnemyZombie enemy)
         {
-            var viewModel = new WindowDescriptionViewModel(this, Container);
+            var viewModel = new WindowEnemyViewViewModel(this, Container, enemy);
 
             _worldUI.OpenWorldWindow(viewModel);
 
@@ -179,7 +195,7 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
 
-        public void CloseWindowDescription(WindowDescriptionViewModel viewModel)
+        public void CloseWindowEnemyView(WindowEnemyViewViewModel viewModel)
         {
             _worldUI.CloseWorldWindow(viewModel);
         }

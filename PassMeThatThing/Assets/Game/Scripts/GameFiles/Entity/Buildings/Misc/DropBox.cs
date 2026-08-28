@@ -63,8 +63,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         private void Awake()
         {
             Boxes[gameObject] = this;
-            if (_toughnessModel == null)
-                _toughnessModel = new ToughnessModel();
+            if (ToughnessModel == null)
+                ToughnessModel = new ToughnessModel();
         }
 
         public override void OnStartClient()

@@ -1,4 +1,5 @@
-﻿using Game.UI;
+﻿using DG.Tweening;
+using Game.UI;
 using System.Collections;
 using UnityEngine;
 
@@ -22,5 +23,19 @@ namespace Assets.Game.Scripts.GameFiles.UIWorld
         }
 
         protected virtual void OnBind(T viewModel) { }
+
+        public void UpdatePosition(Vector3 pos)
+        {
+            transform.position = pos + ViewModel.windowOffset;
+        }
+
+        public void ChangeRotation(Vector3 lookPos)
+        {
+            if (ViewModel.enabled.Value)
+            {
+                var dir = (transform.position - lookPos).normalized;
+                transform.rotation = Quaternion.LookRotation(dir);
+            }
+        }
     }
 }

@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror;
+using R3;
 using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
@@ -16,8 +18,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private EnemyData _zombieData;
         //
         // private bool _hitRagdollCoroutine;
-        
-        public float elapsedAttack;
+        [SyncVar(hook = nameof(OnElapsedChanged))]
+        private float _elapsedAttack;
+
         public float AttackCooldown => _zombieData.AttackCooldown;
         public float ChaseDistance => _zombieData.ChaseDistance;
         public float AttackDistance => _zombieData.AttackDistance;
@@ -35,8 +38,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
         public ZombieDeath ZombieDeath { get; private set; }
-        
         public ZombieKnockout ZombieKnockout { get; private set; }
+        public float ElapsedAttack { get => _elapsedAttack; set => _elapsedAttack = value; }
+
+        public event Action<int, int> OnEnemyHealthChanged;
+        public event Action<int, int> OnEnemyToughnessChanged;
+        public event Action<float, float> OnEnemyElapsedAttackChanged;
 
         [Inject]
         private void Construct(EnemyDatabase enemyDatabase)
@@ -54,6 +61,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.Start();
             
             EnemyView.Initialize();
+            EnemyView.InitUI(this);
 
             if (isServer)
             {
@@ -66,49 +74,24 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnStartServer();
             
-            ZombieWalk = new ZombieWalk(this, 
-                stateMachine);
-            ZombieChase = new ZombieChase(this, 
-                stateMachine);
-            ZombieAttack = new ZombieAttack(this, 
-                stateMachine);
+            ZombieWalk = new ZombieWalk(this, stateMachine);
+            ZombieChase = new ZombieChase(this, stateMachine);
+            ZombieAttack = new ZombieAttack(this, stateMachine);
             ZombieDeath = new ZombieDeath(this, stateMachine);
-            
             ZombieKnockout =  new ZombieKnockout(this, stateMachine);
             
             stateMachine.Initialize(ZombieWalk);
             
             DisableRagdoll();
         }
-        
-        [ClientRpc]
-        public void RpcFall()
+
+        public void OnElapsedChanged(float oldElapsed, float newElapsed)
         {
-            EnableRagdoll();
+            if (oldElapsed != newElapsed)
+                OnEnemyElapsedAttackChanged?.Invoke(newElapsed, AttackCooldown);
         }
 
-        public void EnableRagdoll()
-        {
-            movementController.DisableNavAgent();
-            
-            enemyView.DisableAnimator();
-            ragdollHandler.EnableRagdoll();
-        }
-        
-        [ClientRpc]
-        public void RpcStandUp()
-        {
-            enemyView.PlayStandingUp((() => DisableRagdoll()));
-            
-        }
-        public void DisableRagdoll()
-        {
-            movementController.EnableNavAgent();
-            
-            ragdollHandler.DisableRagdoll();
-            enemyView.EnableAnimator();
-        }
-
+        //Damagable callbacks
         public override void OnDeath()
         {
             base.OnDeath();
@@ -119,21 +102,24 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            // if (!isServer) return;
-            
             Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
+            OnEnemyHealthChanged?.Invoke(currentHealth, maxHealth);
         }
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)
         {
             Debug.Log($"[Zombie] OnToughnessChanged {currentToughness}/{maxToughness}");
+            OnEnemyToughnessChanged?.Invoke(currentToughness, maxToughness);
         }
 
         public override void OnToughnessBreak()
         {
+            Debug.Log($"[Zombie] OnToughnessBreak");
+
             stateMachine.ChangeState(ZombieKnockout);
         }
         
+        //SM
         private new void Update()
         {
             base.Update();
@@ -144,23 +130,58 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.FixedUpdate();
         }
 
+        //Destroy
         [ClientRpc]
         public void RpcSelfDestroy()
         {
-            // RpcPlayParticles();
-            if (gameObject != null)
-                Destroy(gameObject);
+            enemyView.PlayParticles();
+            enemyView.transform.DOScale(0f, 0.5f)
+                .OnComplete((() =>
+                {
+                    if (isServer)   
+                    {
+                        SelfNetDestroy();
+                    }
+                }));
         }
-        
-        // [ClientRpc]
-        // private void RpcPlayParticles()
-        // {
-        //     particles.Play();
-        //     animator.transform.DOScale(0f, 0.5f)
-        //         .OnComplete((() =>
-        //         {
-        //             Destroy(gameObject);
-        //         }));
-        // }
+
+        [Server]
+        private void SelfNetDestroy()
+        {
+            if (gameObject != null)
+            {
+                NetworkServer.Destroy(gameObject);
+            }
+        }
+
+        //Ragdoll
+
+        [ClientRpc]
+        public void RpcFall()
+        {
+            EnableRagdoll();
+        }
+
+        public void EnableRagdoll()
+        {
+            movementController.DisableNavAgent();
+
+            enemyView.DisableAnimator();
+            ragdollHandler.EnableRagdoll();
+        }
+
+        [ClientRpc]
+        public void RpcStandUp()
+        {
+            enemyView.PlayStandingUp((() => DisableRagdoll()));
+
+        }
+        public void DisableRagdoll()
+        {
+            movementController.EnableNavAgent();
+
+            ragdollHandler.DisableRagdoll();
+            enemyView.EnableAnimator();
+        }
     }
 }

@@ -25,7 +25,6 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
 
         private void Start()
         {
-            
             _subs.Add(ViewModel.enabled.Subscribe(SetVisibility));
 
             ViewModel.RequestSubCameraPos(ChangeRotation);
@@ -38,12 +37,6 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
             ViewModel.RequestUnSubCameraPos(ChangeRotation);
             ViewModel.RequestUnSubDescriptionText(ChangeText);
             _subs.Dispose();
-        }
-
-        private void FixedUpdate()
-        {
-            if (ViewModel.enabled.Value)
-                transform.position = ViewModel.parentPos + Vector3.up * 1.5f;
         }
 
         public void SetVisibility(bool v)
@@ -59,15 +52,6 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
                 {
                     _root.visible = v;
                 });
-            }
-        }
-
-        public void ChangeRotation(Vector3 lookPos)
-        {
-            if (ViewModel.enabled.Value)
-            {
-                var dir = (transform.position - lookPos).normalized;
-                transform.rotation = Quaternion.LookRotation(dir);
             }
         }
 

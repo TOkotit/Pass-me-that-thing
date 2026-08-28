@@ -6,6 +6,7 @@ using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Game.Scripts.GameFiles.Entity.GlobalView;
 using Game.Scripts.GameFiles.Items;
 using Mirror;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -20,9 +21,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected EnemyAttackController attackController;
         
         [Inject] private DamagableRegistry _damagableRegistry;
+
         private float SMLogicTimer;
         private float SMLogicInterval = 0.1f;
-        
+        private bool isAlive = true;
+
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
         
@@ -32,10 +35,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public TargetDetector TargetDetector => targetDetector;
         public EnemyMovementController MovementController => movementController;
         public EnemyAttackController AttackController => attackController;
-        private bool isAlive = true;
 
         public EnemySpawner EnemySpawner {get; set;}
-        
+
+
         public override void OnDeath()
         {
             if (!isServer) return;
@@ -53,7 +56,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         protected virtual void Awake()
         {
             EnemyModel = new EnemyModel();
-            _toughnessModel = new ToughnessModel();
+            ToughnessModel = new ToughnessModel();
         }
 
         #region ServerLogic

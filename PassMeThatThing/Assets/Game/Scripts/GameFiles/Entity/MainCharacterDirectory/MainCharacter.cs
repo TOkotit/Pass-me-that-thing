@@ -124,7 +124,7 @@ namespace Game.Entity
 
         protected void Awake()
         {
-            _toughnessModel = new ToughnessModel();
+            ToughnessModel = new ToughnessModel();
         }
 
         public new void Start()

@@ -1,12 +1,18 @@
 using System;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
+using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Entity.GlobalView;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.View
 {
     public class ZombieView : EnemyView
     {
+        [Inject] private GameplayUIManager _gameplayUIManager;
+        private WindowEnemyViewViewModel _windowViewModel;
+
         [SerializeField] protected LayerMask groundMask;
         
         private const string WalkKey = "Walk";
@@ -38,6 +44,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
         private bool IsFrontUp => Vector3.Dot(_hipsBone.up, Vector3.up) > 0;
 
+        public void InitUI(EnemyZombie enemy)
+        {
+            _windowViewModel = _gameplayUIManager.OpenWindowEnemyView(enemy);
+            
+        }
+
         public void Initialize()
         {
             var currentClips = animator.runtimeAnimatorController.animationClips;
@@ -51,6 +63,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
             
             // _rigAdjusterForBackStandingUpAnimation = new RigAdjusterForAnimation(currentClips.First(clip => clip.name == BackStandUpClipName), bones, this);
             // _rigAdjusterForFrontStandingUpAnimation = new RigAdjusterForAnimation(currentClips.First(clip => clip.name == FrontStandClipName), bones, this);
+        }
+
+        private void OnDestroy()
+        {
+            _gameplayUIManager.CloseWindowEnemyView(_windowViewModel);
         }
 
         public void PlayStandingUp(Action adjustAnimationEndedCallback = null, Action animationEndedCallback = null)

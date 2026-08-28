@@ -11,10 +11,12 @@ namespace Entity
     /// </summary>
     public abstract class ToughnessDamageable : Damageable
     {
-        protected ToughnessModel _toughnessModel;
+        private ToughnessModel _toughnessModel;
         [SerializeField] protected RagdollHandler ragdollHandler;
         public RagdollHandler RagdollHandler => ragdollHandler;
-        
+
+        public ToughnessModel ToughnessModel { get => _toughnessModel; set => _toughnessModel = value; }
+
         [SyncVar(hook = nameof(OnSyncedToughnessChanged))]
         private int _syncedToughness;
         
@@ -27,7 +29,7 @@ namespace Entity
                 _toughnessModel = new ToughnessModel();
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             base.Start();
             if (isServer)
