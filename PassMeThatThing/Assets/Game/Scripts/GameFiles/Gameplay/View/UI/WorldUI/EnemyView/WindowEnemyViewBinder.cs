@@ -13,6 +13,7 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
         [SerializeField] private UIDocument uiDocument;
 
         private VisualElement _root;
+        private Label _stunText;
         private ProgressBar _healthBar;
         private ProgressBar _toughnessBar;
         private ProgressBar _attackBar;
@@ -22,6 +23,9 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
         private void Awake()
         {
             _root = uiDocument.rootVisualElement;
+
+            _stunText = _root.Q<Label>("StunText");
+
             _healthBar = _root.Q<ProgressBar>("EnemyHealth");
             _toughnessBar = _root.Q<ProgressBar>("EnemyToughness");
             _attackBar = _root.Q<ProgressBar>("EnemyElapsedAttack");
@@ -33,10 +37,10 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
 
             ViewModel.RequestSubCameraPos(ChangeRotation);
 
-
             ViewModel.RequestSubEnemyHealth(UpdateHealthBar);
             ViewModel.RequestSubEnemyToughness(UpdateToughnessBar);
             ViewModel.RequestSubEnemyAttack(UpdateElapsedAttackBar);
+            ViewModel.RequestSubStun(UpdateStun);
 
             ViewModel.enabled.Value = true;
 
@@ -47,7 +51,12 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
         private void OnDestroy()
         {
             ViewModel.RequestUnSubCameraPos(ChangeRotation);
-            
+
+            ViewModel.RequestUnsubEnemyHealth(UpdateHealthBar);
+            ViewModel.RequestUnsubEnemyToughness(UpdateToughnessBar);
+            ViewModel.RequestUnsubEnemyAttack(UpdateElapsedAttackBar);
+            ViewModel.RequestUnsubStun(UpdateStun);
+
             _subs.Dispose();
         }
 
@@ -65,6 +74,11 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
                     _root.visible = v;
                 });
             }
+        }
+
+        public void UpdateStun(bool value)
+        {
+            _stunText.visible = value;
         }
 
         public void UpdateHealthBar(int value, int maxValue)

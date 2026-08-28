@@ -20,6 +20,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
             _zombie.RpcFall();
             _zombie.StartCoroutine(Wait());
+
+            _zombie.StunChanged(true);
         }
 
         private IEnumerator Wait()
@@ -46,6 +48,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             base.Exit();
             _zombie.ServerFullToughnessRecover();
             _zombie.RpcStandUp();
+            _zombie.StunChanged(false);
         }
         
     }

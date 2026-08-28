@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/World/UiToolkit/EnemyView.uss?fileID=7433441132597879392&amp;guid=e877f6d811b170c469867a9363363a70&amp;type=3#EnemyView"/>
     <ui:VisualElement style="flex-grow: 1;">
         <ui:VisualElement name="StatusContainer" style="flex-grow: 0; justify-content: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 20px;">
-            <ui:Label text="STUN" name="StunText" style="-unity-text-align: middle-center; font-size: 13px; align-self: center; visibility: visible; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 183, 0);"/>
+            <ui:Label text="STUN" name="StunText" style="-unity-text-align: middle-center; font-size: 13px; align-self: center; visibility: hidden; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; color: rgb(255, 183, 0);"/>
         </ui:VisualElement>
         <ui:VisualElement name="Bars" style="flex-grow: 1; visibility: visible; display: flex;">
             <ui:ProgressBar value="22" title="" name="EnemyHealth" class="health-progress-bar custom-progress-bar" style="flex-grow: 1; height: 24px;"/>

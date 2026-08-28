@@ -170,21 +170,6 @@ namespace Game.Gameplay.View.UI
 
         //WorldSpace
 
-        //public WindowDescriptionViewModel OpenWindowDescription()
-        //{
-        //    var viewModel = new WindowDescriptionViewModel(this, Container);
-
-        //    _worldUI.OpenWorldWindow(viewModel);
-
-
-        //    return viewModel;
-        //}
-
-        //public void CloseWindowDescription(WindowDescriptionViewModel viewModel)
-        //{
-        //    _worldUI.CloseWorldWindow(viewModel);
-        //}
-
         public WindowEnemyViewViewModel OpenWindowEnemyView(EnemyZombie enemy)
         {
             var viewModel = new WindowEnemyViewViewModel(this, Container, enemy);

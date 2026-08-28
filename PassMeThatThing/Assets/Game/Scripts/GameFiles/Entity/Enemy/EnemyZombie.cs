@@ -44,6 +44,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public event Action<int, int> OnEnemyHealthChanged;
         public event Action<int, int> OnEnemyToughnessChanged;
         public event Action<float, float> OnEnemyElapsedAttackChanged;
+        public event Action<bool> OnEnemyStunChanged;
 
         [Inject]
         private void Construct(EnemyDatabase enemyDatabase)
@@ -117,6 +118,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             Debug.Log($"[Zombie] OnToughnessBreak");
 
             stateMachine.ChangeState(ZombieKnockout);
+        }
+
+        public void StunChanged(bool value)
+        {
+            OnEnemyStunChanged?.Invoke(value);
         }
         
         //SM

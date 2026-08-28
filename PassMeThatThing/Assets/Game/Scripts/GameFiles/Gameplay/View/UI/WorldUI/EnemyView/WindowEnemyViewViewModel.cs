@@ -75,5 +75,15 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
             _enemy.OnEnemyElapsedAttackChanged -= f;
         }
 
+        public void RequestSubStun(Action<bool> f)
+        {
+            _enemy.OnEnemyStunChanged += f;
+        }
+
+        public void RequestUnsubStun(Action<bool> f)
+        {
+            _enemy.OnEnemyStunChanged -= f;
+        }
+
     }
 }
