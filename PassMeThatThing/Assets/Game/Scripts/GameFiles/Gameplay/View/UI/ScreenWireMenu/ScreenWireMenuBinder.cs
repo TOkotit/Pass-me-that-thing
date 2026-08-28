@@ -40,7 +40,10 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         private void BeforeExit(Action onComplete)
         {
-            onComplete();
+            _selectionWheel.DOScale(new Vector2(0, 0), 0.2f).OnComplete(
+                () => {
+                    onComplete();
+                });
         }
 
         private void OnDestroy()
@@ -58,7 +61,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         public void OnSelectionWheelChanged(int index, int lastIndex)
         {
-            Debug.Log($"OnSelectionWheelChanged {index} / {lastIndex}");
+            //Debug.Log($"OnSelectionWheelChanged {index} / {lastIndex}");
             ViewModel.RequestBuildingChosen(index);
         }
         

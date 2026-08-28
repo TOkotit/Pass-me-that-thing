@@ -21,7 +21,7 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenCraftMenu
 
         private void OnClick(ClickEvent e)
         {
-            Debug.Log($"RecipeButton OnClick {recipeId}");
+            //Debug.Log($"RecipeButton OnClick {recipeId}");
             OnRecipeClick?.Invoke(recipeId);
         }
     }

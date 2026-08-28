@@ -43,7 +43,6 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _gameInput.GameInput.Gameplay.CancelBuilding.performed -= OnPerformedCancelBuilding;
         }
         
-        private void OnPerformedBuildMenu(InputAction.CallbackContext c) => RequestGoToGameplay();
         private void OnPerformedConfirmBuilding(InputAction.CallbackContext c) => RequestConfirmBuilding();
         private void OnPerformedCancelBuilding(InputAction.CallbackContext c) => RequestCancelBuilding();
 

@@ -12,10 +12,10 @@ namespace Game.UI
         
         public void Bind(UIRootViewModel viewModel)
         {
-            Debug.Log("Bind");
+            //Debug.Log("Bind");
             _subscriptions.Add(viewModel.OpenedScreen.Subscribe(newScreenViewModel =>
             {
-                Debug.Log("Opened screen: " + newScreenViewModel);
+                //Debug.Log("Opened screen: " + newScreenViewModel);
                 _windowsContainer.OpenScreen(newScreenViewModel);
             }));
 

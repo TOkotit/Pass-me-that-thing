@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Enums;
 using Game.Scripts.GameFiles.Entity.Buildings;
 using Game.UI;
 using Systems;
@@ -70,11 +69,5 @@ namespace Game.Gameplay.View.UI.ScreenBuild
             _handlerModel.StartBuildPreview(_buildingsDatabase.miniBuildings[buildingIndex].id);
             RequestGoToBuildPreview();
         }
-
-        public void HideUi(Action onComplete)
-        {
-            
-        }
-        
     }
 }

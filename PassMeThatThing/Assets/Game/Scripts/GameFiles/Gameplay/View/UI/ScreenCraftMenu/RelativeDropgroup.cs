@@ -49,7 +49,7 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenCraftMenu
 
         private void OpenDropdown()
         {
-            Debug.Log("[ui] OpenDropdown");
+            //Debug.Log("[ui] OpenDropdown");
             _isOpen = true;
             _content.style.display = DisplayStyle.Flex;
             _arrow.AddToClassList("dropgroup__arrow--open");
@@ -57,7 +57,7 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenCraftMenu
 
         private void CloseDropdown()
         {
-            Debug.Log("[ui] CloseDropdown");
+            //Debug.Log("[ui] CloseDropdown");
             _isOpen = false;
             _content.style.display = DisplayStyle.None;
             _arrow.RemoveFromClassList("dropgroup__arrow--open");

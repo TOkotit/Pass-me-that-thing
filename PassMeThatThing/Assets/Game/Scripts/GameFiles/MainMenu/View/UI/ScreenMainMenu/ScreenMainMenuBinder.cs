@@ -20,11 +20,11 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         private void Awake()
         {
             _root = uiDocument.rootVisualElement;
-            _hostBtn = _root.Q("HostBtn") as Button;
-            _joinBtn = _root.Q("JoinBtn") as Button;
-            _optionsBtn = _root.Q("OptionsBtn") as Button;
-            _exitBtn = _root.Q("ExitBtn") as Button;
-            _ipInput = _root.Q("IpInput") as TextField;
+            _hostBtn = _root.Q<Button>("HostBtn");
+            _joinBtn = _root.Q<Button>("JoinBtn");
+            _optionsBtn = _root.Q<Button>("OptionsBtn");
+            _exitBtn = _root.Q<Button>("ExitBtn");
+            _ipInput = _root.Q<TextField>("IpInput");
         }
 
         private void Start()
@@ -61,7 +61,6 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         {
             ViewModel.RequestGoToScreenOptions();
         }
-
         
         private void OnExitButtonClicked(ClickEvent e)
         {

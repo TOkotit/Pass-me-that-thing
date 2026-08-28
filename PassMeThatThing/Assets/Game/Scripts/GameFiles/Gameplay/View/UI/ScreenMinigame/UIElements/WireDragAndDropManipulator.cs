@@ -203,7 +203,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 _line.UpdatePositions(_box.worldBound.position,
                     _box.worldBound.position);
 
-                _box.transform.scale = new Vector2(-1, 1);
+                _box.style.scale = new Vector2(-1, 1);
                 _box.style.backgroundImage = new StyleBackground(_t.end);
             }
         }

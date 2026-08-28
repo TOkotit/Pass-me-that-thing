@@ -62,7 +62,6 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
 
         public void ChangeText(string value)
         {
-            Debug.Log($"[WUI] ChangeText {value}");
             _text.text = value;
         }
     }

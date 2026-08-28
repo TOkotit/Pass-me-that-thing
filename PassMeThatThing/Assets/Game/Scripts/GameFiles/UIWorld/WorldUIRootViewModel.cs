@@ -26,7 +26,7 @@ namespace Assets.Game.Scripts.GameFiles.UIWorld
         {
             if (_openedWorldWindows.Contains(worldWindowViewModel))
             {
-                Debug.Log("[WUI] _openedWorldWindows.Contains");
+                //Debug.Log("[WUI] _openedWorldWindows.Contains");
                 return;
             }
 

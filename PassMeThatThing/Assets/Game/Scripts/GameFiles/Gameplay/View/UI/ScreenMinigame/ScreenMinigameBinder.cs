@@ -155,7 +155,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
             UpdateIndicators();
             
-            Debug.Log($"OnToggleClicked {_turnedToggles}");
+            //Debug.Log($"OnToggleClicked {_turnedToggles}");
             if (_turnedToggles >= _customToggles.Count)
             {
                 CompleteMinigame();
@@ -244,7 +244,6 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 _elemRegistry[newInput] = t.color;
                 newInput.style.width = 110;
                 newInput.style.height = 110;
-                //newInput.style.backgroundColor = Color.lightPink;
             }
         }
 
@@ -259,7 +258,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             {
                 _matchedColors.Remove(_elemRegistry[a]);
             }
-            Debug.Log($"CheckWires {_matchedColors.Count}");
+            //Debug.Log($"CheckWires {_matchedColors.Count}");
 
             if (_matchedColors.Count >= wireColors.Count)
             {

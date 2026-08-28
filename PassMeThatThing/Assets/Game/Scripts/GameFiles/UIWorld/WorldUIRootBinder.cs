@@ -16,7 +16,7 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.UIWorld
 
         public void Bind(WorldUIRootViewModel viewModel)
         {
-            Debug.Log("[WUI] Bind");
+            //Debug.Log("[WUI] Bind");
 
             foreach (var openedPopup in viewModel.OpenedWorldWindows)
             {

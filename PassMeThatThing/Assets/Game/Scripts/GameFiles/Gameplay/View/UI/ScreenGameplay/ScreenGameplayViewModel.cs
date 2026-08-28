@@ -291,7 +291,7 @@ namespace Game.Gameplay.View.UI
         private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
         {
             var e = _gameEventsDatabase.GetEvent(newItem.EventType);
-            Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
+            //Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
             switch (op)
             {
                 case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:

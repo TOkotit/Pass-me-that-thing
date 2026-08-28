@@ -71,7 +71,7 @@ namespace Game.Gameplay.View.UI.ScreenBuild
 
         public void UpdateResources(IReadOnlyDictionary<Resource, float> d)
         {
-            Debug.Log("[CRAFT] binder UpdateResources");
+            //Debug.Log("[CRAFT] binder UpdateResources");
 
             _resources.Clear();
             _resourceContainer.Clear();

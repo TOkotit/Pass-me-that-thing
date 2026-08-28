@@ -70,17 +70,14 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
         public void UpdateHealthBar(int value, int maxValue)
         {
             _healthBar.value = (float)value / maxValue * 100;
-            Debug.Log($"[UI] h {_healthBar.value}");
         }
         public void UpdateToughnessBar(int value, int maxValue)
         {
             _toughnessBar.value = (float)value / maxValue * 100;
-            Debug.Log($"[UI] t {_healthBar.value}");
         }
         public void UpdateElapsedAttackBar(float value, float maxValue)
         {
             _attackBar.value = value / maxValue * 100;
-            Debug.Log($"[UI] e {_healthBar.value}");
         }
     }
 }

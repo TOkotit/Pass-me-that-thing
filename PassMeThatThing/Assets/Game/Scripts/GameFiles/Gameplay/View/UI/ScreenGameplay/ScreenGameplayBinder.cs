@@ -140,7 +140,7 @@ namespace Game.Gameplay.View.UI
         
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
-            Debug.Log($"[UI] new hp {newValue}");
+            //Debug.Log($"[UI] new hp {newValue}");
 
             _healthImage.style.opacity = (1 - (float)newValue / maxHealth) * 0.4f;
             _health1.value = (float)newValue / maxHealth * 100;
@@ -170,7 +170,7 @@ namespace Game.Gameplay.View.UI
         
         private void UpdateDeathUI(bool isDead)
         {
-            Debug.Log($"[UI] death {isDead}");
+            //Debug.Log($"[UI] death {isDead}");
             if (isDead)
             {
                 DOTween.To(
