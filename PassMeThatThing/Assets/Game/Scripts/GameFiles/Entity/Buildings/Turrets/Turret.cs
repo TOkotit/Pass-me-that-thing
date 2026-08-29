@@ -26,12 +26,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
 
         public override void OnDeath()
         {
-            
+            base.OnDeath();
         }
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            
+            base.OnHealthChanged(currentHealth, maxHealth);
         }
     }
 }

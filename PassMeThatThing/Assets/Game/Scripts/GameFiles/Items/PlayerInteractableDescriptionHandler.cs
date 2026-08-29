@@ -1,5 +1,6 @@
 ﻿using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
+using Entity;
 using Game.Entity;
 using Game.Gameplay.View.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
@@ -17,11 +18,13 @@ namespace Assets.Game.Scripts.GameFiles.Items
         [SerializeField] private Camera playerCamera;
 
         [SerializeField] private LayerMask interactionLayer;
+        [SerializeField] private LayerMask buildingLayer;
         [SerializeField] private float interactionDistance;
 
         [Inject] private WireManager _wiremanager;
         [Inject] private MCLocalModel _localModel;
         [Inject] private PhysicalItemRegistry _physicalItemRegistry;
+        [Inject] private DamagableRegistry _damageableRegistry;
         [Inject] private GameplayUIManager _gameplayUIManager;
 
         private PopupDescriptionViewModel _currentDescription;
@@ -69,8 +72,8 @@ namespace Assets.Game.Scripts.GameFiles.Items
         private void GetDescription()
         {
             var ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-
-            if (Physics.Raycast(ray, out var hit, interactionDistance, interactionLayer))
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
             {
                 if (hit.collider.gameObject.transform == _currentTransform) return;
                 _currentTransform = hit.collider.gameObject.transform;
@@ -103,6 +106,22 @@ namespace Assets.Game.Scripts.GameFiles.Items
                     var net = _wiremanager.WireNetsData[wireNode.NetId];
 
                     _localModel.CurrentInteractableText = $"{net.availableQuantity}/{net.requiredQuantity}";
+                }
+                else
+                {
+                    CloseWindow();
+                }
+            }
+            else if (Physics.Raycast(ray, out hit, interactionDistance, buildingLayer))
+            {
+                if (hit.collider.gameObject.transform == _currentTransform) return;
+                _currentTransform = hit.collider.gameObject.transform;
+
+                if (_damageableRegistry.TryGetDamagable(hit.collider.gameObject, out var dam))
+                {
+                    OpenWindow();
+
+                    _localModel.CurrentInteractableText = $"{dam.DamagableModel.HealthPool.CurrentHealth}/{dam.DamagableModel.HealthPool.MaxHealth}";
                 }
                 else
                 {

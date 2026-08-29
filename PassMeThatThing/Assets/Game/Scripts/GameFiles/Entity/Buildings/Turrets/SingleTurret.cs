@@ -131,16 +131,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
 
         public override void OnDeath()
         {
-            
+            base.OnDeath();
         }
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
+            base.OnHealthChanged(currentHealth, maxHealth);
             Debug.Log($"[Single Turret] OnHealthChanged {currentHealth} / {maxHealth}");
         }
 
         public void OnWireNetWorkingStateChanged(WireType type, bool isNetWorking)
         {
+            if (type == WireType.Water) return;
             _workConditions[type] = isNetWorking;
             CheckWork();
         }

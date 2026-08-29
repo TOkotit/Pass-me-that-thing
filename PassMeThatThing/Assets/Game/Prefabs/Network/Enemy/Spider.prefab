@@ -178,15 +178,15 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 0
   type: 1
+  statusEffectHandler: {fileID: 0}
+  ragdollHandler: {fileID: 0}
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
-  ragdollHandler: {fileID: 0}
   enemyView: {fileID: 4264136277298202069}
   ceilingLayer:
     serializedVersion: 2
     m_Bits: 8
-  elapsedAttack: 0
 --- !u!114 &1118780070767854037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,7 +339,7 @@ MonoBehaviour:
   baseMass: 2
   nonPhysicalMultiplier: 0.3
   nonPhysicalTresholdMultiplier: 20
-  _damagable: {fileID: 1649528348939832622}
+  damageable: {fileID: 0}
 --- !u!114 &-7848420249468526302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,7 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagable: {fileID: 1649528348939832622}
+  damageable: {fileID: 1649528348939832622}
   priority: 0
   damagableType: 1
 --- !u!1001 &5479402048584124174

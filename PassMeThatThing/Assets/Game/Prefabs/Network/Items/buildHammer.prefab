@@ -15,10 +15,11 @@ GameObject:
   - component: {fileID: 1686371426209873383}
   - component: {fileID: 5340831970347749924}
   - component: {fileID: 7776855572588576369}
+  - component: {fileID: 7870549207746825770}
+  - component: {fileID: 7173915848797314942}
   - component: {fileID: 4913154011383626854}
   - component: {fileID: 2742765135364868261}
   - component: {fileID: 6213635256034360291}
-  - component: {fileID: 6251785499172985757}
   m_Layer: 7
   m_Name: buildHammer
   m_TagString: Item
@@ -174,9 +175,51 @@ MonoBehaviour:
       Value: 1
     - Key: 2
       Value: 1
-  lmbReaction: {fileID: 6251785499172985757}
+  lmbReaction: {fileID: 7173915848797314942}
   rmbReaction: {fileID: 0}
   reloadReaction: {fileID: 0}
+--- !u!114 &7870549207746825770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0c206e7c36465691727e5bce1c7c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.CollisionDamageDealer
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  damage: 10
+  toughnessDamage: 1
+  useVelocityDamage: 0
+  velocityDamageMultiplier: 1
+  cooldown: 0.5
+  damageTypes:
+    _serializedList:
+    - Key: 2
+      Value: -1
+    - Key: 1
+      Value: 1
+  HitPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &7173915848797314942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb452dac46a9c564b9695edfdd3eb431, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.ItemPhysics.LmbBuildHammer
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &4913154011383626854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,21 +288,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _outline: {fileID: 2742765135364868261}
---- !u!114 &6251785499172985757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6289893463516360249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1184055be4f1d104192878f2dd322a8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.ItemPhysics.LmbBuildHammer
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!1 &9034408919313911600
 GameObject:
   m_ObjectHideFlags: 0

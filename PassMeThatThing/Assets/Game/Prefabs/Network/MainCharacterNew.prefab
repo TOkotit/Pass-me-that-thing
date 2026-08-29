@@ -1889,11 +1889,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a28b6185ecaaac84cbf82d1c3fe5201c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.Items.PlayerInteractableDescriptionHandler
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   interval: 0.8
   playerCamera: {fileID: 3355288843335198720}
   interactionLayer:
     serializedVersion: 2
     m_Bits: 17344
+  buildingLayer:
+    serializedVersion: 2
+    m_Bits: 8192
   interactionDistance: 5
 --- !u!1 &5079773065674125635
 GameObject:

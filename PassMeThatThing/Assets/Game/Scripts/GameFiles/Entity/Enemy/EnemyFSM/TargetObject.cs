@@ -14,6 +14,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         [SerializeField] private int priority;
         [SerializeField] private DamagableType damagableType;
 
+        [SerializeField] public bool Enabled = true;
+
         public Damageable Damageable => damageable;
         
         [Inject] 

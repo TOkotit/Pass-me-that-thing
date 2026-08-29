@@ -1,5 +1,8 @@
 using System;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings;
 using Entity;
+using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings
 {
@@ -8,6 +11,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
     /// </summary>
     public class Building : Damageable
     {
+        [SerializeField] private BuildingView buildingView;
+
         protected BuildingModel BuildingModel;
         protected BuildingData BuildingData;
         
@@ -35,7 +40,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            
+            buildingView.TakeDamage();
         }
         
         

@@ -105,7 +105,6 @@ GameObject:
   - component: {fileID: 7370826059491095980}
   - component: {fileID: 1931763817442211047}
   - component: {fileID: 5475941992780067928}
-  - component: {fileID: 1084716827342913949}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -182,12 +181,12 @@ MonoBehaviour:
   syncInterval: 0
   defaultHealth: 50
   type: 1
+  statusEffectHandler: {fileID: 0}
+  ragdollHandler: {fileID: 1976506774925312268}
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
-  ragdollHandler: {fileID: 1976506774925312268}
   enemyView: {fileID: 1685545026476552139}
-  elapsedAttack: 0
 --- !u!114 &858915913017742702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagable: {fileID: 6059272469753625803}
+  damageable: {fileID: 6059272469753625803}
   priority: 0
   damagableType: 1
 --- !u!114 &1118780070767854037
@@ -246,6 +245,8 @@ MonoBehaviour:
   damageTypes:
     _serializedList:
     - Key: 0
+      Value: 1
+    - Key: 2
       Value: 1
 --- !u!114 &2949989233195922033
 MonoBehaviour:
@@ -355,25 +356,7 @@ MonoBehaviour:
   baseMass: 2
   nonPhysicalMultiplier: 0.3
   nonPhysicalTresholdMultiplier: 20
-  _damagable: {fileID: 6059272469753625803}
---- !u!114 &1084716827342913949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8090700475096468142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b95c365ae0148cb9990864d9aabd75f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  radius: 2
-  damagePerSecond: 10
-  interval: 1
+  damageable: {fileID: 0}
 --- !u!1001 &8256282482685125458
 PrefabInstance:
   m_ObjectHideFlags: 0

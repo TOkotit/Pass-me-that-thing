@@ -103,6 +103,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         private void CalcOneTarget(KeyValuePair<GameObject, TargetObject> d)
         {
+            if (!d.Value.Enabled) return;
             _tempDistance =  Vector3.Distance(d.Key.transform.position, transform.position);
             if (_tempDistance > _maxDetectionRange) return;
             
