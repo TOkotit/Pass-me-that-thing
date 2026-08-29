@@ -64,8 +64,9 @@ namespace Assets.Game.Scripts.GameFiles.Items
 
             if (_currentDescription.enabled.Value)
             {
-                _currentDescription.screenPos.Value 
-                    = playerCamera.WorldToScreenPoint(_currentTransform.position);
+                if (_currentTransform != null)
+                    _currentDescription.screenPos.Value 
+                        = playerCamera.WorldToScreenPoint(_currentTransform.position);
             }
         }
 
@@ -77,6 +78,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
             {
                 if (hit.collider.gameObject.transform == _currentTransform) return;
                 _currentTransform = hit.collider.gameObject.transform;
+                _localModel.CurrentInteractableText = "";
 
                 if (hit.collider.gameObject.CompareTag("Item"))
                 {
@@ -86,7 +88,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
                     var item = hit.collider.gameObject.GetComponentInParent<PhysicalItem>();
                     if (item != null)
                     {
-                        _localModel.CurrentInteractableText = item.Network.ItemData.Id;
+                        _localModel.CurrentInteractableText = item.Network.itemId;
                     }
                 }
                 else if (hit.collider.gameObject.CompareTag("Door"))
@@ -121,7 +123,8 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
-                    _localModel.CurrentInteractableText = $"{dam.DamagableModel.HealthPool.CurrentHealth}/{dam.DamagableModel.HealthPool.MaxHealth}";
+                    _localModel.CurrentInteractableText 
+                        = $"{dam.DamagableModel.HealthPool.CurrentHealth}/{dam.DamagableModel.HealthPool.MaxHealth}";
                 }
                 else
                 {

@@ -79,6 +79,14 @@ namespace Entity
             _syncedMaxToughness = _toughnessModel.CurrentToughness;
         }
 
+        [Client]
+        protected void ClientInitMaxToughness(int newToughness, bool fullToughness)
+        {
+            //Debug.Log("[DAM] ClientInitMaxToughness");
+            _toughnessModel.SetMaxToughness(newToughness, fullToughness);
+            OnToughnessChanged(_toughnessModel.CurrentToughness,
+                    _toughnessModel.MaxToughness);
+        }
 
         // Хуки 
         public void OnSyncedToughnessChanged(int oldToughness, int newToughness)

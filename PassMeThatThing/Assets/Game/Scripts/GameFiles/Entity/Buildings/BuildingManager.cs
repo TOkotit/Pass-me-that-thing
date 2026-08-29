@@ -11,22 +11,6 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         [Inject] private BuildingsDatabase _buildingsDatabase;
         
         
-
-        // [Command(requiresAuthority =  false)]
-        // public void CmdSpawnBuilding(Vector3 pos, int buildingIndex)
-        // {
-        //     if (_buildingsDatabase.buildings.Count > buildingIndex)
-        //     {
-        //         var buildingData = _buildingsDatabase.buildings[buildingIndex];
-        //         if (true) // проверка на ресурсы
-        //         {
-        //
-        //             SpawnBuilding(pos, buildingData);
-        //
-        //         }
-        //     }
-        // }
-        
         [Command(requiresAuthority =  false)]
         public void CmdSpawnBuilding(Vector3 pos, Quaternion rotation, string buildingId)
         {

@@ -91,7 +91,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [ClientRpc]
         private void RpcPlayParticlesOnHit()
         {
-            Debug.Log("<color=yellow>PlayParticlesOnHit");
+            //Debug.Log("<color=yellow>PlayParticlesOnHit");
             _particlePool.GetAndPlayParticle(Particles.pow, damageDealer.HitPosition);
         }
 

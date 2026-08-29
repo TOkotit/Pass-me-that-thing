@@ -26,7 +26,16 @@ namespace Game.Scripts.Systems
             }
     
             int finalDamage = (int)(damage * multiplier);
-            damageable.ServerTakeDamage(finalDamage);
+
+            if (finalDamage < 0)
+            {
+                damageable.ServerHeal(-finalDamage);
+            }
+            else
+            {
+                damageable.ServerTakeDamage(finalDamage);
+            }
+            
 
             if (toughnessDamage > 0 && damageable is ToughnessDamageable tough)
             {

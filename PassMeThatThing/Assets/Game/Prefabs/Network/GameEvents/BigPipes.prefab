@@ -66,7 +66,6 @@ MonoBehaviour:
   syncInterval: 0
   floodEvent: {fileID: 1032108084039664460}
   port: {fileID: 3858860607167916054}
-  pivot: {fileID: 4518478493167500406}
   outline: {fileID: 4680887058531560655}
   impactParticles: {fileID: 2367443740266242791}
   valveSound: {fileID: 4301122828989730178}
@@ -269,6 +268,7 @@ GameObject:
   - component: {fileID: 6468441584140739080}
   - component: {fileID: 6609596328987690964}
   - component: {fileID: 8801093466208183907}
+  - component: {fileID: 1617020948868845625}
   m_Layer: 0
   m_Name: BigPipes
   m_TagString: Untagged
@@ -368,6 +368,7 @@ MonoBehaviour:
   defaultHealth: 0
   type: 2
   statusEffectHandler: {fileID: 0}
+  buildingView: {fileID: 0}
 --- !u!114 &6609596328987690964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,6 +401,25 @@ MonoBehaviour:
   damageable: {fileID: 0}
   priority: 0
   damagableType: 2
+  Enabled: 1
+--- !u!114 &1617020948868845625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6398786016326100300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 682b5aa5604c59f4ca10cace31095acd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.Entity.Buildings.BuildingView
+  meshRenderers:
+  - {fileID: 8750103118561197332}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  repairColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.6
+  flashCount: 3
 --- !u!1 &6599366479341219376
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,6 +609,11 @@ PrefabInstance:
 --- !u!4 &7576656224758744699 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 55bdc909dd4745841a65c17692cc620e, type: 3}
+  m_PrefabInstance: {fileID: 7975604240955613584}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8750103118561197332 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 55bdc909dd4745841a65c17692cc620e, type: 3}
   m_PrefabInstance: {fileID: 7975604240955613584}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8643202909214749327

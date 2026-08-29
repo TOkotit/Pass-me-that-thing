@@ -1,5 +1,3 @@
-// Game.Scripts.GameFiles.Entity.HealthPool
-using System;
 using UnityEngine;
 
 
@@ -31,6 +29,15 @@ public class HealthPool
     {
         if (damage == 0) return _currentHealth;
         _currentHealth -= damage;
+        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
+        // Debug.Log($"Health after damage: {_currentHealth}");
+        return _currentHealth;
+    }
+
+    public int Heal(int value)
+    {
+        if (value == 0) return _currentHealth;
+        _currentHealth += value;
         _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
         // Debug.Log($"Health after damage: {_currentHealth}");
         return _currentHealth;

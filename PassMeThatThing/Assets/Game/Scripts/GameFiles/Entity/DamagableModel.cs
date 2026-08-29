@@ -10,13 +10,26 @@ namespace Entity
         public event Action<int, int> OnHealthChanged; //currHp, maxHp
         public event Action OnDeath;
 
+        public event Action<int> OnDamage; //delta hp
+        public event Action<int> OnHeal; //delta hp
+
         public void TakeDamage(int damage)
         {
             if (HealthPool == null) return;
-            int newHealth = HealthPool.TakeDamage(damage);
-            
+            HealthPool.TakeDamage(damage);
+
+            OnDamage?.Invoke(damage);
             OnHealthChanged?.Invoke(HealthPool.CurrentHealth, HealthPool.MaxHealth);
             if (HealthPool.CurrentHealth <= 0) OnDeath?.Invoke();
+        }
+
+        public void Heal(int value)
+        {
+            if (HealthPool == null) return;
+            HealthPool.Heal(value);
+
+            OnHeal?.Invoke(value);
+            OnHealthChanged?.Invoke(HealthPool.CurrentHealth, HealthPool.MaxHealth);
         }
 
         public void SetHealth(int newHealth)

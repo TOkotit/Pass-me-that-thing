@@ -60,19 +60,22 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public new void Start()
         {
             base.Start();
-            
+
 
             if (isServer)
             {
                 ServerSetMaxHealth(MaxHealth, true);
                 ServerSetMaxToughness(MaxToughness, true);
             }
+            else if (isClient)
+            {
+                ClientInitMaxHealth(MaxHealth, true);
+                ClientInitMaxToughness(MaxToughness, true);
+            }
         }
         
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            // if (!isServer) return;
-            
             Debug.Log($"[Spider] OnHealthChanged {currentHealth}/{maxHealth}");
         }
 

@@ -8,7 +8,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings
     {
         [SerializeField] private List<MeshRenderer> meshRenderers;
 
-        [SerializeField] private Color flashColor = Color.red;
+        [SerializeField] private Color damageColor = Color.red;
+        [SerializeField] private Color repairColor = Color.white;
         [SerializeField] private float flashDuration = 0.6f;
         [SerializeField] private int flashCount = 3;
 
@@ -26,10 +27,19 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings
             {
                 StopCoroutine(flashRoutine);
             }
-            flashRoutine = StartCoroutine(FlashRoutine());
+            flashRoutine = StartCoroutine(FlashRoutine(damageColor));
         }
 
-        private IEnumerator FlashRoutine()
+        public void Repair()
+        {
+            if (flashRoutine != null)
+            {
+                StopCoroutine(flashRoutine);
+            }
+            flashRoutine = StartCoroutine(FlashRoutine(repairColor));
+        }
+
+        private IEnumerator FlashRoutine(Color flashColor)
         {
             for (int i = 0; i < flashCount; i++)
             {

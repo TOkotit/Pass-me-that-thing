@@ -17,7 +17,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public void ChangeState(EnemyState newState)
         {
             _currentState.Exit();
-            Debug.Log($"NEW ENEMY STATE {newState}");
+            //Debug.Log($"NEW ENEMY STATE {newState}");
             _currentState = newState;
             _currentState.Enter();
         }

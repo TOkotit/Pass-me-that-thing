@@ -23,7 +23,9 @@ namespace Game.Scripts.GameFiles.Entity
         
         private float _lastDamageTime = -999f;
 
+        [SyncVar]
         public Vector3 HitPosition;
+
         public event Action OnTakeDamage;
 
         private void OnCollisionEnter(Collision other)

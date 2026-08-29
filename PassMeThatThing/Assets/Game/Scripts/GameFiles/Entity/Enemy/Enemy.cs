@@ -1,16 +1,9 @@
-using DG.Tweening;
-using DI;
+
 using Entity;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
-using Game.Scripts.GameFiles.Entity.Enemy.View;
-using Game.Scripts.GameFiles.Entity.GlobalView;
-using Game.Scripts.GameFiles.Items;
-using Mirror;
-using System;
 using UnityEngine;
-using UnityEngine.AI;
 using VContainer;
-using VContainer.Unity;
+
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
@@ -59,12 +52,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ToughnessModel = new ToughnessModel();
         }
 
-        #region ServerLogic
         public override void OnStartServer()
         {
+            base.OnStartServer();
+
             stateMachine = new EnemyStateMachine();
-            
-            _damagableRegistry.Register(this);
         }
 
         protected void Update()
@@ -86,7 +78,5 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             stateMachine.CurrentState.PhysicsUpdate();
         }
-        #endregion
-
     }
 }

@@ -41,6 +41,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public ZombieKnockout ZombieKnockout { get; private set; }
         public float ElapsedAttack { get => _elapsedAttack; set => _elapsedAttack = value; }
 
+        public bool isFall;
+
         public event Action<int, int> OnEnemyHealthChanged;
         public event Action<int, int> OnEnemyToughnessChanged;
         public event Action<float, float> OnEnemyElapsedAttackChanged;
@@ -68,6 +70,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             {
                 ServerSetMaxHealth(MaxHealth, true);
                 ServerSetMaxToughness(MaxToughness, true);
+            }
+            else if (isClient)
+            {
+                ClientInitMaxHealth(MaxHealth, true);
+                ClientInitMaxToughness(MaxToughness, true);
             }
         }
 
@@ -97,8 +104,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnDeath();
             if (!isServer) return;
-            
-            stateMachine.ChangeState(ZombieDeath);
+            if (stateMachine.CurrentState != ZombieDeath)
+                stateMachine.ChangeState(ZombieDeath);
         }
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
@@ -117,7 +124,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             Debug.Log($"[Zombie] OnToughnessBreak");
 
-            stateMachine.ChangeState(ZombieKnockout);
+            if (!isServer ) return;
+            if (stateMachine.CurrentState != ZombieKnockout)
+                stateMachine.ChangeState(ZombieKnockout);
         }
 
         public void StunChanged(bool value)
@@ -134,6 +143,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private new void FixedUpdate()
         {
             base.FixedUpdate();
+        }
+
+        [Server]
+        public void SpawnDropItem()
+        {
+            EnemySpawner.EnemyDropItemSpawner.ServerSpawnObject("scrap1", transform.position);
         }
 
         //Destroy

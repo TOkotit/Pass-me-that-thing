@@ -138,7 +138,7 @@ namespace Game.Entity
             }
             else if (isClient)
             {
-                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, DamagableModel.HealthPool.MaxHealth);
+                ClientInitMaxHealth((int)_model.MaxHealth, true);
             }
         }
 

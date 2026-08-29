@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
 
@@ -10,11 +11,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 {
     public class EnemySpawner : NetworkBehaviour
     {
-        //[SerializeField] private List<Transform> zombieSpawnPositions;
+        [SerializeField] private ItemSpawner enemyDropItemSpawner;
+
         [SerializeField] private int enemyLimit;
+
         private int _enemyCount;
-        
-        //public List<Transform> ZombieSpawnPositions => zombieSpawnPositions;
 
         private List<EnemySpawnPoint> _enemySpawnPositions = new();
 
@@ -23,6 +24,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             get => _enemyCount;
             set => _enemyCount = value;
         }
+        public ItemSpawner EnemyDropItemSpawner => enemyDropItemSpawner;
 
         [Server]
         public void RegisterSpawnpoint(EnemySpawnPoint sp)
@@ -52,32 +54,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void SpawnWave(List<EnemyData> enemiesData)
         {
-            //Debug.Log($"Spawning wave of: {enemyData.Id}");
             var positions = _enemySpawnPositions;
-            
-            //if (enemyData.Id == "zombie")
-            //{
-            //    positions = zombieSpawnPositions;
-            //}
             
             for (var i = 0; i < positions.Count && i < enemiesData.Count; i++)
             {
                 SpawnEnemy(positions[i].transform.position, enemiesData[i]);
-
-                //if (_enemyCount < enemyLimit)
-                //{
-                //    SpawnEnemy(positions[i].position, enemiesData[i]);
-                //}
-                //else
-                //{
-                //    Debug.Log($"Enemy limit {_enemyCount}/{enemyLimit}");
-                //}
             }
         }
 
-        // private void Update()
-        // {
-        //     Debug.Log(_enemyCount);
-        // }
     }
 }

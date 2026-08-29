@@ -3,6 +3,7 @@ using DG.Tweening;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
+using System;
 using UnityEngine;
 using VContainer;
 
@@ -40,6 +41,16 @@ namespace Game.Scripts.GameFiles.Items
             //RpcInteractWithObject();
         }
 
+        [Server]
+        public void ServerSpawnObject(string itemId, Vector3 pos)
+        {
+            var itemToDrop = _itemPoolManager.CreateNewObject(itemId);
+            itemToDrop.transform.position = pos;
+
+            var physItem = itemToDrop.GetComponent<PhysicalItem>();
+            _physicalItemRegistry.Register(physItem);
+        }
+
 
         [ClientRpc]
         public void RpcInteractWithObject()
@@ -59,6 +70,7 @@ namespace Game.Scripts.GameFiles.Items
                 craftSound.Play();
             }
         }
+        [Obsolete]
         public void SpawnItem() //код для тестовой сцены, не работает. потом удалить
         {
             if (!_itemPoolManager || _physicalItemRegistry == null)

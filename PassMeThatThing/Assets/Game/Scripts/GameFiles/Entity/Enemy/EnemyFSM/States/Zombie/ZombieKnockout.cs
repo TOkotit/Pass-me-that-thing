@@ -18,17 +18,21 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
 
-            _zombie.RpcFall();
-            _zombie.StartCoroutine(Wait());
+            if (!_zombie.isFall)
+            {
+                _zombie.isFall = true;
+                _zombie.RpcFall();
+                _zombie.StunChanged(true);
+            }
 
-            _zombie.StunChanged(true);
+            _zombie.StartCoroutine(Wait());
         }
 
         private IEnumerator Wait()
         {
             for (var i = 0; i < 1; i++)
             {
-                yield return new WaitForSeconds(3);
+                yield return new WaitForSeconds(1f);
             }
             StateMachine.ChangeState(_zombie.ZombieWalk);
         }
@@ -47,6 +51,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Exit();
             _zombie.ServerFullToughnessRecover();
+            _zombie.isFall = false;
             _zombie.RpcStandUp();
             _zombie.StunChanged(false);
         }

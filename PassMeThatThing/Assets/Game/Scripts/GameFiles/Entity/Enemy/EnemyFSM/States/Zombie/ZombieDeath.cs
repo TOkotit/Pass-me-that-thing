@@ -17,9 +17,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Enter()
         {
             base.Enter();
-            
-            
-            _zombie.RpcFall();
+
+            if (!_zombie.isFall)
+            {
+                _zombie.isFall = true;
+                _zombie.RpcFall();
+            }
             _zombie.StartCoroutine(Wait());
         }
 
@@ -29,6 +32,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             {
                 yield return new WaitForSeconds(3);
             }
+            _zombie.SpawnDropItem();
             _zombie.RpcSelfDestroy();
         }
 
