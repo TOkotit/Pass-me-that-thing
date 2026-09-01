@@ -18,9 +18,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
 
-            if (!_zombie.isFall)
+            if (!_zombie.IsFall)
             {
-                _zombie.isFall = true;
+                _zombie.IsFall = true;
                 _zombie.RpcFall();
                 _zombie.StunChanged(true);
             }
@@ -51,7 +51,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Exit();
             _zombie.ServerFullToughnessRecover();
-            _zombie.isFall = false;
+            _zombie.IsFall = false;
             _zombie.RpcStandUp();
             _zombie.StunChanged(false);
         }

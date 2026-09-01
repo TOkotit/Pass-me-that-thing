@@ -16,13 +16,13 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
         
         private GameplayUIManager _gameplayUIManager;
         private readonly MCLocalModel _mcLocalModel;
-        private readonly EnemyZombie _enemy;
+        private readonly Enemy _enemy;
 
         public override string Id => "WindowEnemyView";
 
         public WindowEnemyViewViewModel(GameplayUIManager gameplayUIManager, 
             IObjectResolver container,
-            EnemyZombie enemy)
+            Enemy enemy)
         {
             _gameplayUIManager = gameplayUIManager;
             _mcLocalModel = container.Resolve<MCLocalModel>();

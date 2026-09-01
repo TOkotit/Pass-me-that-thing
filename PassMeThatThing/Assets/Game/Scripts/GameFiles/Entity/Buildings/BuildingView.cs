@@ -10,8 +10,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings
 
         [SerializeField] private Color damageColor = Color.red;
         [SerializeField] private Color repairColor = Color.white;
-        [SerializeField] private float flashDuration = 0.6f;
-        [SerializeField] private int flashCount = 3;
+        [SerializeField] private float flashDuration = 0.2f;
+        [SerializeField] private int flashCount = 2;
 
         private MaterialPropertyBlock propBlock;
         private Coroutine flashRoutine;

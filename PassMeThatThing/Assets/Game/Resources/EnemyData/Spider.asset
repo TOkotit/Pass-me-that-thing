@@ -16,10 +16,11 @@ MonoBehaviour:
   enemyName: Spider
   worldPrefab: {fileID: 8090700475096468142, guid: 58d0c80be7eff2e41be1e3d1e09451c4, type: 3}
   enemyImage: {fileID: 21300000, guid: f89888c2a4f561d4e92bd0dc6ccf655b, type: 3}
-  maxHealth: 10
+  maxHealth: 50
   maxToughness: 0
   speed: 8
   damage: 5
   attackCooldown: 3
+  attackSphereArea: {x: 3, y: 3, z: 3}
   chaseDistance: 9
   attackDistance: 7

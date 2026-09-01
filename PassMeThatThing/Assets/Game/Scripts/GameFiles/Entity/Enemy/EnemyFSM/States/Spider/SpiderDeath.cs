@@ -18,7 +18,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             
             if (_spider != null)
             {
-                _spider.SelfDestroy();
+                _spider.RpcSelfDestroy();
             }
         }
 

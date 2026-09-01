@@ -15,38 +15,37 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
     {
         [SerializeField] protected ZombieView enemyView;
         
+
         private EnemyData _zombieData;
-        //
+
         // private bool _hitRagdollCoroutine;
         [SyncVar(hook = nameof(OnElapsedChanged))]
         private float _elapsedAttack;
 
-        public float AttackCooldown => _zombieData.AttackCooldown;
+
+        public override EnemyView EnemyView => enemyView;
+        public ZombieView ZombieEnemyView => enemyView;
+
+        public override float AttackCooldown => _zombieData.AttackCooldown;
+        public override float ElapsedAttack { get => _elapsedAttack; set => _elapsedAttack = value; }
         public float ChaseDistance => _zombieData.ChaseDistance;
         public float AttackDistance => _zombieData.AttackDistance;
         
         public float Speed => _zombieData.Speed;
         public float Damage => _zombieData.Damage;
+        public Vector3 AttackArea => _zombieData.AttackSphereArea;
 
         public int MaxHealth => _zombieData.MaxHealth;
         public int MaxToughness => _zombieData.MaxToughness;
-        
-        
-        public ZombieView EnemyView => enemyView;
-        
+
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
         public ZombieDeath ZombieDeath { get; private set; }
         public ZombieKnockout ZombieKnockout { get; private set; }
-        public float ElapsedAttack { get => _elapsedAttack; set => _elapsedAttack = value; }
 
-        public bool isFall;
+        public bool IsFall { get; set; }
 
-        public event Action<int, int> OnEnemyHealthChanged;
-        public event Action<int, int> OnEnemyToughnessChanged;
-        public event Action<float, float> OnEnemyElapsedAttackChanged;
-        public event Action<bool> OnEnemyStunChanged;
 
         [Inject]
         private void Construct(EnemyDatabase enemyDatabase)
@@ -54,17 +53,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             _zombieData = enemyDatabase.GetEnemy("zombie");
         }
 
-        public new void Awake()
-        {
-            base.Awake();
-        }
-
-        public new void Start()
+        protected override void Start()
         {
             base.Start();
-            
-            EnemyView.Initialize();
-            EnemyView.InitUI(this);
+
+            ZombieEnemyView.Initialize();
 
             if (isServer)
             {
@@ -95,8 +88,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public void OnElapsedChanged(float oldElapsed, float newElapsed)
         {
-            if (oldElapsed != newElapsed)
-                OnEnemyElapsedAttackChanged?.Invoke(newElapsed, AttackCooldown);
+            EnemyElapsedAttackChanged(newElapsed, AttackCooldown);
         }
 
         //Damagable callbacks
@@ -111,13 +103,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
             Debug.Log($"[Zombie] OnHealthChanged {currentHealth}/{maxHealth}");
-            OnEnemyHealthChanged?.Invoke(currentHealth, maxHealth);
+            EnemyHealthChanged(currentHealth, maxHealth);
         }
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)
         {
             Debug.Log($"[Zombie] OnToughnessChanged {currentToughness}/{maxToughness}");
-            OnEnemyToughnessChanged?.Invoke(currentToughness, maxToughness);
+            EnemyToughnessChanged(currentToughness, maxToughness);
         }
 
         public override void OnToughnessBreak()
@@ -131,24 +123,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         public void StunChanged(bool value)
         {
-            OnEnemyStunChanged?.Invoke(value);
-        }
-        
-        //SM
-        private new void Update()
-        {
-            base.Update();
-        }
-
-        private new void FixedUpdate()
-        {
-            base.FixedUpdate();
-        }
-
-        [Server]
-        public void SpawnDropItem()
-        {
-            EnemySpawner.EnemyDropItemSpawner.ServerSpawnObject("scrap1", transform.position);
+            EnemyStunChanged(value);
         }
 
         //Destroy

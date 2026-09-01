@@ -170,7 +170,7 @@ namespace Game.Gameplay.View.UI
 
         //WorldSpace
 
-        public WindowEnemyViewViewModel OpenWindowEnemyView(EnemyZombie enemy)
+        public WindowEnemyViewViewModel OpenWindowEnemyView(Enemy enemy)
         {
             var viewModel = new WindowEnemyViewViewModel(this, Container, enemy);
 

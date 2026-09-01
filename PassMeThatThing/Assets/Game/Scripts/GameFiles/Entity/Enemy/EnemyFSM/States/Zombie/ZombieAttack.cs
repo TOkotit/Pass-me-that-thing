@@ -30,7 +30,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _targetDetector = enemy.TargetDetector;
             _movementController = enemy.MovementController;
             
-            _enemyView = enemy.EnemyView;
+            _enemyView = enemy.ZombieEnemyView;
         }
 
         public override void Enter()
@@ -54,7 +54,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public IEnumerator Attack()
         {
             _enemyView.EnableAttackpreview(true);
-            _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, new Vector3(5f, 5f, 5f) * 2);
+            _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _zombie.AttackArea * 2);
 
             while (_zombie.ElapsedAttack < _zombie.AttackCooldown)
             {
@@ -63,7 +63,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             }
             
             _movementController.RotateTo(_targetDetector.DetectedTarget);
-            _attackController.AttackMelee(new Vector3(5f, 5f, 5f), _zombie.Damage);
+            _attackController.AttackMelee(_zombie.AttackArea, _zombie.Damage);
 
             _zombie.ElapsedAttack = 0f;
             _enemyView.EnableAttackpreview(false);

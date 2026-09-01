@@ -10,11 +10,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 {
     public class ZombieView : EnemyView
     {
-        [Inject] private GameplayUIManager _gameplayUIManager;
-        private WindowEnemyViewViewModel _windowViewModel;
+
 
         [SerializeField] protected LayerMask groundMask;
-        [SerializeField] protected GameObject attackPreviewSphere;
+        
 
         private const string WalkKey = "Walk";
         private const string Attack1Key = "Attack1";
@@ -38,6 +37,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
         private RigAdjusterForAnimation _rigAdjusterForBackStandingUpAnimation;
         private RigAdjusterForAnimation _rigAdjusterForFrontStandingUpAnimation;
 
+        [Header("ragdoll")]
         [SerializeField] Transform _parent;
         [SerializeField] private Transform _hipsBone;
 
@@ -45,11 +45,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
         private bool IsFrontUp => Vector3.Dot(_hipsBone.up, Vector3.up) > 0;
 
-        public void InitUI(EnemyZombie enemy)
-        {
-            _windowViewModel = _gameplayUIManager.OpenWindowEnemyView(enemy);
-            
-        }
+        
 
         public void Initialize()
         {
@@ -66,10 +62,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
             // _rigAdjusterForFrontStandingUpAnimation = new RigAdjusterForAnimation(currentClips.First(clip => clip.name == FrontStandClipName), bones, this);
         }
 
-        private void OnDestroy()
-        {
-            _gameplayUIManager.CloseWindowEnemyView(_windowViewModel);
-        }
 
         public void PlayStandingUp(Action adjustAnimationEndedCallback = null, Action animationEndedCallback = null)
         {
@@ -129,17 +121,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
             _hipsBone.position = initHipsPosition;
             _hipsBone.rotation = initHipsRotation;
-        }
-
-        public void EnableAttackpreview(bool enabled)
-        {
-            attackPreviewSphere.SetActive(enabled);
-        }
-
-        public void SetAttackpreview(Vector3 pos, Vector3 size)
-        {
-            attackPreviewSphere.transform.position = pos;
-            attackPreviewSphere.transform.localScale = size;
         }
     }
 }

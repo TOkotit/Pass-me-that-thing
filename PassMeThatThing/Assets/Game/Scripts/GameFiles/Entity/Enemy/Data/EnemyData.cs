@@ -16,6 +16,7 @@ public class EnemyData : ScriptableObject
     [SerializeField] private int speed;
     [SerializeField] private int damage;
     [SerializeField] private int attackCooldown;
+    [SerializeField] private Vector3 attackSphereArea;
     [SerializeField] private int chaseDistance;
     [SerializeField] private int attackDistance;
 
@@ -30,6 +31,7 @@ public class EnemyData : ScriptableObject
     public int Speed => speed;
     public int Damage => damage;
     public int AttackCooldown => attackCooldown;
+    public Vector3 AttackSphereArea => attackSphereArea;
     public int ChaseDistance => chaseDistance;
     public int AttackDistance => attackDistance;
 

@@ -39,7 +39,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _targetDetector = enemy.TargetDetector;
             _movementController = enemy.MovementController;
             
-            // _enemyView = enemy.EnemyView;
+            _enemyView = enemy.EnemyView;
             _spider = enemy;
             
         }
@@ -96,6 +96,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public IEnumerator DashAttack()
         {
             _dashProgress = 0f;
+
+            _enemyView.EnableAttackpreview(true);
+            _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _spider.AttackArea * 2);
+
             if (_targetDetector.IsTargetVisible)
             {
                 _positionEnd = _targetDetector.DetectedTarget;
@@ -110,8 +114,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     yield return null;
                 }
             }
-            _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _spider.Damage);
-            
+            _attackController.AttackMelee(_spider.AttackArea, _spider.Damage);
+
+            _enemyView.EnableAttackpreview(false);
             StateMachine.ChangeState(_spider.SpiderKnockout);
         }
         

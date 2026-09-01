@@ -18,9 +18,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
 
-            if (!_zombie.isFall)
+            if (!_zombie.IsFall)
             {
-                _zombie.isFall = true;
+                _zombie.IsFall = true;
                 _zombie.RpcFall();
             }
             _zombie.StartCoroutine(Wait());
