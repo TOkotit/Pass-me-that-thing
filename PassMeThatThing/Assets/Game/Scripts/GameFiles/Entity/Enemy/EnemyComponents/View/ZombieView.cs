@@ -14,7 +14,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
         private WindowEnemyViewViewModel _windowViewModel;
 
         [SerializeField] protected LayerMask groundMask;
-        
+        [SerializeField] protected GameObject attackPreviewSphere;
+
         private const string WalkKey = "Walk";
         private const string Attack1Key = "Attack1";
         private const string Attack2Key = "Attack2";
@@ -128,6 +129,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
             _hipsBone.position = initHipsPosition;
             _hipsBone.rotation = initHipsRotation;
+        }
+
+        public void EnableAttackpreview(bool enabled)
+        {
+            attackPreviewSphere.SetActive(enabled);
+        }
+
+        public void SetAttackpreview(Vector3 pos, Vector3 size)
+        {
+            attackPreviewSphere.transform.position = pos;
+            attackPreviewSphere.transform.localScale = size;
         }
     }
 }

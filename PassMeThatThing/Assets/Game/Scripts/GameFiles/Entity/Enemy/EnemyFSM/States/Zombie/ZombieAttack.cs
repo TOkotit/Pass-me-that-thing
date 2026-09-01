@@ -15,7 +15,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private TargetDetector _targetDetector;
         private EnemyMovementController _movementController;
         
-        private EnemyView _enemyView;
+        private ZombieView _enemyView;
 
         private Coroutine _attackCoroutine;
         
@@ -53,6 +53,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         public IEnumerator Attack()
         {
+            _enemyView.EnableAttackpreview(true);
+            _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, new Vector3(5f, 5f, 5f) * 2);
+
             while (_zombie.ElapsedAttack < _zombie.AttackCooldown)
             {
                 _zombie.ElapsedAttack += Time.deltaTime;
@@ -60,9 +63,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             }
             
             _movementController.RotateTo(_targetDetector.DetectedTarget);
-            _attackController.AttackMelee(new Vector3(10f, 10f, 10f), _zombie.Damage);
+            _attackController.AttackMelee(new Vector3(5f, 5f, 5f), _zombie.Damage);
 
             _zombie.ElapsedAttack = 0f;
+            _enemyView.EnableAttackpreview(false);
             StateMachine.ChangeState(_zombie.ZombieChase);
         }
         

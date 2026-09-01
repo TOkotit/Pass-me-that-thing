@@ -17,10 +17,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private LayerMask _targetLayer;
 
         [Inject] private DamageSystem _damageSystem;
-        
-        [SerializeField] protected Transform attackCubeCenter;
+
+        [SerializeField] private Transform attackCubeCenter;
         [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
-        
+
+        public Transform AttackCubeCenter => attackCubeCenter;
+
         public event Action OnAttackMelee;
         
         public override void OnStartServer()
