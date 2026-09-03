@@ -60,7 +60,7 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
         [Server]
         private void GiveFruits()
         {
-            itemSpawner.ServerSpawnObject();
+            itemSpawner.ServerSpawnCurrentItem();
         }
 
         public void Interact()

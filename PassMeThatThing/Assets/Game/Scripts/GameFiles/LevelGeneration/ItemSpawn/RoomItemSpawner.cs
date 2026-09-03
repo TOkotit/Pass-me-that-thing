@@ -64,11 +64,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
             RandomUtilities.Shuffle(spawnPositions);
             for (int i = 0; i < itemsToSpawn.Count; i++)
             {
-                itemSpawner.Item = itemsToSpawn[i];
-                itemSpawner.PointToSpawn = spawnPositions[i];
-                
-                Debug.Log($"Spawning item: {itemSpawner.Item} in {room}");
-                itemSpawner.SpawnItem();
+                itemSpawner.ServerSpawnItem(itemsToSpawn[i].Id, spawnPositions[i].position);
+
+                Debug.Log($"Spawning item: {itemsToSpawn[i].Id} in {room}");
             }
             
         }

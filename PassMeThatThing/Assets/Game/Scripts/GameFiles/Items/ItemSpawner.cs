@@ -4,8 +4,10 @@ using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts.GameFiles.Items
 {
@@ -21,16 +23,15 @@ namespace Game.Scripts.GameFiles.Items
         
         [Inject] private ItemPoolManager _itemPoolManager; 
         [Inject] private PhysicalItemRegistry _physicalItemRegistry;
-        
-        
-        [Command(requiresAuthority = false)] 
-        private void CmdInteractWithObject()
+
+        public override void OnStartClient()
         {
-            ServerSpawnObject();
+            base.OnStartClient();
+            InteractableRegistry.Instance.Register(gameObject, this);
         }
 
         [Server]
-        public void ServerSpawnObject()
+        public void ServerSpawnCurrentItem()
         {
             var itemToDrop = _itemPoolManager.CreateNewObject(item.Id);
             itemToDrop.transform.position = pointToSpawn.position;
@@ -42,7 +43,7 @@ namespace Game.Scripts.GameFiles.Items
         }
 
         [Server]
-        public void ServerSpawnObject(string itemId, Vector3 pos)
+        public void ServerSpawnItem(string itemId, Vector3 pos)
         {
             var itemToDrop = _itemPoolManager.CreateNewObject(itemId);
             itemToDrop.transform.position = pos;
@@ -51,6 +52,19 @@ namespace Game.Scripts.GameFiles.Items
             _physicalItemRegistry.Register(physItem);
         }
 
+        [Server]
+        public void ServerSpawnItemsFromChanceDict(Dictionary<ItemData, float> drops, Vector3 pos)
+        {
+            foreach (var d in drops)
+            {
+                var r = Random.Range(0, 100) / 100f;
+                if (r <= d.Value)
+                {
+                    ServerSpawnItem(d.Key.Id, pos);
+                    Debug.Log($"спавн дропа - {d.Key.Id} шанс {r} <= {d.Value}");
+                }
+            }
+        }
 
         [ClientRpc]
         public void RpcInteractWithObject()
@@ -70,6 +84,7 @@ namespace Game.Scripts.GameFiles.Items
                 craftSound.Play();
             }
         }
+
         [Obsolete]
         public void SpawnItem() //код для тестовой сцены, не работает. потом удалить
         {
@@ -87,10 +102,18 @@ namespace Game.Scripts.GameFiles.Items
             if (physItem)
                 _physicalItemRegistry.Register(physItem);
         }
+
         public void Interact()
         {
             CmdInteractWithObject();
         }
+
+        [Command(requiresAuthority = false)]
+        private void CmdInteractWithObject()
+        {
+            ServerSpawnCurrentItem();
+        }
+
         public void SrbToggle()
         {
             
@@ -101,10 +124,5 @@ namespace Game.Scripts.GameFiles.Items
             
         }
 
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            InteractableRegistry.Instance.Register(gameObject, this);
-        }
     }
 }

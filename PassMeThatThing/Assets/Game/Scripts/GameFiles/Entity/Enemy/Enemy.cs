@@ -24,6 +24,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         protected EnemyStateMachine stateMachine;
 
         public virtual EnemyView EnemyView { get; }
+        public virtual EnemyData EnemyData { get; }
 
         public override DamagableModel DamagableModel => EnemyModel;
         public TargetDetector TargetDetector => targetDetector;
@@ -54,7 +55,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void SpawnDropItem()
         {
-            EnemySpawner.EnemyDropItemSpawner.ServerSpawnObject("scrap1", transform.position);
+            EnemySpawner.EnemyDropItemSpawner.ServerSpawnItemsFromChanceDict(EnemyData.Drops, transform.position);
         }
 
         public override void OnDeath()

@@ -1,3 +1,5 @@
+using AYellowpaper.SerializedCollections;
+using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -20,6 +22,9 @@ public class EnemyData : ScriptableObject
     [SerializeField] private int chaseDistance;
     [SerializeField] private int attackDistance;
 
+    [Header("Drops")]
+    [SerializeField] private SerializedDictionary<ItemData, float> drops; //item - base chance
+
 
     public string Id => id;
     public string EnemyName => enemyName;
@@ -35,5 +40,5 @@ public class EnemyData : ScriptableObject
     public int ChaseDistance => chaseDistance;
     public int AttackDistance => attackDistance;
 
-    
+    public SerializedDictionary<ItemData, float> Drops  => drops;
 }

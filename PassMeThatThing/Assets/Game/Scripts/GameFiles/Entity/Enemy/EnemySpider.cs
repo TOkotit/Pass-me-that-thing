@@ -16,6 +16,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         [SyncVar(hook = nameof(OnElapsedChanged))]
         private float _elapsedAttack;
 
+        public override EnemyData EnemyData => _spiderData;
         public override EnemyView EnemyView => enemyView;
         public SpiderView SpiderEnemyView => enemyView;
 

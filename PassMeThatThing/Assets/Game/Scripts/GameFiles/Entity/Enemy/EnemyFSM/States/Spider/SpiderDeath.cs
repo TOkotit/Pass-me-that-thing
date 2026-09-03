@@ -4,9 +4,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 {
     public class SpiderDeath : EnemyState
     {
-        
         private EnemySpider _spider;
-        
+
+        public override bool AbleToInterupt => false;
+
         public SpiderDeath(EnemySpider enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
         {
             _spider = enemy;

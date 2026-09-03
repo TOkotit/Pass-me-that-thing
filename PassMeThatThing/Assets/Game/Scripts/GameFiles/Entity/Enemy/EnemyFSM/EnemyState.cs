@@ -8,6 +8,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
     {
         protected EnemyStateMachine StateMachine;
         protected Enemy Enemy;
+
+        public virtual bool AbleToInterupt => true;
         
         public event Action OnEnter;
         public event Action OnExit;

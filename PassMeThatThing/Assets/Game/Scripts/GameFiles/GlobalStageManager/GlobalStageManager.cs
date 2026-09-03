@@ -97,10 +97,10 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 var zombieData = _enemyDatabase.GetEnemy("zombie");
                 _enemySpawner.SpawnWave(new List<EnemyData>()
                 {
-                    spiderData,
+                    //spiderData,
                     zombieData,
-                    zombieData,
-                    zombieData,
+                    //zombieData,
+                    //zombieData,
                 });
             }
 

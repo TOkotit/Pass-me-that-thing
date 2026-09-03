@@ -73,6 +73,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Exit()
         {
             base.Exit();
+            _enemyView.EnableAttackpreview(false);
         }
         
     }

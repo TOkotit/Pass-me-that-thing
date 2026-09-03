@@ -22,7 +22,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SyncVar(hook = nameof(OnElapsedChanged))]
         private float _elapsedAttack;
 
-
+        public override EnemyData EnemyData => _zombieData;
         public override EnemyView EnemyView => enemyView;
         public ZombieView ZombieEnemyView => enemyView;
 
