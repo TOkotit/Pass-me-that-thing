@@ -57,9 +57,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
                 //var rarity = GetRandomRarity(depth, graphBuilder.MaxDepth);
                 var rarity = GetRandomRarity(depth, depth+2);
 
-                var itemsForRarity = _rarityDatabase.allItems.Where(item => item.Value == rarity);
+                var itemsForRarity = _rarityDatabase.AllRarityItems.Where(item => (int)item.RarityType == rarity);
                 var randomIndex = Random.Range(0, itemsForRarity.Count());
-                itemsToSpawn.Add(itemsForRarity.ElementAt(randomIndex).Key);
+                itemsToSpawn.Add(itemsForRarity.ElementAt(randomIndex).ItemData);
             }
             RandomUtilities.Shuffle(spawnPositions);
             for (int i = 0; i < itemsToSpawn.Count; i++)
@@ -73,7 +73,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
 
         private int GetRandomRarity(int depth, int maxDepth)
         {
-            var availableRarities = _rarityDatabase.allItems.Values.Distinct().OrderBy(r => r).ToList();
+            var availableRarities = _rarityDatabase.AllRarityItems.Select(r => (int)r.RarityType).Distinct().OrderBy(r => r).ToList();
             int maxRarity = availableRarities.Max();
 
             int targetRarity = RandomUtilities.RandomWeightedByParameter(depth, maxDepth, maxRarity,

@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12bfb97aa92444a490e137585694d4ed, type: 3}
   m_Name: MainRarityDatabase
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.LevelGeneration.ItemSpawn.ItemRarityDatabase
-  allItems:
+  allRarityItems:
+  - {fileID: 11400000, guid: 952c7747f289ae04eb1f610ffbe1dc5d, type: 2}
+  - {fileID: 11400000, guid: 4d0df088b938dca4c9cc54f36dcaf9cb, type: 2}
+  - {fileID: 11400000, guid: 506b1ca4db085cf4ab0f237571d367e8, type: 2}
+  baseChancesToRarity:
     _serializedList:
-    - Key: {fileID: 11400000, guid: 7818e0f1a66926a448d71ecf86aed54f, type: 2}
-      Value: 1
-    - Key: {fileID: 11400000, guid: 704a0688953de4446b1c4140c40243b1, type: 2}
-      Value: 2
-    - Key: {fileID: 11400000, guid: 201f3980e4f0bfa479b34af28abdffb6, type: 2}
-      Value: 3
+    - Key: 1
+      Value: 0.4
+    - Key: 2
+      Value: 0.3
+    - Key: 3
+      Value: 0.2
+    - Key: 4
+      Value: 0.1

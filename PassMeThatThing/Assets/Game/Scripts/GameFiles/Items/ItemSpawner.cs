@@ -1,4 +1,5 @@
 using Ami.BroAudio;
+using Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using DG.Tweening;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -53,15 +54,15 @@ namespace Game.Scripts.GameFiles.Items
         }
 
         [Server]
-        public void ServerSpawnItemsFromChanceDict(Dictionary<ItemData, float> drops, Vector3 pos)
+        public void ServerSpawnItemsFromChanceDict(Dictionary<ItemRarityData, float> drops, Vector3 pos)
         {
             foreach (var d in drops)
             {
                 var r = Random.Range(0, 100) / 100f;
                 if (r <= d.Value)
                 {
-                    ServerSpawnItem(d.Key.Id, pos);
-                    Debug.Log($"спавн дропа - {d.Key.Id} шанс {r} <= {d.Value}");
+                    ServerSpawnItem(d.Key.ItemData.Id, pos);
+                    Debug.Log($"спавн дропа - {d.Key.ItemData.Id} шанс {r} <= {d.Value}");
                 }
             }
         }
