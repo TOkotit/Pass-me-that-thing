@@ -54,11 +54,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   itemDatabase: {fileID: 11400000, guid: b22ce1c9f341e3643a3fe569948c0115, type: 2}
+  itemRarityDatabase: {fileID: 11400000, guid: b951381ed03bdea4f91c17450eef30ed, type: 2}
   gameEventsDatabase: {fileID: 11400000, guid: 2f73b15b6609d4f4097d27cb381f2dc3, type: 2}
   enemyDatabase: {fileID: 11400000, guid: 2f00ea7190d56db4eb38dc6a6f4b1b88, type: 2}
   buildingDatabase: {fileID: 11400000, guid: a9bdf24b4b1b4a34bad785d141fcd614, type: 2}
   turretDatabase: {fileID: 11400000, guid: a9fe5466967b7fb4cb4c53733b42b957, type: 2}
-  rarityDatabase: {fileID: 11400000, guid: 4240fdceda74348488bff7534c5379d5, type: 2}
   resourceDatabase: {fileID: 11400000, guid: af8573786b8cd7841ada4184ea297353, type: 2}
   recipeDatabase: {fileID: 11400000, guid: 4398a8f71f825264c9712ad5f8a0b785, type: 2}
   eventManager: {fileID: 0}
@@ -70,3 +70,4 @@ MonoBehaviour:
   craftManager: {fileID: 0}
   globalInventoryManager: {fileID: 0}
   particlePoolManager: {fileID: 0}
+  levelOrchestrator: {fileID: 0}

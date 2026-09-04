@@ -21,6 +21,7 @@ using UnityEngine.Serialization;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration;
 using Assets.Game.Scripts.GameFiles.UIWorld;
+using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 
 namespace DI
 {
@@ -30,6 +31,7 @@ namespace DI
         
         [Header("Databases")]
         [SerializeField] private ItemDatabase itemDatabase;
+        [SerializeField] private ItemRarityDatabase itemRarityDatabase;
         [SerializeField] private GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
         [SerializeField] private BuildingsDatabase buildingDatabase;
@@ -57,6 +59,7 @@ namespace DI
             
             //databases
             builder.RegisterInstance(itemDatabase);
+            builder.RegisterInstance(itemRarityDatabase);
             builder.RegisterInstance(gameEventsDatabase);
             builder.RegisterInstance(enemyDatabase);
             builder.RegisterInstance(buildingDatabase);

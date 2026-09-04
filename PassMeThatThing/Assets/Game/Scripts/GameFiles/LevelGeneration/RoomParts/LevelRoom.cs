@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
+using Game.Scripts.Utils;
 using Mirror;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -15,14 +17,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] private RoomPlateData[] plates;
         [SerializeField] private int totalDoors;
         [SerializeField] private List<NetworkObjectSpot> networkObjects;
+        [SerializeField] private List<NetworkRarityItemSpot> networkRarityItems;
         [SerializeField] private NavMeshSurface navMeshSurface;
+
+        [Header("Item Spawn")]
+        [SerializeField] private float spawnRate = 0.7f;
+        [SerializeField] private float spawnGrowthRate = 0.6f;
+
+        private int _maxItemCount;
+        private float[] _weights;
+        private float _totalWeight;
 
         public RoomType RoomType => roomType;
         public int TotalDoors => totalDoors;
         public RoomPlateData[] Plates => plates;
         public List<NetworkObjectSpot> NetworkObjects => networkObjects;
         public NavMeshSurface NavMeshSurface => navMeshSurface;
-        
+        public List<NetworkRarityItemSpot> NetworkRarityItems  => networkRarityItems;
+
         public void Awake()
         {
             ReparentToLevelContainer();
@@ -45,7 +57,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             
             var childNetworkObjects = GetComponentsInChildren<NetworkObjectSpot>();
             networkObjects = new List<NetworkObjectSpot>(childNetworkObjects);
-            
+
+            var childNetworkRarityItems = GetComponentsInChildren<NetworkRarityItemSpot>();
+            networkRarityItems = new List<NetworkRarityItemSpot>(childNetworkRarityItems);
+
             navMeshSurface = GetComponentInChildren<NavMeshSurface>(true);
             if (navMeshSurface == null)
             {
@@ -90,5 +105,31 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             return (RoomRotation)steps;
         }
 
+        //item spawn
+        public void CacheItemCountWeights()
+        {
+            _maxItemCount = networkRarityItems.Count;
+
+            _weights = new float[_maxItemCount + 1];
+            _weights[0] = spawnRate;
+            for (int i = 1; i <= _maxItemCount; i++)
+            {
+                _weights[i] = _weights[i - 1]; // * spawnGrowthRate;
+            }
+            _totalWeight = 0f;
+            foreach (float w in _weights)
+            {
+                _totalWeight += w;
+            }
+
+            Debug.Log("Room CacheItemCountWeights" + string.Join(" ", _weights));
+        }
+
+        public int GetRandomItemCount()
+        {
+            if (_maxItemCount == 0) return 0;
+
+            return RandomUtilities.RandomWeightedIndex(_weights, _totalWeight);
+        }
     }
 }

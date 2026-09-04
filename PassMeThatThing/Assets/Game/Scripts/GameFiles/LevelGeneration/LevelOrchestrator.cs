@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
+using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
+using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
@@ -32,10 +37,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] private RoomDatabase roomDatabase;
         [SerializeField] public LevelGrid levelGrid;
         [SerializeField] public NetworkObjectsOrchestrator  networkObjectsOrchestrator;
+        [SerializeField] public NetworkRarityItemsOrchestrator networkRarityItemsOrchestrator;
         [SerializeField] private Transform levelContainer;
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private GameObject wallWithPassagePrefab;
-        
+
         public static Transform ActiveLevelContainer { get; private set; }
 
         private void Awake()
@@ -51,6 +57,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> _usedConnections = new();
         private List<GameObject> _placedWalls = new();
         public List<NetworkObjectSpot> AllLevelSpots { get; private set; } = new();
+        //TODO ЗАМЕНИТЬ МОНОБЕХ LEVELROOM НА ROOM ID
+        public Dictionary<LevelRoom, List<NetworkRarityItemSpot>> AllLevelRarityItemSpots { get; private set; } = new();
 
         // Read-only доступ для LevelGrid и прочих потребителей: количество, типы,
         // кластеры и расположение комнат — единый источник истины, без дублирования.
@@ -66,6 +74,16 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             public Vector3Int Cell;
             public PathNode Parent;
             public int Depth;
+        }
+
+        [Inject]
+        private void Construct(ItemRarityDatabase rarityDatabase,
+            ItemPoolManager itemPoolManager,
+            PhysicalItemRegistry physicalItemRegistry)
+        {
+            networkRarityItemsOrchestrator.Init(rarityDatabase,
+                itemPoolManager,
+                physicalItemRegistry);
         }
         
         public void GeneratePhysicalLevel(List<RoomCluster> clusters, int seed)
@@ -98,6 +116,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             BlockUnusedExits();
             PlaceUsedExitPassages();
             networkObjectsOrchestrator.SpawnNetworkObjects(AllLevelSpots);
+            networkRarityItemsOrchestrator.SpawnNetworkRarityItem(AllLevelRarityItemSpots);
             BakeNavMeshes();
             Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_allPlacedRooms.Count}.");
         }
@@ -148,6 +167,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             _clusters.Clear();
             _usedConnections.Clear();
             AllLevelSpots.Clear();
+            AllLevelRarityItemSpots.Clear();
             _placedWalls.Clear();
             if (!levelContainer) return;
             for (var i = levelContainer.childCount - 1; i >= 0; i--)
@@ -548,7 +568,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var instanceGo = Instantiate(entry.PrefabGameObject, worldPos, rotQuat, levelContainer);
             var spawnedRoomComponent = instanceGo.GetComponent<LevelRoom>();
-                AllLevelSpots.AddRange(spawnedRoomComponent.NetworkObjects);
+
+            AllLevelSpots.AddRange(spawnedRoomComponent.NetworkObjects);
+            //TODO ЗАМЕНИТЬ КОМПОНЕНТ НА ROOM ID
+            AllLevelRarityItemSpots[spawnedRoomComponent] = spawnedRoomComponent.NetworkRarityItems;
             
             var data = new PlacedRoomDataCluster 
             { 
