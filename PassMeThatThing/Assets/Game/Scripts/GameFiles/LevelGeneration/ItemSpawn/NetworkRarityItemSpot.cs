@@ -9,13 +9,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
     {
         [SerializeField] private Vector3 previewGizmosSize = new Vector3(1f,1f,1f);
 
-        [Header("специальные настройки (в процессе работы)")]
+        [Header("шанс на который не влияет общее кол-во предметов в комнате")]
         [SerializeField] private bool useConstSpawnChance;
         [SerializeField] private float constSpawnChance;
 
+        [Header("Берутся предметы только из этого типа редкости")]
         [SerializeField] private bool useConstRarityType;
         [SerializeField] private ItemRarityType constRarityType;
 
+        [Header("Берется только этот предмет")]
         [SerializeField] private bool useConstItem;
         [SerializeField] private ItemRarityData constItem;
 

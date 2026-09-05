@@ -13,21 +13,23 @@ namespace Game.Scripts.GameFiles.Items
 
         public Dictionary<string, NetworkItem> PoolDict => _poolDict;
 
-        public void Start()
+        public override void OnStartClient()
         {
             InitializePool();
         }
 
-        
+        //Теперь префабы предметов регистрируются как все объекты 
+        //через NetworkManager
         public void InitializePool()
         {
             foreach (var item in database.allItems)
             {
-                NetworkClient.RegisterPrefab(item.WorldPrefab);
+                //NetworkClient.RegisterPrefab(item.WorldPrefab);
                 
                 if (isServer)
                     _poolDict = new Dictionary<string, NetworkItem>();
             }
+           //Debug.Log("ITEMPOOL Network objects registered");
         }
         
         [Server]
