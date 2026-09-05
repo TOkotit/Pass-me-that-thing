@@ -29,7 +29,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     {
         public Vector3Int GlobalPosition;
         public Vector3Int Direction;
-        public RoomsConnectionTypes Type;
     }
     
     public class LevelOrchestrator : MonoBehaviour
@@ -60,8 +59,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         //TODO ЗАМЕНИТЬ МОНОБЕХ LEVELROOM НА ROOM ID
         public Dictionary<LevelRoom, List<NetworkRarityItemSpot>> AllLevelRarityItemSpots { get; private set; } = new();
 
-        // Read-only доступ для LevelGrid и прочих потребителей: количество, типы,
-        // кластеры и расположение комнат — единый источник истины, без дублирования.
         public IReadOnlyList<PlacedRoomDataCluster> AllPlacedRooms => _allPlacedRooms;
         public IReadOnlyList<RoomCluster> Clusters => _clusters;
         private static readonly Vector3Int[] SearchDirections = {
@@ -201,11 +198,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var success = true;
                 foreach (var roomNode in remainingRooms)
                 {
-                    if (!TryPlaceRoomInCluster(roomNode, placedCoreRooms, coreCluster))
-                    {
-                        success = false;
-                        break;
-                    }
+                    if (TryPlaceRoomInCluster(roomNode, placedCoreRooms, coreCluster)) continue;
+                    success = false;
+                    break;
                 }
 
                 if (success && ValidateClusterIntegrity(placedCoreRooms))
@@ -332,7 +327,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         if (!match.HasValue) continue;
 
                         var targetCell = exit.Conn.GlobalPosition + exit.Conn.Direction;
-                        var origin = targetCell - match.Value.LocalPosition;
+                        var origin = targetCell - match.Value;
 
                         if (!RoomCollisionValidator.IsPlacementValid(levelGrid, entry, rot, origin)) continue;
 
@@ -354,6 +349,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             var allFreeConnections = clusterRooms.SelectMany(r => r.FreeConnections).ToList();
 
+            if (allFreeConnections.Count < 2)
+            {
+                return false;
+            }
+
+            var validConnectionsCount = 0;
+
             foreach (var connection in allFreeConnections)
             {
                 var targetCell = connection.GlobalPosition + connection.Direction;
@@ -361,11 +363,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (!IsCellAWell(targetCell))
                 {
-                    return true;
+                    validConnectionsCount++;
                 }
             }
 
-            return false;
+            return validConnectionsCount >= 2;
         }
 
         private bool IsCellAWell(Vector3Int emptyCellPos)
@@ -437,7 +439,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                             if (!match.HasValue) continue;
                             var targetCell = parentConn.GlobalPosition + parentConn.Direction;
-                            var origin = targetCell - match.Value.LocalPosition;
+                            var origin = targetCell - match.Value;
 
                             if (!RoomCollisionValidator.IsPlacementValid(levelGrid, entry, rot, origin)) continue;
                             if (IsSpaceIsolatedFromOtherClusters(origin, entry, rot, otherClustersCells, 1))
@@ -589,10 +591,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var globalPos = origin + plate.LocalPosition;
                 var doorDirs = plate.Doors.Select(d => d.GlobalDirection).ToList();
-                // Раньше тут был entry.RoomComponent.GetInstanceID() — это ID префаба,
-                // общий для всех комнат одного типа. Из-за этого миникарта не рисовала
-                // стену между двумя соседними комнатами одного типа (isSameRoom = true).
-                // Берём ID именно заспавненного инстанса.
                 levelGrid.SetCellState(globalPos, true, doorDirs, spawnedRoomComponent.GetInstanceID(), spawnedRoomComponent.RoomType);
 
                 data.OccupiedCells.Add(globalPos);
@@ -603,7 +601,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     { 
                         GlobalPosition = globalPos, 
                         Direction = door.GlobalDirection, 
-                        Type = door.Type 
                     });
                 }
             }
@@ -638,44 +635,235 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         }
 
 
-        private (Vector3Int LocalPosition, RoomsConnectionTypes Type)? FindMatchingConnection(VirtualPlateData[] plates, ConnectionPointNew parentConn)
+        private Vector3Int ? FindMatchingConnection(VirtualPlateData[] plates, ConnectionPointNew parentConn)
         {
             var targetDirection = -parentConn.Direction;
             foreach (var plate in plates)
             {
-                foreach (var door in plate.Doors)
-                {
-                    if (door.GlobalDirection == targetDirection && door.Type == parentConn.Type)
-                    {
-                        return (plate.LocalPosition, door.Type);
-                    }
-                }
+                if (plate.Doors.Any(door => door.GlobalDirection == targetDirection))
+                    return plate.LocalPosition;
             }
             return null;
         }
 
+        
+        private List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> GetFreeExits(Func<RoomCluster, bool> clusterFilter = null)
+        {
+            return _allPlacedRooms
+                .Where(r => r.RoomComponent != null &&
+                            r.RoomComponent.RoomType is not (RoomType.CommandCenter or RoomType.RecoveryHangar))
+                .Where(r => clusterFilter == null || clusterFilter(r.Cluster))
+                .SelectMany(r => r.FreeConnections.Select(c => (Room: r, Conn: c)))
+                .ToList();
+        }
 
         private void ConnectAllFreeExits()
         {
-            var allFreeConnections = new List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)>();
-            foreach (var roomData in _allPlacedRooms)
-            {
-                if (roomData.RoomComponent.RoomType is RoomType.CommandCenter or RoomType.RecoveryHangar)
-                    continue;
-
-                allFreeConnections.AddRange(roomData.FreeConnections.Select(conn => (roomData, conn)));
-            }
-
             var clusterLinks = new Dictionary<RoomCluster, HashSet<RoomCluster>>();
 
-            ConnectAdjacentDoorsGlobally(allFreeConnections, clusterLinks);
+            ConnectAdjacentDoorsGlobally(GetFreeExits(), clusterLinks);
 
             var tunnelPrefabs = roomDatabase.GetSuitableRooms(RoomType.TechnicalTunnels, 1, false);
             if (tunnelPrefabs == null || tunnelPrefabs.Count == 0) return;
 
-            ConnectFreeExitPairs(allFreeConnections, tunnelPrefabs, clusterLinks, preferUnlinked: true);
-            ConnectFreeExitPairs(allFreeConnections, tunnelPrefabs, clusterLinks, preferUnlinked: false);
+            bool connectionsAdded;
+            var currentMaxDepth = 2;
+            var absoluteMaxDepth = 14;
+
+            do
+            {
+                connectionsAdded = false;
+                var currentExits = GetFreeExits();
+                var freeExitsBefore = currentExits.Count;
+
+                ConnectFreeExitPairs(currentExits, tunnelPrefabs, clusterLinks, currentMaxDepth);
+
+                var freeExitsAfter = GetFreeExits().Count;
+                if (freeExitsAfter < freeExitsBefore)
+                {
+                    connectionsAdded = true;
+                    currentMaxDepth = 2; 
+                }
+                else
+                {
+                    currentMaxDepth++;
+                    if (currentMaxDepth <= absoluteMaxDepth)
+                    {
+                        connectionsAdded = true;
+                    }
+                }
+            }
+            while (connectionsAdded);
+
             EnsureAllClustersConnected(tunnelPrefabs, clusterLinks);
+        }
+
+        private bool TryLinkExitToTargets(
+            (PlacedRoomDataCluster Room, ConnectionPointNew Conn) startExit,
+            List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> candidateTargets,
+            List<RoomDataEntry> tunnelPrefabs,
+            Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks,
+            int maxPathLength = 14)
+        {
+            var targetDict = candidateTargets
+                .Where(x => x.Room.Cluster != startExit.Room.Cluster)
+                .GroupBy(x => x.Conn.GlobalPosition + x.Conn.Direction)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            if (targetDict.Count == 0) return false;
+
+            var startCell = startExit.Conn.GlobalPosition + startExit.Conn.Direction;
+            if (levelGrid.IsCellOccupied(startCell) && !targetDict.ContainsKey(startCell)) return false;
+
+            var queue = new Queue<PathNode>();
+            var visited = new HashSet<Vector3Int>();
+            queue.Enqueue(new PathNode { Cell = startCell, Parent = null, Depth = 1 });
+            visited.Add(startCell);
+
+            PathNode endNode = null;
+            (PlacedRoomDataCluster Room, ConnectionPointNew Conn)? foundTarget = null;
+
+            while (queue.Count > 0)
+            {
+                var curr = queue.Dequeue();
+
+                if (targetDict.TryGetValue(curr.Cell, out var target))
+                {
+                    endNode = curr;
+                    foundTarget = target;
+                    break;
+                }
+
+                if (curr.Depth >= maxPathLength) continue;
+
+                foreach (var dir in SearchDirections)
+                {
+                    var nextCell = curr.Cell + dir;
+                    if (visited.Contains(nextCell)) continue;
+
+                    if (levelGrid.IsCellOccupied(nextCell))
+                    {
+                        if (!targetDict.ContainsKey(nextCell))
+                        {
+                            continue;
+                        }
+                    }
+
+                    visited.Add(nextCell);
+                    queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
+                }
+            }
+
+            if (endNode == null || !foundTarget.HasValue) return false;
+
+            var path = new List<Vector3Int>();
+            var node = endNode;
+            while (node != null)
+            {
+                path.Add(node.Cell);
+                node = node.Parent;
+            }
+            path.Reverse();
+
+            if (path.Count > maxPathLength) return false;
+
+            var targetRoom = foundTarget.Value.Room;
+            var targetConn = foundTarget.Value.Conn;
+
+            if (!TryPlaceTunnelsAlongPath(path, tunnelPrefabs, startExit.Room, startExit.Conn, targetConn))
+                return false;
+
+            startExit.Room.FreeConnections.Remove(startExit.Conn);
+            targetRoom.FreeConnections.Remove(targetConn);
+            _usedConnections.Add((startExit.Room, startExit.Conn));
+            _usedConnections.Add((targetRoom, targetConn));
+
+            RegisterClusterLink(clusterLinks, startExit.Room.Cluster, targetRoom.Cluster);
+
+            return true;
+        }
+
+        private bool TryConnectFirstAvailable(
+            List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> ownExits,
+            List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> targets,
+            List<RoomDataEntry> tunnelPrefabs,
+            Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+        {
+            if (targets.Count == 0) return false;
+
+            foreach (var startExit in ownExits)
+            {
+                if (TryLinkExitToTargets(startExit, targets, tunnelPrefabs, clusterLinks))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void ConnectClustersToCore(
+            RoomCluster coreCluster,
+            List<RoomDataEntry> tunnelPrefabs,
+            Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+        {
+            var otherClusters = _allPlacedRooms
+                .Select(r => r.Cluster)
+                .Distinct()
+                .Where(c => c != coreCluster)
+                .ToList();
+
+            foreach (var cluster in otherClusters)
+            {
+                if (clusterLinks.TryGetValue(coreCluster, out var coreLinks) && coreLinks.Contains(cluster))
+                    continue;
+
+                var ownExits = GetFreeExits(c => c == cluster).OrderBy(_ => _random.Next()).ToList();
+                var coreExits = GetFreeExits(c => c == coreCluster);
+
+                if (!TryConnectFirstAvailable(ownExits, coreExits, tunnelPrefabs, clusterLinks))
+                {
+                    Debug.LogWarning("[GENERATOR] Не удалось напрямую соединить кластер с ядром (не хватило свободных выходов/пути) — попробуем через резервную связь.");
+                }
+            }
+        }
+
+        private void EnsureRedundantLinks(
+            RoomCluster coreCluster,
+            List<RoomDataEntry> tunnelPrefabs,
+            Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+        {
+            var otherClusters = _allPlacedRooms
+                .Select(r => r.Cluster)
+                .Distinct()
+                .Where(c => c != coreCluster)
+                .ToList();
+
+            foreach (var cluster in otherClusters)
+            {
+                var linkedTo = clusterLinks.TryGetValue(cluster, out var linked) ? linked : new HashSet<RoomCluster>();
+                if (linkedTo.Count >= 2) continue;
+
+                var ownExits = GetFreeExits(c => c == cluster).OrderBy(_ => _random.Next()).ToList();
+                if (ownExits.Count == 0)
+                {
+                    Debug.LogWarning("[GENERATOR] У кластера не осталось свободных выходов для резервной связи.");
+                    continue;
+                }
+
+                clusterLinks.TryGetValue(coreCluster, out var coreLinks);
+                var otherSpokes = GetFreeExits(c =>
+                    c != cluster && c != coreCluster &&
+                    !linkedTo.Contains(c) &&
+                    coreLinks != null && coreLinks.Contains(c));
+
+                if (TryConnectFirstAvailable(ownExits, otherSpokes, tunnelPrefabs, clusterLinks))
+                    continue;
+
+                var anyOther = GetFreeExits(c => c != cluster && !linkedTo.Contains(c));
+                if (!TryConnectFirstAvailable(ownExits, anyOther, tunnelPrefabs, clusterLinks))
+                {
+                    Debug.LogWarning("[GENERATOR] Не удалось дать кластеру вторую (резервную) связь — у него может остаться только один путь к ядру.");
+                }
+            }
         }
         
         private void ConnectAdjacentDoorsGlobally(
@@ -716,7 +904,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             List<(PlacedRoomDataCluster Room, ConnectionPointNew Conn)> allFreeConnections,
             List<RoomDataEntry> tunnelPrefabs,
             Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks,
-            bool preferUnlinked)
+            int maxPathLength)
         {
             var i = 0;
             while (i < allFreeConnections.Count)
@@ -724,12 +912,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var startData = allFreeConnections[i];
                 var startCluster = startData.Room.Cluster;
 
-                var pool = allFreeConnections.Where(x => x.Room.Cluster != startCluster);
-
-                if (preferUnlinked)
-                {
-                    pool = pool.Where(x => !(clusterLinks.TryGetValue(startCluster, out var linked) && linked.Contains(x.Room.Cluster)));
-                }
+                var pool = allFreeConnections.Where(x => 
+                    x.Room.Cluster != startCluster && 
+                    !(clusterLinks.TryGetValue(startCluster, out var linked) && linked.Contains(x.Room.Cluster))
+                );
 
                 var targetDict = pool
                     .GroupBy(x => x.Conn.GlobalPosition + x.Conn.Direction)
@@ -769,15 +955,21 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         break;
                     }
 
-                    if (curr.Depth >= 10) continue;
+                    if (curr.Depth >= maxPathLength) continue;
 
                     foreach (var dir in SearchDirections)
                     {
                         var nextCell = curr.Cell + dir;
                         if (visited.Contains(nextCell)) continue;
-        
-                        if (levelGrid.IsCellOccupied(nextCell)) continue; 
-        
+
+                        if (levelGrid.IsCellOccupied(nextCell))
+                        {
+                            if (!targetDict.ContainsKey(nextCell))
+                            {
+                                continue;
+                            }
+                        }
+
                         visited.Add(nextCell);
                         queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
                     }
@@ -796,7 +988,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     }
                     path.Reverse();
 
-                    if (path.Count <= 14)
+                    if (path.Count <= maxPathLength)
                     {
                         var targetRoom = foundTarget.Value.Room;
                         var targetConn = foundTarget.Value.Conn;
@@ -806,7 +998,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             RegisterClusterLink(clusterLinks, startCluster, targetRoom.Cluster);
 
                             allFreeConnections.Remove(foundTarget.Value);
-                            allFreeConnections.Remove(startData); // Безопасное удаление по ссылке
+                            allFreeConnections.Remove(startData);
                             
                             startData.Room.FreeConnections.Remove(startData.Conn);
                             targetRoom.FreeConnections.Remove(targetConn);
@@ -944,6 +1136,40 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var coreCluster = commandCenterRoom.Cluster;
             var allClusters = _allPlacedRooms.Select(r => r.Cluster).Distinct().ToList();
 
+            var reachable = ComputeReachableClusters(coreCluster, clusterLinks);
+            var isolatedClusters = allClusters.Where(c => c != coreCluster && !reachable.Contains(c)).ToList();
+
+            foreach (var isolatedCluster in isolatedClusters)
+            {
+                if (reachable.Contains(isolatedCluster)) continue;
+
+                var ownExits = GetFreeExits(c => c == isolatedCluster);
+                if (ownExits.Count == 0)
+                {
+                    Debug.LogWarning("[GENERATOR] The isolated cluster had no free ports left\u2014connection to the network failed.");
+                    continue;
+                }
+
+                var reachableExits = GetFreeExits(c => reachable.Contains(c));
+                if (reachableExits.Count == 0)
+                {
+                    Debug.LogWarning("[GENERATOR] The connected part of the network has no free ports left\u2014there is nowhere to extend the tunnel to.");
+                    continue;
+                }
+
+                if (TryConnectFirstAvailable(ownExits, reachableExits, tunnelPrefabs, clusterLinks))
+                {
+                    reachable = ComputeReachableClusters(coreCluster, clusterLinks);
+                }
+                else
+                {
+                    Debug.LogWarning("[GENERATOR] Failed to forcibly connect the isolated cluster to the network.");
+                }
+            }
+        }
+
+        private HashSet<RoomCluster> ComputeReachableClusters(RoomCluster coreCluster, Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks)
+        {
             var reachable = new HashSet<RoomCluster> { coreCluster };
             var bfsQueue = new Queue<RoomCluster>();
             bfsQueue.Enqueue(coreCluster);
@@ -962,204 +1188,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
             }
 
-            var isolatedClusters = allClusters.Where(c => c != coreCluster && !reachable.Contains(c)).ToList();
-
-            foreach (var isolatedCluster in isolatedClusters)
-            {
-                var ownExits = _allPlacedRooms
-                    .Where(r => r.Cluster == isolatedCluster)
-                    .SelectMany(r => r.FreeConnections.Select(c => (Room: r, Conn: c)))
-                    .ToList();
-
-                if (ownExits.Count == 0)
-                {
-                    Debug.LogWarning("[GENERATOR] The isolated cluster had no free ports left—connection to the network failed.");
-                    continue;
-                }
-
-                var reachableExits = _allPlacedRooms
-                    .Where(r => reachable.Contains(r.Cluster))
-                    .SelectMany(r => r.FreeConnections.Select(c => (Room: r, Conn: c)))
-                    .ToList();
-
-                if (reachableExits.Count == 0)
-                {
-                    Debug.LogWarning("[GENERATOR] The connected part of the network has no free ports left—there is nowhere to extend the tunnel to.\n\n");
-                    continue;
-                }
-
-                var connected = false;
-
-                foreach (var startExit in ownExits)
-                {
-                    var targetDict = reachableExits
-                        .GroupBy(x => x.Conn.GlobalPosition + x.Conn.Direction)
-                        .ToDictionary(g => g.Key, g => g.First());
-
-                    var startCell = startExit.Conn.GlobalPosition + startExit.Conn.Direction;
-                    if (levelGrid.IsCellOccupied(startCell) && !targetDict.ContainsKey(startCell)) continue;
-
-                    var queue = new Queue<PathNode>();
-                    var visited = new HashSet<Vector3Int>();
-                    queue.Enqueue(new PathNode { Cell = startCell, Parent = null, Depth = 1 });
-                    visited.Add(startCell);
-
-                    PathNode endNode = null;
-                    (PlacedRoomDataCluster Room, ConnectionPointNew Conn)? foundTarget = null;
-
-                    while (queue.Count > 0)
-                    {
-                        var curr = queue.Dequeue();
-
-                        if (targetDict.TryGetValue(curr.Cell, out var target))
-                        {
-                            endNode = curr;
-                            foundTarget = target;
-                            break;
-                        }
-
-                        if (curr.Depth >= 16) continue;
-
-                        foreach (var dir in SearchDirections)
-                        {
-                            var nextCell = curr.Cell + dir;
-                            if (!visited.Contains(nextCell))
-                            {
-                                if (!levelGrid.IsCellOccupied(nextCell) || targetDict.ContainsKey(nextCell))
-                                {
-                                    visited.Add(nextCell);
-                                    queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
-                                }
-                            }
-                        }
-                    }
-
-                    if (endNode == null || !foundTarget.HasValue) continue;
-
-                    var path = new List<Vector3Int>();
-                    var node = endNode;
-                    while (node != null)
-                    {
-                        path.Add(node.Cell);
-                        node = node.Parent;
-                    }
-                    path.Reverse();
-
-                    PlaceTunnelsAlongPath(path, tunnelPrefabs, startExit.Room, startExit.Conn, foundTarget.Value.Conn);
-
-                    startExit.Room.FreeConnections.Remove(startExit.Conn);
-                    foundTarget.Value.Room.FreeConnections.Remove(foundTarget.Value.Conn);
-
-                    _usedConnections.Add((startExit.Room, startExit.Conn));
-                    _usedConnections.Add((foundTarget.Value.Room, foundTarget.Value.Conn));
-
-                    RegisterClusterLink(clusterLinks, isolatedCluster, foundTarget.Value.Room.Cluster);
-                    reachable.Add(isolatedCluster);
-                    connected = true;
-                    break;
-                }
-
-                if (!connected)
-                {
-                    Debug.LogWarning("[GENERATOR] Failed to forcibly connect the isolated cluster to the network.");
-                }
-            }
-        }
-        
-                private void PlaceTunnelsAlongPath(List<Vector3Int> path, List<RoomDataEntry> tunnelPrefabs, PlacedRoomDataCluster ownerData, ConnectionPointNew startConn, ConnectionPointNew endConn)
-        {
-            var sortedPrefabs = tunnelPrefabs
-                .OrderByDescending(p => RoomRotationHelper.GetRotatedPlates(p, RoomRotation.Deg0).Length)
-                .ThenBy(p => p.PrefabGameObject.name)
-                .ToList();
-
-            var i = 0;
-            while (i < path.Count)
-            {
-                var cell = path[i];
-                if (levelGrid.IsCellOccupied(cell)) 
-                {
-                    i++;
-                    continue; 
-                }
-
-                var placed = false;
-                var prevCell = i == 0 ? startConn.GlobalPosition : path[i - 1];
-
-                foreach (var enrty in sortedPrefabs)
-                {
-                    for (var r = 0; r < 4; r++)
-                    {
-                        var rot = (RoomRotation)r;
-                        var plates = RoomRotationHelper.GetRotatedPlates(enrty, rot);
-                        var prefabSize = plates.Length;
-
-                        if (i + prefabSize > path.Count) continue;
-
-                        var matchPath = true;
-                        var hasPrevDoor = false;
-                        var hasNextDoor = false;
-                        
-                        var expectedPathCells = new HashSet<Vector3Int>();
-                        for (var j = 0; j < prefabSize; j++)
-                        {
-                            expectedPathCells.Add(path[i + j]);
-                        }
-
-                        var nextCellAfterPrefab = (i + prefabSize == path.Count) ? endConn.GlobalPosition : path[i + prefabSize];
-                        var lastPrefabCell = path[i + prefabSize - 1];
-
-                        var actualPrefabCells = new HashSet<Vector3Int>();
-
-                        foreach (var p in plates)
-                        {
-                            var globalPos = cell + p.LocalPosition;
-                            actualPrefabCells.Add(globalPos);
-
-                            if (globalPos == cell)
-                            {
-                                var dirToPrev = prevCell - cell;
-                                if (p.Doors.Any(d => d.GlobalDirection == dirToPrev))
-                                {
-                                    hasPrevDoor = true;
-                                }
-                            }
-
-                            if (globalPos == lastPrefabCell)
-                            {
-                                var dirToNext = nextCellAfterPrefab - lastPrefabCell;
-                                if (p.Doors.Any(d => d.GlobalDirection == dirToNext))
-                                {
-                                    hasNextDoor = true;
-                                }
-                            }
-                        }
-
-                        if (!expectedPathCells.SetEquals(actualPrefabCells))
-                        {
-                            matchPath = false;
-                        }
-
-                        if (matchPath && hasPrevDoor && hasNextDoor && RoomCollisionValidator.IsPlacementValid(levelGrid, enrty, rot, cell))
-                        {
-                            var instance = InstantiateTunnel(enrty, cell, rot);
-                            ownerData.AttachedTunnels.Add(instance);
-
-                            foreach (var p in plates)
-                            {
-                                var doorDirs = p.Doors.Select(d => d.GlobalDirection).ToList();
-                                levelGrid.SetCellState(cell + p.LocalPosition, true, doorDirs, instance.GetInstanceID(), RoomType.TechnicalTunnels);
-                            }
-                            
-                            i += prefabSize - 1; 
-                            placed = true;
-                            break;
-                        }
-                    }
-                    if (placed) break;
-                }
-                i++;
-            }
+            return reachable;
         }
 
         private GameObject InstantiateTunnel(RoomDataEntry entry, Vector3Int origin, RoomRotation rotation)

@@ -8,7 +8,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     {
         public Vector3Int LocalDirection;  
         public Vector3Int GlobalDirection; 
-        public RoomsConnectionTypes Type;
     }
 
     public struct VirtualPlateData
