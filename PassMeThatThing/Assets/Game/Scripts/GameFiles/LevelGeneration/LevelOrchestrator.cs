@@ -113,8 +113,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             BlockUnusedExits();
             PlaceUsedExitPassages();
             networkObjectsOrchestrator.SpawnNetworkObjects(AllLevelSpots);
-            networkRarityItemsOrchestrator.SpawnNetworkRarityItem(AllLevelRarityItemSpots);
             BakeNavMeshes();
+            networkRarityItemsOrchestrator.SpawnNetworkRarityItem(AllLevelRarityItemSpots);
             Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_allPlacedRooms.Count}.");
         }
         
