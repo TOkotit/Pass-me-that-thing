@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Game.Scripts.Utils;
@@ -24,13 +25,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
         [Header("Item Spawn")]
         [SerializeField] private int minItemCount = 0;
-        [SerializeField] private float spawnRate = 0.3f;
-        [SerializeField] private float spawnRateStep = 1.1f;
+        [SerializeField] private float spawnRate = 1;
+        [SerializeField] private float spawnRateStep = 1.2f;
 
-        [Header("OnCompile")]
-        [SerializeField] private int maxItemCount;//не учитываются споты с UseConstSpawnChance
-        [SerializeField] private float[] weights;
-        [SerializeField] private float totalWeight;
+        private int _maxItemCount;//не учитываются споты с UseConstSpawnChance
+        private float[] _weights;
+        private float _totalWeight;
 
         public RoomType RoomType => roomType;
         public int TotalDoors => totalDoors;
@@ -64,7 +64,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var childNetworkRarityItems = GetComponentsInChildren<NetworkRarityItemSpot>();
             networkRarityItems = new List<NetworkRarityItemSpot>(childNetworkRarityItems);
-            CacheItemCountWeights();
 
             navMeshSurface = GetComponentInChildren<NavMeshSurface>(true);
             if (navMeshSurface == null)
@@ -111,42 +110,37 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         }
 
         //item spawn
+        //TODO Сделать просчет весов спавна одноразовым
+        //и где-то хранить это для каждой комнаты
         public void CacheItemCountWeights()
         {
-            maxItemCount = networkRarityItems.Where(s => !s.UseConstSpawnChance).Count();
+            _maxItemCount = networkRarityItems.Where(s => !s.UseConstSpawnChance).Count();
 
-            weights = new float[maxItemCount + 1];
-            weights[0] = spawnRate;
+            _weights = new float[_maxItemCount + 1];
+            _weights[0] = spawnRate;
 
-            for (var i = 1; i <= maxItemCount; i++)
+            for (var i = 1; i <= _maxItemCount; i++)
             {
-                if (i < maxItemCount / 2)
-                    weights[i] = weights[i - 1] * spawnRateStep;
+                if (i < _maxItemCount / 2)
+                    _weights[i] = MathF.Round(_weights[i - 1] * spawnRateStep, 3);
                 else
-                    weights[i] = weights[i - 1] / spawnRateStep;
+                    _weights[i] = MathF.Round(_weights[i - 1] / spawnRateStep, 3);
             }
 
-            totalWeight = 0f;
-            foreach (var w in weights)
+            _totalWeight = 0f;
+            foreach (var w in _weights)
             {
-                totalWeight += w;
+                _totalWeight += w;
             }
 
-            Debug.Log("Room CacheItemCountWeights" + string.Join(" ", weights));
-        }
-
-        private int NormalDis(int x)
-        {
-            var result = (1/Math.Sqrt(2 * Math.PI)) * Math.Exp(-(x * x) / 2);
-            Debug.Log("NormalDis" + result);
-            return (int)result;
+            Debug.Log("Room CacheItemCountWeights" + string.Join(" ", _weights));
         }
 
         public int GetRandomItemCount()
         {
-            if (maxItemCount == 0) return 0;
+            if (_maxItemCount == 0) return 0;
 
-            return RandomUtilities.RandomWeightedIndex(weights, totalWeight);
+            return RandomUtilities.RandomWeightedIndex(_weights, _totalWeight);
         }
 
         
