@@ -91,6 +91,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
         public IEnumerator GoUp()
         {
+            _movementController.Rb.useGravity = false;
+            _movementController.Rb.isKinematic = true;
+            _movementController.Rb.linearVelocity = Vector3.zero;
             _progress = 0f;
             _isGoingUp = true;
             
@@ -99,18 +102,23 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 _progress += Time.deltaTime;
                 var progressInPercantage = _progress / _timeToGoUp;
 
-                _spider.transform.position = Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage);
-                _spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
+                _movementController.Rb.MovePosition(Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage));
+                _movementController.Rb.MoveRotation(Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage));
+
+
+                //_spider.transform.position = Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage);
+                //_spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
                 yield return null;
             }
             _isGoingUp = false;
             _isUp = true;
+            
         }
         
         
         public override void Exit()
         {
-            // _movementController.EnableNavAgent();
+            
             base.Exit();
         }
         

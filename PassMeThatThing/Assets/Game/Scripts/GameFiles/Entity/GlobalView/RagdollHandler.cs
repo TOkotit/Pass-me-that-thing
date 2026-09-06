@@ -8,6 +8,7 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
     public class RagdollHandler : NetworkBehaviour
     {
         [SerializeField] protected List<Rigidbody> rigidbodies;
+        [SerializeField] protected List<Collider> colliders;
         public List<Rigidbody> GetRigidbodies() => rigidbodies;
 
         private Rigidbody _injuredRigidbody;
@@ -36,6 +37,22 @@ namespace Game.Scripts.GameFiles.Entity.GlobalView
             foreach (var r in rigidbodies)
             {
                 r.isKinematic = true;
+            }
+        }
+
+        public virtual void EnableColliders()
+        {
+            foreach (var c in colliders)
+            {
+                c.enabled = true;
+            }
+        }
+
+        public virtual void DisableColliders()
+        {
+            foreach (var c in colliders)
+            {
+                c.enabled = false;
             }
         }
     }

@@ -164,6 +164,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             enemyView.DisableAnimator();
             ragdollHandler.EnableRagdoll();
+            ragdollHandler.EnableColliders();
         }
 
         [ClientRpc]
@@ -177,6 +178,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             movementController.EnableNavAgent();
 
             ragdollHandler.DisableRagdoll();
+            ragdollHandler.DisableColliders();
             enemyView.EnableAnimator();
         }
     }

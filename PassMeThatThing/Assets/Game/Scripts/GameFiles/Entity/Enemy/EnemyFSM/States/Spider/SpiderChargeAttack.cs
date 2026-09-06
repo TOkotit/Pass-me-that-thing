@@ -97,6 +97,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             _dashProgress = 0f;
 
+            _movementController.Rb.useGravity = true;
+            _movementController.Rb.isKinematic = false;
+
             _enemyView.EnableAttackpreview(true);
             _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _spider.AttackArea * 2);
 
@@ -109,8 +112,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _dashProgress += Time.deltaTime;
                     var progressInPercantage = _dashProgress / _timeToDash;
 
-                    _spider.transform.position = Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage);
-                    _spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
+                    _movementController.Rb.MovePosition(Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage));
+                    _movementController.Rb.MoveRotation(Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage));
+
+                    //_spider.transform.position = Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage);
+                    //_spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
+
                     yield return null;
                 }
             }

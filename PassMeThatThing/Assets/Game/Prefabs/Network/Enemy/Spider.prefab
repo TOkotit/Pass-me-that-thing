@@ -58,8 +58,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.58, y: 0.58, z: 0.58}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 285281043149053595}
   - {fileID: 2522549946574312055}
@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 8780573388070845451}
   - component: {fileID: 5475941992780067928}
   - component: {fileID: -7848420249468526302}
+  - component: {fileID: 7179818156917931822}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -246,10 +247,10 @@ CapsuleCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.14
-  m_Height: 0
+  m_Radius: 0.44
+  m_Height: 0.9478768
   m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_Center: {x: 0, y: 0.32889396, z: 0}
 --- !u!114 &8234759350192102838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,8 +349,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   navMeshAgent: {fileID: 8780573388070845451}
-  isMovingRB: 0
-  rb: {fileID: 0}
+  isMovingRB: 1
+  rb: {fileID: 7179818156917931822}
 --- !u!114 &7370826059491095980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,8 +410,8 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8090700475096468142}
   m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 1
+  m_AgentTypeID: -334000983
+  m_Radius: 0.8
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -457,6 +458,33 @@ MonoBehaviour:
   priority: 0
   damagableType: 1
   Enabled: 1
+--- !u!54 &7179818156917931822
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  serializedVersion: 5
+  m_Mass: 50
+  m_LinearDamping: 10
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1001 &2985433611110748482
 PrefabInstance:
   m_ObjectHideFlags: 0
