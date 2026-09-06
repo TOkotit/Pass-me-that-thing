@@ -1,12 +1,15 @@
 .pause-menu_button-socket {
-    width: 500px;
+    width: auto;
     height: 128px;
-    align-self: center;
+    align-self: stretch;
     padding-top: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
     background-image: resource("Sprites/Menu/MenuBtn");
+    margin-left: 10%;
+    margin-right: 10%;
+    flex-grow: 0;
 }
 
 .pause-menu_button {
