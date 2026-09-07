@@ -4,34 +4,64 @@ using Game.Scripts.Enums;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 {
-    
+    /// <summary>
+    /// Кластер комнат<br/>
+    /// Пока хранит только список нод
+    /// </summary>
     public class RoomCluster
     {
         public List<RoomNode> Rooms { get; set; } = new();
     }
     
+    /// <summary>
+    /// <para>Подбирает и создаёт комнаты по сиду и собирает их в кластеры.<br/>
+    /// Распределяет обязательные и случайные комнаты по группам с соблюдением квот по комнатам и соблюдении определённых параметров.<br/>
+    /// </para>
+    /// Используется в <see cref="LevelOrchestrator"/>
+    /// </summary>
     public class LevelGenerator
     {
         private readonly Random _random;
-        private readonly LevelGraphConfig _config;
+        private readonly LevelConfig _config;
         private readonly int _targetRoomCount;
         
-        private int _nextNodeId = 0;
         private int _medicalBlockCount = 0;
 
-        public LevelGenerator(LevelGraphConfig config, int seed)
+        private const int MinRoomsOnTheLevel = 7;
+        private const int MinClusterSize = 2;
+        private const int MaxClusterSize = 4;
+        
+        /// <summary>
+        /// Рассчитывается целевое количество комнат на уровне(<see cref="_targetRoomCount"/>) выбирается случайное число между минимальным и максимальным значениями из конфигурации.<br/>
+        /// Жёсткое ограничение в минимум 7 конмат, даже если в конфиге указано меньше
+        /// </summary>
+        /// <param name="config">Сылка на конфиг файл с настройками генерации</param>
+        /// <param name="seed">Сид для генерации</param>
+        public LevelGenerator(LevelConfig config, int seed)
         {
             _config = config;
             _random = new Random(seed);
             
-            var minRoomsRequired = Math.Max(config.MinRooms, 7);
+            var minRoomsRequired = Math.Max(config.MinRooms, MinRoomsOnTheLevel);
             _targetRoomCount = _random.Next(minRoomsRequired, config.MaxRooms + 1);
         }
         
+        /// <summary>
+        /// <para>Главный метод запускающий генерацию значений для уровня.<br/>
+        /// Создаёт и складывает все <see cref="RoomCluster"/> в список clusters.<br/>
+        /// Вызывает запуск генерации базового кластера с хабом(<see cref="BuildCoreCluster"/>).<br/>
+        /// Вычисляет общее количество комнат на остальные кластера, вычитая 4 комнаты базового кластера.<br/>
+        /// Распределяет по кластерам количество комнатна каждого с помощью <see cref="CalculateClusterSizes"/><br/>
+        /// Создаёт список обязательных комнат на уровне с помощью <see cref="BuildMandatoryPool"/>
+        /// Для каждого кластера рассчитывается квота обязательных комнат
+        /// Обязательные комнаты изымаются из начала пула и добавляются в кластер.
+        /// Оставшееся свободное место в кластере заполняется через метод <see cref="GetRandomRepeatableRoom"/>
+        /// </para>
+        /// </summary>
+        /// <returns>Список всех кластеров clusters</returns>
         public List<RoomCluster> GenerateClusters()
         {
             var clusters = new List<RoomCluster>();
-            _nextNodeId = 0;
             _medicalBlockCount = 0;
 
             var coreCluster = BuildCoreCluster();
@@ -85,7 +115,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             return clusters;
         }
         
-        private RoomCluster BuildCoreCluster()
+        
+        /// <summary>
+        /// Базовый кластер в который добавляется 4 строго заданные комнаты:
+        /// <list><item><see cref="RoomType.CommandCenter"/></item>
+        /// <item><see cref="RoomType.Generator"/></item>
+        /// <item><see cref="RoomType.Warehouse"/></item>
+        /// <item><see cref="RoomType.LivingBlock"/></item>
+        /// </list>
+        /// </summary>
+        /// <returns>Возвращает <see cref="RoomCluster"/> с 4 заданными комнатами</returns>
+        private static RoomCluster BuildCoreCluster()
         {
             var cluster = new RoomCluster();
 
@@ -96,14 +136,21 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
             return cluster;
         }
-        private RoomNode CreateNode(RoomType type)
-        {
-            return new RoomNode(_nextNodeId++, type);
-        }
+        
+        /// <summary>
+        /// Метод обёртка для создания новых нод
+        /// </summary>
+        /// <param name="type">Тип комнаты</param>
+        /// <returns>Возвращает новую ноду с заданным типом комнаты</returns>
+        private static RoomNode CreateNode(RoomType type) => new(type);
 
-        private const int MinClusterSize = 2;
-        private const int MaxClusterSize = 4;
 
+        /// <summary>
+        /// Генерирует случайное значение от <see cref="MinClusterSize"/> до <see cref="MaxClusterSize"/> включительно<br/>
+        /// Если оставшееся количество комнат меньше минимального размера кластера, прибавляет это значение к предыдущему клстеру
+        /// </summary>
+        /// <param name="remainingRooms">Общее количество комнат</param>
+        /// <returns>Список чисел - размеров кластеров</returns>
         private List<int> CalculateClusterSizes(int remainingRooms)
         {
             var sizes = new List<int>();
@@ -130,6 +177,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             return sizes;
         }
         
+        /// <summary>
+        /// Создаёт список комнат, которые обязательно должны появиться на уровне
+        /// В зависимости от общего размера уровня добавляются ивентовые комнаты
+        /// </summary>
+        /// <returns>Список типов комнат</returns>
         private List<RoomType> BuildMandatoryPool()
         {
             var pool = new List<RoomType>
@@ -156,11 +208,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             {
                 pool.Add(events[_random.Next(events.Count)]);
             }
-
             ShuffleList(pool);
             return pool;
         }
 
+        /// <summary>
+        /// Использует список с типами комнат дубликатами.<br/>
+        /// Проводятся проверки состава текущего кластера. <see cref="RoomType.Workshop"/> и <see cref="RoomType.Armory"/> добавляются в список возможных вариантов только если их еще нет в этом конкретном кластере.<br/>
+        /// <see cref="RoomType.MedicalBlock"/> добавляется в список возможных вариантов только если его нет в текущем кластере и общее количество медицинских блоков на уровне меньше 2.<br/>
+        /// Из сформированного списка выбирается случайная комната
+        /// </summary>
+        /// <param name="currentCluster">Кластер</param>
+        /// <returns>Тип комнаты для заполнения кластера</returns>
         private RoomType GetRandomRepeatableRoom(RoomCluster currentCluster)
         {
             var types = new List<RoomType>
@@ -194,6 +253,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             return selected;
         }
         
+        
+        /// <summary>
+        /// Перемешивает случайным образом список
+        /// </summary>
+        /// <param name="list">Список элементов</param>
+        /// <typeparam name="T">Элемент</typeparam>
         private void ShuffleList<T>(IList<T> list)
         {
             var n = list.Count;

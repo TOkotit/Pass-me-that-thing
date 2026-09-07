@@ -11,9 +11,18 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
+    /// <summary>
+    /// <para>Основной компонент комнаты, хранит инфорацию тип комнаты, кэш массив клеток(RoomPlateData), сетевые объекты внутри него, а так же NavMesh<br/>
+    /// Регистрируется в базе данных(RoomDatabase)<br/></para>
+    ///
+    /// Используется в:
+    /// <list type="bullet">
+    /// <item><see cref="LevelOrchestrator"/></item>
+    /// <item><see cref="RoomDatabase"/></item>
+    /// </list>
+    /// </summary>
     
     [RequireComponent(typeof(Grid))]
-
     public class LevelRoom : MonoBehaviour
     {
         [SerializeField] private RoomType roomType;
