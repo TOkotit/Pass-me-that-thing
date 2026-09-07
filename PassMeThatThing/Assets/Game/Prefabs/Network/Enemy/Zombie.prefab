@@ -94,6 +94,37 @@ MonoBehaviour:
     m_Bits: 8
   _parent: {fileID: 227837763217859650}
   _hipsBone: {fileID: 7712171669055653720}
+--- !u!1 &6994456766497010121
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2571571816664754673}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2571571816664754673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6994456766497010121}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.453, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 227837763217859650}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7017092975039700443
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +258,7 @@ Transform:
   m_Children:
   - {fileID: 4626078019415932954}
   - {fileID: 387873943417241419}
+  - {fileID: 2571571816664754673}
   - {fileID: 9086114221855915269}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -363,6 +395,11 @@ MonoBehaviour:
   navMeshAgent: {fileID: 5286021340439170528}
   isMovingRB: 1
   rb: {fileID: 3809508609198974759}
+  groundCheckBox: {fileID: 2571571816664754673}
+  groundCheckBoxHafExtends: {x: 1, y: 1, z: 1}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!65 &8309401126575335136
 BoxCollider:
   m_ObjectHideFlags: 0

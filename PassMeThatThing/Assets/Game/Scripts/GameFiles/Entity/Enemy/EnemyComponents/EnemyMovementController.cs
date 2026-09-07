@@ -13,6 +13,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         
         [SerializeField] private Rigidbody rb;
         
+        [SerializeField] private Transform groundCheckBox;
+        [SerializeField] private Vector3 groundCheckBoxHafExtends;
+        [SerializeField] private LayerMask groundLayer;
+
+        private Collider[] colliders;
+
         private Vector3 _targetPosition;
         private float _moveForce;
         private float _maxSpeed;
@@ -23,6 +29,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private Vector3 _rotateDirection;
         private Quaternion _lookRotation;
         private float _rotationSpeed = 5f;
+
+        private bool _isGrounded;
+        private float linDamping = 10f;
 
         public Rigidbody Rb => rb;
 
@@ -51,7 +60,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             if (isMovingRB)
             {
-                rb.linearDamping = navMeshAgent.isOnNavMesh ? 10f : 0f;
+                _isGrounded = Physics.CheckBox(groundCheckBox.position, 
+                    groundCheckBoxHafExtends, groundCheckBox.rotation, groundLayer);
+                rb.linearDamping = _isGrounded ? linDamping : 0f;
                 navMeshAgent.nextPosition = rb.position;
                 MoveWithPhysics();
             }
@@ -146,6 +157,12 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                         Time.fixedDeltaTime * rotationSpeed);
                 }
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(groundCheckBox.position, groundCheckBoxHafExtends);
         }
     }
 }
