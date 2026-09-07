@@ -1,6 +1,7 @@
 using System.Collections;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
+using Game.Scripts.Utils;
 using Mirror.BouncyCastle.Asn1.X509;
 using UnityEngine;
 using Time = UnityEngine.Time;
@@ -95,22 +96,23 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         public IEnumerator DashAttack()
         {
-            _dashProgress = 0f;
-
             _movementController.Rb.useGravity = true;
             _movementController.Rb.isKinematic = false;
 
-            _enemyView.EnableAttackpreview(true);
-            _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _spider.AttackArea * 2);
-
             if (_targetDetector.IsTargetVisible)
             {
+                _dashProgress = 0f;
                 _positionEnd = _targetDetector.DetectedTarget;
-            
-                while (_dashProgress < _timeToDash)
+
+                _enemyView.EnableAttackpreview(true);
+                _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _spider.AttackArea * 2);
+
+                var timeDash = RandomUtilities.RandNearMult(_timeToDash, 0.1f);
+
+                while (_dashProgress < timeDash)
                 {
                     _dashProgress += Time.deltaTime;
-                    var progressInPercantage = _dashProgress / _timeToDash;
+                    var progressInPercantage = _dashProgress / timeDash;
 
                     _movementController.Rb.MovePosition(Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage));
                     _movementController.Rb.MoveRotation(Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage));

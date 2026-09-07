@@ -24,7 +24,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private Quaternion _lookRotation;
         private float _rotationSpeed = 5f;
 
-        public Rigidbody Rb  => rb;
+        public Rigidbody Rb => rb;
 
         private void Start()
         {
@@ -43,14 +43,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 navMeshAgent.updatePosition = false;
                 navMeshAgent.updateRotation = false;
                 navMeshAgent.updateUpAxis = false;
-            }
-        }
-
-        private void Update()
-        {
-            if (isMovingRB)
-            {
-                navMeshAgent.nextPosition = rb.position;
+                
             }
         }
 
@@ -58,6 +51,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             if (isMovingRB)
             {
+                rb.linearDamping = navMeshAgent.isOnNavMesh ? 10f : 0f;
+                navMeshAgent.nextPosition = rb.position;
                 MoveWithPhysics();
             }
         }
@@ -85,8 +80,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             }
         }
-        
-        
         
         [Server]
         public void NavigateTo(Vector3 pos)
@@ -134,25 +127,25 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Server]
         public void RotateTo(Vector3 target, float rotationSpeed=1f)
         {
-            //_rotateDirection = (target - transform.position).normalized;
-            
-            //_rotateDirection.y = 0;
-            
-            //_lookRotation = Quaternion.LookRotation(_rotateDirection);
+            _rotateDirection = (target - transform.position).normalized;
 
-            //if (isMovingRB)
-            //{
-            //    rb.MoveRotation(Quaternion.Slerp(rb.rotation, _lookRotation, Time.fixedDeltaTime * _rotationSpeed));
-            //}
-            //else
-            //{
-            //    while (Quaternion.Angle(_lookRotation, transform.rotation) >= 5f)
-            //    {
-            //        transform.rotation = Quaternion.Slerp(transform.rotation, 
-            //            _lookRotation, 
-            //            Time.fixedDeltaTime * rotationSpeed);
-            //    }
-            //}
+            _rotateDirection.y = 0;
+
+            _lookRotation = Quaternion.LookRotation(_rotateDirection);
+
+            if (isMovingRB)
+            {
+                rb.MoveRotation(Quaternion.Slerp(rb.rotation, _lookRotation, Time.fixedDeltaTime * _rotationSpeed));
+            }
+            else
+            {
+                while (Quaternion.Angle(_lookRotation, transform.rotation) >= 5f)
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation,
+                        _lookRotation,
+                        Time.fixedDeltaTime * rotationSpeed);
+                }
+            }
         }
     }
 }

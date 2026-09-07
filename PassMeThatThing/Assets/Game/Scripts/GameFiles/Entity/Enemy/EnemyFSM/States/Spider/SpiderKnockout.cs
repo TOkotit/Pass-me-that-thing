@@ -1,4 +1,5 @@
 using Game.Scripts.Enums;
+using Game.Scripts.Utils;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
@@ -11,6 +12,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         private float _atkCooldown;
         private bool _isAtkCooldown;
         private EnemyMovementController _movementController;
+
+        private float rTime;
         
         public SpiderKnockout(EnemySpider enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
         {
@@ -24,6 +27,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _isAtkCooldown = true;
             _atkCooldown = 0f;
             _movementController.EnableNavAgent();
+
+            rTime = RandomUtilities.RandNearMult(_spider.AttackCooldown, 0.1f);
         }
 
         public override void LogicUpdate()
@@ -36,7 +41,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             if (_isAtkCooldown)
             {
                 _atkCooldown += Time.fixedDeltaTime;
-                if (_atkCooldown >= _spider.AttackCooldown)
+                if (_atkCooldown >= rTime)
                 {
                     _isAtkCooldown = false;
                     StateMachine.ChangeState(_spider.SpiderWalk);

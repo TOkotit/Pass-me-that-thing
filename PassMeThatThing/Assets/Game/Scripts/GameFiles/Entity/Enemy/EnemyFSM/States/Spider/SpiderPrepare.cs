@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Enums;
+using Game.Scripts.Utils;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
@@ -96,11 +97,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _movementController.Rb.linearVelocity = Vector3.zero;
             _progress = 0f;
             _isGoingUp = true;
-            
-            while (_progress < _timeToGoUp)
+
+            var timeUp = RandomUtilities.RandNearMult(_timeToGoUp, 0.1f);
+
+
+            while (_progress < timeUp)
             {
                 _progress += Time.deltaTime;
-                var progressInPercantage = _progress / _timeToGoUp;
+                var progressInPercantage = _progress / timeUp;
 
                 _movementController.Rb.MovePosition(Vector3.Lerp(_positionStart, _positionEnd, progressInPercantage));
                 _movementController.Rb.MoveRotation(Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage));

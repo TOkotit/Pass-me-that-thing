@@ -57,5 +57,25 @@ namespace Game.Scripts.Utils
             var totalWeight = weights.Sum();
             return RandomWeightedIndex(weights, totalWeight);
         }
+
+        public static float RandNearMult(float value, float m)
+        {
+            return Random.Range(value - value * m, value + value * m);
+        }
+
+        public static float RandNearMult(float value, float redM, float incM)
+        {
+            return Random.Range(value - value * redM, value + value * incM);
+        }
+
+        public static float RandNearVal(float value, float step)
+        {
+            return Random.Range(value - step, value + step);
+        }
+
+        public static float RandNearVal(float value, float redStep, float incStep)
+        {
+            return Random.Range(value - redStep, value + incStep);
+        }
     }
 }

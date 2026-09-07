@@ -1,5 +1,6 @@
 using System.Collections;
 using Game.Scripts.Enums;
+using Game.Scripts.Utils;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
@@ -32,7 +33,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             for (var i = 0; i < 1; i++)
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(RandomUtilities.RandNearVal(1f, 0.2f));
             }
             StateMachine.ChangeState(_zombie.ZombieWalk);
         }
