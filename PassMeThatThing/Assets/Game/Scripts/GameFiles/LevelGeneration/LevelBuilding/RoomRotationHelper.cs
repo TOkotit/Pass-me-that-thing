@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
+    
+    /// <summary>
+    /// Enum с значениями поворота
+    /// </summary>
     public enum RoomRotation
     {
         Deg0 = 0,
@@ -12,6 +16,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         Deg270 = 3
     }
     
+    /// <summary>
+    /// <para>
+    /// Выполняет математический расчет поворотов комнаты<br/>
+    /// Позволяет получить новые координаты дверей и ячеек для проверки возможности размещения повернутой комнаты<br/>
+    /// </para>
+    /// Вызывается в:
+    /// <list type="bullet">
+    /// <item><see cref="RoomCollisionValidator"/> при валидации позиции</item>
+    /// <item><see cref="LevelOrchestrator"/> при размещении и повороте комнат</item>
+    /// </list>
+    /// </summary>
     public static class RoomRotationHelper
     {
         public static VirtualPlateData[] GetRotatedPlates(RoomDataEntry room, RoomRotation rotation)

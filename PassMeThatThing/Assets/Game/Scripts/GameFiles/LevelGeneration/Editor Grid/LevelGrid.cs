@@ -7,7 +7,16 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
 {
-    
+    /// <summary>
+    /// <para>Координирует пространственную 3D-сетку уровня, хранит данные о занятых координатах и предоставляет визуализацию для Unity<br/>
+    /// Используется для определения топологии уровня и получении доп инфорамации о уровне, кластерах и комнатах<br/></para>
+    /// >Вызывается в:
+    /// <list type="bullet">
+    /// <item><see cref="levelOrchestrator"/> для расстановки комнат</item>
+    /// <item><see cref="RoomCollisionValidator"/> для проверки коллизии комнат</item>
+    /// <item><see cref="MinimapView"/> для отображения сетки уровня на миникарте</item>
+    /// </list>
+    /// </summary>
     [RequireComponent(typeof(Grid))]
     public class LevelGrid : MonoBehaviour
     {

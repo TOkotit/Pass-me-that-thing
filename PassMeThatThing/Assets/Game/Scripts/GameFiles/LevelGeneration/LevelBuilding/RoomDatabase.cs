@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
 {
-    
+    /// <summary>
+    /// Структура для удобного хранения префаба и самого компонента комнаты(<see cref="LevelRoom"/>) в базе данных<br/>
+    /// </summary>
     [System.Serializable]
     public struct RoomDataEntry
     {
@@ -12,6 +14,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public LevelRoom RoomComponent;
     }
     
+    /// <summary>
+    /// База данных комнат, хранит список <see cref="RoomDataEntry"/>, заполняя его при валидации
+    /// </summary>
     [CreateAssetMenu(fileName = "RoomDatabaseNew", menuName = "Level Generation/Room Database New")]
     public class RoomDatabase : ScriptableObject
     {
@@ -38,7 +43,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             foreach (var entry in targetList)
             {
-                if (entry.PrefabGameObject == null || entry.RoomComponent == null) continue;
+                if (!entry.PrefabGameObject || !entry.RoomComponent) continue;
                 
                 var connectionsMatch = exactMatch 
                     ? entry.RoomComponent.TotalDoors == requiredConnections 
@@ -95,7 +100,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             for (var i = 0; i < entries.Count; i++)
             {
                 var entry = entries[i];
-                if (entry.PrefabGameObject != null && entry.RoomComponent == null)
+                if (entry.PrefabGameObject != null && !entry.RoomComponent)
                 {
                     entry.RoomComponent = entry.PrefabGameObject.GetComponent<LevelRoom>();
                     entries[i] = entry;

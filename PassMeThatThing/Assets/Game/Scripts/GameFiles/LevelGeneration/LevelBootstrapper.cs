@@ -8,7 +8,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     public class LevelBootstrapper : NetworkBehaviour
     {
         [SerializeField] private LevelOrchestrator orchestrator;
-        [SerializeField] private LevelGraphConfig graphConfig = new LevelGraphConfig();
+        [SerializeField] private LevelConfig _config = new LevelConfig();
         
         [Header("Seed Settings")]
         [SerializeField] private int testSeed = 12345; 
@@ -27,7 +27,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var currentSeed = useRandomSeedForTests ? Random.Range(int.MinValue, int.MaxValue) : testSeed;
             Debug.Log($"[BOOTSTRAPPER] Генерация уровня. Используемый Seed: {currentSeed}");
 
-            var generator = new LevelGenerator(graphConfig, currentSeed);
+            var generator = new LevelGenerator(_config, currentSeed);
             var clusters = generator.GenerateClusters();
 
             if (clusters != null && clusters.Count > 0)

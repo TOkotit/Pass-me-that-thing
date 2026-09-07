@@ -85,7 +85,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
 
             int activeSeed = useRandomSeed ? UnityEngine.Random.Range(int.MinValue, int.MaxValue) : customSeed;
  
-            var generator = new LevelGenerator(new LevelGraphConfig(), activeSeed);
+            var generator = new LevelGenerator(new LevelConfig(), activeSeed);
             var clusters = generator.GenerateClusters();
  
             if (clusters is { Count: > 0 })
