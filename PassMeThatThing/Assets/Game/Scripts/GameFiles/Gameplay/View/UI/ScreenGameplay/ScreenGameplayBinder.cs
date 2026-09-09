@@ -13,15 +13,20 @@ using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using UnityEngine.WSA;
 
 
 namespace Game.Gameplay.View.UI
 {
     public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
     {
+        private const string CircleCursorClassName = "cursor-circle";
+        private const string CrossCursorClassName = "cursor-cross";
+
         private Color selectedColor = CustomColorUtils.FromHex("1C452B");
         private Color noSelectionColor = new Color(1f, 1f, 1f, 0f);
-        
+
+        private StyleRotate _styleRotate;
         private int _activeSlotIndex = -1;
 
         private Dictionary<int, TemplateContainer> _gameEvents = new ();
@@ -33,16 +38,19 @@ namespace Game.Gameplay.View.UI
         
         
         private VisualElement _root;
+        private VisualElement _cursor;
         private LevelGrid _levelGrid;
         private ProgressBar _health1;
         private VisualElement _healthImage;
         private VisualElement _deathImage;
         private Label _throwChargeText;
+        private GroupBox _inventoryContainer;
         private List<VisualElement> _itemImages;
         private GroupBox _gameEventsContainer;
         private Label _gameGlobalStateText;
         private Label _gameGlobalStateTimerText;
         private MinimapView  _miniMap;
+        private VisualElement _miniMapContainer;
 
         private VisualElement _leftPlugSocketImage;
         private VisualElement _rightPlugSocketImage;
@@ -50,6 +58,7 @@ namespace Game.Gameplay.View.UI
         private VisualElement _rightPlugImage;
         private GroupBox _wirePlacementContainer;
 
+        private VisualElement _playerHud;
         private VisualElement _localPlayerAvatar;
         private List<VisualElement> _otherPlayerAvatars = new();
 
@@ -61,21 +70,26 @@ namespace Game.Gameplay.View.UI
 
             _root = uiDocument.rootVisualElement;
 
+            _cursor = _root.Q<VisualElement>("Cursor");
             _health1 = _root.Q<ProgressBar>("Health1");
             _healthImage = _root.Q<VisualElement>("HealthVisualImg");
             _deathImage = _root.Q<VisualElement>("DeathVisualImg");
             _throwChargeText = _root.Q<Label>("ThrowLb");
+            _inventoryContainer = _root.Q<GroupBox>("InventoryContainer");
             _itemImages = _root.Q<GroupBox>("InventoryContainer").Children().ToList();
             _gameEventsContainer = _root.Q<GroupBox>("EventsContainer");
             _gameGlobalStateText = _root.Q<Label>("PhaseLb");
             _gameGlobalStateTimerText = _root.Q<Label>("RemainingTimeLb");
             _miniMap = _root.Q<MinimapView>("Minimap");
+            _miniMapContainer = _root.Q<VisualElement>("MinimapContainer");
 
             _leftPlugSocketImage = _root.Q<VisualElement>("LeftPlugSocketImage");
             _rightPlugSocketImage = _root.Q<VisualElement>("RightPlugSocketImage");
             _leftPlugImage = _root.Q<VisualElement>("LeftPlugImage");
             _rightPlugImage = _root.Q<VisualElement>("RightPlugImage");
             _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
+
+            _playerHud = _root.Q<VisualElement>("PlayerHud");
 
             _localPlayerAvatar = _root.Q<VisualElement>("Avatar1");
 
@@ -117,6 +131,9 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
 
             ViewModel.RequestSubPlugImages(UpdatePlugImages);
+
+            ViewModel.RequestSubCursorChange(UpdateCursor);
+            ViewModel.RequestSubElementsShake(UpdateElementsShake);
         }
 
         private void OnDestroy()
@@ -137,7 +154,36 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
             ViewModel.RequestUnsub();
         }
-        
+
+        private void UpdateElementsShake(int sign)
+        {
+            _styleRotate = new StyleRotate(new Rotate(new Angle(2 * sign)));
+            _inventoryContainer.style.rotate = _styleRotate;
+            _playerHud.style.rotate = _styleRotate;
+            _wirePlacementContainer.style.rotate = _styleRotate;
+            _miniMapContainer.style.rotate = _styleRotate;
+        }
+
+        private void UpdateCursor(CursorViewType cursorViewType)
+        {
+            switch (cursorViewType)
+            {
+                case CursorViewType.Default:
+                    _cursor.RemoveFromClassList(CircleCursorClassName);
+                    _cursor.RemoveFromClassList(CrossCursorClassName);
+                    break;
+                case CursorViewType.Circle:
+                    _cursor.AddToClassList(CircleCursorClassName);
+                    _cursor.RemoveFromClassList(CrossCursorClassName);
+                    break;
+                case CursorViewType.Cross:
+                    _cursor.AddToClassList(CrossCursorClassName);
+                    _cursor.RemoveFromClassList(CircleCursorClassName);
+                    break;
+            }
+
+        }
+
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
         {
             //Debug.Log($"[UI] new hp {newValue}");

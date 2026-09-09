@@ -27,6 +27,7 @@ namespace Game.Scripts.GameFiles.Items
         private PlayerInventory inventory;
         private GameInput _gameInput;
         private PlayerInventoryModel _playerInventoryModel;
+        private MCLocalModel _mcLocalModel;
         private PhysicalItemRegistry _physicalItemRegistry;
         private OutlineRegistry _outlineRegistry;
         private DamagableRegistry _damagableRegistry;
@@ -56,10 +57,12 @@ namespace Game.Scripts.GameFiles.Items
             PlayerInventoryModel playerInventoryModel,
             PhysicalItemRegistry physicalItemRegistry,
             OutlineRegistry outlineRegistry,
-            DamagableRegistry damagableRegistry)
+            DamagableRegistry damagableRegistry,
+            MCLocalModel mCLocalModel)
         {
             _gameInput = gameInputManager.GameInput;
             _playerInventoryModel = playerInventoryModel;
+            _mcLocalModel = mCLocalModel;
             _physicalItemRegistry = physicalItemRegistry;
             _outlineRegistry = outlineRegistry;
             _damagableRegistry = damagableRegistry;
@@ -109,7 +112,12 @@ namespace Game.Scripts.GameFiles.Items
                 if (_outlineRegistry.TryGetOutline(hit.collider.gameObject, out var outline))
                 {
                     _outlineRegistry.EnableOutline(outline);
+                    _mcLocalModel.CurrentCursor.Value = CursorViewType.Circle;
                 }
+            }
+            else
+            {
+                _mcLocalModel.CurrentCursor.Value = CursorViewType.Default;
             }
         }
 

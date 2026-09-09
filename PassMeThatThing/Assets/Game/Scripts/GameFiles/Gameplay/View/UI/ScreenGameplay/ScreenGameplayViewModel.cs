@@ -115,6 +115,16 @@ namespace Game.Gameplay.View.UI
             _localWireHandlerModel.CancelHighlight();
         }
 
+        public void RequestSubCursorChange(Action<CursorViewType> f)
+        {
+            _subscriptions.Add(_mcLocalModel.CurrentCursor.Subscribe(f));
+        }
+
+        public void RequestSubElementsShake(Action<int> f)
+        {
+            _subscriptions.Add(_mcLocalModel.CameraRotationSign.Subscribe(f));
+        }
+
         public void RequestSubPlayersInfo(Action<PlayerViewData, List<PlayerViewData>> f)
         {
             OnPlayerDataChanged += f;

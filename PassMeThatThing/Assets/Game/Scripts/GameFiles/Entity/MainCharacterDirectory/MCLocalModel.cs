@@ -1,3 +1,5 @@
+using Game.Scripts.Enums;
+using R3;
 using System;
 using UnityEngine;
 
@@ -11,6 +13,8 @@ namespace Game.Entity
         private bool _isDead;
 
         private string _currentInteractableText;
+        private ReactiveProperty<CursorViewType> _currentCursor = new();
+        private ReactiveProperty<int> _cameraRotationSign = new();
 
         public event Action<int, int> OnHealthChanged;
         public event Action<bool> OnDeathChanged;
@@ -56,6 +60,10 @@ namespace Game.Entity
                 _currentInteractableText = value;
             }
         }
+
+        public ReactiveProperty<CursorViewType> CurrentCursor => _currentCursor;
+
+        public ReactiveProperty<int> CameraRotationSign => _cameraRotationSign;
 
         public void ReportCameraRotation(float angleY)
         {

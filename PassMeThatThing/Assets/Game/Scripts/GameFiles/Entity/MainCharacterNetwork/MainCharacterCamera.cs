@@ -140,9 +140,18 @@ namespace MainCharacterNetwork
 
             _recoilOffset = Vector2.Lerp(_recoilOffset, Vector2.zero, Time.deltaTime * recoilRecoverySpeed);
 
-            if (Mathf.Abs(inputDelta.x) > 0.0001f)
+            if (Mathf.Abs(inputDelta.x) > 0.01f)
             {
-                _mcLocalModel?.ReportCameraRotation(_rotation.y);
+                _mcLocalModel.ReportCameraRotation(_rotation.y);
+
+                if (Mathf.Abs(inputDelta.x) > 10f)
+                {
+                    _mcLocalModel.CameraRotationSign.Value = Math.Sign(inputDelta.x);
+                }
+                else
+                {
+                    _mcLocalModel.CameraRotationSign.Value = 0;
+                }
             }
 
             _rotation.x = Mathf.Clamp(_rotation.x, -maxPitch, maxPitch);
