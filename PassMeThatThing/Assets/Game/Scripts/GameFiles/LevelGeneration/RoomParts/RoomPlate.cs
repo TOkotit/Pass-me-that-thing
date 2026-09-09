@@ -1,3 +1,4 @@
+using System;
 using Game.Scripts.Enums;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     /// <summary>
     /// Структура для хранения локальной позиции ячейки, локального поворота и ссылки на компонент(<see cref="RoomPlate"/>)
     /// </summary>
+    [Serializable]
     public struct RoomPlateData
     {
         public Vector3Int localPosition;

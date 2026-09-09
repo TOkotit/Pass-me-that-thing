@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Scripts.Enums;
 using UnityEngine;
@@ -18,8 +19,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     
     /// <summary>
     /// <para>
-    /// Выполняет математический расчет поворотов комнаты<br/>
-    /// Позволяет получить новые координаты дверей и ячеек для проверки возможности размещения повернутой комнаты<br/>
+    /// Выполняет математический расчет поворотов комнаты.<br/>
+    /// Позволяет получить новые координаты дверей и ячеек для проверки возможности размещения повернутой комнаты.<br/>
     /// </para>
     /// Вызывается в:
     /// <list type="bullet">
@@ -31,6 +32,19 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     {
         public static VirtualPlateData[] GetRotatedPlates(RoomDataEntry room, RoomRotation rotation)
         {
+            if (!room.RoomComponent)
+            {
+                var prefabName = room.PrefabGameObject ? room.PrefabGameObject.name : "Не назначен";
+                Debug.LogError($"[RoomRotationHelper] RoomComponent равен null для префаба: {prefabName}");
+                return Array.Empty<VirtualPlateData>();
+            }
+
+            // 2. Проверка на наличие массива Plates внутри LevelRoom
+            if (room.RoomComponent.Plates == null)
+            {
+                Debug.LogError($"[RoomRotationHelper] Поле Plates внутри LevelRoom равно null у объекта: {room.RoomComponent.gameObject.name}");
+                return Array.Empty<VirtualPlateData>();
+            }
             var originalPlates = room.RoomComponent.Plates;
             var rotatedPlates = new VirtualPlateData[originalPlates.Length];
 

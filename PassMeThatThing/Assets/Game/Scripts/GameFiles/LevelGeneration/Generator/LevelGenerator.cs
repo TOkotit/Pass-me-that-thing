@@ -4,14 +4,7 @@ using Game.Scripts.Enums;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 {
-    /// <summary>
-    /// Кластер комнат<br/>
-    /// Пока хранит только список нод
-    /// </summary>
-    public class RoomCluster
-    {
-        public List<RoomNode> Rooms { get; set; } = new();
-    }
+
     
     /// <summary>
     /// <para>Подбирает и создаёт комнаты по сиду и собирает их в кластеры.<br/>
@@ -24,26 +17,24 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         private readonly Random _random;
         private readonly LevelConfig _config;
         private readonly int _targetRoomCount;
-        
-        private int _medicalBlockCount = 0;
+        private int nextNodeId = 0;
+        private int nextClusterId = 0;
+        private int _medicalBlockCount;
 
-        private const int MinRoomsOnTheLevel = 7;
-        private const int MinClusterSize = 2;
-        private const int MaxClusterSize = 4;
-        
         /// <summary>
         /// Рассчитывается целевое количество комнат на уровне(<see cref="_targetRoomCount"/>) выбирается случайное число между минимальным и максимальным значениями из конфигурации.<br/>
         /// Жёсткое ограничение в минимум 7 конмат, даже если в конфиге указано меньше
         /// </summary>
-        /// <param name="config">Сылка на конфиг файл с настройками генерации</param>
-        /// <param name="seed">Сид для генерации</param>
-        public LevelGenerator(LevelConfig config, int seed)
+        /// <param name="config">ScriptableObject с конфигурацией</param>
+        /// <param name="seedOverride">Сид для генерации</param>
+        public LevelGenerator(LevelConfig config, int? seedOverride = null)
         {
             _config = config;
-            _random = new Random(seed);
+            var actualSeed = seedOverride ?? (_config.UseRandomSeed ? new Random().Next() : _config.CustomSeed);
+            _random = new Random(actualSeed);
             
-            var minRoomsRequired = Math.Max(config.MinRooms, MinRoomsOnTheLevel);
-            _targetRoomCount = _random.Next(minRoomsRequired, config.MaxRooms + 1);
+            var minRoomsRequired = Math.Max(_config.MinRooms, _config.AbsoluteMinRooms);
+            _targetRoomCount = _random.Next(minRoomsRequired, _config.MaxRooms + 1);
         }
         
         /// <summary>
@@ -63,7 +54,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         {
             var clusters = new List<RoomCluster>();
             _medicalBlockCount = 0;
-
+            
+            nextNodeId = 1;
+            nextClusterId = 1;
+            
             var coreCluster = BuildCoreCluster();
             clusters.Add(coreCluster);
 
@@ -76,14 +70,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 var size = clusterSizes[i];
                 var isLastCluster = i == clusterSizes.Count - 1;
                 
-                var mandatoryToTake = size >= 4 ? 2 : 1;
+                var mandatoryToTake = size >= _config.MaxClusterSize ? 2 : 1;
 
                 if (isLastCluster)
                 {
                     mandatoryToTake = Math.Max(mandatoryToTake, mandatoryPool.Count);
                 }
-                
-                if (!isLastCluster)
+                else
                 {
                     var clustersLeft = clusterSizes.Count - i;
                     if (mandatoryPool.Count > mandatoryToTake + (clustersLeft - 1) * 2)
@@ -95,18 +88,19 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 mandatoryToTake = Math.Min(mandatoryToTake, size);
                 mandatoryToTake = Math.Min(mandatoryToTake, mandatoryPool.Count);
 
-                var cluster = new RoomCluster();
+                var cluster = new RoomCluster(nextClusterId++);
 
                 for (var m = 0; m < mandatoryToTake; m++)
                 {
-                    cluster.Rooms.Add(CreateNode(mandatoryPool[0]));
+                    var node = CreateNode(mandatoryPool[0], cluster.Id);
+                    cluster.AddRoom(node);
                     mandatoryPool.RemoveAt(0);
                 }
 
                 var repeatablesToTake = size - cluster.Rooms.Count;
                 for (var r = 0; r < repeatablesToTake; r++)
                 {
-                    cluster.Rooms.Add(CreateNode(GetRandomRepeatableRoom(cluster)));
+                    cluster.Rooms.Add(CreateNode(GetRandomRepeatableRoom(cluster), cluster.Id));
                 }
 
                 clusters.Add(cluster);
@@ -117,33 +111,28 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         
         
         /// <summary>
-        /// Базовый кластер в который добавляется 4 строго заданные комнаты:
-        /// <list><item><see cref="RoomType.CommandCenter"/></item>
-        /// <item><see cref="RoomType.Generator"/></item>
-        /// <item><see cref="RoomType.Warehouse"/></item>
-        /// <item><see cref="RoomType.LivingBlock"/></item>
-        /// </list>
+        /// Базовый кластер в который добавляется заданные комнаты из конфига <see cref="LevelConfig"/>
         /// </summary>
-        /// <returns>Возвращает <see cref="RoomCluster"/> с 4 заданными комнатами</returns>
-        private static RoomCluster BuildCoreCluster()
+        /// <returns>Возвращает <see cref="RoomCluster"/> с заданными комнатами</returns>
+        private RoomCluster BuildCoreCluster()
         {
-            var cluster = new RoomCluster();
+            var cluster = new RoomCluster(nextClusterId++);
 
-            cluster.Rooms.Add(CreateNode(RoomType.CommandCenter));
-            cluster.Rooms.Add(CreateNode(RoomType.Generator));
-            cluster.Rooms.Add(CreateNode(RoomType.Warehouse));
-            cluster.Rooms.Add(CreateNode(RoomType.LivingBlock));
-
+            foreach (var roomType in _config.CoreRooms)
+            {
+                var node = CreateNode(roomType, cluster.Id);
+                cluster.AddRoom(node);
+            }
             return cluster;
         }
-        
+
         /// <summary>
         /// Метод обёртка для создания новых нод
         /// </summary>
         /// <param name="type">Тип комнаты</param>
+        /// <param name="clusterId">ID кластера в котором лежит нода</param>
         /// <returns>Возвращает новую ноду с заданным типом комнаты</returns>
-        private static RoomNode CreateNode(RoomType type) => new(type);
-
+        private RoomNode CreateNode(RoomType type, int clusterId) => new(nextNodeId++, type, clusterId);
 
         /// <summary>
         /// Генерирует случайное значение от <see cref="MinClusterSize"/> до <see cref="MaxClusterSize"/> включительно<br/>
@@ -157,17 +146,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
             while (remainingRooms > 0)
             {
-                if (remainingRooms <= MaxClusterSize)
+                if (remainingRooms <= _config.MaxClusterSize)
                 {
                     sizes.Add(remainingRooms);
                     break;
                 }
 
-                var size = _random.Next(MinClusterSize, MaxClusterSize + 1);
+                var size = _random.Next(_config.MinClusterSize, _config.MaxClusterSize + 1);
 
-                if (remainingRooms - size < MinClusterSize)
+                if (remainingRooms - size < _config.MinClusterSize)
                 {
-                    size = remainingRooms - MinClusterSize;
+                    size = remainingRooms - _config.MinClusterSize;
                 }
 
                 sizes.Add(size);
@@ -184,30 +173,27 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         /// <returns>Список типов комнат</returns>
         private List<RoomType> BuildMandatoryPool()
         {
-            var pool = new List<RoomType>
-            {
-                RoomType.Laboratory,
-                RoomType.Armory,
-                RoomType.Workshop,
-                RoomType.MedicalBlock
-            };
+            var pool = new List<RoomType>(_config.MandatoryRooms);
 
-            if (_medicalBlockCount < 2) _medicalBlockCount++;
-
-            var events = new List<RoomType>
+            if (_medicalBlockCount < _config.MaxMedicalBlocksOnLevel && pool.Contains(RoomType.MedicalBlock))
             {
-                RoomType.Server,
-                RoomType.WaterPurification
-            };
-
-            if (_targetRoomCount >= 20)
-            {
-                pool.AddRange(events);
+                _medicalBlockCount++;
             }
-            else if (_targetRoomCount >= 15)
+
+            var events = new List<RoomType>(_config.EventRooms);
+
+            if (events.Count > 0)
             {
-                pool.Add(events[_random.Next(events.Count)]);
+                if (_targetRoomCount >= _config.HighEventThreshold)
+                {
+                    pool.AddRange(events);
+                }
+                else if (_targetRoomCount >= _config.LowEventThreshold)
+                {
+                    pool.Add(events[_random.Next(events.Count)]);
+                }
             }
+
             ShuffleList(pool);
             return pool;
         }
@@ -222,11 +208,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         /// <returns>Тип комнаты для заполнения кластера</returns>
         private RoomType GetRandomRepeatableRoom(RoomCluster currentCluster)
         {
-            var types = new List<RoomType>
-            {
-                RoomType.LivingBlock, RoomType.LivingBlock,
-                RoomType.Warehouse, RoomType.Warehouse
-            };
+            var types = new List<RoomType>(_config.BaseRepeatableRooms);
 
             if (!currentCluster.Rooms.Exists(r => r.Type == RoomType.Workshop))
             {
@@ -238,7 +220,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
                 types.Add(RoomType.Armory);
             }
 
-            if (_medicalBlockCount < 2 && !currentCluster.Rooms.Exists(r => r.Type == RoomType.MedicalBlock))
+            if (_medicalBlockCount < _config.MaxMedicalBlocksOnLevel && !currentCluster.Rooms.Exists(r => r.Type == RoomType.MedicalBlock))
             {
                 types.Add(RoomType.MedicalBlock);
             }

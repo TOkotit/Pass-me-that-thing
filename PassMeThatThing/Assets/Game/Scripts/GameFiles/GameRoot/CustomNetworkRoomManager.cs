@@ -8,46 +8,74 @@ using UnityEngine.SceneManagement;
 
 namespace Assets.Game.Scripts.GameFiles.GameRoot
 {
+    
+    //Структура сообщения для передачи сида по сети
+    public struct LevelSeedMessage : NetworkMessage
+    {
+        public int Seed;
+    }
+    
     public class CustomNetworkRoomManager : NetworkRoomManager
     {
         public event Action<bool> OnServerSceneLoadStateChanged;
         public event Action<bool> OnClientSceneLoadStateChanged;
         
+        private int? _syncedSeed = null;
+        private bool _isLevelGeneratedOnClient = false;
         
-        [SerializeField] private bool useRandomSeed = true;
-        [SerializeField] private int customSeed = 12345;
+        
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            NetworkClient.RegisterHandler<LevelSeedMessage>(OnClientReceiveSeedMessage);
+        }
         
         public override void OnServerChangeScene(string newSceneName)
         {
             base.OnServerChangeScene(newSceneName);
-
             Debug.Log($"[CNRM] OnServerChangeScene new - {newSceneName}");
-
             OnServerSceneLoadStateChanged?.Invoke(true);
         }
 
         public override void OnServerSceneChanged(string sceneName)
         {
-            if (sceneName == GameplayScene)
-            {
-                GenerateLevelDeterministic("Server");
-            }
-            
             base.OnServerSceneChanged(sceneName);
-        
             Debug.Log($"[CNRM] OnServerSceneChanged {sceneName}");
 
+            if (sceneName == GameplayScene)
+            {
+                var orchestrator = FindObjectOfType<LevelOrchestrator>();
+                if (orchestrator)
+                {
+                    _syncedSeed = orchestrator.GenerateLevelFromConfig("Server");
+                    Debug.Log($"[CNRM] Сервер утвердил сид для сессии: {_syncedSeed}");
+                }
+            }
             OnServerSceneLoadStateChanged?.Invoke(false);
+        }
+        
+        //Отправка сида клиенту, когда он завершил загрузку сцены и готов
+        public override void OnServerReady(NetworkConnectionToClient conn)
+        {
+            base.OnServerReady(conn);
+
+            var sceneName = SceneManager.GetActiveScene().path;
+            if (sceneName == GameplayScene && _syncedSeed.HasValue)
+            {
+                conn.Send(new LevelSeedMessage { Seed = _syncedSeed.Value });
+            }
         }
 
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
             base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-
             if (NetworkServer.active) return;
 
-            Debug.Log("[CNRM] OnClientChangeScene");
 
+            _syncedSeed = null;
+            _isLevelGeneratedOnClient = false;
+            
+            Debug.Log("[CNRM] OnClientChangeScene");
             OnClientSceneLoadStateChanged?.Invoke(true);
         }
 
@@ -55,49 +83,53 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
         {
             
             base.OnClientSceneChanged();
-
             if (NetworkServer.active) return;
-            
-            var sceneName = SceneManager.GetActiveScene().path;
-            if (sceneName == GameplayScene)
-            {
-                Debug.Log($"[CNRM]<color=green> ВЫзов генерации на клиенте, попытка");
-                GenerateLevelDeterministic("Client");
-            }
-            else
-            {
-                Debug.Log($"[CNRM]<color=red> sceneName: {sceneName}, need: {GameplayScene}");
-            }
-            
+
             Debug.Log("[CNRM] OnClientSceneChanged");
+            
+            TryGenerateClientLevel();
             
             OnClientSceneLoadStateChanged?.Invoke(false);
         }
         
-        private void GenerateLevelDeterministic(string who)
+        private void OnClientReceiveSeedMessage(LevelSeedMessage msg)
+        {
+            _syncedSeed = msg.Seed;
+            Debug.Log($"[CNRM] Клиент получил сид от сервера: {_syncedSeed}");
+            TryGenerateClientLevel();
+        }
+        
+        private void TryGenerateClientLevel()
+        {
+            if (NetworkServer.active) return; 
+            if (_isLevelGeneratedOnClient) return;
+
+            var sceneName = SceneManager.GetActiveScene().path;
+            if (sceneName == GameplayScene)
+            {
+                if (_syncedSeed.HasValue)
+                {
+                    Debug.Log($"[CNRM] Вызов генерации на клиенте с сидом {_syncedSeed}");
+                    GenerateLevelDeterministic("Client", _syncedSeed.Value);
+                    _isLevelGeneratedOnClient = true;
+                }
+                else
+                {
+                    Debug.Log("[CNRM] Сцена загружена, но сид от сервера еще не получен. Ожидание...");
+                }
+            }
+        }
+        
+        private void GenerateLevelDeterministic(string who, int seed)
         {
             var orchestrator = FindObjectOfType<LevelOrchestrator>();
-            if (orchestrator == null)
+            if (!orchestrator)
             {
                 Debug.LogError($"[CNRM] ({who}) LevelOrchestrator не найден на сцене!");
                 return;
             }
 
-            int activeSeed = useRandomSeed ? UnityEngine.Random.Range(int.MinValue, int.MaxValue) : customSeed;
- 
-            var generator = new LevelGenerator(new LevelConfig(), activeSeed);
-            var clusters = generator.GenerateClusters();
- 
-            if (clusters is { Count: > 0 })
-            {
-                orchestrator.GeneratePhysicalLevel(clusters, activeSeed);
-                Debug.Log($"[CNRM] ({who}) Уровень сгенерирован, seed={activeSeed}, комнат в кластерах={clusters.Count}.");
-            }
-            else
-            {
-                Debug.LogError($"[CNRM] ({who}) Не удалось сгенерировать кластеры для уровня.");
-            }
+            orchestrator.GenerateLevelFromConfig(who, seed);
         }
-
     }
 }
