@@ -17,7 +17,6 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] private Vector3 groundCheckBoxHafExtends;
         [SerializeField] private LayerMask groundLayer;
 
-        private Collider[] colliders;
 
         private Vector3 _targetPosition;
         private float _moveForce;

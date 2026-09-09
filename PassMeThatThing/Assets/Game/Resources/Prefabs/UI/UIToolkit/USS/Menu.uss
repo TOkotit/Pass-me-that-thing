@@ -30,3 +30,21 @@
     font-size: 60px;
     color: rgb(21, 146, 66);
 }
+
+.loading-dot {
+    width: 30px;
+    height: 30px;
+    background-color: rgb(255, 255, 255);
+    align-self: center;
+    margin-top: 11px;
+    margin-right: 11px;
+    margin-bottom: 11px;
+    margin-left: 11px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+    opacity: 0;
+}
