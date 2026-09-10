@@ -39,7 +39,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public Vector3Int Origin;
         public RoomRotation Rotation;
         public RoomCluster Cluster;
-        
         public int RoomId;
         public string GlobalId => Cluster != null ? $"{Cluster.Id}_{RoomId}" : RoomId.ToString();
         

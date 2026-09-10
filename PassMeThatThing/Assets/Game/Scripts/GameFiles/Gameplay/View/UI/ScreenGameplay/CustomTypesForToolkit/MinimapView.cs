@@ -64,6 +64,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 _cellSize = Mathf.Max(1f, value);
                 MarkDirtyRepaint();
                 _mapContent.MarkDirtyRepaint(); 
+                _gridLinesLayer?.MarkDirtyRepaint();
                 _gridLayer.MarkDirtyRepaint();
             }
         }
@@ -80,6 +81,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
         private readonly VisualElement _filterContainer;
         private readonly VisualElement _mapContent;
         private VisualElement _gridLayer;
+        private VisualElement _gridLinesLayer;
  
         public MinimapView()
         {
@@ -119,6 +121,19 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             };
             _filterContainer.Add(_mapContent);
             
+            _gridLinesLayer = new VisualElement
+            {
+                name = "minimap-grid-lines",
+                style =
+                {
+                    position = Position.Absolute,
+                    left = 0,
+                    top = 0,
+                    right = 0,
+                    bottom = 0
+                }
+            };
+            _mapContent.Add(_gridLinesLayer);
             _gridLayer = new VisualElement
             {
                 name = "minimap-grid",
@@ -136,6 +151,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             UpdateViewportSize();
 
             _mapContent.generateVisualContent += OnGenerateBackgroundContent;
+            _gridLinesLayer.generateVisualContent += OnGenerateGridLinesContent; 
             _gridLayer.generateVisualContent += OnGenerateGridContent;
         }
         
@@ -160,6 +176,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             var offsetY = pivotY + (Center.y - 1f) * _cellSize;
 
             _gridLayer.style.translate = new StyleTranslate(new Translate(offsetX, offsetY));
+
+            if (_gridLinesLayer != null)
+            {
+                var remainderX = Mod(offsetX, _cellSize);
+                var remainderY = Mod(offsetY, _cellSize);
+                _gridLinesLayer.style.translate = new StyleTranslate(new Translate(remainderX, remainderY));
+            }
         }
 
  
@@ -238,37 +261,38 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             var diagonal = Mathf.Sqrt(_viewportWidth * _viewportWidth + _viewportHeight * _viewportHeight);
 
             DrawFilledRect(painter, -diagonal, -diagonal, diagonal * 3f, diagonal * 3f, BackgroundColor);
-
-            if (ShowGridLines)
-            {
-                DrawGridLines(painter, diagonal);
-            }
         }
  
-        private void DrawGridLines(Painter2D painter, float diagonal)
+        private void OnGenerateGridLinesContent(MeshGenerationContext ctx)
         {
-            var pivotX = _viewportWidth * 0.5f;
-            var pivotY = _viewportHeight * 0.5f;
-            var halfCell = _cellSize * 0.5f;
+            if (!ShowGridLines || _viewportWidth <= 0f || _viewportHeight <= 0f) return;
+
+            var painter = ctx.painter2D;
+            var diagonal = Mathf.Sqrt(_viewportWidth * _viewportWidth + _viewportHeight * _viewportHeight);
+            
+            var padding = _cellSize * 2f;
+            var start = -diagonal - padding;
+            var endW = _viewportWidth + diagonal + padding;
+            var endH = _viewportHeight + diagonal + padding;
 
             painter.strokeColor = GridLineColor;
             painter.lineWidth = 1f;
- 
-            var startX = Mod(pivotX - halfCell, _cellSize);
-            for (var x = startX - diagonal; x <= _viewportWidth + diagonal; x += _cellSize)
+
+            var startX = Mathf.Floor(start / _cellSize) * _cellSize;
+            for (var x = startX; x <= endW; x += _cellSize)
             {
                 painter.BeginPath();
-                painter.MoveTo(new Vector2(x, -diagonal));
-                painter.LineTo(new Vector2(x, _viewportHeight + diagonal));
+                painter.MoveTo(new Vector2(x, start));
+                painter.LineTo(new Vector2(x, endH));
                 painter.Stroke();
             }
- 
-            var startY = Mod(pivotY - halfCell, _cellSize);
-            for (var y = startY - diagonal; y <= _viewportHeight + diagonal; y += _cellSize)
+
+            var startY = Mathf.Floor(start / _cellSize) * _cellSize;
+            for (var y = startY; y <= endH; y += _cellSize)
             {
                 painter.BeginPath();
-                painter.MoveTo(new Vector2(-diagonal, y));
-                painter.LineTo(new Vector2(_viewportWidth + diagonal, y));
+                painter.MoveTo(new Vector2(start, y));
+                painter.LineTo(new Vector2(endW, y));
                 painter.Stroke();
             }
         }
