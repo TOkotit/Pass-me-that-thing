@@ -68,7 +68,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
             }
         }
  
-        public Vector3Int Center { get; private set; }
+        public Vector2 Center { get; private set; }
  
         private bool _centerIsManual;
         private Vector2 _panRemainder;
@@ -155,22 +155,21 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
         {
             var pivotX = _viewportWidth * 0.5f;
             var pivotY = _viewportHeight * 0.5f;
-            var halfCell = _cellSize * 0.5f;
 
-            var offsetX = pivotX - Center.x * _cellSize - halfCell;
-            var offsetY = pivotY + Center.z * _cellSize - halfCell;
+            var offsetX = pivotX - Center.x * _cellSize;
+            var offsetY = pivotY + (Center.y - 1f) * _cellSize;
 
             _gridLayer.style.translate = new StyleTranslate(new Translate(offsetX, offsetY));
         }
 
  
-                public void SetCenter(Vector3Int worldCell)
+        public void SetCenter(Vector2 worldCellExact)
         {
             _centerIsManual = true;
 
-            if (Center == worldCell) return;
+            if (Center == worldCellExact) return;
             
-            Center = worldCell;
+            Center = worldCellExact;
             _panRemainder = Vector2.zero;
             UpdateGridTranslate();
         }
@@ -211,7 +210,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
         {
             if (_cellsCache.Count == 0)
             {
-                Center = Vector3Int.zero;
+                Center = Vector2.zero;
                 return;
             }
  
@@ -228,7 +227,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 if (cell.z > maxZ) maxZ = cell.z;
             }
  
-            Center = new Vector3Int((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
+            Center = new Vector2((minX + maxX) / 2f + 0.5f, (minZ + maxZ) / 2f + 0.5f);
         }
         
         private void OnGenerateBackgroundContent(MeshGenerationContext ctx)

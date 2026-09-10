@@ -601,6 +601,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         {
             var roomComp = entry.PrefabGameObject.GetComponent<LevelRoom>();
             var roomType = roomComp ? roomComp.RoomType : RoomType.None;
+            var virtualId = _virtualRoomIdCounter++;
 
             var data = new PlacedRoomDataCluster
             {
@@ -608,18 +609,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 RoomType = roomType,
                 Origin = origin,
                 Rotation = rotation,
-                Cluster = cluster
+                Cluster = cluster,
+                RoomId = virtualId
             };
 
             var virtualPlates = RoomRotationHelper.GetRotatedPlates(entry, rotation);
-            var virtualId = _virtualRoomIdCounter++;
 
             foreach (var plate in virtualPlates)
             {
                 var globalPos = origin + plate.LocalPosition;
                 var doorDirs = plate.Doors.Select(d => d.GlobalDirection).ToList();
 
-                _levelGrid.SetCellState(globalPos, true, doorDirs, virtualId, roomType);
+                _levelGrid.SetCellState(globalPos, true, doorDirs, virtualId, cluster.Id, roomType);
 
                 data.OccupiedCells.Add(globalPos);
 
@@ -1122,7 +1123,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             {
                                 var globalPos = cell + p.LocalPosition;
                                 var doorDirs = p.Doors.Select(d => d.GlobalDirection).ToList();
-                                _levelGrid.SetCellState(globalPos, true, doorDirs, tunnelId, RoomType.TechnicalTunnels);
+                                _levelGrid.SetCellState(globalPos, true, doorDirs, tunnelId, ownerData.Cluster.Id, RoomType.TechnicalTunnels);
                                 modifiedCells.Add(globalPos);
                             }
 

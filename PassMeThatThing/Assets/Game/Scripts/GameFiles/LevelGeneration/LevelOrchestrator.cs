@@ -39,6 +39,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public Vector3Int Origin;
         public RoomRotation Rotation;
         public RoomCluster Cluster;
+        
+        public int RoomId;
+        public string GlobalId => Cluster != null ? $"{Cluster.Id}_{RoomId}" : RoomId.ToString();
+        
         public List<ConnectionPoint> FreeConnections = new();
         public List<Vector3Int> OccupiedCells = new();
         public List<VirtualTunnelData> AttachedTunnels = new();
@@ -107,7 +111,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         /// <param name="forcedSeed"></param>
         public int GenerateLevelFromConfig(string who, int? forcedSeed = null)
         {
-            if (levelConfig == null)
+            if (!levelConfig)
             {
                 Debug.LogError($"[GENERATOR] ({who}) LevelConfig не назначен в LevelOrchestrator!");
                 return 0;

@@ -402,11 +402,13 @@ namespace Game.Gameplay.View.UI
         }
         private void UpdateMiniMapPosition(Vector3 playerPosition)
         {
-            if (_miniMap == null || _levelGrid == null) return;
+            if (_miniMap == null || !_levelGrid) return;
             
-            var cellPosition = _levelGrid.UnityGrid.WorldToCell(playerPosition);
+            var localPos = _levelGrid.UnityGrid.transform.InverseTransformPoint(playerPosition);
+            var cellSize = _levelGrid.UnityGrid.cellSize;
+            var exactCellPos = new Vector2(localPos.x / cellSize.x, localPos.z / cellSize.z);
             
-            _miniMap.SetCenter(cellPosition);
+            _miniMap.SetCenter(exactCellPos);
         }
     }
 }

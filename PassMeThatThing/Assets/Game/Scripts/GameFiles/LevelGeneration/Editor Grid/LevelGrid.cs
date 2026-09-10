@@ -23,6 +23,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
         public struct CellData
         {
             public int RoomId;
+            public int ClusterId;
+            public string GlobalId;
             public List<Vector3Int> Doors;
             public RoomType RoomType;
 
@@ -119,10 +121,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
         }
 
         
-        public void SetCellState(Vector3Int cellPosition, bool isOccupied, List<Vector3Int> doorDirections = null, int roomId = -1, RoomType roomType = RoomType.None)
+        public void SetCellState(Vector3Int cellPosition, bool isOccupied, List<Vector3Int> doorDirections = null, int roomId = -1, int clusterId = -1, RoomType roomType = RoomType.None)
         {
-            
-            
             if (_occupiedCells == null) InitializeGrid();
 
             if (isOccupied)
@@ -132,7 +132,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Editor_Grid
                 {
                     _cellDataMap[cellPosition] = new CellData 
                     { 
-                        RoomId = roomId, 
+                        RoomId = roomId,
+                        ClusterId = clusterId,
+                        GlobalId = (clusterId != -1 && roomId != -1) ? $"{clusterId}_{roomId}" : "",
                         Doors = doorDirections ?? new List<Vector3Int>(),
                         RoomType = roomType
                     };
