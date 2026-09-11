@@ -17,8 +17,12 @@ namespace MainCharacterNetwork
         [SerializeField] private UniversalRendererData rendererData;
         private ScriptableRendererFeature _visionFeature;
         private ScriptableRendererFeature _outlineFeature;
-        private bool _isVisionEnabled = false;
-
+        
+        //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
+        private bool _isPowerEventActive = false;
+        private bool _isDebugVisionEnabled = true;
+        
+        
         private IControllable _controllable;
         private IControllable _defaultControllable;
         private MainCharacterCamera _mainCamera;
@@ -87,6 +91,14 @@ namespace MainCharacterNetwork
             }
 
             TrySubscribe();
+            
+            //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
+            NetworkVisionManager.OnGlobalPowerStateChanged += HandlePowerStateChanged;
+
+            if (NetworkVisionManager.Instance != null)
+            {
+                HandlePowerStateChanged(NetworkVisionManager.Instance.IsGlobalPowerOn);
+            }
         }
 
         private void OnEnable()
@@ -98,9 +110,21 @@ namespace MainCharacterNetwork
         private void OnDisable()
         {
             if (isLocalPlayer)
+            {
                 TryUnsubscribe();
+                
+                //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
+                NetworkVisionManager.OnGlobalPowerStateChanged -= HandlePowerStateChanged;
+            }
 
             SetVisionState(false);
+        }
+        
+        //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
+        private void HandlePowerStateChanged(bool isPowerOn)
+        {
+            _isPowerEventActive = !isPowerOn;
+            UpdateVisionFeature();
         }
 
         private void TrySubscribe()
@@ -147,13 +171,22 @@ namespace MainCharacterNetwork
             ReadMovement();
             _mcLocalModel?.ReportPlayerPosition(transform.position);
 
+            //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
             if (Input.GetKeyDown(KeyCode.V))
             {
-                _isVisionEnabled = !_isVisionEnabled;
-                SetVisionState(_isVisionEnabled);
+                _isDebugVisionEnabled = !_isDebugVisionEnabled;
+                UpdateVisionFeature();
             }
         }
+        
+        //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
+        private void UpdateVisionFeature()
+        {
+            var shouldBeActive = _isPowerEventActive && _isDebugVisionEnabled;
+            SetVisionState(shouldBeActive);
+        }
 
+        //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
         private void SetVisionState(bool state)
         {
             if (_visionFeature) _visionFeature.SetActive(state);

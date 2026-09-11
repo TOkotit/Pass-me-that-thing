@@ -5,23 +5,8 @@ public class GlobalVisionShaderManager : MonoBehaviour
 {
     public static GlobalVisionShaderManager Instance { get; private set; }
 
-    // ---------- Заглушка для сфер (оставлена, чтобы не ломать VisionOutline.shader / MultipleVision.hlsl) ----------
-    private readonly List<Vector4> _activeZones = new();
-    private ComputeBuffer _zonesBuffer;
-    private ComputeBuffer _boundaryBuffer;
-    private ComputeBuffer _meridianBuffer;
-
-    private static readonly int ZonesBufferId = Shader.PropertyToID("_VisionZonesBuffer");
-    private static readonly int BoundaryBufferId = Shader.PropertyToID("_VisionBoundaryBuffer");
-    private static readonly int MeridianBufferId = Shader.PropertyToID("_VisionMeridianBuffer");
-    private static readonly int ZonesCountId = Shader.PropertyToID("_VisionZonesCount");
-    private static readonly int VerticalStepId = Shader.PropertyToID("_VisionVerticalStep");
-
-    [SerializeField] private float verticalStep = 1f; // используется только заглушкой, можно не трогать
-
-    // ---------- Конусы (фонарики) ----------
-    private readonly List<Vector4> _activeConesPosRange = new();  // xyz = позиция, w = дальность
-    private readonly List<Vector4> _activeConesDirAngle = new();  // xyz = направление, w = cos(halfAngle)
+    private readonly List<Vector4> _activeConesPosRange = new();  
+    private readonly List<Vector4> _activeConesDirAngle = new();  
 
     private ComputeBuffer _conesPosRangeBuffer;
     private ComputeBuffer _conesDirAngleBuffer;
@@ -30,10 +15,11 @@ public class GlobalVisionShaderManager : MonoBehaviour
     private static readonly int ConesPosRangeId = Shader.PropertyToID("_VisionConesPosRange");
     private static readonly int ConesDirAngleId = Shader.PropertyToID("_VisionConesDirAngle");
     private static readonly int ConesCountId = Shader.PropertyToID("_VisionConesCount");
+    private static readonly int ZonesCountId = Shader.PropertyToID("_VisionZonesCount"); 
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (!Instance) Instance = this;
         else { Destroy(gameObject); return; }
 
         _conesPosRangeBuffer = new ComputeBuffer(1, sizeof(float) * 4);
@@ -42,30 +28,21 @@ public class GlobalVisionShaderManager : MonoBehaviour
         Shader.SetGlobalBuffer(ConesPosRangeId, _conesPosRangeBuffer);
         Shader.SetGlobalBuffer(ConesDirAngleId, _conesDirAngleBuffer);
         Shader.SetGlobalInt(ConesCountId, 0);
-    }
-
-    // Оставлено для совместимости — сейчас всегда добавляет в пустоту, так как система сфер отключена
-    public void AddZone(Vector3 position, float radius)
-    {
-        _activeZones.Add(new Vector4(position.x, position.y, position.z, radius));
+        Shader.SetGlobalInt(ZonesCountId, 0);
     }
 
     public void AddConeZone(Vector3 position, Vector3 direction, float halfAngleDegrees, float range)
     {
         _activeConesPosRange.Add(new Vector4(position.x, position.y, position.z, range));
 
-        Vector3 dir = direction.normalized;
-        float cosHalfAngle = Mathf.Cos(halfAngleDegrees * Mathf.Deg2Rad);
+        var dir = direction.normalized;
+        var cosHalfAngle = Mathf.Cos(halfAngleDegrees * Mathf.Deg2Rad);
         _activeConesDirAngle.Add(new Vector4(dir.x, dir.y, dir.z, cosHalfAngle));
     }
 
     private void LateUpdate()
     {
-        // Сферы — заглушка, всегда 0
-        Shader.SetGlobalInt(ZonesCountId, 0);
-        _activeZones.Clear();
-
-        int conesCount = _activeConesPosRange.Count;
+        var conesCount = _activeConesPosRange.Count;
         Shader.SetGlobalInt(ConesCountId, conesCount);
 
         if (conesCount > 0)
@@ -96,9 +73,6 @@ public class GlobalVisionShaderManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _zonesBuffer?.Release();
-        _boundaryBuffer?.Release();
-        _meridianBuffer?.Release();
         _conesPosRangeBuffer?.Release();
         _conesDirAngleBuffer?.Release();
     }
