@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Assets.Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.States.Zombie;
 using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
@@ -38,6 +39,14 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public int MaxHealth => _zombieData.MaxHealth;
         public int MaxToughness => _zombieData.MaxToughness;
 
+        public float WanderTime => _zombieData.WanderTime;
+
+        public float WaitTime => _zombieData.WaitTime;
+
+        public float ChaseSpeedMult => _zombieData.ChaseSpeedMult;
+        public float WanderSpeedMult => _zombieData.WanderSpeedMult;
+
+        public ZombieWander ZombieWander {  get; private set; }
         public ZombieWalk ZombieWalk { get; private set; }
         public ZombieChase ZombieChase { get; private set; }
         public ZombieAttack ZombieAttack { get; private set; }
@@ -74,14 +83,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         public override void OnStartServer()
         {
             base.OnStartServer();
-            
+
+            ZombieWander = new ZombieWander(this, stateMachine);
             ZombieWalk = new ZombieWalk(this, stateMachine);
             ZombieChase = new ZombieChase(this, stateMachine);
             ZombieAttack = new ZombieAttack(this, stateMachine);
             ZombieDeath = new ZombieDeath(this, stateMachine);
             ZombieKnockout =  new ZombieKnockout(this, stateMachine);
             
-            stateMachine.Initialize(ZombieWalk);
+            stateMachine.Initialize(ZombieWander);
             
             DisableRagdoll();
         }

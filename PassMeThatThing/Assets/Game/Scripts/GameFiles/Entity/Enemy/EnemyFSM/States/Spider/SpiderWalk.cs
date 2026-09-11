@@ -42,6 +42,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
                 }
             }
+            else
+            {
+                StateMachine.ChangeState(_spider.SpiderWander);
+            }
         }
 
         public override void PhysicsUpdate()

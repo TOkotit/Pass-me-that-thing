@@ -73,7 +73,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 if (Physics.Raycast(_ray, out _hit, float.MaxValue, _spider.CeilingLayer))
                 {
                     _positionStart =  _spider.transform.position;
-                    _positionEnd = _hit.point - _spider.transform.up * 2f;
+                    _positionEnd = _hit.point;
                     _rotationStart = _spider.transform.rotation;
                     _rotationEnd = _spider.transform.rotation * Quaternion.Euler(0, 0, 180);
                     

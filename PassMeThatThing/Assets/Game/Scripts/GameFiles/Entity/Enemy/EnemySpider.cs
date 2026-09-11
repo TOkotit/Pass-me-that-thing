@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.States.Spider;
 using DG.Tweening;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror;
@@ -30,7 +31,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public float Speed => _spiderData.Speed;
         public int MaxHealth => _spiderData.MaxHealth;
         public int MaxToughness => _spiderData.MaxToughness;
-        
+
+        public float WanderTime => _spiderData.WanderTime;
+
+        public float WaitTime => _spiderData.WaitTime;
+
+        public float ChaseSpeedMult => _spiderData.ChaseSpeedMult;
+        public float WanderSpeedMult => _spiderData.WanderSpeedMult;
+
+        public SpiderWander SpiderWander { get; private set; }
         public SpiderWalk SpiderWalk { get; private set; }
         public SpiderFindPlace SpiderFindPlace { get; private set; }
         public SpiderPrepare SpiderPrepare { get; private set; }
@@ -50,6 +59,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.OnStartServer();
             
+            SpiderWander = new SpiderWander(this, stateMachine);
             SpiderWalk = new SpiderWalk(this, stateMachine);
             SpiderFindPlace = new SpiderFindPlace(this, stateMachine);
             SpiderPrepare = new SpiderPrepare(this, stateMachine);
@@ -57,7 +67,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             SpiderDeath = new SpiderDeath(this, stateMachine);
             SpiderKnockout =  new SpiderKnockout(this, stateMachine);
             
-            stateMachine.Initialize(SpiderWalk);
+            stateMachine.Initialize(SpiderWander);
         }
         protected override void Start()
         {

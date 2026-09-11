@@ -18,12 +18,16 @@ MonoBehaviour:
   enemyImage: {fileID: 21300000, guid: f89888c2a4f561d4e92bd0dc6ccf655b, type: 3}
   maxHealth: 70
   maxToughness: 2
-  speed: 7
+  speed: 3
   damage: 7
   attackCooldown: 3
   attackSphereArea: {x: 5, y: 5, z: 5}
   chaseDistance: 5
   attackDistance: 3
+  wanderTime: 3
+  waitTime: 1
+  chaseSpeedMult: 1.5
+  wanderSpeedMult: 0.5
   drops:
     _serializedList:
     - Key: {fileID: 11400000, guid: 952c7747f289ae04eb1f610ffbe1dc5d, type: 2}

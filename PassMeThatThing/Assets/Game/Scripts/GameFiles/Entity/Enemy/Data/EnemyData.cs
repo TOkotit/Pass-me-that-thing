@@ -16,12 +16,18 @@ public class EnemyData : ScriptableObject
     [Header("Stats")]
     [SerializeField] private int maxHealth;
     [SerializeField] private int maxToughness;
-    [SerializeField] private int speed;
     [SerializeField] private int damage;
     [SerializeField] private int attackCooldown;
     [SerializeField] private Vector3 attackSphereArea;
     [SerializeField] private int chaseDistance;
     [SerializeField] private int attackDistance;
+    [SerializeField] private float wanderTime;
+    [SerializeField] private float waitTime;
+
+    [Header("Speed")]
+    [SerializeField] private int speed;
+    [SerializeField] private float chaseSpeedMult;
+    [SerializeField] private float wanderSpeedMult;
 
     [Header("Drops")]
     [SerializeField] private SerializedDictionary<ItemRarityData, float> drops; //item - base chance to this enemy
@@ -42,4 +48,11 @@ public class EnemyData : ScriptableObject
     public int AttackDistance => attackDistance;
 
     public SerializedDictionary<ItemRarityData, float> Drops  => drops;
+
+    public float WanderTime => wanderTime;
+
+    public float WaitTime => waitTime;
+
+    public float ChaseSpeedMult => chaseSpeedMult;
+    public float WanderSpeedMult => wanderSpeedMult;
 }

@@ -43,12 +43,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         private bool _inSight;
         private bool _inProximity;
 
+        public float SightDistance => sightDistance;
 
         public Vector3 DetectedTarget { get; private set; }
         public TargetObject DetectedTargetObject { get; private set; }
         public float DistanceToTarget { get; private set; } = -1f;
         public bool IsTargetVisible { get; private set; }
-
+        
 
         public event Action<Vector3> OnDetectedTarget;
 

@@ -26,11 +26,13 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             base.Enter();
             _isAtkCooldown = true;
             _atkCooldown = 0f;
-            _movementController.EnableNavAgent();
 
             rTime = RandomUtilities.RandNearMult(_spider.AttackCooldown, 0.1f);
-        }
 
+            //_movementController.Rb.constraints = RigidbodyConstraints.None;
+            //_movementController.Rb.AddTorque(new Vector3(1f, 1f, 1f) * 3, ForceMode.VelocityChange);
+        }
+        
         public override void LogicUpdate()
         {
             
@@ -51,6 +53,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         public override void Exit()
         {
+            _movementController.EnableNavAgent();
+            //_movementController.Rb.angularVelocity = Vector3.zero;
+            //_movementController.Rb.MoveRotation(Quaternion.identity);
+            //_movementController.Rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             base.Exit();
         }
         

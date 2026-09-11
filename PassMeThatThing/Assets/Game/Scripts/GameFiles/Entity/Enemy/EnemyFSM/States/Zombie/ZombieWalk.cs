@@ -41,6 +41,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                     _movementController.NavigateTo(_targetDetector.DetectedTarget);
                 }
             }
+            else
+            {
+                StateMachine.ChangeState(_zombie.ZombieWander);
+            }
         }
 
         public override void PhysicsUpdate()
