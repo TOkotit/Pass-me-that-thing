@@ -370,8 +370,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &36460282
 Grid:
   m_ObjectHideFlags: 0
@@ -1294,8 +1295,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &71532130
 Grid:
   m_ObjectHideFlags: 0
@@ -1426,8 +1428,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &78203333
 Grid:
   m_ObjectHideFlags: 0
@@ -1566,8 +1569,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &86658114
 Grid:
   m_ObjectHideFlags: 0
@@ -2420,6 +2424,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 2512996955
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 15
@@ -2954,8 +2962,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &148830967
 Grid:
   m_ObjectHideFlags: 0
@@ -4544,6 +4553,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 2955050763
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 15
@@ -5852,6 +5865,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3417742754
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 15
@@ -6831,8 +6848,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &373432859
 Grid:
   m_ObjectHideFlags: 0
@@ -7413,8 +7431,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &423832110
 Grid:
   m_ObjectHideFlags: 0
@@ -7711,6 +7730,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3882019187
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -8430,6 +8453,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3009906239
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -9716,6 +9743,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 540239954
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 10
@@ -10539,8 +10570,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &601516220
 Grid:
   m_ObjectHideFlags: 0
@@ -10846,8 +10878,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &649118232
 Grid:
   m_ObjectHideFlags: 0
@@ -11260,8 +11293,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &664704848
 Grid:
   m_ObjectHideFlags: 0
@@ -12408,6 +12442,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 2692224419
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 15
@@ -12668,8 +12706,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &772421889
 Grid:
   m_ObjectHideFlags: 0
@@ -12798,6 +12837,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 559629577
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -13069,8 +13112,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &805602757
 Grid:
   m_ObjectHideFlags: 0
@@ -13199,6 +13243,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 1331204663
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -13811,6 +13859,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3492167825
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -15688,8 +15740,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &941820638
 Grid:
   m_ObjectHideFlags: 0
@@ -16059,8 +16112,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &977945696
 Grid:
   m_ObjectHideFlags: 0
@@ -17148,6 +17202,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3809544544
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 10.4
@@ -17251,8 +17309,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &1052906206
 Grid:
   m_ObjectHideFlags: 0
@@ -18019,8 +18078,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &1127266434
 Grid:
   m_ObjectHideFlags: 0
@@ -18380,6 +18440,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 516652098
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 10
@@ -18465,8 +18529,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &1155521268
 Grid:
   m_ObjectHideFlags: 0
@@ -20175,8 +20240,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &1333357263
 Grid:
   m_ObjectHideFlags: 0
@@ -23833,8 +23899,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &1570100054
 Grid:
   m_ObjectHideFlags: 0
@@ -24438,6 +24505,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3630417992
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 15
@@ -24852,6 +24923,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 253280300
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -25727,6 +25802,10 @@ PrefabInstance:
     - target: {fileID: 1045236775697610580, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 1485080989
       objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
@@ -27134,8 +27213,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &1808560111
 Grid:
   m_ObjectHideFlags: 0
@@ -29458,6 +29538,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 1139687183
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 15
@@ -30764,6 +30848,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645015231732391870, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
+      propertyPath: sceneId
+      value: 3097731122
+      objectReference: {fileID: 0}
     - target: {fileID: 3103123893000864925, guid: ee79b5b306de8fe4ea09c1ca891afd5e, type: 3}
       propertyPath: radius
       value: 10.4
@@ -31094,8 +31182,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &2123840455
 Grid:
   m_ObjectHideFlags: 0
@@ -31628,8 +31717,9 @@ MonoBehaviour:
   networkObjects: []
   networkRarityItems: []
   navMeshSurface: {fileID: 0}
+  minItemCount: 0
   spawnRate: 0.7
-  spawnGrowthRate: 0.6
+  spawnRateStep: 1.2
 --- !u!156049354 &2145256991
 Grid:
   m_ObjectHideFlags: 0

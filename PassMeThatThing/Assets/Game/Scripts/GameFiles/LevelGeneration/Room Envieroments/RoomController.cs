@@ -9,8 +9,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
         public int RoomId { get; private set; } = -1;
         public bool IsPowerOn { get; private set; } = true;
 
-        private readonly List<OutlineShader> _lights = new();
-        public IReadOnlyList<OutlineShader> Lights => _lights;
+        private readonly List<RoomLight> _lights = new();
+        public IReadOnlyList<RoomLight> Lights => _lights;
         
         public void SetRoomId(int id)
         {
@@ -25,19 +25,19 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
             NetworkVisionManager.Instance.RegisterRoomLocal(RoomId, this);
         }
 
-        public void RegisterLight(OutlineShader roomLight)
+        public void RegisterLight(RoomLight roomLight)
         {
             if (_lights.Contains(roomLight)) return;
             _lights.Add(roomLight);
             roomLight.SetActiveLocal(IsPowerOn);
         }
 
-        public void UnregisterLight(OutlineShader roomLight) => _lights.Remove(roomLight);
+        public void UnregisterLight(RoomLight roomLight) => _lights.Remove(roomLight);
 
         public void ApplyPowerState(bool state)
         {
             IsPowerOn = state;
-            foreach (var light in _lights.Where(l => l != null))
+            foreach (var light in _lights.Where(l => l))
                 light.SetActiveLocal(state);
         }
 
@@ -49,7 +49,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
 
         private void OnDestroy()
         {
-            if (NetworkVisionManager.Instance != null)
+            if (NetworkVisionManager.Instance)
                 NetworkVisionManager.Instance.UnregisterRoomLocal(RoomId);
         }
     }

@@ -9,10 +9,11 @@ public class NetworkVisionManager : NetworkBehaviour
 
     private readonly SyncDictionary<int, bool> _roomPowerStates = new();
 
-    [SyncVar]
+    [SyncVar(hook = nameof(OnGlobalPowerChanged))]
     private bool _isGlobalPowerOn = true;
     public bool IsGlobalPowerOn => _isGlobalPowerOn;
-
+    public static event System.Action<bool> OnGlobalPowerStateChanged;
+    
     private readonly Dictionary<int, RoomController> _localRooms = new();
 
     private void Awake()
@@ -29,6 +30,11 @@ public class NetworkVisionManager : NetworkBehaviour
         {
             ApplyRoomState(kvp.Key, kvp.Value);
         }
+    }
+    
+    private void OnGlobalPowerChanged(bool oldState, bool newState)
+    {
+        OnGlobalPowerStateChanged?.Invoke(newState);
     }
 
     private void OnRoomPowerStateChanged(SyncDictionary<int, bool>.Operation op, int roomId, bool state)
