@@ -15,3 +15,63 @@ MonoBehaviour:
   allEnemies:
   - {fileID: 11400000, guid: 21d697d700232dd4dbe09ae3103730ac, type: 2}
   - {fileID: 11400000, guid: 2c1b6e7fca1e627488552ffc2f2f669b, type: 2}
+  levelEnemiesConfig:
+    _serializedList:
+    - Key:
+        minVal: 1
+        maxVal: 1
+      Value:
+      - count: 1
+        enemyDiff: 0
+    - Key:
+        minVal: 2
+        maxVal: 2
+      Value:
+      - count: 2
+        enemyDiff: 0
+    - Key:
+        minVal: 3
+        maxVal: 4
+      Value:
+      - count: 1
+        enemyDiff: 0
+      - count: 1
+        enemyDiff: 1
+    - Key:
+        minVal: 5
+        maxVal: 6
+      Value:
+      - count: 1
+        enemyDiff: 0
+      - count: 2
+        enemyDiff: 1
+    - Key:
+        minVal: 7
+        maxVal: 9
+      Value:
+      - count: 2
+        enemyDiff: 0
+      - count: 3
+        enemyDiff: 1
+      - count: 1
+        enemyDiff: 2
+    - Key:
+        minVal: 10
+        maxVal: 12
+      Value:
+      - count: 2
+        enemyDiff: 0
+      - count: 4
+        enemyDiff: 1
+      - count: 2
+        enemyDiff: 2
+    - Key:
+        minVal: 13
+        maxVal: 15
+      Value:
+      - count: 2
+        enemyDiff: 0
+      - count: 3
+        enemyDiff: 1
+      - count: 3
+        enemyDiff: 2

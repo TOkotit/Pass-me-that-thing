@@ -1,5 +1,6 @@
 using Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using AYellowpaper.SerializedCollections;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -12,6 +13,9 @@ public class EnemyData : ScriptableObject
     [SerializeField] private string enemyName;
     [SerializeField] private GameObject worldPrefab; 
     [SerializeField] private Sprite enemyImage;
+
+    [Header("Difficulty")]
+    [SerializeField] private EnemyDifficulty enemyDifficulty;
 
     [Header("Stats")]
     [SerializeField] private int maxHealth;
@@ -38,21 +42,25 @@ public class EnemyData : ScriptableObject
     public GameObject WorldPrefab => worldPrefab;
     public Sprite EnemyImage => enemyImage;
 
+    public EnemyDifficulty EnemyDifficulty => enemyDifficulty;
+
     public int MaxHealth => maxHealth;
     public int MaxToughness => maxToughness;
-    public int Speed => speed;
+    
     public int Damage => damage;
     public int AttackCooldown => attackCooldown;
     public Vector3 AttackSphereArea => attackSphereArea;
     public int ChaseDistance => chaseDistance;
     public int AttackDistance => attackDistance;
 
-    public SerializedDictionary<ItemRarityData, float> Drops  => drops;
-
     public float WanderTime => wanderTime;
-
     public float WaitTime => waitTime;
 
+    public int Speed => speed;
     public float ChaseSpeedMult => chaseSpeedMult;
     public float WanderSpeedMult => wanderSpeedMult;
+
+
+    public SerializedDictionary<ItemRarityData, float> Drops  => drops;
+
 }

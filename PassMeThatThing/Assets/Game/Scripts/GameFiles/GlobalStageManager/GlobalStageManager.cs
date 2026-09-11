@@ -7,6 +7,7 @@ using Game.Scripts.Utils;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts.GameFiles.GlobalStageManager
 {
@@ -30,6 +31,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private NetworkTimer _timer;
         private bool _inOvertime;
         private bool _fightEnded;
+
+        private int _levelCount = 0;
 
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime;
@@ -89,19 +92,13 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             {
                 _playerReadyManager.ResetReady();
                 //_gameRandomEventManager.TryTriggerRandomEvents();
+                _levelCount++;
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
-                var spiderData = _enemyDatabase.GetEnemy("spider");
-                var zombieData = _enemyDatabase.GetEnemy("zombie");
-                _enemySpawner.SpawnWave(new List<EnemyData>()
-                {
-                    spiderData,
-                    //zombieData,
-                    //zombieData,
-                    //zombieData,
-                });
+
+                _enemySpawner.SpawnWave(GetEnemies());
             }
 
             if (duration > 0)
@@ -169,6 +166,25 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _fightEnded = true;
             _inOvertime = false;
             StartStage(GlobalStagesType.Preparation);
+        }
+
+        [Server]
+        private List<EnemyData> GetEnemies()
+        {
+            var result = new List<EnemyData>();
+            var enemyPacks = _enemyDatabase.GetEnemyPacksByLevel(_levelCount);
+
+            foreach (var ep in enemyPacks)
+            {
+                var enemiesDiff = _enemyDatabase.GetEnemiesByDiff(ep.enemyDiff);
+
+                for (var i = 0; i < ep.count; i++)
+                {
+                    result.Add(enemiesDiff[Random.Range(0, enemiesDiff.Count)]);
+                }
+            }
+
+            return result;
         }
 
         [ClientRpc]

@@ -16,9 +16,9 @@ MonoBehaviour:
   enemyName: Zombie
   worldPrefab: {fileID: 8090700475096468142, guid: 076bc048e732e104d9bb0a59c30ad253, type: 3}
   enemyImage: {fileID: 21300000, guid: f89888c2a4f561d4e92bd0dc6ccf655b, type: 3}
+  enemyDifficulty: 1
   maxHealth: 70
   maxToughness: 2
-  speed: 3
   damage: 7
   attackCooldown: 3
   attackSphereArea: {x: 5, y: 5, z: 5}
@@ -26,6 +26,7 @@ MonoBehaviour:
   attackDistance: 3
   wanderTime: 3
   waitTime: 1
+  speed: 3
   chaseSpeedMult: 1.5
   wanderSpeedMult: 0.5
   drops:
