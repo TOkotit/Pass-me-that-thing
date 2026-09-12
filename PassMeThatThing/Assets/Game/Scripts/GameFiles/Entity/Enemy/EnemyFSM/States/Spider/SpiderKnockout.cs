@@ -29,6 +29,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
             rTime = RandomUtilities.RandNearMult(_spider.AttackCooldown, 0.1f);
 
+            _spider.SpiderEnemyView.GroupUp();
+
             //_movementController.Rb.constraints = RigidbodyConstraints.None;
             //_movementController.Rb.AddTorque(new Vector3(1f, 1f, 1f) * 3, ForceMode.VelocityChange);
         }
@@ -45,6 +47,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 _atkCooldown += Time.fixedDeltaTime;
                 if (_atkCooldown >= rTime)
                 {
+                    _spider.SpiderEnemyView.UnGroup();
                     _isAtkCooldown = false;
                     StateMachine.ChangeState(_spider.SpiderWalk);
                 }

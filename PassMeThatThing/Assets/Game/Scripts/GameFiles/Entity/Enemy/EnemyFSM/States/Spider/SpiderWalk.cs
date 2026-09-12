@@ -22,7 +22,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         public override void Enter()
         {
             base.Enter();
-            
+
+            _spider.SpiderEnemyView.SetWalk(true);
+
             _movementController.EnableNavAgent();
             _movementController.SetSpeed(_spider.Speed);
         }
@@ -55,6 +57,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         public override void Exit()
         {
+
+            _spider.SpiderEnemyView.SetWalk(false);
+
             base.Exit();
         }
         

@@ -100,6 +100,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
 
             var timeUp = RandomUtilities.RandNearMult(_timeToGoUp, 0.1f);
 
+            _spider.SpiderEnemyView.GroupUp();
 
             while (_progress < timeUp)
             {
@@ -114,6 +115,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 //_spider.transform.rotation = Quaternion.Slerp(_rotationStart, _rotationEnd, progressInPercantage);
                 yield return null;
             }
+
+            _spider.SpiderEnemyView.UnGroup();
+
             _isGoingUp = false;
             _isUp = true;
             

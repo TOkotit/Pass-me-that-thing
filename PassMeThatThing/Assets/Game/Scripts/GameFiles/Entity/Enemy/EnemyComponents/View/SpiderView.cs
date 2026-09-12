@@ -7,21 +7,21 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 {
     public class SpiderView : EnemyView
     {
-        [SerializeField] protected LayerMask groundMask;
+        //[SerializeField] protected LayerMask groundMask;
         
-        private const string WalkKey = "Walk";
-        private const string Attack1Key = "Attack1";
-        private const string Attack2Key = "Attack2";
-        private const string DeathKey = "Death";
+        private const string WalkKey = "isWalking";
+        private const string GroupUpKey = "GroupUp";
+        private const string UnGroupKey = "UnGroup";
+        private const string JumpAttackKey = "JumpAttack";
 
-        public void Walk() => base.animator.SetTrigger(WalkKey);
-        public void Attack1() => base.animator.SetTrigger(Attack1Key);
-        public void Attack2() => base.animator.SetTrigger(Attack2Key);
-        public void Death() => base.animator.SetTrigger(DeathKey);
+        public void SetWalk(bool value) => animator.SetBool(WalkKey, value);
+        public void GroupUp() => netAnimator.SetTrigger(GroupUpKey);
+        public void UnGroup() => netAnimator.SetTrigger(UnGroupKey);
+        public void JumpAttack() => netAnimator.SetTrigger(JumpAttackKey);
         
         
-        private const string IdleClipName = "";
+        //private const string IdleClipName = "";
 
-       
+        
     }
 }

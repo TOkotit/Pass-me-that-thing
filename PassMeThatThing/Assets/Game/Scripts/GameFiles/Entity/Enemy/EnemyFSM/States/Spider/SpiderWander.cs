@@ -63,6 +63,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.States.Spider
                     _isWandering = false;
                     _rWaitTime = RandomUtilities.RandNearMult(_spider.WaitTime, _timeRanMult);
                     _movementController.StopNavigating();
+
+                    _spider.SpiderEnemyView.SetWalk(false);
                 }
             }
             else
@@ -75,6 +77,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.States.Spider
                     _isWandering = true;
                     _rWanderTime = RandomUtilities.RandNearMult(_spider.WanderTime, _timeRanMult);
                     SetNewRandomDestination();
+
+                    _spider.SpiderEnemyView.SetWalk(true);
                 }
             }
         }

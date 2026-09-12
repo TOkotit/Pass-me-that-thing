@@ -104,6 +104,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 _dashProgress = 0f;
                 _positionEnd = _targetDetector.DetectedTarget;
 
+                _spider.SpiderEnemyView.JumpAttack();
+
                 _enemyView.EnableAttackpreview(true);
                 _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _spider.AttackArea * 2);
 
