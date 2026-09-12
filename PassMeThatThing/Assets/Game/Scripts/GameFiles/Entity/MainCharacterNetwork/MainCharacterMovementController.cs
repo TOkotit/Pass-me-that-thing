@@ -47,12 +47,16 @@ namespace MainCharacterNetwork
             _mainCamera = GetComponentInChildren<MainCharacterCamera>(true);
             if (!_mainCamera)
                 Debug.LogWarning("MainCharacterCamera not found in children");
+            
+            if (rendererData)
+            {
+                _visionFeature = rendererData.rendererFeatures.Find(f => f.name == "VisionEffect");
+                _outlineFeature = rendererData.rendererFeatures.Find(f => f.name == "GlobalOutlines");
+            }
         }
 
         private void Start()
         {
-            _visionFeature = rendererData.rendererFeatures.Find(f => f.name == "VisionEffect");
-            _outlineFeature = rendererData.rendererFeatures.Find(f => f.name == "GlobalOutlines");
             SetVisionState(false);
         }
 
@@ -95,7 +99,7 @@ namespace MainCharacterNetwork
             //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
             NetworkVisionManager.OnGlobalPowerStateChanged += HandlePowerStateChanged;
 
-            if (NetworkVisionManager.Instance != null)
+            if (NetworkVisionManager.Instance)
             {
                 HandlePowerStateChanged(NetworkVisionManager.Instance.IsGlobalPowerOn);
             }

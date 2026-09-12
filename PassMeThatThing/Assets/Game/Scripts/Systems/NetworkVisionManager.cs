@@ -1,93 +1,55 @@
 using System.Collections.Generic;
 using Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments;
 using Mirror;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkVisionManager : NetworkBehaviour
 {
-    public static NetworkVisionManager Instance { get; private set; }
-
-    private readonly SyncDictionary<int, bool> _roomPowerStates = new();
 
     [SyncVar(hook = nameof(OnGlobalPowerChanged))]
     private bool _isGlobalPowerOn = true;
     public bool IsGlobalPowerOn => _isGlobalPowerOn;
     public static event System.Action<bool> OnGlobalPowerStateChanged;
-    
-    private readonly Dictionary<int, RoomController> _localRooms = new();
 
-    private void Awake()
+    public static NetworkVisionManager Instance { get; private set; }
+    public List<RoomLight> RoomLights = new();
+
+    public void Awake()
     {
-        if (Instance == null) Instance = this;
-        else { Destroy(gameObject); return; }
+        if (!Instance) Instance = this;
+        else if (Instance != this) Destroy(gameObject);
     }
 
-    public override void OnStartClient()
+    public void RegisterRoomLight(RoomLight roomLight)
     {
-        _roomPowerStates.OnChange  += OnRoomPowerStateChanged;
-
-        foreach (var kvp in _roomPowerStates)
+        if(!RoomLights.Contains(roomLight))
         {
-            ApplyRoomState(kvp.Key, kvp.Value);
+            RoomLights.Add(roomLight);
+            roomLight.SetActiveLocal(_isGlobalPowerOn);
         }
+    }
+
+    public void UnregisterRoomLight(RoomLight roomLight)
+    {
+        RoomLights.Remove(roomLight);
     }
     
     private void OnGlobalPowerChanged(bool oldState, bool newState)
     {
         OnGlobalPowerStateChanged?.Invoke(newState);
-    }
 
-    private void OnRoomPowerStateChanged(SyncDictionary<int, bool>.Operation op, int roomId, bool state)
-    {
-        if (op == SyncDictionary<int, bool>.Operation.OP_ADD || op == SyncDictionary<int, bool>.Operation.OP_SET)
+        for (var i = RoomLights.Count - 1; i >= 0; i--)
         {
-            ApplyRoomState(roomId, state);
+            var light =  RoomLights[i];
+            if (light) light.SetActiveLocal(newState);
+            else RoomLights.RemoveAt(i);
         }
-    }
-
-    private void ApplyRoomState(int roomId, bool state)
-    {
-        if (_localRooms.TryGetValue(roomId, out var room) && room != null)
-        {
-            room.ApplyPowerState(state);
-        }
-    }
-
-
-    public void RegisterRoomLocal(int roomId, RoomController room)
-    {
-        _localRooms[roomId] = room;
-
-        if (_roomPowerStates.TryGetValue(roomId, out var state))
-        {
-            room.ApplyPowerState(state);
-        }
-        else if (isServer)
-        {
-            _roomPowerStates[roomId] = true;
-        }
-    }
-
-    public void UnregisterRoomLocal(int roomId)
-    {
-        _localRooms.Remove(roomId);
     }
 
     [Server]
-    public void SetRoomPower(int roomId, bool state)
-    {
-        _roomPowerStates[roomId] = state;
-    }
-
-    [Server]
-    public void SetAllRoomsPower(bool state)
+    public void SetGlobalPower(bool state)
     {
         _isGlobalPowerOn = state;
-
-        var ids = new List<int>(_roomPowerStates.Keys);
-        foreach (var id in ids)
-        {
-            _roomPowerStates[id] = state;
-        }
     }
 }
