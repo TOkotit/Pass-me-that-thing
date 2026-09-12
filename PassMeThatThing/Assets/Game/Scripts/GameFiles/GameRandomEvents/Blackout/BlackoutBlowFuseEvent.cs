@@ -11,16 +11,12 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         protected override void OnStartEvent()
         {
-            if (NetworkVisionManager.Instance)
-            {
-                NetworkVisionManager.Instance.SetAllRoomsPower(false);
-                Debug.Log("[PowerOutageEvent] Электричество вырубилось! Лампы погасли.");
-            }
-
             if (terminal) 
                 terminal.IsFixed = false;
 
             RpcEnableOutline();
+            
+            NetworkVisionManager.Instance.SetGlobalPower(false);
         }
         
         [Server]
@@ -32,13 +28,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
         [Server]
         protected override void OnStopEvent()
         {
-            if (NetworkVisionManager.Instance)
-            {
-                NetworkVisionManager.Instance.SetAllRoomsPower(true);
-                Debug.Log("[PowerOutageEvent] Электричество восстановлено! Лампы горят.");
-            }
-
             RpcDisableOutline();
+            NetworkVisionManager.Instance.SetGlobalPower(true);
         }
 
         //View

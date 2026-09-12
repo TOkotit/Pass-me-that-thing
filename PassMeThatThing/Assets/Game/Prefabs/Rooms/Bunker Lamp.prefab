@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1045236775697610580}
-  - component: {fileID: -8969820925791355655}
   - component: {fileID: 6419721375646041877}
   - component: {fileID: 3103123893000864925}
   - component: {fileID: 6225422794305737262}
@@ -40,18 +39,6 @@ Transform:
   - {fileID: 7594373832648682040}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-8969820925791355655
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 417354701815754222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.AutoGameplayScopeInjector
 --- !u!65 &6419721375646041877
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -14,39 +14,32 @@ public class RoomLight : MonoBehaviour
     [SerializeField] private GameObject _lampOffPrefab;
 
     public bool IsActive { get; private set; } = true;
-    private RoomController _roomController;
 
     private void Start()
     {
         if (!_lightComponent) _lightComponent = GetComponentInChildren<Light>(true);
-        
-        StartCoroutine(FindRoomControllerCoroutine());
-    }
-    
-    private IEnumerator FindRoomControllerCoroutine()
-    {
-        while (!_roomController)
+
+        if (NetworkVisionManager.Instance)
         {
-            if (transform.parent)
-            {
-                _roomController = GetComponentInParent<RoomController>();
-                
-                if (_roomController)
-                {
-                    _roomController.RegisterLight(this);
-                    Debug.Log($"<color=green>[RoomLight]</color> Успешно зарегистрирована в комнате {_roomController.RoomId}");
-                    yield break;
-                }
-            }
-            
-            yield return new WaitForSeconds(0.2f);
+            NetworkVisionManager.Instance.RegisterRoomLight(this);
+        }
+        else
+        {
+            Debug.LogWarning($"[RoomLight] NetworkVisionManager не найден для {{gameObject.name}}");
         }
     }
 
-    private void OnDestroy() => _roomController?.UnregisterLight(this);
+    private void OnDestroy()
+    {
+        if (NetworkVisionManager.Instance)
+        {
+            NetworkVisionManager.Instance.UnregisterRoomLight(this);
+        }
+    }
 
     public void SetActiveLocal(bool state)
     {
+        Debug.Log($"[RoomLight] SetActiveLocal was called");
         IsActive = state;
         
         if (_lampOnPrefab) 
