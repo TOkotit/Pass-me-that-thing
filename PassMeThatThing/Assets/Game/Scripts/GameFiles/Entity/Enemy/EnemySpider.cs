@@ -91,6 +91,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             base.OnHealthChanged(currentHealth, maxHealth);
 
             Debug.Log($"[Spider] OnHealthChanged {currentHealth}/{maxHealth}");
+            EnemyHealthChanged(currentHealth, maxHealth);
         }
 
         public override void OnToughnessChanged(int currentToughness, int maxToughness)
@@ -98,6 +99,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             base.OnToughnessChanged(currentToughness, maxToughness);
 
             Debug.Log($"[Spider] OnToughnessChanged {currentToughness}/{maxToughness}");
+            EnemyToughnessChanged(currentToughness, maxToughness);
         }
 
         public override void OnDeath()

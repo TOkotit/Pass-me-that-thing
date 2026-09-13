@@ -64,6 +64,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.States.Zombie
                     _isWandering = false;
                     _rWaitTime = RandomUtilities.RandNearMult(_zombie.WaitTime, _timeRanMult);
                     _movementController.StopNavigating();
+
+                    _zombie.ZombieEnemyView.SetWalk(false);
                 }
             }
             else
@@ -76,6 +78,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.States.Zombie
                     _isWandering = true;
                     _rWanderTime = RandomUtilities.RandNearMult(_zombie.WanderTime, _timeRanMult);
                     SetNewRandomDestination();
+
+                    _zombie.ZombieEnemyView.SetWalk(true);
                 }
             }
         }

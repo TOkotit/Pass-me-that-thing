@@ -13,20 +13,19 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
 
         [SerializeField] protected LayerMask groundMask;
-        
 
-        private const string WalkKey = "Walk";
-        private const string Attack1Key = "Attack1";
-        private const string Attack2Key = "Attack2";
-        private const string DeathKey = "Death";
+        private const string WalkKey = "isWalking";
+        private const string RunKey = "isRunning";
+        private const string AttackRightKey = "attackRight";
+        private const string AttackLeftKey = "attackLeft";
 
-        public void Walk() => base.animator.SetTrigger(WalkKey);
-        public void Attack1() => base.animator.SetTrigger(Attack1Key);
-        public void Attack2() => base.animator.SetTrigger(Attack2Key);
-        public void Death() => base.animator.SetTrigger(DeathKey);
-        
-        
-        private const string IdleClipName = "tentacls|tentacls|zombie-walkLegs";
+        public void SetWalk(bool value) => animator.SetBool(WalkKey, value);
+        public void SetRun(bool value) => animator.SetBool(RunKey, value);
+        public void AttackRight() => netAnimator.SetTrigger(AttackRightKey);
+        public void AttackLeft() => netAnimator.SetTrigger(AttackLeftKey);
+
+
+        private const string IdleClipName = "ZombieIdle";
         private const string BackStandUpClipName = "BackStandUp";
         private const string FrontStandClipName = "FrontStandUp";
 

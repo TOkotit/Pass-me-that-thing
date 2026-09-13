@@ -23,7 +23,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.Enter();
             
-            _movementController.SetSpeed(_zombie.Speed);
+            _movementController.SetSpeed(_zombie.Speed * _zombie.ChaseSpeedMult);
+
+            _zombie.ZombieEnemyView.SetWalk(true);
+            _zombie.ZombieEnemyView.SetRun(true);
         }
 
         public override void LogicUpdate()
@@ -54,7 +57,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         
         public override void Exit()
         {
-            
+            _zombie.ZombieEnemyView.SetWalk(false);
+            _zombie.ZombieEnemyView.SetRun(false);
             base.Exit();
         }
         

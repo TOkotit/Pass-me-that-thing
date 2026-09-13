@@ -77,5 +77,10 @@ namespace Game.Scripts.Utils
         {
             return Random.Range(value - redStep, value + incStep);
         }
+
+        public static bool RandTrue()
+        {
+            return Random.Range(0, 2) == 0;
+        }
     }
 }

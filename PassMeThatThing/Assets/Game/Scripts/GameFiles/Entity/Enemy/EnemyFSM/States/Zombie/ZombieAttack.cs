@@ -1,6 +1,7 @@
 using System.Collections;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
+using Game.Scripts.Utils;
 using Mirror.BouncyCastle.Asn1.X509;
 using UnityEngine;
 using Time = UnityEngine.Time;
@@ -56,12 +57,24 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             _enemyView.EnableAttackpreview(true);
             _enemyView.SetAttackpreview(_attackController.AttackCubeCenter.position, _zombie.AttackArea * 2);
 
+            if (RandomUtilities.RandTrue())
+            {
+                _zombie.ZombieEnemyView.AttackRight();
+            }
+            else
+            {
+                _zombie.ZombieEnemyView.AttackLeft();
+            }
+
             while (_zombie.ElapsedAttack < _zombie.AttackCooldown)
             {
                 _zombie.ElapsedAttack += Time.deltaTime;
                 yield return null;
             }
+
             
+
+
             _movementController.RotateTo(_targetDetector.DetectedTarget);
             _attackController.AttackMelee(_zombie.AttackArea, _zombie.Damage);
 
