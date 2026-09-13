@@ -203,6 +203,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 instance.name = wallData.Name;
                 _placedWalls.Add(instance);
             }
+            
+            SpawnClusterDoors();
         }
 
         /// <summary>
@@ -233,10 +235,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 var surface = room.NavMeshSurface;
                 if (!surface)
-                {
-                    Debug.LogWarning($"[GENERATOR] У комнаты {room.name} не задан NavMeshSurface, навмеш не запечён.");
                     continue;
-                }
 
                 surface.BuildNavMesh();
             }
@@ -264,5 +263,75 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     DestroyImmediate(child);
             }
         }
+
+        private void SpawnClusterDoors()
+        {
+            if (_solver?.ClusterExits == null) return;
+            
+            var spawnedPositions = new List<Vector3Int>();
+
+            foreach (var exit in _solver.ClusterExits)
+            {
+                var conn = exit.Conn;
+                var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
+                var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
+
+                var basePosition = new Vector3(
+                    centerWorldPos.x + conn.Direction.x * 5f,
+                    baseWorldPos.y,
+                    centerWorldPos.z + conn.Direction.z * 5f
+                );
+        
+                var roundedPos = new Vector3Int(
+                    Mathf.RoundToInt(basePosition.x), 
+                    Mathf.RoundToInt(basePosition.y), 
+                    Mathf.RoundToInt(basePosition.z)
+                );   
+        
+                if (spawnedPositions.Contains(roundedPos)) continue;
+                spawnedPositions.Add(roundedPos);
+
+                var doorGo = new GameObject($"ClusterDoorSpot_{roundedPos}");
+                doorGo.transform.SetParent(levelContainer);
+        
+                var rotation = Quaternion.FromToRotation(Vector3.right, -conn.Direction);
+                doorGo.transform.rotation = rotation;
+                
+                var localOffset = new Vector3(0f, 0f, -1.15f);
+                var worldOffset = rotation * localOffset;
+        
+                doorGo.transform.position = basePosition + worldOffset;
+        
+                var spot = doorGo.AddComponent<NetworkObjectSpot>();
+                spot.NetworkObjectsOnLevelType = NetworkObjectsOnLevelType.Door;
+
+                AllLevelSpots.Add(spot);
+            }
+        }
+        
+        private void OnDrawGizmos()
+        {
+            if (_solver?.ClusterExits == null || _solver.ClusterExits.Count == 0) return;
+            if (!levelGrid || !levelGrid.UnityGrid) return;
+
+            Gizmos.color = Color.red;
+
+            foreach (var exit in _solver.ClusterExits)
+            {
+                var conn = exit.Conn;
+                var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
+                var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
+
+                var left = new Vector3(-conn.Direction.z, 0f, conn.Direction.x);
+                var position = new Vector3(
+                    centerWorldPos.x + conn.Direction.x * 5f + left.x,
+                    baseWorldPos.y * 2.5f,
+                    centerWorldPos.z + conn.Direction.z * 5f + left.z);
+                
+                Gizmos.DrawCube(position, new Vector3(3f, 5f, 3f));
+            }
+        }
+        
+        
     }
 }
