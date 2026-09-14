@@ -178,7 +178,7 @@ namespace Game.Gameplay.View.UI
                     = new StyleBackground( 
                         ViewModel.ScreenHintsDatabase.GetHintIcon(e.useHintType));
                 h.Q<Label>("HintText").text = e.name;
-                h.Q<Label>("Bind").visible = false;
+                h.Q<Label>("Bind").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
             }
 
             foreach (var e in ViewModel.PlayerInventoryModel.ItemUseHints)
@@ -190,7 +190,7 @@ namespace Game.Gameplay.View.UI
                     = new StyleBackground(
                         ViewModel.ScreenHintsDatabase.GetHintIcon(e.useHintType));
                 h.Q<Label>("HintText").text = e.name;
-                h.Q<Label>("Bind").visible = false;
+                h.Q<Label>("Bind").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
             }
 
             foreach (var e in ViewModel.PlayerInventoryModel.SceneControlHints)
@@ -202,7 +202,7 @@ namespace Game.Gameplay.View.UI
                         e.bind.action.bindings[0].effectivePath,
                         InputControlPath.HumanReadableStringOptions.OmitDevice) + "]";
 
-                h.Q<VisualElement>("HintIcon").visible = false;
+                h.Q<VisualElement>("HintIcon").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
                 h.Q<Label>("HintText").text = e.name;
                 h.Q<Label>("Bind").text = bindString;
             }
@@ -216,7 +216,7 @@ namespace Game.Gameplay.View.UI
                         e.bind.action.bindings[0].effectivePath,
                         InputControlPath.HumanReadableStringOptions.OmitDevice) + "]";
 
-                h.Q<VisualElement>("HintIcon").visible = false;
+                h.Q<VisualElement>("HintIcon").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
                 h.Q<Label>("HintText").text = e.name;
                 h.Q<Label>("Bind").text = bindString;
             }

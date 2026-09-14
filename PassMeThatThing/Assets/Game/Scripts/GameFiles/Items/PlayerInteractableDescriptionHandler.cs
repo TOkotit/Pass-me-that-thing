@@ -1,11 +1,16 @@
-﻿using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
+﻿using Assets.Game.Scripts.Enums;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 using Entity;
 using Game.Entity;
 using Game.Gameplay.View.UI;
+using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VContainer;
 
@@ -23,6 +28,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
 
         [Inject] private WireManager _wiremanager;
         [Inject] private MCLocalModel _localModel;
+        [Inject] private PlayerInventoryModel _inventoryModel;
         [Inject] private PhysicalItemRegistry _physicalItemRegistry;
         [Inject] private DamagableRegistry _damageableRegistry;
         [Inject] private GameplayUIManager _gameplayUIManager;
@@ -84,11 +90,13 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
-                    //var item = _physicalItemRegistry.GetItem(hit.collider.gameObject);
-                    var item = hit.collider.gameObject.GetComponentInParent<PhysicalItem>();
+                    var item = _physicalItemRegistry.GetItem(hit.collider.gameObject);
+                    //var item = hit.collider.gameObject.GetComponentInParent<PhysicalItem>();
                     if (item != null)
                     {
                         _localModel.CurrentInteractableText = item.Network.itemId;
+                        _localModel.CurrentDescriptionMode = PopupDescriptionMode.Item;
+                        _localModel.ItemRecycleResources = item.Resources.ToDictionary(u => u.Key, u => u.Value);
                     }
                 }
                 else if (hit.collider.gameObject.CompareTag("Door"))
@@ -96,6 +104,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
                     OpenWindow();
 
                     _localModel.CurrentInteractableText = "Interact"; //заглушка
+                    _localModel.CurrentDescriptionMode = PopupDescriptionMode.Other;
                 }
                 else if (hit.collider.gameObject.CompareTag("WireNode"))
                 {
@@ -107,6 +116,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
 
                     var net = _wiremanager.WireNetsData[wireNode.NetId];
 
+                    _localModel.CurrentDescriptionMode = PopupDescriptionMode.Other;
                     _localModel.CurrentInteractableText = $"{net.availableQuantity}/{net.requiredQuantity}";
                 }
                 else
@@ -123,6 +133,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
+                    _localModel.CurrentDescriptionMode = PopupDescriptionMode.Other;
                     _localModel.CurrentInteractableText 
                         = $"{dam.DamagableModel.HealthPool.CurrentHealth}/{dam.DamagableModel.HealthPool.MaxHealth}";
                 }
@@ -147,6 +158,5 @@ namespace Assets.Game.Scripts.GameFiles.Items
             _currentDescription.enabled.Value = false;
             _currentTransform = null;
         }
-
     }
 }

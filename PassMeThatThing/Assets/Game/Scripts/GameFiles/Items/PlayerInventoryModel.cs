@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Game.Scripts.GameFiles.Items;
+using Mono.Cecil;
 using ObservableCollections;
 using R3;
 
@@ -18,7 +19,6 @@ namespace Game.Scripts.GameFiles.Items
         private List<UseHint> _itemUseHints = new();
         private List<ControlHint> _sceneControlHints = new();
         private List<ControlHint> _itemControlHints = new();
-        
 
         public ObservableDictionary<int, ItemSlot> Inventory => _inventory;
 
@@ -55,6 +55,8 @@ namespace Game.Scripts.GameFiles.Items
         public event Action<int> OnThrowChargeChanged;
 
         public event Action OnHintChanged;
+
+        
 
         public void HintsChanged()
         {
