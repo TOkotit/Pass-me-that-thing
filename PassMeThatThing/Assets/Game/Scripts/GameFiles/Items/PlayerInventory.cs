@@ -11,19 +11,24 @@ using Mirror;
 using Mirror.Examples.RigidbodyPhysics;
 using VContainer;
 using VContainer.Unity;
+using Assets.Game.Scripts.GameFiles.Items;
+using UnityEngine.InputSystem;
+using UnityEditor.Rendering.LookDev;
 
 public class PlayerInventory : NetworkBehaviour
 {
     public readonly SyncDictionary<int, ItemSlot> ServerInventory = new();
     private int size = 3;
-    [Inject] PlayerInventoryModel _playerInventoryModel;
+    [Inject] private PlayerInventoryModel _playerInventoryModel;
     [Inject] private ItemDatabase itemDatabase;
     [Inject] private ItemPoolManager _itemPoolManager;
     [Inject] private PhysicalItemRegistry _physicalItemRegistry;
     [Inject] private GlobalInventoryManager  _globalInventoryManager;
+    [Inject] private ItemDatabase _itemDatabase;
     
 
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
+
     [SyncVar(hook = nameof(OnActiveSlotChanged))]
     public int activeSlot;
     
@@ -53,14 +58,19 @@ public class PlayerInventory : NetworkBehaviour
         if (!isLocalPlayer) return;
         base.OnStartClient();
         ServerInventory.OnChange += OnInventoryChanged;
-         
+        _playerInventoryModel.OnActiveSlotChanged += UpdateHints;
+
         RefreshLocalModel();
     }
 
     public override void OnStopClient()
     {
         if (isLocalPlayer)
+        {
             ServerInventory.OnChange -= OnInventoryChanged;
+
+            _playerInventoryModel.OnActiveSlotChanged -= UpdateHints;
+        }
     }
 
     private void OnInventoryChanged(SyncDictionary<int, ItemSlot>.Operation op, int index, ItemSlot newItem)
@@ -78,6 +88,8 @@ public class PlayerInventory : NetworkBehaviour
                 _playerInventoryModel.Inventory.Remove(index);
                 break;
         }
+
+        UpdateHints(index);
     }
 
     private void RefreshLocalModel()
@@ -294,5 +306,48 @@ public class PlayerInventory : NetworkBehaviour
             
             ServerInventory.Remove(slotIndex);
         }
+    }
+
+    public void UpdateHints(int newIndex)
+    {
+
+        if (_playerInventoryModel.Inventory.TryGetValue(newIndex, out var slot))
+        {
+            Debug.Log("SetHintsAboutItem(slot.itemId);");
+            SetHintsAboutItem(slot.itemId);
+        }
+        else
+        {
+            Debug.Log("ClearHintsAboutItem();");
+            ClearHintsAboutItem();
+        }
+    }
+
+    public void SetHintsAboutItem(string itemId)
+    {
+        var itemData = _itemDatabase.GetItem(itemId);
+
+        _playerInventoryModel.ItemControlHints.Clear();
+        foreach (var c in itemData.ControlHints)
+        {
+            _playerInventoryModel.ItemControlHints.Add(c);
+        }
+
+        _playerInventoryModel.ItemUseHints.Clear();
+        foreach (var c in itemData.UseHints)
+        {
+            _playerInventoryModel.ItemUseHints.Add(c);
+        }
+
+
+        _playerInventoryModel.HintsChanged();
+    }
+
+    public void ClearHintsAboutItem()
+    {
+        _playerInventoryModel.ItemControlHints.Clear();
+        _playerInventoryModel.ItemUseHints.Clear();
+        
+        _playerInventoryModel.HintsChanged();
     }
 }

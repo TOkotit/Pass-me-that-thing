@@ -17,3 +17,11 @@ MonoBehaviour:
   worldPrefab: {fileID: 6289893463516360249, guid: dbcd57581d5afbc479e8f726d4508773, type: 3}
   itemImage: {fileID: 21300000, guid: 1aca74399fbde434f820cd5df79b6796, type: 3}
   isStackable: 0
+  controlHints:
+  - bind: {fileID: 6713172846599839819, guid: 8c451ecf07bf102489295290aaadd4ed, type: 3}
+    name: Drop
+  - bind: {fileID: -1229138109158587906, guid: 8c451ecf07bf102489295290aaadd4ed, type: 3}
+    name: Delete Building
+  useHints:
+  - useHintType: 0
+    name: Repair

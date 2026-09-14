@@ -14,6 +14,7 @@ using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using UnityEngine.WSA;
+using UnityEngine.InputSystem;
 
 
 namespace Game.Gameplay.View.UI
@@ -35,8 +36,8 @@ namespace Game.Gameplay.View.UI
         
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset gameEventPrefab;
-        
-        
+        [SerializeField] private VisualTreeAsset hintPrefab;
+
         private VisualElement _root;
         private VisualElement _cursor;
         private LevelGrid _levelGrid;
@@ -65,6 +66,8 @@ namespace Game.Gameplay.View.UI
         private Label _localPlayerName;
         private List<Label> _otherPlayerNames = new();
 
+        private GroupBox _hintsContainer;
+
         private void Awake()
         {
 
@@ -90,6 +93,8 @@ namespace Game.Gameplay.View.UI
             _wirePlacementContainer = _root.Q<GroupBox>("WirePlacementContainer");
 
             _playerHud = _root.Q<VisualElement>("PlayerHud");
+
+            _hintsContainer = _root.Q<GroupBox>("ControlsContainer");
 
             _localPlayerAvatar = _root.Q<VisualElement>("Avatar1");
 
@@ -134,6 +139,8 @@ namespace Game.Gameplay.View.UI
 
             ViewModel.RequestSubCursorChange(UpdateCursor);
             ViewModel.RequestSubElementsShake(UpdateElementsShake);
+
+            ViewModel.RequestSubHintsChange(UpdateHints);
         }
 
         private void OnDestroy()
@@ -152,7 +159,67 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestUnsubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
+
+            ViewModel.RequestUnSubHintsChange(UpdateHints);
+
             ViewModel.RequestUnsub();
+        }
+
+        private void UpdateHints()
+        {
+            _hintsContainer.Clear();
+
+            foreach (var e in ViewModel.PlayerInventoryModel.SceneUseHints)
+            {
+                var h = hintPrefab.Instantiate();
+                _hintsContainer.Add(h);
+
+                h.Q<VisualElement>("HintIcon").style.backgroundImage 
+                    = new StyleBackground( 
+                        ViewModel.ScreenHintsDatabase.GetHintIcon(e.useHintType));
+                h.Q<Label>("HintText").text = e.name;
+                h.Q<Label>("Bind").visible = false;
+            }
+
+            foreach (var e in ViewModel.PlayerInventoryModel.ItemUseHints)
+            {
+                var h = hintPrefab.Instantiate();
+                _hintsContainer.Add(h);
+
+                h.Q<VisualElement>("HintIcon").style.backgroundImage
+                    = new StyleBackground(
+                        ViewModel.ScreenHintsDatabase.GetHintIcon(e.useHintType));
+                h.Q<Label>("HintText").text = e.name;
+                h.Q<Label>("Bind").visible = false;
+            }
+
+            foreach (var e in ViewModel.PlayerInventoryModel.SceneControlHints)
+            {
+                var h = hintPrefab.Instantiate();
+                _hintsContainer.Add(h);
+
+                var bindString = "[" + InputControlPath.ToHumanReadableString(
+                        e.bind.action.bindings[0].effectivePath,
+                        InputControlPath.HumanReadableStringOptions.OmitDevice) + "]";
+
+                h.Q<VisualElement>("HintIcon").visible = false;
+                h.Q<Label>("HintText").text = e.name;
+                h.Q<Label>("Bind").text = bindString;
+            }
+
+            foreach (var e in ViewModel.PlayerInventoryModel.ItemControlHints)
+            {
+                var h = hintPrefab.Instantiate();
+                _hintsContainer.Add(h);
+
+                var bindString = "[" + InputControlPath.ToHumanReadableString(
+                        e.bind.action.bindings[0].effectivePath,
+                        InputControlPath.HumanReadableStringOptions.OmitDevice) + "]";
+
+                h.Q<VisualElement>("HintIcon").visible = false;
+                h.Q<Label>("HintText").text = e.name;
+                h.Q<Label>("Bind").text = bindString;
+            }
         }
 
         private void UpdateElementsShake(int sign)

@@ -22,6 +22,8 @@ using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration;
 using Assets.Game.Scripts.GameFiles.UIWorld;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
+using Assets.Game.Scripts.GameFiles.Items;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 
 namespace DI
 {
@@ -36,7 +38,8 @@ namespace DI
         [SerializeField] private EnemyDatabase enemyDatabase;
         [SerializeField] private BuildingsDatabase buildingDatabase;
         [SerializeField] private TurretDatabase turretDatabase;
-        
+        [SerializeField] private ScreenHintsDatabase screenHintsDatabase;
+
         [SerializeField] private ResourceDatabase resourceDatabase;
         [SerializeField] private WorkbenchItemRecipeDatabase recipeDatabase;
         
@@ -64,6 +67,7 @@ namespace DI
             builder.RegisterInstance(enemyDatabase);
             builder.RegisterInstance(buildingDatabase);
             builder.RegisterInstance(turretDatabase);
+            builder.RegisterInstance(screenHintsDatabase);
             builder.RegisterInstance(resourceDatabase);
             builder.RegisterInstance(recipeDatabase);
             //managers

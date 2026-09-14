@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiDocument: {fileID: 4534698160928983741}
   gameEventPrefab: {fileID: 9197481963319205126, guid: 62254866ce225fe43848b23490a39663, type: 3}
+  hintPrefab: {fileID: 9197481963319205126, guid: 905674e1e6d4b3043be2fba1c77891e1, type: 3}
 --- !u!114 &4534698160928983741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,6 +68,10 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 5252466f6fe04a94ba3394a77c8a0ae9, type: 3}
   m_SortingOrder: 0
+  m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}

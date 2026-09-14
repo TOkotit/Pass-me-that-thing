@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Entity;
 using Game.Scripts.Enums;
@@ -48,6 +49,7 @@ namespace Game.Gameplay.View.UI
         private readonly BuildingsDatabase _buildingsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         private readonly GameInputManager _gameInputManager;
+        private readonly ScreenHintsDatabase _screenHintsDatabase;
 
         
         private readonly MCLocalModel  _mcLocalModel;
@@ -60,6 +62,9 @@ namespace Game.Gameplay.View.UI
         private Action<int> removeEvent;
 
         public BuildingsDatabase BuildingsDatabase => _buildingsDatabase;
+        public PlayerInventoryModel PlayerInventoryModel => _playerInventoryModel;
+
+        public ScreenHintsDatabase ScreenHintsDatabase => _screenHintsDatabase;
 
         public event Action<PlayerViewData, List<PlayerViewData>> OnPlayerDataChanged;
 
@@ -78,6 +83,7 @@ namespace Game.Gameplay.View.UI
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
             _gameInputManager = container.Resolve<GameInputManager>();
+            _screenHintsDatabase = container.Resolve<ScreenHintsDatabase>();
 
             _localWireHandlerModel = container.Resolve<LocalWireHandlerModel>();
             _levelOrchestrator = container.Resolve<LevelOrchestrator>();
@@ -113,6 +119,17 @@ namespace Game.Gameplay.View.UI
         public void CancelWirePlacement(InputAction.CallbackContext c)
         {
             _localWireHandlerModel.CancelHighlight();
+        }
+
+        public void RequestSubHintsChange(Action f)
+        {
+            f();
+            _playerInventoryModel.OnHintChanged += f;
+        }
+
+        public void RequestUnSubHintsChange(Action f)
+        {
+            _playerInventoryModel.OnHintChanged -= f;
         }
 
         public void RequestSubCursorChange(Action<CursorViewType> f)
@@ -233,17 +250,6 @@ namespace Game.Gameplay.View.UI
         public void RequestUnsubCameraRotation(Action<float> f)
         {
             _mcLocalModel.OnCameraYRotationChanged -= f;
-        }
-        
-        public void RequestSubInteractionText(Action<bool> f)
-        {
-            _playerInventoryModel.OnAbleInteract += f;
-        }
-        
-        public void RequestUnsubInteractionText(Action<bool> f)
-        {
-
-            _playerInventoryModel.OnAbleInteract -= f;
         }
 
         public void InitImage(Action<int, Sprite> f)

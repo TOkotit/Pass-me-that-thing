@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Gameplay/Gameplay.uss?fileID=7433441132597879392&amp;guid=e152551381caab343a416b55f7bf77d3&amp;type=3#Gameplay"/>
     <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
     <ui:GroupBox style="left: 50%; top: 50%; position: absolute; translate: -50% -50%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;">
-        <ui:VisualElement name="Cursor" class="cursor"/>
+        <ui:VisualElement name="Cursor" class="cursor" style="aspect-ratio: 1; width: 10px; height: 10px;"/>
     </ui:GroupBox>
     <ui:VisualElement enabled="true" name="HealthVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; background-image: resource(&quot;Sprites/low_hp&quot;); display: none; opacity: 0; visibility: hidden;"/>
     <ui:GroupBox class="tektur-font" style="align-self: auto; justify-content: center; align-items: auto; align-content: auto; height: 100%;">
@@ -28,10 +28,11 @@
             <ui:VisualElement name="MinimapFrame" style="flex-grow: 1; top: -5px; right: -17px; position: absolute; height: 315px; width: 353px; background-image: resource(&quot;Sprites/GameplaySprites/minimap Frame&quot;); -unity-background-scale-mode: scale-to-fit;"/>
             <ui:GroupBox name="EventsContainer" style="height: 593px; width: 294px; align-items: stretch; position: absolute; background-color: rgba(115, 115, 115, 0); justify-content: flex-start; top: 304px; left: auto; right: 0;"/>
         </ui:VisualElement>
-        <ui:GroupBox style="height: 107px; width: 516px; align-items: stretch; align-content: flex-start; align-self: flex-start; bottom: 0; position: absolute; left: auto; flex-direction: row; justify-content: space-between; font-size: 100%; right: 0;">
+        <ui:GroupBox name="PhaseContainer" style="height: 107px; width: 516px; align-items: stretch; align-content: flex-start; align-self: flex-start; position: absolute; flex-direction: row; justify-content: space-between; font-size: 100%; bottom: 0; left: 143px;">
             <ui:Label text="Label" name="RemainingTimeLb" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); font-size: 50px;"/>
             <ui:Label text="Label" name="PhaseLb" style="flex-grow: 1; font-size: 50%; color: rgb(255, 255, 255); -unity-text-align: lower-left;"/>
         </ui:GroupBox>
+        <ui:GroupBox name="ControlsContainer" style="position: absolute; right: 0; bottom: 0; height: 246px; width: 395px; flex-direction: column-reverse;"/>
         <ui:GroupBox name="InventoryContainer" style="height: 278px; width: 584px; align-items: stretch; align-content: flex-start; align-self: center; position: absolute; left: 0%; bottom: 0; right: auto; background-color: rgba(128, 128, 128, 0); justify-content: space-evenly; flex-direction: row; background-image: resource(&quot;Sprites/GameplaySprites/inventory_3s&quot;); -unity-background-scale-mode: scale-to-fit; background-position-y: bottom 0; transform-origin: left bottom; transition-property: rotate; transition-duration: 0.2s;">
             <ui:VisualElement name="Item1Img" class="inventory-item" style="position: absolute; top: 75px; left: 177px;"/>
             <ui:VisualElement name="Item2Img" class="inventory-item" style="flex-grow: 1; position: absolute; top: 78px; left: 324px;"/>
