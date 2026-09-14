@@ -51,11 +51,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private readonly List<RoomCluster> _clusters = new();
         private readonly List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> _usedConnections = new();
         private readonly List<VirtualWallData> _plannedWalls = new();
-
+        private readonly List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> _clusterExits = new();
+        
         public IReadOnlyList<PlacedRoomDataCluster> AllPlacedRooms => _allPlacedRooms;
         public IReadOnlyList<RoomCluster> Clusters => _clusters;
         public IReadOnlyList<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> UsedConnections => _usedConnections;
         public IReadOnlyList<VirtualWallData> PlannedWalls => _plannedWalls;
+
+        public List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> ClusterExits =>  _clusterExits;
 
         /// <summary>
         /// </summary>
@@ -80,6 +83,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             _clusters.Clear();
             _usedConnections.Clear();
             _plannedWalls.Clear();
+            _clusterExits.Clear();
             _virtualRoomIdCounter = 1;
         }
 
@@ -220,12 +224,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 UndoClusterPlacement(placedRooms);
             }
-
-            if (!isCore)
-            {
-                Debug.LogWarning($"[GENERATOR] Failed to link cluster after {MAX_CLUSTER_PLACEMENT_ATTEMPTS} attempts.");
-            }
-
             return false;
         }
 
@@ -279,17 +277,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
 
             if (farthestCluster == null)
-            {
-                Debug.LogWarning("[GENERATOR] No cluster with a free exit was found for the evacuation hangar.");
                 return;
-            }
 
             var hangarCandidates = _roomDatabase.GetSuitableRooms(RoomType.RecoveryHangar, 1, false);
             if (hangarCandidates.Count == 0)
-            {
-                Debug.LogWarning("[GENERATOR] There are no RecoveryHangar prefabs in the database.");
                 return;
-            }
 
             var exitOptions = _allPlacedRooms
                 .Where(r => r.Cluster == farthestCluster)
@@ -318,8 +310,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     }
                 }
             }
-
-            Debug.LogWarning("[GENERATOR] It was not possible to dock the evacuation hangar with the free exit of the farthest cluster.");
         }
 
         /// <summary>
@@ -836,6 +826,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             if (!TryPlaceTunnelsAlongPath(path, tunnelPrefabs, startExit.Room, startExit.Conn, targetConn))
                 return false;
 
+            _clusterExits.Add((startExit.Room, startExit.Conn));
+            _clusterExits.Add((targetRoom, targetConn));
             startExit.Room.FreeConnections.Remove(startExit.Conn);
             targetRoom.FreeConnections.Remove(targetConn);
             _usedConnections.Add((startExit.Room, startExit.Conn));
@@ -902,6 +894,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                         if (connAData.Room.Cluster != connBData.Room.Cluster)
                         {
                             RegisterClusterLink(clusterLinks, connAData.Room.Cluster, connBData.Room.Cluster);
+                            _clusterExits.Add((connAData.Room, connAData.Conn));
+                            _clusterExits.Add((connBData.Room, connBData.Conn));
                         }
 
                         allFreeConnections.RemoveAt(i);
@@ -1024,6 +1018,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                             targetRoom.FreeConnections.Remove(targetConn);
                             _usedConnections.Add((startData.Room, startData.Conn));
                             _usedConnections.Add((targetRoom, targetConn));
+                            _clusterExits.Add((startData.Room, startData.Conn));
+                            _clusterExits.Add((targetRoom, targetConn));
 
                             connected = true;
                         }
@@ -1195,25 +1191,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 var ownExits = GetFreeExits(c => c == isolatedCluster);
                 if (ownExits.Count == 0)
-                {
-                    Debug.LogWarning("[GENERATOR] The isolated cluster had no free ports left—connection to the network failed.");
                     continue;
-                }
 
                 var reachableExits = GetFreeExits(c => reachable.Contains(c));
                 if (reachableExits.Count == 0)
-                {
-                    Debug.LogWarning("[GENERATOR] The connected part of the network has no free ports left—there is nowhere to extend the tunnel to.");
                     continue;
-                }
 
                 if (TryConnectFirstAvailable(ownExits, reachableExits, tunnelPrefabs, clusterLinks))
                 {
                     reachable = ComputeReachableClusters(coreCluster, clusterLinks);
-                }
-                else
-                {
-                    Debug.LogWarning("[GENERATOR] Failed to forcibly connect the isolated cluster to the network.");
                 }
             }
         }
@@ -1328,7 +1314,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             foreach (var (roomData, conn) in _usedConnections)
             {
                 if (roomData == null) continue;
-
                 PlanDoorwayInsert(roomData, conn, _wallWithPassagePrefab, "UsedExitPassageWall");
             }
         }

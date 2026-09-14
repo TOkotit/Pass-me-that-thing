@@ -13,29 +13,33 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         [SerializeField] private float closedYRotation = 0f;
         [SerializeField] private float openYRotation = 90f;
         [SerializeField] private float moveSpeed = 2f;
-
         [SyncVar(hook = nameof(OnOpenStateChanged))]
         private bool isOpen;
         
         
         private float targetRotationY;
+        private float baseYRotation;
         private bool initialized;
 
         
-        public void OnStartServer()
+        public override void OnStartServer()
         {
+            baseYRotation = transform.localEulerAngles.y;
             isOpen = false;
-            targetRotationY = closedYRotation;
+            targetRotationY = baseYRotation + closedYRotation;
             initialized = true;
         }
 
-        public void OnStartClient()
+        public override void OnStartClient()
         {
             base.OnStartClient();
             InteractableRegistry.Instance.Register(gameObject, this);
-            targetRotationY = isOpen ? openYRotation : closedYRotation;
+            baseYRotation = transform.localEulerAngles.y;
+            targetRotationY = baseYRotation + (isOpen ? openYRotation : closedYRotation);
             initialized = true;
         }
+        
+        
 
         private void FixedUpdate()
         {
@@ -66,7 +70,7 @@ namespace Game.Scripts.GameFiles.InteractableObjects.Doors
         
         private void UpdateTarget(bool open)
         {
-            targetRotationY = open ? openYRotation : closedYRotation;
+            targetRotationY = baseYRotation + (open ? openYRotation : closedYRotation);
             initialized = true;
         }
         
