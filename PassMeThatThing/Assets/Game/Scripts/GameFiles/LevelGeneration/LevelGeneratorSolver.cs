@@ -126,6 +126,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             ConnectAllFreeExits();
             PlaceRecoveryHangar(clusters);
 
+            ValidateAndSanitizeConnections();
+            
             BlockUnusedExits();
             PlaceUsedExitPassages();
 
@@ -1315,6 +1317,60 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 if (roomData == null) continue;
                 PlanDoorwayInsert(roomData, conn, _wallWithPassagePrefab, "UsedExitPassageWall");
+            }
+        }
+
+        
+        /// <summary>
+        /// Проверяет целостность всех проходов.<br/>
+        /// Если проход односторонний (нет парной двери напротив или тоннеля), 
+        /// он переводится в глухую стену.
+        /// </summary>
+        private void ValidateAndSanitizeConnections()
+        {
+            var usedSet = new HashSet<(Vector3Int pos, Vector3Int dir)>();
+            foreach (var (room, conn) in _usedConnections)
+            {
+                usedSet.Add((conn.GlobalPosition, conn.GlobalPosition));
+            }
+            
+            var tunnelDoorsSet = new HashSet<(Vector3Int pos, Vector3Int dir)>();
+            foreach (var room in _allPlacedRooms)
+            {
+                foreach (var tunnel in room.AttachedTunnels)
+                {
+                    var plates = RoomRotationHelper.GetRotatedPlates(tunnel.Entry, tunnel.Rotation);
+                    foreach (var plate in plates)
+                    {
+                        var globalPos = tunnel.Origin + plate.LocalPosition;
+                        foreach (var door in plate.Doors)
+                        {
+                            tunnelDoorsSet.Add((globalPos, door.GlobalDirection));
+                        }
+                    }
+                }
+            }
+            
+            var invalidConnections = new List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)>();
+
+            foreach (var item in _usedConnections)
+            {
+                var targetPos = item.Conn.GlobalPosition + item.Conn.Direction;
+                var targetDir = -item.Conn.Direction;
+                
+                var hasMatchingRoomDoor = usedSet.Contains((targetPos, targetDir));
+                var hasMatchingTunnelDoor = tunnelDoorsSet.Contains((targetPos, targetDir));
+                
+                if (!hasMatchingRoomDoor && !hasMatchingTunnelDoor) invalidConnections.Add(item);
+            }
+            
+            foreach (var invalid in invalidConnections)
+            {
+                _usedConnections.Remove(invalid);
+                if (!invalid.Room.FreeConnections.Contains(invalid.Conn))
+                {
+                    invalid.Room.FreeConnections.Add(invalid.Conn);
+                }
             }
         }
 

@@ -8,36 +8,18 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     public class LevelBootstrapper : NetworkBehaviour
     {
         [SerializeField] private LevelOrchestrator orchestrator;
-        [SerializeField] private LevelConfig _config = new LevelConfig();
-        
-        [Header("Seed Settings")]
-        [SerializeField] private int testSeed = 12345; 
-        [SerializeField] private bool useRandomSeedForTests = false;
+        [SerializeField] private LevelConfig _config;
 
         [ContextMenu("Generate Level")]
         public void Generate()
         {
             
-            if (orchestrator == null)
+            if (!orchestrator)
             {
                 Debug.LogError("[СБОЙ] Ссылка на LevelOrchestrator не назначена в инспекторе.");
                 return;
             }
-
-            var currentSeed = useRandomSeedForTests ? Random.Range(int.MinValue, int.MaxValue) : testSeed;
-            Debug.Log($"[BOOTSTRAPPER] Генерация уровня. Используемый Seed: {currentSeed}");
-
-            var generator = new LevelGenerator(_config, currentSeed);
-            var clusters = generator.GenerateClusters();
-
-            if (clusters != null && clusters.Count > 0)
-            {
-                orchestrator.GeneratePhysicalLevel(clusters, currentSeed);
-            }
-            else
-            {
-                Debug.LogError("[СБОЙ] Не удалось сгенерировать кластеры уровня.");
-            }
+            orchestrator.GenerateLevelFromConfig("BootStrapper");
         }
 
         private void Start()
