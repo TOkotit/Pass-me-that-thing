@@ -28,6 +28,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             }
         }
 
+        public PortType PortType => portType;
+
         public event Action<WireType, bool> OnWireNetStateChanged;
 
         public void OnWireNetWorkingStateChanged(bool isNetWorking)

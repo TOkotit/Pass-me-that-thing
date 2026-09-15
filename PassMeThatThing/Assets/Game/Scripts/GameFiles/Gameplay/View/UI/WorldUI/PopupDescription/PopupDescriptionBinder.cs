@@ -18,10 +18,21 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
 
         private VisualElement _root;
         private VisualElement _container;
+        
+        private VisualElement _mainTextContainer;
         private Label _text;
 
         private VisualElement _recycleContainer;
         private VisualElement _recycleResourceContainer;
+
+        private VisualElement _healthContainer;
+        private Label _healthText;
+
+        private VisualElement _wireContainer;
+        private Label _wireText;
+        private VisualElement _wireNetIcon;
+        private VisualElement _wirePortInputIcon;
+        private VisualElement _wirePortOutputIcon;
 
         private CompositeDisposable _subs = new();
 
@@ -31,8 +42,19 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
             _text = _root.Q<Label>("TextLb");
             _container = _root.Q<VisualElement>("Container");
 
+            _mainTextContainer = _root.Q<VisualElement>("MainTextContainer");
+
             _recycleContainer = _root.Q<VisualElement>("RecycleContainer");
             _recycleResourceContainer = _root.Q<VisualElement>("ResourceContainer");
+
+            _healthContainer = _root.Q<VisualElement>("HealthContainer");
+            _healthText = _root.Q<Label>("HealthTextLb");
+
+            _wireContainer = _root.Q<VisualElement>("WireContainer");
+            _wireText = _root.Q<Label>("WireTextLb");
+            _wireNetIcon = _root.Q<VisualElement>("WireNetIcon");
+            _wirePortInputIcon = _root.Q<VisualElement>("WirePortInputIcon");
+            _wirePortOutputIcon = _root.Q<VisualElement>("WirePortOutputIcon");
         }
 
         private void Start()
@@ -79,6 +101,8 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
         public void ChangeText(string value)
         {
             _text.text = value;
+            _healthText.text = value;
+            _wireText.text = value;
         }
 
         public void ChangeItemRecycleResource(Dictionary<Resource, float> d)
@@ -99,12 +123,63 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescriptio
             }
         }
 
+        public void HideAllContainers()
+        {
+            var style = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+
+            _mainTextContainer.style.display = style;
+            _recycleContainer.style.display = style;
+            _healthContainer.style.display = style;
+            _wireContainer.style.display = style;
+        }
+
         public void ChangeDescriptionMode(PopupDescriptionMode mode)
         {
-            _recycleContainer.style.display
-                = mode == PopupDescriptionMode.Item 
-                ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
-                : new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            HideAllContainers();
+
+            var flexStyle = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+
+            switch (mode)
+            {
+                case PopupDescriptionMode.Item:
+                    _recycleContainer.style.display = flexStyle;
+                    _mainTextContainer.style.display = flexStyle;
+                    break;
+
+                case PopupDescriptionMode.Building:
+                    _healthContainer.style.display = flexStyle;
+                    break;
+
+                case PopupDescriptionMode.WirePortInput:
+                    _wireContainer.style.display = flexStyle;
+                    HideWireContainerIcons();
+                    _wirePortInputIcon.style.display = flexStyle;
+                    break;
+
+                case PopupDescriptionMode.WirePortOutput:
+                    _wireContainer.style.display = flexStyle;
+                    HideWireContainerIcons();
+                    _wirePortOutputIcon.style.display = flexStyle;
+                    break;
+
+                case PopupDescriptionMode.WireNet:
+                    _wireContainer.style.display = flexStyle;
+                    HideWireContainerIcons();
+                    _wireNetIcon.style.display = flexStyle;
+                    break;
+
+                case PopupDescriptionMode.Other:
+                    _mainTextContainer.style.display = flexStyle;
+                    break;
+            }
+        }
+
+        private void HideWireContainerIcons()
+        {
+            var style = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            _wirePortInputIcon.style.display = style;
+            _wirePortOutputIcon.style.display = style;
+            _wireNetIcon.style.display = style;
         }
     }
 }

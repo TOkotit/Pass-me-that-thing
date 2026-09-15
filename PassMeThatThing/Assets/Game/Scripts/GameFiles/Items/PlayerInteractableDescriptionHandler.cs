@@ -110,14 +110,29 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     var wireNode = hit.collider.gameObject.GetComponentInParent<WireNode>();
 
-                    if (wireNode.NetId == -1) return;
+                    if (wireNode.NetId != -1)
+                    {
+                        OpenWindow();
 
-                    OpenWindow();
+                        var net = _wiremanager.WireNetsData[wireNode.NetId];
 
-                    var net = _wiremanager.WireNetsData[wireNode.NetId];
-
-                    _localModel.CurrentDescriptionMode = PopupDescriptionMode.Other;
-                    _localModel.CurrentInteractableText = $"{net.availableQuantity}/{net.requiredQuantity}";
+                        _localModel.CurrentDescriptionMode = PopupDescriptionMode.WireNet;
+                        _localModel.CurrentInteractableText = $"{net.availableQuantity}/{net.requiredQuantity}";
+                    }
+                    else if (wireNode is WireNodePort port)
+                    {
+                        OpenWindow();
+                        if (port.PortType == PortType.Input)
+                        {
+                            _localModel.CurrentDescriptionMode = PopupDescriptionMode.WirePortInput;
+                            _localModel.CurrentInteractableText = $"{port.RequiredValue}";
+                        }
+                        else
+                        {
+                            _localModel.CurrentDescriptionMode = PopupDescriptionMode.WirePortOutput;
+                            _localModel.CurrentInteractableText = $"{port.AvailableValue}";
+                        }
+                    }
                 }
                 else
                 {
@@ -133,7 +148,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
-                    _localModel.CurrentDescriptionMode = PopupDescriptionMode.Other;
+                    _localModel.CurrentDescriptionMode = PopupDescriptionMode.Building;
                     _localModel.CurrentInteractableText 
                         = $"{dam.DamagableModel.HealthPool.CurrentHealth}/{dam.DamagableModel.HealthPool.MaxHealth}";
                 }

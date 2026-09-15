@@ -3,8 +3,14 @@
     <ui:VisualElement style="flex-grow: 1;">
         <ui:VisualElement name="Container" style="align-self: auto; justify-content: flex-start; background-image: resource(&quot;Sprites/World/WorldDescription&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: center; background-position-y: center; padding-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; width: 415px; height: 254px; visibility: visible;">
             <ui:VisualElement style="flex-grow: 0; position: relative; left: 17px; top: 54px;">
-                <ui:Label text="item item aaaaaaa " name="TextLb" picking-mode="Ignore" enabled="true" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" style="-unity-text-align: middle-center; color: rgb(176, 190, 173); white-space: pre-wrap; font-size: 25px; -unity-font-style: bold; -unity-font-definition: resource(&quot;Sprites/Fonts/Tektur[wdth,wght]&quot;); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;"/>
-                <ui:VisualElement name="RecycleContainer" style="flex-grow: 0; flex-direction: row;">
+                <ui:VisualElement name="MainTextContainer" style="flex-grow: 1;">
+                    <ui:Label text="item item aaaaaaa " name="TextLb" picking-mode="Ignore" enabled="true" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" style="-unity-text-align: middle-center; color: rgb(176, 190, 173); white-space: pre-wrap; font-size: 25px; -unity-font-style: bold; -unity-font-definition: resource(&quot;Sprites/Fonts/Tektur[wdth,wght]&quot;); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="HealthContainer" style="flex-grow: 1; flex-direction: row; justify-content: center; visibility: visible; display: none;">
+                    <ui:VisualElement name="HealthIcon" style="flex-grow: 0; background-image: resource(&quot;Sprites/Hints/health&quot;); -unity-background-scale-mode: scale-to-fit; width: 83px; aspect-ratio: 1; align-self: center;"/>
+                    <ui:Label text="item item aaaaaaa " name="HealthTextLb" picking-mode="Ignore" enabled="true" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" style="-unity-text-align: middle-center; color: rgb(176, 190, 173); white-space: pre-wrap; font-size: 25px; -unity-font-style: bold; -unity-font-definition: resource(&quot;Sprites/Fonts/Tektur[wdth,wght]&quot;); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="RecycleContainer" style="flex-grow: 0; flex-direction: row; display: none;">
                     <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/Hints/recycle&quot;); -unity-background-scale-mode: scale-to-fit; width: 42px;"/>
                     <ui:VisualElement name="ResourceContainer" style="flex-grow: 1; flex-direction: row;">
                         <ui:Instance template="RecipeResView"/>
@@ -13,6 +19,12 @@
                         <ui:Instance template="RecipeResView"/>
                         <ui:Instance template="RecipeResView"/>
                     </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="WireContainer" style="flex-grow: 1; flex-direction: row; justify-content: center;">
+                    <ui:VisualElement name="WireNetIcon" style="flex-grow: 0; background-image: resource(&quot;Sprites/Hints/wireNet&quot;); -unity-background-scale-mode: scale-to-fit; width: 83px; aspect-ratio: 1; align-self: center;"/>
+                    <ui:VisualElement name="WirePortInputIcon" style="flex-grow: 0; background-image: resource(&quot;Sprites/Hints/wireInputPort&quot;); -unity-background-scale-mode: scale-to-fit; width: 83px; aspect-ratio: 1; align-self: center;"/>
+                    <ui:VisualElement name="WirePortOutputIcon" style="flex-grow: 0; background-image: resource(&quot;Sprites/Hints/wireOutputPort&quot;); -unity-background-scale-mode: scale-to-fit; width: 83px; aspect-ratio: 1; align-self: center;"/>
+                    <ui:Label text="item item aaaaaaa " name="WireTextLb" picking-mode="Ignore" enabled="true" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" style="-unity-text-align: middle-center; color: rgb(176, 190, 173); white-space: pre-wrap; font-size: 25px; -unity-font-style: bold; -unity-font-definition: resource(&quot;Sprites/Fonts/Tektur[wdth,wght]&quot;); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

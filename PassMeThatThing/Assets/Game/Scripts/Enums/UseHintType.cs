@@ -7,6 +7,5 @@ namespace Assets.Game.Scripts.Enums
         DamageHit,
         RepairHit,
         FixHit,
-        Recycle
     }
 }

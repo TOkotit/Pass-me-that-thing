@@ -5,6 +5,9 @@ namespace Assets.Game.Scripts.Enums
     {
         Other,
         Item,
-
+        Building,
+        WirePortInput,
+        WirePortOutput,
+        WireNet
     }
 }
