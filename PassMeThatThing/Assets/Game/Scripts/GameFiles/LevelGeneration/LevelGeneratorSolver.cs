@@ -126,6 +126,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             ConnectAllFreeExits();
             PlaceRecoveryHangar(clusters);
 
+            ValidateAndSanitizeConnections();
+            
             BlockUnusedExits();
             PlaceUsedExitPassages();
 
@@ -763,9 +765,30 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 .GroupBy(x => x.Conn.GlobalPosition + x.Conn.Direction)
                 .ToDictionary(g => g.Key, g => g.First());
 
-            if (targetDict.Count == 0) return false;
+            return TryLinkExitViaPath(startExit, targetDict, tunnelPrefabs, clusterLinks, maxPathLength, out _);
+        }
 
-            var startCell = startExit.Conn.GlobalPosition + startExit.Conn.Direction;
+        /// <summary>
+        /// Общий поиск пути алгоритмом волнового обхода (BFS) от стартовой клетки до одной из целевых клеток словаря.<br/>
+        /// Вынесен из дублировавшихся <see cref="TryLinkExitToTargets"/> и <see cref="ConnectFreeExitPairs"/>.
+        /// </summary>
+        /// <param name="startCell">Клетка старта пути</param>
+        /// <param name="targetDict">Словарь целевых клеток → связанные с ними выходы</param>
+        /// <param name="maxPathLength">Максимальная длина пути</param>
+        /// <param name="path">Найденный маршрут (валиден только при успехе)</param>
+        /// <param name="foundTarget">Найденная целевая точка соединения (валидна только при успехе)</param>
+        /// <returns>Найден ли путь до одной из целей</returns>
+        private bool TryFindPath(
+            Vector3Int startCell,
+            Dictionary<Vector3Int, (PlacedRoomDataCluster Room, ConnectionPoint Conn)> targetDict,
+            int maxPathLength,
+            out List<Vector3Int> path,
+            out (PlacedRoomDataCluster Room, ConnectionPoint Conn) foundTarget)
+        {
+            path = null;
+            foundTarget = default;
+
+            if (targetDict.Count == 0) return false;
             if (_levelGrid.IsCellOccupied(startCell) && !targetDict.ContainsKey(startCell)) return false;
 
             var queue = new Queue<PathNode>();
@@ -774,7 +797,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             visited.Add(startCell);
 
             PathNode endNode = null;
-            (PlacedRoomDataCluster Room, ConnectionPoint Conn)? foundTarget = null;
 
             while (queue.Count > 0)
             {
@@ -794,47 +816,74 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     var nextCell = curr.Cell + dir;
                     if (visited.Contains(nextCell)) continue;
 
-                    if (_levelGrid.IsCellOccupied(nextCell))
-                    {
-                        if (!targetDict.ContainsKey(nextCell))
-                        {
-                            continue;
-                        }
-                    }
+                    if (_levelGrid.IsCellOccupied(nextCell) && !targetDict.ContainsKey(nextCell))
+                        continue;
 
                     visited.Add(nextCell);
                     queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
                 }
             }
 
-            if (endNode == null || !foundTarget.HasValue) return false;
+            if (endNode == null) return false;
 
-            var path = new List<Vector3Int>();
+            var result = new List<Vector3Int>();
             var node = endNode;
             while (node != null)
             {
-                path.Add(node.Cell);
+                result.Add(node.Cell);
                 node = node.Parent;
             }
-            path.Reverse();
+            result.Reverse();
 
-            if (path.Count > maxPathLength) return false;
+            if (result.Count > maxPathLength) return false;
 
-            var targetRoom = foundTarget.Value.Room;
-            var targetConn = foundTarget.Value.Conn;
+            path = result;
+            return true;
+        }
+
+        /// <summary>
+        /// Общая логика стыковки выхода с целью: поиск пути (<see cref="TryFindPath"/>), простановка туннелей вдоль него,
+        /// регистрация связи кластеров и обновление списков соединений.<br/>
+        /// Вынесена из дублировавшихся <see cref="TryLinkExitToTargets"/> и <see cref="ConnectFreeExitPairs"/>.
+        /// </summary>
+        /// <param name="startExit">Стартовый выход</param>
+        /// <param name="targetDict">Словарь целевых клеток → связанные с ними выходы</param>
+        /// <param name="tunnelPrefabs">Префабы тоннелей</param>
+        /// <param name="clusterLinks">Словарь связей кластеров</param>
+        /// <param name="maxPathLength">Максимальная длина тоннеля</param>
+        /// <param name="connectedTarget">Выход, с которым удалось состыковаться (валиден только при успехе)</param>
+        /// <returns>Успешность стыковки</returns>
+        private bool TryLinkExitViaPath(
+            (PlacedRoomDataCluster Room, ConnectionPoint Conn) startExit,
+            Dictionary<Vector3Int, (PlacedRoomDataCluster Room, ConnectionPoint Conn)> targetDict,
+            List<RoomDataEntry> tunnelPrefabs,
+            Dictionary<RoomCluster, HashSet<RoomCluster>> clusterLinks,
+            int maxPathLength,
+            out (PlacedRoomDataCluster Room, ConnectionPoint Conn) connectedTarget)
+        {
+            connectedTarget = default;
+
+            var startCell = startExit.Conn.GlobalPosition + startExit.Conn.Direction;
+
+            if (!TryFindPath(startCell, targetDict, maxPathLength, out var path, out var foundTarget))
+                return false;
+
+            var targetRoom = foundTarget.Room;
+            var targetConn = foundTarget.Conn;
 
             if (!TryPlaceTunnelsAlongPath(path, tunnelPrefabs, startExit.Room, startExit.Conn, targetConn))
                 return false;
 
-            _clusterExits.Add((startExit.Room, startExit.Conn));
-            _clusterExits.Add((targetRoom, targetConn));
+            RegisterClusterLink(clusterLinks, startExit.Room.Cluster, targetRoom.Cluster);
+
             startExit.Room.FreeConnections.Remove(startExit.Conn);
             targetRoom.FreeConnections.Remove(targetConn);
             _usedConnections.Add((startExit.Room, startExit.Conn));
             _usedConnections.Add((targetRoom, targetConn));
+            _clusterExits.Add((startExit.Room, startExit.Conn));
+            _clusterExits.Add((targetRoom, targetConn));
 
-            RegisterClusterLink(clusterLinks, startExit.Room.Cluster, targetRoom.Cluster);
-
+            connectedTarget = foundTarget;
             return true;
         }
         
@@ -935,98 +984,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     .GroupBy(x => x.Conn.GlobalPosition + x.Conn.Direction)
                     .ToDictionary(g => g.Key, g => g.First());
 
-                if (targetDict.Count == 0)
+                if (TryLinkExitViaPath(startData, targetDict, tunnelPrefabs, clusterLinks, maxPathLength, out var connectedTarget))
+                {
+                    allFreeConnections.Remove(connectedTarget);
+                    allFreeConnections.Remove(startData);
+                }
+                else
                 {
                     i++;
-                    continue;
                 }
-
-                var startCell = startData.Conn.GlobalPosition + startData.Conn.Direction;
-
-                if (_levelGrid.IsCellOccupied(startCell) && !targetDict.ContainsKey(startCell))
-                {
-                    i++;
-                    continue;
-                }
-
-                var queue = new Queue<PathNode>();
-                var visited = new HashSet<Vector3Int>();
-
-                queue.Enqueue(new PathNode { Cell = startCell, Parent = null, Depth = 1 });
-                visited.Add(startCell);
-
-                PathNode endNode = null;
-                (PlacedRoomDataCluster Room, ConnectionPoint Conn)? foundTarget = null;
-
-                while (queue.Count > 0)
-                {
-                    var curr = queue.Dequeue();
-
-                    if (targetDict.TryGetValue(curr.Cell, out var target))
-                    {
-                        endNode = curr;
-                        foundTarget = target;
-                        break;
-                    }
-
-                    if (curr.Depth >= maxPathLength) continue;
-
-                    foreach (var dir in SearchDirections)
-                    {
-                        var nextCell = curr.Cell + dir;
-                        if (visited.Contains(nextCell)) continue;
-
-                        if (_levelGrid.IsCellOccupied(nextCell))
-                        {
-                            if (!targetDict.ContainsKey(nextCell))
-                            {
-                                continue;
-                            }
-                        }
-
-                        visited.Add(nextCell);
-                        queue.Enqueue(new PathNode { Cell = nextCell, Parent = curr, Depth = curr.Depth + 1 });
-                    }
-                }
-
-                var connected = false;
-
-                if (endNode != null && foundTarget.HasValue)
-                {
-                    var path = new List<Vector3Int>();
-                    var node = endNode;
-                    while (node != null)
-                    {
-                        path.Add(node.Cell);
-                        node = node.Parent;
-                    }
-                    path.Reverse();
-
-                    if (path.Count <= maxPathLength)
-                    {
-                        var targetRoom = foundTarget.Value.Room;
-                        var targetConn = foundTarget.Value.Conn;
-
-                        if (TryPlaceTunnelsAlongPath(path, tunnelPrefabs, startData.Room, startData.Conn, targetConn))
-                        {
-                            RegisterClusterLink(clusterLinks, startCluster, targetRoom.Cluster);
-
-                            allFreeConnections.Remove(foundTarget.Value);
-                            allFreeConnections.Remove(startData);
-
-                            startData.Room.FreeConnections.Remove(startData.Conn);
-                            targetRoom.FreeConnections.Remove(targetConn);
-                            _usedConnections.Add((startData.Room, startData.Conn));
-                            _usedConnections.Add((targetRoom, targetConn));
-                            _clusterExits.Add((startData.Room, startData.Conn));
-                            _clusterExits.Add((targetRoom, targetConn));
-
-                            connected = true;
-                        }
-                    }
-                }
-
-                if (!connected) i++;
             }
         }
 
@@ -1318,6 +1284,60 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
         }
 
+        
+        /// <summary>
+        /// Проверяет целостность всех проходов.<br/>
+        /// Если проход односторонний (нет парной двери напротив или тоннеля), 
+        /// он переводится в глухую стену.
+        /// </summary>
+        private void ValidateAndSanitizeConnections()
+        {
+            var usedSet = new HashSet<(Vector3Int pos, Vector3Int dir)>();
+            foreach (var (room, conn) in _usedConnections)
+            {
+                usedSet.Add((conn.GlobalPosition, conn.Direction));
+            }
+            
+            var tunnelDoorsSet = new HashSet<(Vector3Int pos, Vector3Int dir)>();
+            foreach (var room in _allPlacedRooms)
+            {
+                foreach (var tunnel in room.AttachedTunnels)
+                {
+                    var plates = RoomRotationHelper.GetRotatedPlates(tunnel.Entry, tunnel.Rotation);
+                    foreach (var plate in plates)
+                    {
+                        var globalPos = tunnel.Origin + plate.LocalPosition;
+                        foreach (var door in plate.Doors)
+                        {
+                            tunnelDoorsSet.Add((globalPos, door.GlobalDirection));
+                        }
+                    }
+                }
+            }
+            
+            var invalidConnections = new List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)>();
+
+            foreach (var item in _usedConnections)
+            {
+                var targetPos = item.Conn.GlobalPosition + item.Conn.Direction;
+                var targetDir = -item.Conn.Direction;
+                
+                var hasMatchingRoomDoor = usedSet.Contains((targetPos, targetDir));
+                var hasMatchingTunnelDoor = tunnelDoorsSet.Contains((targetPos, targetDir));
+                
+                if (!hasMatchingRoomDoor && !hasMatchingTunnelDoor) invalidConnections.Add(item);
+            }
+            
+            foreach (var invalid in invalidConnections)
+            {
+                _usedConnections.Remove(invalid);
+                if (!invalid.Room.FreeConnections.Contains(invalid.Conn))
+                {
+                    invalid.Room.FreeConnections.Add(invalid.Conn);
+                }
+            }
+        }
+
         private void Shuffle<T>(IList<T> list)
         {
             var n = list.Count;
@@ -1325,7 +1345,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 n--;
                 var k = _random.Next(n + 1);
-                (list[k], list[n]) = (list[n], list[n]);
+                (list[k], list[n]) = (list[n], list[k]);
             }
         }
 
