@@ -308,30 +308,5 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 AllLevelSpots.Add(spot);
             }
         }
-        
-        private void OnDrawGizmos()
-        {
-            if (_solver?.ClusterExits == null || _solver.ClusterExits.Count == 0) return;
-            if (!levelGrid || !levelGrid.UnityGrid) return;
-
-            Gizmos.color = Color.red;
-
-            foreach (var exit in _solver.ClusterExits)
-            {
-                var conn = exit.Conn;
-                var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
-                var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
-
-                var left = new Vector3(-conn.Direction.z, 0f, conn.Direction.x);
-                var position = new Vector3(
-                    centerWorldPos.x + conn.Direction.x * 5f + left.x,
-                    baseWorldPos.y * 2.5f,
-                    centerWorldPos.z + conn.Direction.z * 5f + left.z);
-                
-                Gizmos.DrawCube(position, new Vector3(3f, 5f, 3f));
-            }
-        }
-        
-        
     }
 }
