@@ -24,6 +24,7 @@ using Assets.Game.Scripts.GameFiles.UIWorld;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Assets.Game.Scripts.GameFiles.Items;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
+using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 
 namespace DI
 {
@@ -36,6 +37,7 @@ namespace DI
         [SerializeField] private ItemRarityDatabase itemRarityDatabase;
         [SerializeField] private GameEventsDatabase gameEventsDatabase;
         [SerializeField] private EnemyDatabase enemyDatabase;
+        [SerializeField] private GlobalStageDatabase globalStageDatabase;
         [SerializeField] private BuildingsDatabase buildingDatabase;
         [SerializeField] private TurretDatabase turretDatabase;
         [SerializeField] private ScreenHintsDatabase screenHintsDatabase;
@@ -65,6 +67,7 @@ namespace DI
             builder.RegisterInstance(itemRarityDatabase);
             builder.RegisterInstance(gameEventsDatabase);
             builder.RegisterInstance(enemyDatabase);
+            builder.RegisterInstance(globalStageDatabase);
             builder.RegisterInstance(buildingDatabase);
             builder.RegisterInstance(turretDatabase);
             builder.RegisterInstance(screenHintsDatabase);

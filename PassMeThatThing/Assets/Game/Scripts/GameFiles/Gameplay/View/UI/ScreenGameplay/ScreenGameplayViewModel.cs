@@ -196,14 +196,19 @@ namespace Game.Gameplay.View.UI
             _mcLocalModel.OnDeathChanged -= f;
         }
 
-        public void RequestSubGlobalState(Action<GlobalStagesType> f)
+        public void RequestInitGlobalState(Action<Stage> f)
         {
-            f(_globalStageManager.CurrentGameStage);
+            f(_globalStageManager.Stage);
+        }
+
+        public void RequestSubGlobalState(Action<Stage> f)
+        {
+            f(_globalStageManager.Stage);
     
             _globalStageManager.OnStageChangedUI += f;
         }
         
-        public void RequestUnsubGlobalState(Action<GlobalStagesType> f)
+        public void RequestUnsubGlobalState(Action<Stage> f)
         {
             _globalStageManager.OnStageChangedUI -= f;
         }

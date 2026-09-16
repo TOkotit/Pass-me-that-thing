@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.GameRandomEvents;
@@ -21,8 +22,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         [Inject] private GameRandomEventManager _gameRandomEventManager;
         [Inject] private EnemyDatabase _enemyDatabase;
+        [Inject] private GlobalStageDatabase _globalStageDatabase;
+
         [Inject] private EnemySpawner _enemySpawner;
         [Inject] private PlayerReadyManager _playerReadyManager;  // <-- теперь через DI
+
 
         [Header("Timers")]
         [SerializeField] private float preparationStageDuration = 200f;
@@ -32,15 +36,18 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private bool _inOvertime;
         private bool _fightEnded;
 
-        private int _levelCount = 0;
+        [SyncVar]
+        private Stage _stage = new();
 
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime;
 
         public event Action<float> OnTimerChangedUI;
-        public event Action<GlobalStagesType> OnStageChangedUI;
+        //public event Action<GlobalStagesType> OnStageChangedUI;
+        public event Action<Stage> OnStageChangedUI;
 
         public static GlobalStageManager Instance { get; private set; }
+        public Stage Stage => _stage;
 
         private void Awake()
         {
@@ -79,20 +86,19 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _timer.Stop();
             _inOvertime = false;
             _fightEnded = false;
-            _currentGameStage = newStage;
 
-            float duration = _currentGameStage switch
-            {
-                GlobalStagesType.Preparation => preparationStageDuration,
-                GlobalStagesType.Fight => fightStageDuration,
-                _ => 0f
-            };
+            _stage.Type = newStage;
+            _currentGameStage = newStage;
+            
+            
 
             if (_currentGameStage == GlobalStagesType.Preparation)
             {
                 _playerReadyManager.ResetReady();
                 //_gameRandomEventManager.TryTriggerRandomEvents();
-                _levelCount++;
+
+                _stage.Level++;
+                _stage.Day = _stage.Level % _globalStageDatabase.LevelAmount;
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
@@ -100,6 +106,13 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
                 _enemySpawner.SpawnWave(GetEnemies());
             }
+
+            var duration = _currentGameStage switch
+            {
+                GlobalStagesType.Preparation => _globalStageDatabase.GetLevelData(_stage.Level).PreparationPhaseTime,
+                GlobalStagesType.Fight => _globalStageDatabase.GetLevelData(_stage.Level).FightPhaseTime,
+                _ => 5f
+            };
 
             if (duration > 0)
                 StartTimer(duration);
@@ -172,7 +185,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private List<EnemyData> GetEnemies()
         {
             var result = new List<EnemyData>();
-            var enemyPacks = _enemyDatabase.GetEnemyPacksByLevel(_levelCount);
+            var enemyPacks = _globalStageDatabase.GetEnemyPacksByLevel(_stage.Level);
 
             foreach (var ep in enemyPacks)
             {
@@ -211,7 +224,29 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage)
         {
-            OnStageChangedUI?.Invoke(_currentGameStage);
+            OnStageChangedUI?.Invoke(_stage);
+        }
+    }
+
+    [Serializable]
+    public class Stage
+    {
+        public GlobalStagesType Type;
+        public int Day;
+        public int Level;
+
+        public Stage()
+        {
+            Type = GlobalStagesType.Preparation;
+            Day = 0;
+            Level = 0;
+        }
+
+        public Stage(GlobalStagesType newStage, int dayCount, int levelCount)
+        {
+            Type = newStage;
+            Day = dayCount;
+            Level = levelCount;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using AYellowpaper.SerializedCollections;
 using Game.Scripts.Enums;
 using System;
@@ -10,8 +11,6 @@ using static Mirror.SimpleWeb.Log;
 public class EnemyDatabase : ScriptableObject
 {
     public List<EnemyData> allEnemies;
-    [Header("Конфиг мобов на диапазон левелов (включ./включ.)")]
-    public SerializedDictionary<LevelRange, List<EnemyPackData>> levelEnemiesConfig;
 
     public EnemyData GetEnemy(string id)
     {
@@ -22,27 +21,6 @@ public class EnemyDatabase : ScriptableObject
     {
         return allEnemies.Where(enemy => enemy.EnemyDifficulty == diff).ToList();
     }
-
-    public List<EnemyPackData> GetEnemyPacksByLevel(int level)
-    {
-        var c = levelEnemiesConfig
-            .Where(kp => kp.Key.minVal <= level && level <= kp.Key.maxVal);
-        if (c.Count() > 0)
-        {
-            return c.First().Value;
-        }
-        else
-        {
-            return levelEnemiesConfig.Last().Value;
-        }
-    }
-}
-
-[Serializable]
-public class EnemyPackData
-{
-    public int count;
-    public EnemyDifficulty enemyDiff;
 }
 
 [Serializable]

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using Game.Scripts.Enums;
@@ -13,8 +11,10 @@ using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
-using UnityEngine.WSA;
 using UnityEngine.InputSystem;
+using Game.Scripts.GameFiles.GlobalStageManager;
+using UnityEditor.SceneManagement;
+using Stage = Game.Scripts.GameFiles.GlobalStageManager.Stage;
 
 
 namespace Game.Gameplay.View.UI
@@ -68,6 +68,9 @@ namespace Game.Gameplay.View.UI
 
         private GroupBox _hintsContainer;
 
+        private VisualElement _screenMessageContainer;
+        private Label _stageChangeMessage;
+
         private void Awake()
         {
 
@@ -95,6 +98,9 @@ namespace Game.Gameplay.View.UI
             _playerHud = _root.Q<VisualElement>("PlayerHud");
 
             _hintsContainer = _root.Q<GroupBox>("ControlsContainer");
+
+            _screenMessageContainer = _root.Q<VisualElement>("ScreenMessageContainer");
+            _stageChangeMessage = _root.Q<Label>("StageChangeMessage");
 
             _localPlayerAvatar = _root.Q<VisualElement>("Avatar1");
 
@@ -132,8 +138,13 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestSubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
+
+            ViewModel.RequestInitGlobalState(UpdateGameGlobalState);
             ViewModel.RequestSubGlobalState(UpdateGameGlobalState);
+            ViewModel.RequestSubGlobalState(ScreenMessageStage);
+
             ViewModel.RequestSubGlobalStateTimer(UpdateGameGlobalStateTimer);
+            
 
             ViewModel.RequestSubPlugImages(UpdatePlugImages);
 
@@ -248,7 +259,6 @@ namespace Game.Gameplay.View.UI
                     _cursor.RemoveFromClassList(CircleCursorClassName);
                     break;
             }
-
         }
 
         private void UpdateCurrHealthUI(int newValue, int maxHealth)
@@ -277,8 +287,6 @@ namespace Game.Gameplay.View.UI
                     _otherPlayerNames[i].text = "-";
                 }
             }
-
-
         }
         
         private void UpdateDeathUI(bool isDead)
@@ -307,16 +315,56 @@ namespace Game.Gameplay.View.UI
             _throwChargeText.text = newValue == 0 ? "" : $"{newValue.ToString()}%";
         }
 
-        private void UpdateGameGlobalState(GlobalStagesType newValue)
+        private void UpdateGameGlobalState(Stage newValue)
         {
-            _gameGlobalStateText.text = newValue switch
+            _gameGlobalStateText.text = newValue.Type switch
             {
                 GlobalStagesType.Fight => "Фаза обороны",
                 GlobalStagesType.Preparation => "Фаза подготовки",
                 _ => "Неизвестная фаза"
             };
         }
-        
+
+        private void ScreenMessageStage(Stage stage)
+        {
+            _stageChangeMessage.text = $"{stage.Day}-{stage.Level} {stage.Type}";
+            ScreenMessage(_stageChangeMessage);
+        }
+
+        private void ScreenMessage(VisualElement messageElement)
+        {
+            var seq = DOTween.Sequence();
+
+            messageElement.visible = true;
+            var opacity = messageElement.style.opacity;
+            var rotate = messageElement.style.rotate;
+
+            seq.Append(
+                _stageChangeMessage
+                .DOScale(new Vector2(1f, 1f), 0.5f).From(new Vector2(0.5f, 0.5f)))
+                .SetEase(Ease.OutQuad);  
+            seq.Join(
+                DOTween.To(
+                    () => opacity.value, 
+                    x => opacity.value = x, 
+                    0f, 1f));
+
+            seq.Append(
+                _stageChangeMessage
+                .DOScale(new Vector2(0.5f, 0.5f), 0.3f).From(new Vector2(1f, 1f)))
+                .SetEase(Ease.OutQuad);
+            seq.Join(
+                DOTween.To(
+                    () => opacity.value,
+                    x => opacity.value = x,
+                    1f, 0f));
+
+            seq.Play().OnComplete(
+                () => {
+                    messageElement.visible = false;
+                });
+        }
+
         private void UpdateGameGlobalStateTimer(float remainingSeconds)
         {
             var minutes = Mathf.FloorToInt(remainingSeconds / 60f);
