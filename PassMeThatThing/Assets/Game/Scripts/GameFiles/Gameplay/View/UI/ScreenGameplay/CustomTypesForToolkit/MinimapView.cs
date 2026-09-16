@@ -341,13 +341,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
 
                     var isSameRoom = hasNeighbor && neighborData.RoomId == cellData.RoomId;
                     var hasDoor = cellData.Doors != null && cellData.Doors.Contains(dir);
+                    var neighborHasDoor = hasNeighbor && neighborData.Doors != null && neighborData.Doors.Contains(-dir);
 
-                    if (!isSameRoom || hasDoor)
+                    if (!isSameRoom)
                     {
                         var start = new Vector2(x + p1.x * _cellSize, y + p1.y * _cellSize);
                         var end = new Vector2(x + p2.x * _cellSize, y + p2.y * _cellSize);
 
-                        if (hasDoor)
+                        if (hasDoor && neighborHasDoor)
                         {
                             var segmentDir = end - start;
                             painter.BeginPath();
@@ -360,7 +361,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                             painter.LineTo(end);
                             painter.Stroke();
                         }
-                        else if (!hasNeighbor || !isSameRoom)
+                        else
                         {
                             painter.BeginPath();
                             painter.MoveTo(start);

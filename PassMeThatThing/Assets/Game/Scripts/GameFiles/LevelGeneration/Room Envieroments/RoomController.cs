@@ -14,12 +14,5 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments
         {
             RoomId = id;
         }
-
-        private void Start()
-        {
-            if (RoomId < 0)
-                Debug.LogWarning($"RoomId не назначен для {gameObject.name} — вызовите SetRoomId() из генератора уровня.");
-        }
-        
     }
 }

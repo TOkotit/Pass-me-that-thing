@@ -36,7 +36,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var spot = levelSpots[i];
 
-                if (spot == null)
+                if (!spot)
                     continue;
 
                 var type = spot.NetworkObjectsOnLevelType;
@@ -53,7 +53,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 createdObject.transform.rotation = spot.transform.rotation;
                 var placement = createdObject.GetComponent<NetworkObjectPlacement>();
 
-                if (placement == null)
+                if (!placement)
                 {
                     Debug.LogError(
                         $"[NETWORK] {createdObject.name} has no NetworkObjectPlacement component.",
@@ -79,7 +79,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         
         public bool TryAttachObject(NetworkObjectPlacement placement)
         {
-            if (placement == null)
+            if (!placement)
                 return false;
 
             if (_levelSpots == null || _levelSpots.Count == 0)
@@ -97,7 +97,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var spot = _levelSpots[spotIndex];
 
-            if (spot == null)
+            if (!spot)
             {
                 Debug.LogWarning(
                     $"[NETWORK] Spot {spotIndex} is null.");
@@ -107,7 +107,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             var container = spot.SpawnContainer;
 
-            if (container == null)
+            if (!container)
             {
                 Debug.LogWarning(
                     $"[NETWORK] SpawnContainer for spot {spotIndex} is null.");
@@ -142,7 +142,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
         public void UnregisterPendingObject(NetworkObjectPlacement placement)
         {
-            if (placement == null)
+            if (!placement)
                 return;
 
             _pendingObjects.Remove(placement);
@@ -157,7 +157,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 var placement = _pendingObjects[i];
 
-                if (placement == null)
+                if (!placement)
                 {
                     _pendingObjects.RemoveAt(i);
                     continue;
