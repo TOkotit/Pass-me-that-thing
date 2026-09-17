@@ -21,8 +21,22 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
         [Header("Конфиг мобов на диапазон левелов (включ./включ.)")]
         public SerializedDictionary<LevelRange, List<EnemyPackData>> levelEnemiesConfig;
 
-        public int LevelAmount => levelInDayAmount;
+        public int LevelInDayAmount => levelInDayAmount;
         public List<LevelData> LevelsData => levelsData;
+
+        public float RestDuration => restDuration;
+
+        public float GetStageDuration(GlobalStagesType type, int level)
+        {
+            var duration = type switch
+            {
+                GlobalStagesType.Preparation => GetLevelData(level-1).PreparationPhaseTime,
+                GlobalStagesType.Fight => GetLevelData(level-1).FightPhaseTime,
+                GlobalStagesType.Rest => RestDuration,
+                _ => 5f
+            };
+            return duration;
+        }
 
         public List<EnemyPackData> GetEnemyPacksByLevel(int level)
         {
@@ -40,6 +54,7 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
 
         public LevelData GetLevelData(int dayIndex)
         {
+            Debug.Log($"dayIndex{dayIndex}");
             return levelsData[dayIndex];
         }
     }

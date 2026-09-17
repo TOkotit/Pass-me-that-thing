@@ -203,8 +203,6 @@ namespace Game.Gameplay.View.UI
 
         public void RequestSubGlobalState(Action<Stage> f)
         {
-            f(_globalStageManager.Stage);
-    
             _globalStageManager.OnStageChangedUI += f;
         }
         

@@ -14,7 +14,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 {
     public class GlobalStageManager : NetworkBehaviour
     {
-        [SyncVar(hook = nameof(OnStageChanged))]
+        [SyncVar]
         private GlobalStagesType _currentGameStage;
         public GlobalStagesType CurrentGameStage => _currentGameStage;
 
@@ -25,25 +25,19 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [Inject] private GlobalStageDatabase _globalStageDatabase;
 
         [Inject] private EnemySpawner _enemySpawner;
-        [Inject] private PlayerReadyManager _playerReadyManager;  // <-- теперь через DI
-
-
-        [Header("Timers")]
-        [SerializeField] private float preparationStageDuration = 200f;
-        [SerializeField] private float fightStageDuration = 300f;
+        [Inject] private PlayerReadyManager _playerReadyManager;
 
         private NetworkTimer _timer;
         private bool _inOvertime;
         private bool _fightEnded;
 
-        [SyncVar]
+        [SyncVar(hook = nameof(OnStageChanged))]
         private Stage _stage = new();
 
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime;
 
         public event Action<float> OnTimerChangedUI;
-        //public event Action<GlobalStagesType> OnStageChangedUI;
         public event Action<Stage> OnStageChangedUI;
 
         public static GlobalStageManager Instance { get; private set; }
@@ -87,18 +81,18 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _inOvertime = false;
             _fightEnded = false;
 
-            _stage.Type = newStage;
+            var newSt = new Stage(_stage.Type, _stage.Day, _stage.Level);
+
+            newSt.Type = newStage;
             _currentGameStage = newStage;
-            
-            
 
             if (_currentGameStage == GlobalStagesType.Preparation)
             {
                 _playerReadyManager.ResetReady();
                 //_gameRandomEventManager.TryTriggerRandomEvents();
 
-                _stage.Level++;
-                _stage.Day = _stage.Level % _globalStageDatabase.LevelAmount;
+                newSt.Level++;
+                newSt.Day = _stage.Level % _globalStageDatabase.LevelInDayAmount + 1;
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
@@ -106,13 +100,14 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
                 _enemySpawner.SpawnWave(GetEnemies());
             }
-
-            var duration = _currentGameStage switch
+            else if (_currentGameStage == GlobalStagesType.Rest)
             {
-                GlobalStagesType.Preparation => _globalStageDatabase.GetLevelData(_stage.Level).PreparationPhaseTime,
-                GlobalStagesType.Fight => _globalStageDatabase.GetLevelData(_stage.Level).FightPhaseTime,
-                _ => 5f
-            };
+                RunRestLogic();
+            }
+
+            _stage = newSt;
+
+            var duration = _globalStageDatabase.GetStageDuration(_stage.Type, _stage.Level);
 
             if (duration > 0)
                 StartTimer(duration);
@@ -170,6 +165,10 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                     EndFight();
                 }
             }
+            else if (_currentGameStage == GlobalStagesType.Rest)
+            {
+                StartStage(GlobalStagesType.Preparation);
+            }
         }
 
         [Server]
@@ -178,7 +177,21 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             if (_fightEnded) return;
             _fightEnded = true;
             _inOvertime = false;
-            StartStage(GlobalStagesType.Preparation);
+
+            if (_stage.Level % _globalStageDatabase.LevelInDayAmount == 0)
+            {
+                StartStage(GlobalStagesType.Rest);
+            }
+            else
+            {
+                StartStage(GlobalStagesType.Preparation);
+            }
+        }
+
+        [Server]
+        private void RunRestLogic()
+        {
+
         }
 
         [Server]
@@ -222,25 +235,18 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             OnTimerChangedUI?.Invoke(Mathf.CeilToInt(newTime));
         }
 
-        private void OnStageChanged(GlobalStagesType oldStage, GlobalStagesType newStage)
+        private void OnStageChanged(Stage oldStage, Stage newStage)
         {
-            OnStageChangedUI?.Invoke(_stage);
+            OnStageChangedUI?.Invoke(newStage);
         }
     }
 
     [Serializable]
-    public class Stage
+    public struct Stage
     {
         public GlobalStagesType Type;
         public int Day;
         public int Level;
-
-        public Stage()
-        {
-            Type = GlobalStagesType.Preparation;
-            Day = 0;
-            Level = 0;
-        }
 
         public Stage(GlobalStagesType newStage, int dayCount, int levelCount)
         {

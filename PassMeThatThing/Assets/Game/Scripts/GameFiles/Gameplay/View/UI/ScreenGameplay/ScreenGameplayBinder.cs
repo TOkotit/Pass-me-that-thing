@@ -12,8 +12,6 @@ using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using UnityEngine.InputSystem;
-using Game.Scripts.GameFiles.GlobalStageManager;
-using UnityEditor.SceneManagement;
 using Stage = Game.Scripts.GameFiles.GlobalStageManager.Stage;
 
 
@@ -321,6 +319,7 @@ namespace Game.Gameplay.View.UI
             {
                 GlobalStagesType.Fight => "Фаза обороны",
                 GlobalStagesType.Preparation => "Фаза подготовки",
+                GlobalStagesType.Rest => "Отдых",
                 _ => "Неизвестная фаза"
             };
         }

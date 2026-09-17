@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
 using DI;
 using Game.Entity;
@@ -8,12 +7,8 @@ using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using UnityEngine;
 using Mirror;
-using Mirror.Examples.RigidbodyPhysics;
 using VContainer;
 using VContainer.Unity;
-using Assets.Game.Scripts.GameFiles.Items;
-using UnityEngine.InputSystem;
-using UnityEditor.Rendering.LookDev;
 
 public class PlayerInventory : NetworkBehaviour
 {
