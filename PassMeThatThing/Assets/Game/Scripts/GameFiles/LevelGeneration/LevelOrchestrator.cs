@@ -204,7 +204,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 _placedWalls.Add(instance);
             }
             
-            SpawnClusterDoors();
+            SpawnPassageDoors();
         }
 
         /// <summary>
@@ -264,15 +264,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             }
         }
 
-        private void SpawnClusterDoors()
+        private void SpawnPassageDoors()
         {
-            if (_solver?.ClusterExits == null) return;
+            if (_solver?.UsedConnections == null) return;
             
             var spawnedPositions = new List<Vector3Int>();
 
-            foreach (var exit in _solver.ClusterExits)
+            foreach (var item in _solver.UsedConnections)
             {
-                var conn = exit.Conn;
+                var conn = item.Conn;
                 var centerWorldPos = levelGrid.UnityGrid.GetCellCenterWorld(conn.GlobalPosition);
                 var baseWorldPos = levelGrid.UnityGrid.CellToWorld(conn.GlobalPosition);
 
@@ -291,7 +291,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 if (spawnedPositions.Contains(roundedPos)) continue;
                 spawnedPositions.Add(roundedPos);
 
-                var doorGo = new GameObject($"ClusterDoorSpot_{roundedPos}");
+                var doorGo = new GameObject($"PassageDoorSpot_{roundedPos}");
                 doorGo.transform.SetParent(levelContainer);
         
                 var rotation = Quaternion.FromToRotation(Vector3.right, -conn.Direction);

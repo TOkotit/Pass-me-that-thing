@@ -288,6 +288,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             var exitOptions = _allPlacedRooms
                 .Where(r => r.Cluster == farthestCluster)
                 .SelectMany(r => r.FreeConnections.Select(c => (Room: r, Conn: c)))
+                .Where(x => !_levelGrid.IsCellOccupied(x.Conn.GlobalPosition + x.Conn.Direction))
                 .OrderBy(_ => _random.Next())
                 .ToList();
 
@@ -685,13 +686,14 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         /// </summary>
         /// <param name="clusterFilter">Фильтр для поиска</param>
         /// <returns>Список свободных выходов List&lt;<see cref="PlacedRoomDataCluster"/>, <see cref="ConnectionPoint"/>&gt;</returns>
-        private List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> GetFreeExits(Func<RoomCluster, bool> clusterFilter = null)
+        private List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> GetFreeExits(Func<RoomCluster, bool> clusterFilter = null, bool excludeBlocked = false)
         {
             return _allPlacedRooms
                 .Where(r => r.Entry.PrefabGameObject &&
                             r.RoomType is not (RoomType.CommandCenter or RoomType.RecoveryHangar))
                 .Where(r => clusterFilter == null || clusterFilter(r.Cluster))
                 .SelectMany(r => r.FreeConnections.Select(c => (Room: r, Conn: c)))
+                .Where(x => !excludeBlocked || !_levelGrid.IsCellOccupied(x.Conn.GlobalPosition + x.Conn.Direction))
                 .ToList();
         }
 
@@ -717,12 +719,12 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             do
             {
                 connectionsAdded = false;
-                var currentExits = GetFreeExits();
+                var currentExits = GetFreeExits(null, true);
                 var freeExitsBefore = currentExits.Count;
 
                 ConnectFreeExitPairs(currentExits, tunnelPrefabs, clusterLinks, currentMaxDepth);
 
-                var freeExitsAfter = GetFreeExits().Count;
+                var freeExitsAfter = GetFreeExits(null, true).Count;
                 if (freeExitsAfter < freeExitsBefore)
                 {
                     connectionsAdded = true;
@@ -1155,11 +1157,11 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 if (reachable.Contains(isolatedCluster)) continue;
 
-                var ownExits = GetFreeExits(c => c == isolatedCluster);
+                var ownExits = GetFreeExits(c => c == isolatedCluster, true);
                 if (ownExits.Count == 0)
                     continue;
 
-                var reachableExits = GetFreeExits(c => reachable.Contains(c));
+                var reachableExits = GetFreeExits(c => reachable.Contains(c), true);
                 if (reachableExits.Count == 0)
                     continue;
 
