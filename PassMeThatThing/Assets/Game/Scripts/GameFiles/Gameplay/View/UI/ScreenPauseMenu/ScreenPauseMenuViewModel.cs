@@ -1,4 +1,6 @@
-﻿using Game.UI;
+﻿using Game.Scripts.GameFiles.GlobalStageManager;
+using Game.UI;
+using Mirror;
 using Systems;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,7 +13,9 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
     {
         private readonly GameplayUIManager _uiManager;
         private readonly GameInputManager _gameInputManager;
-        
+        private NetworkRoomManager _networkRoomManager;
+        private GlobalStageManager _globalStageManager;
+
         public override string Id => "ScreenPauseMenu";
         
         public ScreenPauseMenuViewModel(GameplayUIManager uiManager, IObjectResolver container)
@@ -21,7 +25,13 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
             _gameInputManager = container.Resolve<GameInputManager>();
             
             _gameInputManager.GameInput.UI.PauseMenu.performed += PauseMenuPerformed;
-            
+
+
+            if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
+            {
+                _networkRoomManager = roomManager;
+            }
+            _globalStageManager = container.Resolve<GlobalStageManager>();
         }
 
         public override void Dispose()
@@ -43,7 +53,16 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         
         public void RequestGoToMainMenu()
         {
-
+            //TODO добавить кнопку готовности для выхода назад в лобби
+            if (_globalStageManager.isServer)
+            {
+                //_networkRoomManager.ServerChangeScene(_networkRoomManager.RoomScene);
+                _networkRoomManager.StopHost();
+            }
+            else if (_globalStageManager.isClient)
+            {
+                _networkRoomManager.StopClient();
+            }
         }
         
         public void RequestGoToScreenOptions()

@@ -197,7 +197,8 @@ namespace MainCharacterNetwork
 
         private void OnDestroy()
         {
-            _optionsManager.OnSensitivityChanged -= SetSensitivity;
+            if (_optionsManager != null)
+                _optionsManager.OnSensitivityChanged -= SetSensitivity;
         }
     }
 }

@@ -38,6 +38,7 @@ public class MainMenuEntryPoint : IStartable
         _gameManager.SetState(GameState.Menu);
 
         //_rootView.HideLoadingScreen();
+        _rootView.SetLoadingScreen(false);
     }
     
     private void InitUI(IObjectResolver resolver)

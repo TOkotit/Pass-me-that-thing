@@ -28,7 +28,8 @@ namespace Game.Gameplay.View.UI.ScreenDefeat
             //TODO добавить кнопку готовности для выхода назад в лобби
             if (_globalStageManager.isServer)
             {
-                _networkRoomManager.ServerChangeScene(_networkRoomManager.RoomScene);
+                //_networkRoomManager.ServerChangeScene(_networkRoomManager.RoomScene);
+                _networkRoomManager.StopHost();
             }
             else if (_globalStageManager.isClient)
             {
