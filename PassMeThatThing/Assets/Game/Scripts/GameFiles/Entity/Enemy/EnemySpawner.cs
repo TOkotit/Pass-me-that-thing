@@ -19,12 +19,36 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
         private List<EnemySpawnPoint> _enemySpawnPositions = new();
 
+        private SyncDictionary<string, int> _enemyKilled = new();
+
+
         public int EnemyCount
         {
             get => _enemyCount;
             set => _enemyCount = value;
         }
         public ItemSpawner EnemyDropItemSpawner => enemyDropItemSpawner;
+
+        public IReadOnlyDictionary<string, int> EnemyKilled => _enemyKilled;
+
+        [Server]
+        public void AddKilledEnemy(string id)
+        {
+            if (_enemyKilled.ContainsKey(id))
+            {
+                _enemyKilled[id]++;
+            }
+            else
+            {
+                _enemyKilled.Add(id, 1);
+            }
+        }
+
+        [Server]
+        public void ClearEnemyKilled()
+        {
+            _enemyKilled.Clear();
+        }
 
         [Server]
         public void RegisterSpawnpoint(EnemySpawnPoint sp)
@@ -61,6 +85,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 SpawnEnemy(positions[i].transform.position, enemiesData[i]);
             }
         }
+
 
     }
 }

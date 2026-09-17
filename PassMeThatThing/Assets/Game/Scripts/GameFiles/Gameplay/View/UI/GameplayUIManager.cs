@@ -47,7 +47,21 @@ namespace Game.Gameplay.View.UI
             
             return viewModel;
         }
-        
+
+        public ScreenRestStatsViewModel OpenScreenRestStats()
+        {
+            var viewModel = new ScreenRestStatsViewModel(this, Container);
+
+            LockCursor();
+            _gameInputManager.ToggleMap(InputMapType.Gameplay);
+            _gameInputManager.EnableMouse();
+
+            rootUI.OpenScreen(viewModel);
+
+
+            return viewModel;
+        }
+
         public ScreenMinigameViewModel OpenScreenMinigame(MinigameParameters  parameters)
         {
             var viewModel = new ScreenMinigameViewModel(this, Container, parameters);
@@ -138,6 +152,8 @@ namespace Game.Gameplay.View.UI
 
             return viewModel;
         }
+
+
         
         // Блокировать или разблокировать курсор
         public void LockCursor()

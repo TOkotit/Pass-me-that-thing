@@ -63,6 +63,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if (!isServer) return;
             if (!isAlive) return;
             EnemySpawner.EnemyCount--;
+            EnemySpawner.AddKilledEnemy(EnemyData.Id);
             isAlive = false;
         }
         

@@ -17,6 +17,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         //ивенты которые запущены
         private readonly SyncDictionary<int, BaseGameEvent> _startedEvents = new();
 
+        private readonly SyncDictionary<GameEventsType, int> _fixedEvents = new();
+
         private float _pipebreakChanceBoost;
 
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
@@ -31,6 +33,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 _pipebreakChanceBoost = value;
             } 
         }
+
+        public IReadOnlyDictionary<GameEventsType, int> FixedEvents => _fixedEvents;
 
         public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
         
@@ -97,12 +101,33 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
                 gameEvent.StopEvent();
+                AddFixedEvent(gameEvent.EventType);
                 StartedEvents.Remove(eventId);
             }
             else
             {
                 Debug.LogWarning($"[GameEventManager] Невозможно остановить: ивент с ID:{eventId} не найден на карте.");
             }
+        }
+
+        [Server]
+        public void AddFixedEvent(GameEventsType type)
+        {
+            if (_fixedEvents.ContainsKey(type))
+            {
+                _fixedEvents[type]++;
+            }
+            else
+            {
+                _fixedEvents.Add(type, 1);
+            }
+        }
+
+        //в начале дня после Rest
+        [Server]
+        public void ClearFixedEvent()
+        {
+            _fixedEvents.Clear();
         }
 
 

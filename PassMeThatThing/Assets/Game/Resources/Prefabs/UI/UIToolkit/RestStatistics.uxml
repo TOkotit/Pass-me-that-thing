@@ -1,0 +1,41 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="StatsIcon" src="project://database/Assets/Game/Resources/Prefabs/UI/RestStats/StatsIcon.uxml?fileID=9197481963319205126&amp;guid=d4f9a236d6ab8604c9a53d7bb0ed93c1&amp;type=3#StatsIcon"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/SpecialFont.uss?fileID=7433441132597879392&amp;guid=4632810691e1a36498776db3409c06bb&amp;type=3#SpecialFont"/>
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/UIToolkit/USS/RestStats.uss?fileID=7433441132597879392&amp;guid=027a1c813e148e1498eebd99c07d020c&amp;type=3#RestStats"/>
+    <ui:VisualElement class="tektur-font" style="flex-grow: 1; justify-content: center;">
+        <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0.573); width: 75%; height: 71%; align-self: center; padding-left: 20px; padding-top: 25px; padding-right: 20px; padding-bottom: 25px;">
+            <ui:GroupBox name="PhaseContainer" class="tektur-font" style="height: 107px; width: 516px; align-items: stretch; align-content: flex-start; align-self: center; flex-direction: row; justify-content: space-between; font-size: 88%; color: rgb(255, 255, 255);">
+                <ui:Label text="Label" name="RemainingTimeLb"/>
+                <ui:Label text="Label" name="PhaseLb" style="flex-grow: 1;"/>
+            </ui:GroupBox>
+            <ui:GroupBox class="stat-label" style="flex-direction: row;">
+                <ui:Label text="Resources received:"/>
+                <ui:VisualElement name="ResourceContainer" style="flex-grow: 1; height: 132px; align-items: flex-start; flex-direction: row;">
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                </ui:VisualElement>
+            </ui:GroupBox>
+            <ui:GroupBox class="stat-label" style="flex-direction: row;">
+                <ui:Label text="Enemy defeated:"/>
+                <ui:VisualElement name="EnemyContainer" style="flex-grow: 1; flex-direction: row;">
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                </ui:VisualElement>
+            </ui:GroupBox>
+            <ui:GroupBox class="stat-label" style="flex-direction: row;">
+                <ui:Label text="Breakdowns repaired:"/>
+                <ui:VisualElement name="EventsContainer" style="flex-grow: 1; flex-direction: row;">
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon" name="TemplateContainer"/>
+                    <ui:Instance template="StatsIcon"/>
+                    <ui:Instance template="StatsIcon"/>
+                </ui:VisualElement>
+            </ui:GroupBox>
+        </ui:VisualElement>
+        <ui:Label text="close" name="CloseLabel" style="color: rgb(255, 255, 255); font-size: 70px; -unity-text-align: middle-center; position: absolute; top: 6px; left: 11px;"/>
+    </ui:VisualElement>
+</ui:UXML>

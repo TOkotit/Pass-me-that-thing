@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
+using Game.Gameplay.View.UI;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.Utils;
@@ -26,6 +28,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         [Inject] private EnemySpawner _enemySpawner;
         [Inject] private PlayerReadyManager _playerReadyManager;
+
+        [Inject] private GameplayUIManager _gameplayUIManager;
 
         private NetworkTimer _timer;
         private bool _inOvertime;
@@ -81,9 +85,9 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _inOvertime = false;
             _fightEnded = false;
 
-            var newSt = new Stage(_stage.Type, _stage.Day, _stage.Level);
+            var newStageData = new Stage(_stage.Type, _stage.Day, _stage.Level);
 
-            newSt.Type = newStage;
+            newStageData.Type = newStage;
             _currentGameStage = newStage;
 
             if (_currentGameStage == GlobalStagesType.Preparation)
@@ -91,8 +95,18 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 _playerReadyManager.ResetReady();
                 //_gameRandomEventManager.TryTriggerRandomEvents();
 
-                newSt.Level++;
-                newSt.Day = _stage.Level % _globalStageDatabase.LevelInDayAmount + 1;
+                newStageData.Level++;
+
+                newStageData.Day = (newStageData.Level-1) / _globalStageDatabase.LevelInDayAmount + 1;
+
+                if (newStageData.Day > _stage.Day)
+                {
+                    OnDayBegin();
+                    if (newStageData.Day != 1)
+                    {
+                        OnDayP1Begin();
+                    }
+                }
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
@@ -103,9 +117,10 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             else if (_currentGameStage == GlobalStagesType.Rest)
             {
                 RunRestLogic();
+                OnDayEnd();
             }
 
-            _stage = newSt;
+            _stage = newStageData;
 
             var duration = _globalStageDatabase.GetStageDuration(_stage.Type, _stage.Level);
 
@@ -189,9 +204,36 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         }
 
         [Server]
+        private void OnDayBegin()
+        {
+        }
+
+        [Server]
+        private void OnDayP1Begin() //дни после 1
+        {
+            _gameRandomEventManager.ClearFixedEvent();
+            _enemySpawner.ClearEnemyKilled();
+            //Debug.Log($"OnDayBegin {MainResourceStorage.Instance == null}");
+            MainResourceStorage.Instance.CopyStoredToTempPhaseRes();
+            MainResourceStorage.Instance.ClearDiff();
+        }
+
+        [Server]
+        private void OnDayEnd()
+        {
+            
+        }
+
+        [Server]
         private void RunRestLogic()
         {
+            RpcOpenRestStatsScreen();
+        }
 
+        [ClientRpc]
+        private void RpcOpenRestStatsScreen()
+        {
+            _gameplayUIManager.OpenScreenRestStats();
         }
 
         [Server]

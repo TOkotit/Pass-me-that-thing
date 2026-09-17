@@ -12,9 +12,18 @@ public class ResourceStorage : NetworkBehaviour
     public static Dictionary<GameObject, ResourceStorage> Storages => storages;
     public IReadOnlyDictionary<Resource, float> StoredResources => storedResources;
 
+
+
+    private readonly Dictionary<Resource, float> _tempReceivedResOnStartDay = new ();
+    public IReadOnlyDictionary<Resource, float> TempReceivedResOnPhase => _tempReceivedResOnStartDay;
+
+    private readonly SyncDictionary<Resource, float> _diffReceivedResOnPhase = new();
+    public IReadOnlyDictionary<Resource, float> DiffReceivedResOnPhase => _diffReceivedResOnPhase;
+
+
     public event Action<IReadOnlyDictionary<Resource, float>> OnSyncResourcesChanged;
 
-    private void Awake()
+    public virtual void Awake()
     {
         storages[transform.gameObject] = this;
     }
@@ -42,6 +51,9 @@ public class ResourceStorage : NetworkBehaviour
             storedResources[resource] = current + amount;
         else
             storedResources.Add(resource, amount);
+
+        UpdateDiffResource(resource);
+
         PrintResources();
     }
 
@@ -53,9 +65,69 @@ public class ResourceStorage : NetworkBehaviour
         if (newAmount < 0) return false;
         if (newAmount == 0) storedResources.Remove(resource);
         else storedResources[resource] = newAmount;
+
+        UpdateDiffResource(resource);
+
         PrintResources();
 
         return true;
+    }
+
+    [Server]
+    public void UpdateDiffResource(Resource r)
+    {
+        if (storedResources.ContainsKey(r))
+        {
+            if (_tempReceivedResOnStartDay.ContainsKey(r))
+            {
+                RecalcToDiff(r, storedResources[r] - _tempReceivedResOnStartDay[r]);
+            }
+            else
+            {
+                RecalcToDiff(r, storedResources[r]);
+            }
+        }
+        else
+        {
+            if (_tempReceivedResOnStartDay.ContainsKey(r))
+            {
+                RecalcToDiff(r, 0 - _tempReceivedResOnStartDay[r]);
+            }
+        }
+    }
+
+    [Server]
+    public void RecalcToDiff(Resource r, float newDiff)
+    { 
+        if (_diffReceivedResOnPhase.ContainsKey(r))
+        {
+            _diffReceivedResOnPhase[r] = newDiff;
+            if (newDiff == 0) _diffReceivedResOnPhase.Remove(r);
+        }
+        else
+        {
+            if (newDiff != 0)
+                _diffReceivedResOnPhase.Add(r, newDiff);
+        }
+        Debug.Log($"RecalcToDiff {r} {_diffReceivedResOnPhase[r]}");
+    }
+
+    //в начале дня после отдыха
+    [Server]
+    public void CopyStoredToTempPhaseRes()
+    {
+        _tempReceivedResOnStartDay.Clear();
+        foreach (var r in storedResources)
+        {
+            _tempReceivedResOnStartDay.Add(r.Key, r.Value);
+        }
+    }
+
+    //в начале дня после отдыха
+    [Server]
+    public void ClearDiff()
+    {
+        _diffReceivedResOnPhase.Clear();
     }
 
     public bool HasResource(Resource resource, float amount)

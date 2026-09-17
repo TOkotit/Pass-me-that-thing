@@ -15,10 +15,10 @@ MonoBehaviour:
   id: spider
   enemyName: Spider
   worldPrefab: {fileID: 8090700475096468142, guid: 58d0c80be7eff2e41be1e3d1e09451c4, type: 3}
-  enemyImage: {fileID: 21300000, guid: f89888c2a4f561d4e92bd0dc6ccf655b, type: 3}
-  maxHealth: 50
+  enemyImage: {fileID: 21300000, guid: 501c90e4e0f9eb847a2e78eebfa5baae, type: 3}
+  enemyDifficulty: 0
+  maxHealth: 10
   maxToughness: 0
-  speed: 4
   damage: 5
   attackCooldown: 3
   attackSphereArea: {x: 3, y: 3, z: 3}
@@ -26,6 +26,7 @@ MonoBehaviour:
   attackDistance: 7
   wanderTime: 3
   waitTime: 1
+  speed: 4
   chaseSpeedMult: 1.5
   wanderSpeedMult: 0.5
   drops:
