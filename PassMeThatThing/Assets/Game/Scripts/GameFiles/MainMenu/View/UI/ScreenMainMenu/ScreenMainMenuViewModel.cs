@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Gameplay.View.UI;
 using Game.UI;
 using Mirror;
@@ -21,7 +22,10 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         private readonly ICoroutineRunner _coroutines;
         
         private NetworkManager  _networkRoomManager;
-        
+        private SteamLobbyManager _steamLobbyManager;
+
+        private RootNetworkConfig _networkConfig;
+
 
         public ScreenMainMenuViewModel(MainMenuUIManager uiManager, IObjectResolver container)
         {
@@ -30,15 +34,17 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             _coroutines = container.Resolve<ICoroutineRunner>();
             
             _networkRoomManager = container.Resolve<NetworkManager>();
+            _steamLobbyManager = container.Resolve<SteamLobbyManager>();
+            _networkConfig = container.Resolve<RootNetworkConfig>();
         }
         
         public void RequestHost()
         {
             Debug.Log("RequestHost");
-            if (_networkRoomManager.TryGetComponent<SteamLobbyManager>(out var steamLobby))
+            if (_networkConfig.IsSteamUsing)
             {
                 Debug.Log("[STEAM] Найдено Стим-лобби. Запускаем создание виртуальной комнаты...");
-                steamLobby.CreateSteamLobby();
+                _steamLobbyManager.CreateSteamLobby();
             }
             else
             {
@@ -50,7 +56,14 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
 
         public void RequestJoin()
         {
-            _networkRoomManager.StartClient();
+            if (_networkConfig.IsSteamUsing)
+            {
+                _steamLobbyManager.OpenFriends();
+            }
+            else
+            {
+                _networkRoomManager.StartClient();
+            }
         }
         
         public void RequestIpAddress(string value)

@@ -36,7 +36,7 @@ namespace Game.Scripts.Systems
             {
                 OptionsData = new OptionsData()
                 {
-                    isFullScreen = 0,
+                    isFullScreen = OptionsScreenMode.Windowed,
                     resolutionIndex = 0,
                     language = "English",
                     mouseSensitivity = 15f,
@@ -111,7 +111,7 @@ namespace Game.Scripts.Systems
             {
                 case OptionsScreenMode.Fullscreen:
                     {
-                        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                        Screen.fullScreen = true;
                     }
                     break;
                 case OptionsScreenMode.Windowed:
