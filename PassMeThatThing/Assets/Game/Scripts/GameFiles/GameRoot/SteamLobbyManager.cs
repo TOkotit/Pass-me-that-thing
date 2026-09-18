@@ -8,9 +8,10 @@ namespace Root
     public class SteamLobbyManager : MonoBehaviour
     {
         private const string HostAddressKey = "HostSteamID";
-        [Inject] private NetworkManager _networkManager;
+        private NetworkManager _networkManager;
 
         public CSteamID CurrentLobbyID { get; private set; }
+        public NetworkManager NetworkManager { get => _networkManager; set => _networkManager = value; }
 
         private Callback<LobbyCreated_t> _lobbyCreated;
         private Callback<GameLobbyJoinRequested_t> _joinRequested;
@@ -18,8 +19,6 @@ namespace Root
 
         private void Start()
         {
-            //_networkManager = NetworkManager.singleton;
-
             if (!SteamManager.Initialized)
             {
                 Debug.LogError("[STEAM] Стим не инициализирован! Скрипт лобби работать не будет.");
