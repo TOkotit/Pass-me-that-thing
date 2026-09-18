@@ -358,16 +358,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
 
                             painter.BeginPath();
                             painter.MoveTo(start + segmentDir * 0.7f);
-                            painter.LineTo(end);
-                            painter.Stroke();
                         }
                         else
                         {
                             painter.BeginPath();
                             painter.MoveTo(start);
-                            painter.LineTo(end);
-                            painter.Stroke();
                         }
+
+                        painter.LineTo(end);
+                        painter.Stroke();
                     }
                 }
             }
