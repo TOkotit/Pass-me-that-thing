@@ -52,7 +52,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             else
             {
                 // Если скрипта SteamLobbyManager нет на объекте, запускаем обычный локальный хост (для Radmin)
-                Debug.Log("[LOCAL]  Запускаем стандартный Host...");
+                Debug.Log("[LOCAL] Стим-менеджер не найден. Запускаем стандартный Host...");
                 _networkRoomManager.StartHost(); 
             }
         }

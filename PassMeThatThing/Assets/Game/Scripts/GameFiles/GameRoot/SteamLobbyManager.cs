@@ -124,6 +124,8 @@ namespace Root
 
         private void OnDestroy()
         {
+            LeaveLobby();
+
             _lobbyCreated?.Dispose();
             _joinRequested?.Dispose();
             _lobbyEntered?.Dispose();
