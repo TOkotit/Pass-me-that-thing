@@ -25,7 +25,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
 
         public void ReturnToMainMenu()
         {
-
             if (NetworkServer.active && NetworkClient.isConnected)
             {
                 NetworkManager.singleton.StopHost();
@@ -38,7 +37,11 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
 
             Destroy(_networkScope.gameObject);
             if (_rootNetworkConfig.IsSteamUsing)
+            {
+                _steamLobbyManager.LeaveLobby();
                 Destroy(_steamLobbyManager.gameObject);
+            }
+                
         }
     }
 }
