@@ -54,16 +54,6 @@ namespace DI
                 {
                     builder.RegisterComponent(steamAPIFizzySteamWorksComponent);
                 }
-
-                var steamLobbyManagerComponent = steamAPIGo.GetComponent<SteamLobbyManager>();
-                if (!steamLobbyManagerComponent)
-                {
-                    Debug.LogError("steamLobbyManagerComponent component not found prefab");
-                }
-                else
-                {
-                    builder.RegisterComponent(steamLobbyManagerComponent);
-                }
             }
 
             builder.Register<ConnectedPlayers>(Lifetime.Singleton);

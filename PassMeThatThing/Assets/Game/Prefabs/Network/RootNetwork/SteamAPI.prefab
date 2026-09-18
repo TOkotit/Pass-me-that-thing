@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8678582186098657429}
   - component: {fileID: 3086729404061356238}
   - component: {fileID: 554696090968947433}
-  - component: {fileID: 9061329532893256219}
   m_Layer: 0
   m_Name: SteamAPI
   m_TagString: Untagged
@@ -62,15 +61,3 @@ MonoBehaviour:
   Timeout: 25
   AllowSteamRelay: 1
   UseNextGenSteamNetworking: 1
---- !u!114 &9061329532893256219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2207319197467398837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 992264c95d574d2a82dad69ee170d77d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Root.SteamLobbyManager

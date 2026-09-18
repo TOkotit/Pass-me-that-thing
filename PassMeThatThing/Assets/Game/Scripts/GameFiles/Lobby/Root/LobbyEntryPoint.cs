@@ -1,4 +1,3 @@
-using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.MainMenu.View.UI;
 using Steamworks;
 using Systems;
@@ -14,13 +13,12 @@ namespace Game.Scripts.GameFiles.Lobby.Root
         private LobbyUIRootBinder _sceneUIRootPrefab;
     
         readonly GameManager _gameManager;
-        private RootNetworkConfig _rootNetworkConfig;
         
         public void Start()
         {
             Debug.Log("LobbyEntryPoint.Start");
-
-            if (_rootNetworkConfig.IsSteamUsing)
+            
+            if (SteamManager.Initialized)
             {
                 Debug.Log($"<color=orange>[STEAM] Мой SteamID для подключения друга:</color> <color=green>{SteamUser.GetSteamID().m_SteamID}</color>");
             }
@@ -31,8 +29,7 @@ namespace Game.Scripts.GameFiles.Lobby.Root
             Debug.Log("LobbyEntryPoint");
             _sceneUIRootPrefab = Resources.Load<LobbyUIRootBinder>("Prefabs/UI/Root/LobbyUI");
             _gameManager =  resolver.Resolve<GameManager>();
-            _rootNetworkConfig = resolver.Resolve<RootNetworkConfig>();
-
+        
             InitUI(resolver);
         
         }

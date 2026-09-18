@@ -15,7 +15,6 @@ namespace DI
         [SerializeField] private GameObject networkManager;
         [SerializeField] private GameObject steamLobbyManager;
         [SerializeField] private GameSessionController sessionController;
-
         protected override void Awake()
         {
             Debug.Log("NetworkManagerScope Awake");
@@ -39,16 +38,26 @@ namespace DI
             else
             {
                 if (isSteam)
-                {
                     networkManagerComponent.transport = Parent.Container.Resolve<FizzySteamworks>();
-
-                    Parent.Container.Resolve<SteamLobbyManager>().NetworkManager = networkManagerComponent;
-                }
-                    
 
                 builder.RegisterComponent(networkManagerComponent);
             }
 
+            if (isSteam)
+            {
+                var steamLobbyManagerGo = Instantiate(steamLobbyManager);
+                DontDestroyOnLoad(steamLobbyManagerGo);
+
+                var steamLobbyManagerComponent = steamLobbyManagerGo.GetComponent<SteamLobbyManager>();
+                if (!steamLobbyManagerComponent)
+                {
+                    Debug.LogError("steamLobbyManagerComponent component not found prefab");
+                }
+                else
+                {
+                    builder.RegisterComponent(steamLobbyManagerComponent);
+                }
+            }
 
             builder.RegisterComponent(sessionController);
 

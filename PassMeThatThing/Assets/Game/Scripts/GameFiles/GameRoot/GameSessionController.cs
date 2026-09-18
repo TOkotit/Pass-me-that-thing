@@ -39,7 +39,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
             if (_rootNetworkConfig.IsSteamUsing)
             {
                 _steamLobbyManager.LeaveLobby();
-                //Destroy(_steamLobbyManager.gameObject);
+                Destroy(_steamLobbyManager.gameObject);
             }
                 
         }
