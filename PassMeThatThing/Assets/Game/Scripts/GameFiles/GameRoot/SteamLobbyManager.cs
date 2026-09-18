@@ -1,13 +1,16 @@
 using Mirror;
 using Steamworks;
 using UnityEngine;
+using VContainer;
 
 namespace Root
 {
     public class SteamLobbyManager : MonoBehaviour
     {
         private const string HostAddressKey = "HostSteamID";
-        private NetworkManager _networkManager;
+        [Inject] private NetworkManager _networkManager;
+
+        public CSteamID CurrentLobbyID { get; private set; }
 
         private Callback<LobbyCreated_t> _lobbyCreated;
         private Callback<GameLobbyJoinRequested_t> _joinRequested;
@@ -15,7 +18,7 @@ namespace Root
 
         private void Start()
         {
-            _networkManager = NetworkManager.singleton;
+            //_networkManager = NetworkManager.singleton;
 
             if (!SteamManager.Initialized)
             {
@@ -59,16 +62,16 @@ namespace Root
                 return;
             }
 
-            Debug.Log(
-                $"<color=green>[STEAM] Лобби успешно создано в Стиме. ID лобби: {callback.m_ulSteamIDLobby}</color>");
+            // Запоминаем ID созданного лобби
+            CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
 
-            // 1. Запускаем локальный Mirror-хост (сервер + клиент)
+            Debug.Log(
+                $"<color=green>[STEAM] Лобби успешно создано в Стиме. ID лобби: {CurrentLobbyID.m_SteamID}</color>");
+
             _networkManager.StartHost();
 
-            // 2. Записываем наш личный SteamID64 в метаданные Стим-лобби
-            CSteamID lobbyID = new CSteamID(callback.m_ulSteamIDLobby);
             string mySteamID = SteamUser.GetSteamID().ToString();
-            SteamMatchmaking.SetLobbyData(lobbyID, HostAddressKey, mySteamID);
+            SteamMatchmaking.SetLobbyData(CurrentLobbyID, HostAddressKey, mySteamID);
         }
 
         // ==========================================
@@ -82,27 +85,47 @@ namespace Root
             SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
         }
 
-        // Срабатывает у друга, когда Стим успешно закинул его внутрь твоей Стим-комнаты
+        // Срабатывает у друга когда Стим успешно закинул его внутрь твоей Стим-комнаты
         private void OnLobbyEntered(LobbyEnter_t callback)
         {
-            // Если мы сами являемся Хостом — игнорируем, мы уже в игре
+            CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
+
             if (NetworkServer.active) return;
 
-            CSteamID lobbyID = new CSteamID(callback.m_ulSteamIDLobby);
-
-            // Достаем из Стим-лобби зашитый туда SteamID64 создателя (Хоста)
-            string hostSteamID = SteamMatchmaking.GetLobbyData(lobbyID, HostAddressKey);
+            string hostSteamID = SteamMatchmaking.GetLobbyData(CurrentLobbyID, HostAddressKey);
 
             Debug.Log($"[STEAM] Успешно вошли в лобби. Подключаемся к Mirror-хосту по SteamID: {hostSteamID}");
 
-            // Подставляем этот ID в Mirror в качестве адреса и запускаем подключение клиента
             _networkManager.networkAddress = hostSteamID;
             _networkManager.StartClient();
         }
 
-        // Отписываемся от событий при уничтожении объекта, чтобы не было утечек памяти
+        public void LeaveLobby()
+        {
+            if (CurrentLobbyID.m_SteamID != 0)
+            {
+                SteamMatchmaking.LeaveLobby(CurrentLobbyID);
+                CurrentLobbyID = new CSteamID(0);
+                Debug.Log("[STEAM] Вы вышли из Стим-лобби.");
+            }
+
+            //// Останавливаем сетевую сессию Mirror
+            //if (NetworkServer.active && NetworkClient.isConnected)
+            //{
+            //    // Если мы хост — останавливаем и сервер, и клиента
+            //    _networkManager.StopHost();
+            //}
+            //else if (NetworkClient.isConnected)
+            //{
+            //    // Если мы простой клиент — отключаемся от хоста
+            //    _networkManager.StopClient();
+            //}
+        }
+
         private void OnDestroy()
         {
+            LeaveLobby();
+
             _lobbyCreated?.Dispose();
             _joinRequested?.Dispose();
             _lobbyEntered?.Dispose();
