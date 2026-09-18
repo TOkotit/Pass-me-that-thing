@@ -1,9 +1,7 @@
 ﻿using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Scripts.Systems;
 using Mirror;
-using Mirror.FizzySteam;
 using Root;
-using System.Runtime.InteropServices.ComTypes;
 using Systems;
 using UIRoot;
 using Unity.VisualScripting;
@@ -20,14 +18,10 @@ namespace DI
     /// </summary>
     public class RootScope : LifetimeScope
     {
-        [SerializeField] private RootNetworkConfig rootNetworkConfig;
-        [SerializeField] private GameObject steamAPI;
-
+        [SerializeField] private GameObject networkManager;
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("RootScope.Configure called");
-
-            builder.RegisterInstance(rootNetworkConfig);
             
             var coroutines = new GameObject("[COROUTINES]").AddComponent<Coroutines>();
             DontDestroyOnLoad(coroutines.gameObject);
@@ -35,25 +29,20 @@ namespace DI
             
             var uiRoot = Instantiate(Resources.Load<GameObject>("Prefabs/UI/Root/UIRoot"));
             DontDestroyOnLoad(uiRoot.gameObject);
-
             var uiRootView = uiRoot.GetComponent<UIRootView>();
-            builder.RegisterInstance(uiRootView);
-
-
-            if (rootNetworkConfig.IsSteamUsing)
+            builder.RegisterInstance<UIRootView>(uiRootView);
+            
+            var networkManagerGo = Instantiate(networkManager);
+            DontDestroyOnLoad(networkManagerGo);
+            
+            var networkManagerComponent = networkManagerGo.GetComponent<NetworkManager>();
+            if (!networkManagerComponent)
             {
-                var steamAPIGo = Instantiate(steamAPI);
-                DontDestroyOnLoad(steamAPIGo);
-
-                var steamAPIFizzySteamWorksComponent = steamAPIGo.GetComponent<FizzySteamworks>();
-                if (!steamAPIFizzySteamWorksComponent)
-                {
-                    Debug.LogError("steamAPIFizzySteamWorksComponent component not found prefab");
-                }
-                else
-                {
-                    builder.RegisterComponent(steamAPIFizzySteamWorksComponent);
-                }
+                Debug.LogError("NetworkManager component not found on networkManager prefab.");
+            }
+            else
+            {
+                builder.RegisterComponent(networkManagerComponent);
             }
 
             builder.Register<ConnectedPlayers>(Lifetime.Singleton);
@@ -63,7 +52,22 @@ namespace DI
             builder.Register<GameManager>(Lifetime.Singleton);
             
             
-            builder.RegisterEntryPoint<EntryPoint>();
+            
+            // var activeSceneName = SceneManager.GetActiveScene().name;
+            //
+            //
+            // if (Application.isEditor && !string.Equals(activeSceneName, "Boot", System.StringComparison.OrdinalIgnoreCase))
+            // {
+            //     Debug.Log($"Skipping RegisterEntryPoint — running in editor and active scene is '{activeSceneName}' (not 'Boot').");
+            // }
+            // else
+            // {
+            //     builder.RegisterEntryPoint<Root.EntryPoint>();
+            // }
+            
+            builder.RegisterEntryPoint<Root.EntryPoint>();
         }
+        
+        
     }
 }

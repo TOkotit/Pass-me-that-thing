@@ -2027,63 +2027,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0094903, y: 0.006490388, z: 0.0051094694}
   m_Center: {x: 0, y: 0.00017726002, z: -0.0034683198}
---- !u!1001 &1045840555
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1566408374624911522, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_Name
-      value: NetworkManagerScope
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 44.48814
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.64518
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542285906638162746, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 332d2d810d646aa47b9968590f537f41, type: 3}
 --- !u!54 &1094066731
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5440,10 +5383,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMenuScope
       objectReference: {fileID: 0}
-    - target: {fileID: 4504940727660631306, guid: 16bb822520e51874c893f269e7b11e3c, type: 3}
-      propertyPath: parentReference.TypeName
-      value: DI.NetworkManagerScope
-      objectReference: {fileID: 0}
     - target: {fileID: 8542285906638162746, guid: 16bb822520e51874c893f269e7b11e3c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.88293
@@ -5571,7 +5510,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 717707635}
   - {fileID: 583352414}
-  - {fileID: 1045840555}
   - {fileID: 3785990321707188318}
   - {fileID: 143341706}
   - {fileID: 1974447421}

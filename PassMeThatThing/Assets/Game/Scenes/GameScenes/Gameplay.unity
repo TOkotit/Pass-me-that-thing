@@ -14715,7 +14715,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  RoomLights: []
 --- !u!114 &895201938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19696,10 +19695,6 @@ PrefabInstance:
       propertyPath: globalStageManagerPrefab
       value: 
       objectReference: {fileID: 1071794826}
-    - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
-      propertyPath: parentReference.TypeName
-      value: DI.NetworkManagerScope
-      objectReference: {fileID: 0}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: autoInjectGameObjects.Array.size
       value: 2
