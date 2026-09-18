@@ -1,4 +1,5 @@
-﻿using Game.Scripts.GameFiles.GlobalStageManager;
+﻿using Assets.Game.Scripts.GameFiles.GameRoot;
+using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.UI;
 using Mirror;
 using Systems;
@@ -15,6 +16,7 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         private readonly GameInputManager _gameInputManager;
         private NetworkRoomManager _networkRoomManager;
         private GlobalStageManager _globalStageManager;
+        private GameSessionController _gameSessionController;
 
         public override string Id => "ScreenPauseMenu";
         
@@ -26,6 +28,7 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
             
             _gameInputManager.GameInput.UI.PauseMenu.performed += PauseMenuPerformed;
 
+            _gameSessionController = container.Resolve<GameSessionController>();
 
             if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
             {
@@ -53,16 +56,18 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
         
         public void RequestGoToMainMenu()
         {
-            //TODO добавить кнопку готовности для выхода назад в лобби
-            if (_globalStageManager.isServer)
-            {
-                //_networkRoomManager.ServerChangeScene(_networkRoomManager.RoomScene);
-                _networkRoomManager.StopHost();
-            }
-            else if (_globalStageManager.isClient)
-            {
-                _networkRoomManager.StopClient();
-            }
+            ////TODO добавить кнопку готовности для выхода назад в лобби
+            //if (_globalStageManager.isServer)
+            //{
+            //    //_networkRoomManager.ServerChangeScene(_networkRoomManager.RoomScene);
+            //    _networkRoomManager.StopHost();
+            //}
+            //else if (_globalStageManager.isClient)
+            //{
+            //    _networkRoomManager.StopClient();
+            //}
+            _gameSessionController.ReturnToMainMenu();
+
         }
         
         public void RequestGoToScreenOptions()

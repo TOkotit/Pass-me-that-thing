@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices.ComTypes;
 using Assets.Game.Scripts.GameFiles.GameRoot;
 using DI;
 using Mirror;
@@ -13,18 +14,17 @@ namespace Root
 {
     public class CustomRoomPlayer : NetworkRoomPlayer
     {
-        [Header("Steam things")]
-        [SerializeField] private bool isSteam;
+        private bool isSteam;
         
         [Inject] private RoomViewHandler _viewHandler;
         [Inject] private ConnectedPlayers _players;
-
-
 
         private void Awake()
         {
             var scope = LifetimeScope.Find<LobbyScope>();
             scope.Container.Inject(this);
+
+            isSteam = scope.Container.Resolve<RootNetworkConfig>().IsSteamUsing;
 
             _viewHandler.LocalReadyStateChanged += SetReady;
         }

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1566408374624911522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8542285906638162746}
+  - component: {fileID: 5334933352358531142}
+  - component: {fileID: 1476009968375380068}
+  m_Layer: 0
+  m_Name: NetworkManagerScope
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8542285906638162746
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566408374624911522}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.88293, y: -0.00003, z: 14.63281}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5334933352358531142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566408374624911522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 139e24ae367ba524ba6adaa4b1a2642b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DI.NetworkManagerScope
+  parentReference:
+    TypeName: DI.RootScope
+  autoRun: 1
+  autoInjectGameObjects: []
+  isSteam: 1
+  steamNetworkManager: {fileID: 8501554493249593984, guid: fa35b0f6448ce39409f3e7b630176c47, type: 3}
+  networkManager: {fileID: 2901786848222084306, guid: e1a0dfde2a4d0ff48bbe7fe04d112561, type: 3}
+  sessionController: {fileID: 1476009968375380068}
+--- !u!114 &1476009968375380068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566408374624911522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a4e948cf55edd488eb910658bc3a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.GameRoot.GameSessionController
