@@ -34,11 +34,8 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             _coroutines = container.Resolve<ICoroutineRunner>();
             
             _networkRoomManager = container.Resolve<NetworkManager>();
-            
+            _steamLobbyManager = container.Resolve<SteamLobbyManager>();
             _networkConfig = container.Resolve<RootNetworkConfig>();
-
-            if (_networkConfig.IsSteamUsing)
-                _steamLobbyManager = container.Resolve<SteamLobbyManager>();
         }
         
         public void RequestHost()

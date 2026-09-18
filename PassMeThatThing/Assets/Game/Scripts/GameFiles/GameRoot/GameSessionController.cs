@@ -1,6 +1,10 @@
 ﻿using DI;
 using Mirror;
-using Root;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -10,22 +14,9 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
     public class GameSessionController : MonoBehaviour
     {
         [Inject] private NetworkManagerScope _networkScope;
-        [Inject] private RootNetworkConfig _rootNetworkConfig;
-
-        private SteamLobbyManager _steamLobbyManager;
-
-        [Inject]
-        public void Construct(IObjectResolver resolver)
-        {
-            if (_rootNetworkConfig.IsSteamUsing)
-            {
-                _steamLobbyManager = resolver.Resolve<SteamLobbyManager>();
-            }
-        }
 
         public void ReturnToMainMenu()
         {
-
             if (NetworkServer.active && NetworkClient.isConnected)
             {
                 NetworkManager.singleton.StopHost();
@@ -37,8 +28,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRoot
             }
 
             Destroy(_networkScope.gameObject);
-            if (_rootNetworkConfig.IsSteamUsing)
-                Destroy(_steamLobbyManager.gameObject);
         }
     }
 }

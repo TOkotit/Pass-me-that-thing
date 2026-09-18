@@ -1,16 +1,13 @@
 using Mirror;
 using Steamworks;
 using UnityEngine;
-using VContainer;
 
 namespace Root
 {
     public class SteamLobbyManager : MonoBehaviour
     {
         private const string HostAddressKey = "HostSteamID";
-        [Inject] private NetworkManager _networkManager;
-
-        public CSteamID CurrentLobbyID { get; private set; }
+        private NetworkManager _networkManager;
 
         private Callback<LobbyCreated_t> _lobbyCreated;
         private Callback<GameLobbyJoinRequested_t> _joinRequested;
@@ -18,7 +15,7 @@ namespace Root
 
         private void Start()
         {
-            //_networkManager = NetworkManager.singleton;
+            _networkManager = NetworkManager.singleton;
 
             if (!SteamManager.Initialized)
             {
@@ -62,16 +59,16 @@ namespace Root
                 return;
             }
 
-            // Запоминаем ID созданного лобби
-            CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
-
             Debug.Log(
-                $"<color=green>[STEAM] Лобби успешно создано в Стиме. ID лобби: {CurrentLobbyID.m_SteamID}</color>");
+                $"<color=green>[STEAM] Лобби успешно создано в Стиме. ID лобби: {callback.m_ulSteamIDLobby}</color>");
 
+            // 1. Запускаем локальный Mirror-хост (сервер + клиент)
             _networkManager.StartHost();
 
+            // 2. Записываем наш личный SteamID64 в метаданные Стим-лобби
+            CSteamID lobbyID = new CSteamID(callback.m_ulSteamIDLobby);
             string mySteamID = SteamUser.GetSteamID().ToString();
-            SteamMatchmaking.SetLobbyData(CurrentLobbyID, HostAddressKey, mySteamID);
+            SteamMatchmaking.SetLobbyData(lobbyID, HostAddressKey, mySteamID);
         }
 
         // ==========================================
@@ -85,47 +82,27 @@ namespace Root
             SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
         }
 
-        // Срабатывает у друга когда Стим успешно закинул его внутрь твоей Стим-комнаты
+        // Срабатывает у друга, когда Стим успешно закинул его внутрь твоей Стим-комнаты
         private void OnLobbyEntered(LobbyEnter_t callback)
         {
-            CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
-
+            // Если мы сами являемся Хостом — игнорируем, мы уже в игре
             if (NetworkServer.active) return;
 
-            string hostSteamID = SteamMatchmaking.GetLobbyData(CurrentLobbyID, HostAddressKey);
+            CSteamID lobbyID = new CSteamID(callback.m_ulSteamIDLobby);
+
+            // Достаем из Стим-лобби зашитый туда SteamID64 создателя (Хоста)
+            string hostSteamID = SteamMatchmaking.GetLobbyData(lobbyID, HostAddressKey);
 
             Debug.Log($"[STEAM] Успешно вошли в лобби. Подключаемся к Mirror-хосту по SteamID: {hostSteamID}");
 
+            // Подставляем этот ID в Mirror в качестве адреса и запускаем подключение клиента
             _networkManager.networkAddress = hostSteamID;
             _networkManager.StartClient();
         }
 
-        public void LeaveLobby()
-        {
-            if (CurrentLobbyID.m_SteamID != 0)
-            {
-                SteamMatchmaking.LeaveLobby(CurrentLobbyID);
-                CurrentLobbyID = new CSteamID(0);
-                Debug.Log("[STEAM] Вы вышли из Стим-лобби.");
-            }
-
-            //// Останавливаем сетевую сессию Mirror
-            //if (NetworkServer.active && NetworkClient.isConnected)
-            //{
-            //    // Если мы хост — останавливаем и сервер, и клиента
-            //    _networkManager.StopHost();
-            //}
-            //else if (NetworkClient.isConnected)
-            //{
-            //    // Если мы простой клиент — отключаемся от хоста
-            //    _networkManager.StopClient();
-            //}
-        }
-
+        // Отписываемся от событий при уничтожении объекта, чтобы не было утечек памяти
         private void OnDestroy()
         {
-            LeaveLobby();
-
             _lobbyCreated?.Dispose();
             _joinRequested?.Dispose();
             _lobbyEntered?.Dispose();
