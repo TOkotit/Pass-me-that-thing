@@ -51,7 +51,18 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
 
         public void RequestJoin()
         {
-            _networkRoomManager.StartClient();
+            Debug.Log("RequestJoin");
+            if (_networkRoomManager.TryGetComponent<SteamLobbyManager>(out var steamLobby))
+            {
+                Debug.Log("[STEAM] Найдено Стим-лобби. Запускаем создание виртуальной комнаты...");
+                steamLobby.OpenFriends();
+            }
+            else
+            {
+                Debug.Log("[LOCAL] Стим-менеджер не найден. Запускаем стандартный клиент");
+                _networkRoomManager.StartClient();
+            }
+            
         }
         
         public void RequestIpAddress(string value)

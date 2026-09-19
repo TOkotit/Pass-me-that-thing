@@ -93,6 +93,14 @@ namespace Root
             _networkManager.StartClient();
         }
 
+        public void OpenFriends()
+        {
+            if (SteamManager.Initialized)
+            {
+                SteamFriends.ActivateGameOverlay("Friends");
+            }
+        }
+
         // Отписываемся от событий при уничтожении объекта, чтобы не было утечек памяти
         private void OnDestroy()
         {
