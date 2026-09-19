@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -11,12 +12,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
     public class ResourceDepot : NetworkBehaviour
     {
+        [SerializeField] private ResourceDepotView view;
+
         [SerializeField] protected ResourceStorage storage;
         [Inject] private PhysicalItemRegistry registry;
         [Inject] private ItemPoolManager _itemPoolManager;
 
         private float lastTransfer;  
         private float transferInterval = 0.5f;
+
 
         public void OnTriggerEnter(Collider other)
         {
@@ -42,6 +46,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
                 item.Owner?.MainCharacterModel.PlayerInteraction
                     .PhysicalItemInteractionController.ReleaseCurrentItem(0f, false);
                 _itemPoolManager.DeleteAndDestroyObject(item.Network);
+
+                RpcPlayAnimation();
             }
         }
 
@@ -67,6 +73,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 
                 otherStorage.RemoveResource(resourceKey, 1);
                 storage.AddResource(resourceKey, 1);
+
+                RpcPlayAnimation();
             }
             
             else if (other.CompareTag("InteractableItem"))
@@ -90,7 +98,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 
                 if (box.Resources[resourceKey] <= 0)
                     box.Resources.Remove(resourceKey);
+
+                RpcPlayAnimation();
             }
+        }
+
+        [ClientRpc]
+        public void RpcPlayAnimation()
+        {
+            view.PlayRecycleAnimation();
         }
     }
 }
