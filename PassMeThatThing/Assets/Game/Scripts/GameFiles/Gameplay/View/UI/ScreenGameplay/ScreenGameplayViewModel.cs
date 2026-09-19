@@ -4,6 +4,7 @@ using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Entity;
 using Game.Scripts.Enums;
+using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GlobalStageManager;
@@ -61,6 +62,8 @@ namespace Game.Gameplay.View.UI
         private Action<int, Sprite, int> updateEvent;
         private Action<int> removeEvent;
 
+        public ResourceDatabase resourceDatabase;
+
         public BuildingsDatabase BuildingsDatabase => _buildingsDatabase;
         public PlayerInventoryModel PlayerInventoryModel => _playerInventoryModel;
 
@@ -72,7 +75,9 @@ namespace Game.Gameplay.View.UI
         public ScreenGameplayViewModel(GameplayUIManager uiManager, IObjectResolver container)
         {
             _uiManager = uiManager;
-            
+
+            resourceDatabase = container.Resolve<ResourceDatabase>();
+
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
             _itemDatabase =  container.Resolve<ItemDatabase>();
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
@@ -119,6 +124,16 @@ namespace Game.Gameplay.View.UI
         public void CancelWirePlacement(InputAction.CallbackContext c)
         {
             _localWireHandlerModel.CancelHighlight();
+        }
+
+        public void RequestSubAddedRes(Action<Resource, float> f)
+        {
+            MainResourceStorage.Instance.OnAddedRes += f;
+        }
+
+        public void RequestUnSubAddedRes(Action<Resource, float> f)
+        {
+            MainResourceStorage.Instance.OnAddedRes -= f;
         }
 
         public void RequestSubHintsChange(Action f)

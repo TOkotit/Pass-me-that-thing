@@ -13,6 +13,7 @@ using Game.Scripts.GameFiles.LevelGeneration.UI;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using UnityEngine.InputSystem;
 using Stage = Game.Scripts.GameFiles.GlobalStageManager.Stage;
+using System.Collections;
 
 
 namespace Game.Gameplay.View.UI
@@ -35,6 +36,7 @@ namespace Game.Gameplay.View.UI
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset gameEventPrefab;
         [SerializeField] private VisualTreeAsset hintPrefab;
+        [SerializeField] private VisualTreeAsset addedResPrefab;
 
         private VisualElement _root;
         private VisualElement _cursor;
@@ -69,6 +71,10 @@ namespace Game.Gameplay.View.UI
         private VisualElement _screenMessageContainer;
         private Label _stageChangeMessage;
 
+        private VisualElement _addedResContainer;
+        //private int _maxAddedResCount = 4;
+        //private int _currentAddedResCount;
+
         private void Awake()
         {
 
@@ -99,6 +105,8 @@ namespace Game.Gameplay.View.UI
 
             _screenMessageContainer = _root.Q<VisualElement>("ScreenMessageContainer");
             _stageChangeMessage = _root.Q<Label>("StageChangeMessage");
+
+            _addedResContainer = _root.Q<VisualElement>("AddedResContainer");
 
             _localPlayerAvatar = _root.Q<VisualElement>("Avatar1");
 
@@ -150,6 +158,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubElementsShake(UpdateElementsShake);
 
             ViewModel.RequestSubHintsChange(UpdateHints);
+
+            ViewModel.RequestSubAddedRes(UpdateAddedRes);
         }
 
         private void OnDestroy()
@@ -170,8 +180,27 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
 
             ViewModel.RequestUnSubHintsChange(UpdateHints);
-
+            ViewModel.RequestUnSubAddedRes(UpdateAddedRes);
             ViewModel.RequestUnsub();
+        }
+
+        private void UpdateAddedRes(Resource res, float val)
+        {
+            var r = addedResPrefab.Instantiate();
+            _addedResContainer.Add(r);
+            var rData = ViewModel.resourceDatabase.GetResource(res);
+            r.Q<Label>("Value").text = val > 0 ? "+" : "-" + val;
+            r.Q<VisualElement>("Image").style.backgroundImage
+                = new StyleBackground(rData.resourceImage);
+            r.Q<Label>("Name").text = rData.resourceName;
+
+            StartCoroutine(DeleteAddedRes(r));
+        }
+
+        private IEnumerator DeleteAddedRes(TemplateContainer r)
+        {
+            yield return new WaitForSeconds(0.5f);
+            _addedResContainer.Remove(r);
         }
 
         private void UpdateHints()

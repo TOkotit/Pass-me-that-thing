@@ -23,6 +23,8 @@ public class ResourceStorage : NetworkBehaviour
 
     public event Action<IReadOnlyDictionary<Resource, float>> OnSyncResourcesChanged;
 
+    public event Action<Resource, float> OnAddedRes;
+
     public virtual void Awake()
     {
         storages[transform.gameObject] = this;
@@ -53,6 +55,7 @@ public class ResourceStorage : NetworkBehaviour
             storedResources.Add(resource, amount);
 
         UpdateDiffResource(resource);
+        RpcAddedResChange(resource, amount);
 
         PrintResources();
     }
@@ -67,6 +70,7 @@ public class ResourceStorage : NetworkBehaviour
         else storedResources[resource] = newAmount;
 
         UpdateDiffResource(resource);
+        RpcAddedResChange(resource, -amount);
 
         PrintResources();
 
@@ -128,6 +132,12 @@ public class ResourceStorage : NetworkBehaviour
     public void ClearDiff()
     {
         _diffReceivedResOnPhase.Clear();
+    }
+
+    [ClientRpc]
+    public void RpcAddedResChange(Resource r, float v)
+    {
+        OnAddedRes?.Invoke(r, v);
     }
 
     public bool HasResource(Resource resource, float amount)
