@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Gameplay.View.UI;
 using Game.UI;
 using Mirror;
@@ -29,7 +30,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             _gameManager =  container.Resolve<GameManager>();
             _coroutines = container.Resolve<ICoroutineRunner>();
             
-            _networkRoomManager = container.Resolve<NetworkManager>();
+            _networkRoomManager = container.Resolve<NetworkManagerContainer>().Instance;
         }
         
         public void RequestHost()
@@ -50,7 +51,18 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
 
         public void RequestJoin()
         {
-            _networkRoomManager.StartClient();
+            Debug.Log("RequestJoin");
+            if (_networkRoomManager.TryGetComponent<SteamLobbyManager>(out var steamLobby))
+            {
+                Debug.Log("[STEAM] Найдено Стим-лобби. Запускаем создание виртуальной комнаты...");
+                steamLobby.OpenFriends();
+            }
+            else
+            {
+                Debug.Log("[LOCAL] Стим-менеджер не найден. Запускаем стандартный клиент");
+                _networkRoomManager.StartClient();
+            }
+            
         }
         
         public void RequestIpAddress(string value)

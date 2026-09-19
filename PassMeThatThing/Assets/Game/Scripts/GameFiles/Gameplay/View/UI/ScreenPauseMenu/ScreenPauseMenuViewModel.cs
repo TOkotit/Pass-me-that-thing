@@ -1,4 +1,5 @@
-﻿using Game.Scripts.GameFiles.GlobalStageManager;
+﻿using Assets.Game.Scripts.GameFiles.GameRoot;
+using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.UI;
 using Mirror;
 using Systems;
@@ -27,7 +28,7 @@ namespace Game.Gameplay.View.UI.ScreenPauseMenu
             _gameInputManager.GameInput.UI.PauseMenu.performed += PauseMenuPerformed;
 
 
-            if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
+            if (container.Resolve<NetworkManagerContainer>().Instance is NetworkRoomManager roomManager)
             {
                 _networkRoomManager = roomManager;
             }

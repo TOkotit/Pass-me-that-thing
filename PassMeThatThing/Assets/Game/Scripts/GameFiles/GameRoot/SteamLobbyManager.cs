@@ -15,7 +15,8 @@ namespace Root
 
         private void Start()
         {
-            _networkManager = NetworkManager.singleton;
+            //_networkManager = NetworkManager.singleton;
+            _networkManager = GetComponent<NetworkManager>();
 
             if (!SteamManager.Initialized)
             {
@@ -90,6 +91,14 @@ namespace Root
             // Подставляем этот ID в Mirror в качестве адреса и запускаем подключение клиента
             _networkManager.networkAddress = hostSteamID;
             _networkManager.StartClient();
+        }
+
+        public void OpenFriends()
+        {
+            if (SteamManager.Initialized)
+            {
+                SteamFriends.ActivateGameOverlay("Friends");
+            }
         }
 
         // Отписываемся от событий при уничтожении объекта, чтобы не было утечек памяти

@@ -24,7 +24,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
         {
             _uiManager = uiManager;
 
-            if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
+            if (container.Resolve<NetworkManagerContainer>().Instance is NetworkRoomManager roomManager)
             {
                 _networkRoomManager = roomManager;
             }
