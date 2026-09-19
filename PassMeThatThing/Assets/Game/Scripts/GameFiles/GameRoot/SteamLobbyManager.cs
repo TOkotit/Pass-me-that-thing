@@ -15,7 +15,8 @@ namespace Root
 
         private void Start()
         {
-            _networkManager = NetworkManager.singleton;
+            //_networkManager = NetworkManager.singleton;
+            _networkManager = GetComponent<NetworkManager>();
 
             if (!SteamManager.Initialized)
             {

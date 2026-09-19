@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Gameplay.View.UI;
 using Game.UI;
 using Mirror;
@@ -29,7 +30,7 @@ namespace Game.MainMenu.View.UI.ScreenMainMenu
             _gameManager =  container.Resolve<GameManager>();
             _coroutines = container.Resolve<ICoroutineRunner>();
             
-            _networkRoomManager = container.Resolve<NetworkManager>();
+            _networkRoomManager = container.Resolve<NetworkManagerContainer>().Instance;
         }
         
         public void RequestHost()

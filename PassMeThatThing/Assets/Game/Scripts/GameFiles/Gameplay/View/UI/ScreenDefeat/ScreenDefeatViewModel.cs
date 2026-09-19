@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.UI;
 using Mirror;
@@ -16,7 +17,7 @@ namespace Game.Gameplay.View.UI.ScreenDefeat
         {
             _uiManager = uiManager;
             
-            if (container.Resolve<NetworkManager>() is NetworkRoomManager roomManager)
+            if (container.Resolve<NetworkManagerContainer>().Instance is NetworkRoomManager roomManager)
             {
                 _networkRoomManager = roomManager;
             }

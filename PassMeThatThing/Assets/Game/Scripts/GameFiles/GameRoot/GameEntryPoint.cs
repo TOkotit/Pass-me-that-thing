@@ -25,7 +25,7 @@ namespace Root
             ICoroutineRunner coroutines,
             GameManager gameManager,
             UIRootView uiRoot,
-            NetworkManager roomManager,
+            NetworkManagerContainer roomManager,
             OptionsManager optionsManager)
         {
             _coroutines = coroutines;
@@ -33,7 +33,7 @@ namespace Root
             _uiRoot = uiRoot;
             _optionsManager = optionsManager;
 
-            if (roomManager is CustomNetworkRoomManager manager)
+            if (roomManager.Instance is CustomNetworkRoomManager manager)
                 _roomManager = manager;
         }
         

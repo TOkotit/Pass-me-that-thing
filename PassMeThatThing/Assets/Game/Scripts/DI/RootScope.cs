@@ -18,7 +18,8 @@ namespace DI
     /// </summary>
     public class RootScope : LifetimeScope
     {
-        [SerializeField] private GameObject networkManager;
+        //[SerializeField] private GameObject networkManager;
+        [SerializeField] private GameObject networkManagerContainer;
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("RootScope.Configure called");
@@ -31,19 +32,27 @@ namespace DI
             DontDestroyOnLoad(uiRoot.gameObject);
             var uiRootView = uiRoot.GetComponent<UIRootView>();
             builder.RegisterInstance<UIRootView>(uiRootView);
+
+            //var networkManagerGo = Instantiate(networkManager);
+            //DontDestroyOnLoad(networkManagerGo);
+
+            //var networkManagerComponent = networkManagerGo.GetComponent<NetworkManager>();
+            //if (!networkManagerComponent)
+            //{
+            //    Debug.LogError("NetworkManager component not found on networkManager prefab.");
+            //}
+            //else
+            //{
+            //    builder.RegisterComponent(networkManagerComponent);
+            //}
+
+            var networkManagerCGo = Instantiate(networkManagerContainer);
+            DontDestroyOnLoad(networkManagerCGo);
+
+            var networkManagerCComponent = networkManagerCGo.GetComponent<NetworkManagerContainer>();
+
+            builder.RegisterComponent(networkManagerCComponent);
             
-            var networkManagerGo = Instantiate(networkManager);
-            DontDestroyOnLoad(networkManagerGo);
-            
-            var networkManagerComponent = networkManagerGo.GetComponent<NetworkManager>();
-            if (!networkManagerComponent)
-            {
-                Debug.LogError("NetworkManager component not found on networkManager prefab.");
-            }
-            else
-            {
-                builder.RegisterComponent(networkManagerComponent);
-            }
 
             builder.Register<ConnectedPlayers>(Lifetime.Singleton);
             builder.Register<OptionsManager>(Lifetime.Singleton);
