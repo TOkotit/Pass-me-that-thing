@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1211103160667216620}
   - component: {fileID: 1600982829011797290}
   - component: {fileID: 6524011601328239971}
+  - component: {fileID: 6071520324893965533}
   m_Layer: 0
   m_Name: ItemDepot
   m_TagString: Untagged
@@ -154,6 +155,27 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!65 &6071520324893965533
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4538177488738633520}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.133922, y: 2.151195, z: 1.2807794}
+  m_Center: {x: 0, y: 1.0108051, z: -0.14038968}
 --- !u!1 &8348119416898705299
 GameObject:
   m_ObjectHideFlags: 0
