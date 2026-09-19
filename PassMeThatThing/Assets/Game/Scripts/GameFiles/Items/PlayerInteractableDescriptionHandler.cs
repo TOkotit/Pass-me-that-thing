@@ -103,7 +103,7 @@ namespace Assets.Game.Scripts.GameFiles.Items
                 {
                     OpenWindow();
 
-                    _localModel.CurrentInteractableText = "Interact"; //заглушка
+                    _localModel.CurrentInteractableText = "[E] Interact"; //заглушка
                     _localModel.CurrentDescriptionMode = PopupDescriptionMode.Other;
                 }
                 else if (hit.collider.gameObject.CompareTag("WireNode"))
