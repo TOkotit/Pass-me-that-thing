@@ -29,7 +29,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         {
             base.OnStartServer();
             
-            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor", "Building");
+            _targetLayer = LayerMask.GetMask("Player", "BunkerDoor", "Building", "Interactable");
             
             if (attackCubeCenter == null) 
                 attackCubeCenter = transform;
