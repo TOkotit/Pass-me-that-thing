@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Entity;
@@ -57,6 +58,7 @@ namespace Game.Gameplay.View.UI
         private readonly LocalWireHandlerModel _localWireHandlerModel;
         private readonly LevelOrchestrator _levelOrchestrator;
         private readonly ConnectedPlayers _connectedPlayers;
+        private readonly LocalMainStorageModel _localMainStorageModel;
 
         private Action<int, Sprite, int> addEvent;
         private Action<int, Sprite, int> updateEvent;
@@ -90,6 +92,7 @@ namespace Game.Gameplay.View.UI
             _gameInputManager = container.Resolve<GameInputManager>();
             _screenHintsDatabase = container.Resolve<ScreenHintsDatabase>();
 
+            _localMainStorageModel = container.Resolve<LocalMainStorageModel>();
             _localWireHandlerModel = container.Resolve<LocalWireHandlerModel>();
             _levelOrchestrator = container.Resolve<LevelOrchestrator>();
             _connectedPlayers = container.Resolve<ConnectedPlayers>();
@@ -128,12 +131,12 @@ namespace Game.Gameplay.View.UI
 
         public void RequestSubAddedRes(Action<Resource, float> f)
         {
-            MainResourceStorage.Instance.OnAddedRes += f;
+            _localMainStorageModel.OnAddedRes += f;
         }
 
         public void RequestUnSubAddedRes(Action<Resource, float> f)
         {
-            MainResourceStorage.Instance.OnAddedRes -= f;
+            _localMainStorageModel.OnAddedRes -= f;
         }
 
         public void RequestSubHintsChange(Action f)

@@ -25,6 +25,7 @@ using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using Assets.Game.Scripts.GameFiles.Items;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
 
 namespace DI
 {
@@ -116,6 +117,7 @@ namespace DI
             builder.Register<LocalBuildingHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalWireHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalCraftModel>(Lifetime.Singleton);
+            builder.Register<LocalMainStorageModel>(Lifetime.Singleton);
             
             builder.Register<PlayerReadyManager>(Lifetime.Singleton);
             

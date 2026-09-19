@@ -1,4 +1,6 @@
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using System;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
 {
@@ -7,6 +9,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
         private static ResourceStorage _instance;
         public static ResourceStorage Instance => _instance;
 
+        [Inject] private LocalMainStorageModel _localMainStorageModel;
+
         public override void Awake()
         {
             base.Awake();
@@ -14,11 +18,23 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             {
                 _instance = this;
             }
+
+            
+        }
+
+        public void Start()
+        {
+            _instance.OnAddedRes += _localMainStorageModel.InvokeOnAddedRes;
+        }
+
+        public void OnDestroy()
+        {
+            _instance.OnAddedRes -= _localMainStorageModel.InvokeOnAddedRes;
         }
 
         public override void OnStartClient()
         {
-            base.Awake();
+            base.OnStartClient();
             if (!_instance)
             {
                 _instance = this;
