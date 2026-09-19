@@ -16,6 +16,15 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Misc
             }
         }
 
+        public override void OnStartClient()
+        {
+            base.Awake();
+            if (!_instance)
+            {
+                _instance = this;
+            }
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
