@@ -11,15 +11,16 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
 
         [Header("шанс на который не влияет общее кол-во предметов в комнате")]
         [SerializeField] private bool useConstSpawnChance;
+        [Range(0f, 1f)]
         [SerializeField] private float constSpawnChance;
+
+        [Header("Берется только этот предмет")]
+        [SerializeField] private bool useConstItem;
+        [SerializeField] private ItemData constItem;
 
         [Header("Берутся предметы только из этого типа редкости")]
         [SerializeField] private bool useConstRarityType;
         [SerializeField] private ItemRarityType constRarityType;
-
-        [Header("Берется только этот предмет")]
-        [SerializeField] private bool useConstItem;
-        [SerializeField] private ItemRarityData constItem;
 
         public Vector3 Position => transform.position;
 
@@ -28,7 +29,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
         public bool UseConstRarityType => useConstRarityType;
         public ItemRarityType ConstRarityType => constRarityType;
         public bool UseConstItem => useConstItem;
-        public ItemRarityData ConstItem  => constItem;
+        public ItemData ConstItem  => constItem;
 
         private void OnDrawGizmos()
         {

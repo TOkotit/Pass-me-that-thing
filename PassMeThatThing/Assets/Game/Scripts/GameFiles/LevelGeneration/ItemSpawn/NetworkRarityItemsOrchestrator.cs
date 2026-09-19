@@ -84,7 +84,7 @@ namespace Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
 
                     if (spot.UseConstItem)
                     {
-                        ServerSpawnItem(spot.ConstItem.ItemData.Id, spot.Position);
+                        ServerSpawnItem(spot.ConstItem.Id, spot.Position);
                         if (!spot.UseConstSpawnChance)
                             itemCount++;
                     }
