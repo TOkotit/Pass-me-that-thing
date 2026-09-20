@@ -94,6 +94,79 @@ MonoBehaviour:
     m_Bits: 8
   _parent: {fileID: 227837763217859650}
   _hipsBone: {fileID: 8855991330324235445}
+--- !u!1 &6031697575149917101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7919150695613775391}
+  - component: {fileID: 7330507488948991796}
+  - component: {fileID: 7383144647750717178}
+  m_Layer: 0
+  m_Name: TargetDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7919150695613775391
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6031697575149917101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.37, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 227837763217859650}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7330507488948991796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6031697575149917101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 370e6159660847ee824a454dc2e1fbe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  detectionInterval: 0.5
+  damagableTypes: 0200000000000000
+  proximityAreaCenter: {fileID: 7919150695613775391}
+  proximityAreaRadius: 50.3
+  sightDistance: 114.4
+  sightAngle: 60
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 8
+--- !u!114 &7383144647750717178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6031697575149917101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM.TargetObject
+  damageable: {fileID: 6059272469753625803}
+  priority: 0
+  damagableType: 1
+  Enabled: 1
 --- !u!1 &6994456766497010121
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,8 +300,6 @@ GameObject:
   - component: {fileID: 5686190622791376666}
   - component: {fileID: 5475941992780067928}
   - component: {fileID: 6059272469753625803}
-  - component: {fileID: 858915913017742702}
-  - component: {fileID: 1118780070767854037}
   - component: {fileID: 1833560880880073641}
   - component: {fileID: 2949989233195922033}
   - component: {fileID: 8309401126575335136}
@@ -257,6 +328,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4626078019415932954}
+  - {fileID: 7919150695613775391}
   - {fileID: 387873943417241419}
   - {fileID: 2571571816664754673}
   - {fileID: 9086114221855915269}
@@ -311,50 +383,10 @@ MonoBehaviour:
   type: 1
   statusEffectHandler: {fileID: 0}
   ragdollHandler: {fileID: 394128174630529258}
-  targetDetector: {fileID: 1118780070767854037}
+  targetDetector: {fileID: 7330507488948991796}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
   enemyView: {fileID: 1685545026476552139}
---- !u!114 &858915913017742702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8090700475096468142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2107cd5e64e94356a7d263841558d0d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageable: {fileID: 6059272469753625803}
-  priority: 0
-  damagableType: 1
-  Enabled: 1
---- !u!114 &1118780070767854037
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8090700475096468142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 370e6159660847ee824a454dc2e1fbe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  detectionInterval: 0.5
-  damagableTypes: 0200000000000000
-  proximityAreaCenter: {fileID: 227837763217859650}
-  proximityAreaRadius: 50.3
-  sightDistance: 114.4
-  sightAngle: 60
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &1833560880880073641
 MonoBehaviour:
   m_ObjectHideFlags: 0
