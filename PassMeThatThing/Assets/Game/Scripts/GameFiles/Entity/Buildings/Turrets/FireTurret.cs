@@ -53,7 +53,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
             }
         }
 
-        public new void OnDestroy()
+        protected override void OnDestroy()
         {
             if (isServer)
             {
@@ -63,7 +63,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
 
             base.OnDestroy();
         }
-        
+
+        [Server]
+        public override void BeforeDestroy()
+        {
+            base.BeforeDestroy();
+        }
+
         [Inject]
         public void Construct(BuildingsDatabase buildingsDatabase, TurretDatabase turretDatabas)
         {

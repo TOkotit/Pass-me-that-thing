@@ -54,8 +54,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         public virtual void OnDestroy()
         {
+            //Debug.Log("[Wire] OnDestroy");
             if (isServer)
             {
+                ClearNode();
                 _wireManager.UnRegisterNode(NodeId);
             }
 
@@ -63,6 +65,13 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             {
                 entry.OnEntryInteract -= EntryInteracted;
             }
+        }
+
+        [Server]
+        public void ClearNode()
+        {
+            //Debug.Log("[Wire] ClearNode");
+            _wireManager.ClearConnectionsOfNode(NodeId);
         }
 
         public void EntryInteracted(int entryId)

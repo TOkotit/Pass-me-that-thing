@@ -1,5 +1,6 @@
 using System;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings;
+using DG.Tweening;
 using Entity;
 using Mirror;
 using Unity.VisualScripting;
@@ -42,7 +43,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             if (isServer)
             {
-                NetworkServer.Destroy(gameObject);
+                DestroyBuilding();
             }
         }
 
@@ -61,6 +62,25 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         {
             base.OnHeal(deltaHp);
             buildingView.Repair();
+        }
+
+        [Server]
+        public virtual void BeforeDestroy() { }
+
+        [Server]
+        public void DestroyBuilding()
+        {
+            BeforeDestroy();
+            NetworkServer.Destroy(gameObject);
+        }
+
+        [ClientRpc]
+        public void RpcScaleAndDestroyBuilding()
+        {
+            if (isServer)
+                transform.DOScale(0f, 0.3f).OnComplete(() => DestroyBuilding());
+            else
+                transform.DOScale(0f, 0.3f);
         }
 
     }

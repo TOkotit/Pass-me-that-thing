@@ -33,5 +33,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.Turrets
         {
             base.OnHealthChanged(currentHealth, maxHealth);
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

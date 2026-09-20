@@ -61,16 +61,16 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             
         }
 
-        public void ClearNodeLines(WireNode firstNode)
+        public void ClearNodeLines(WireType type, int nodeId)
         {
             //Todo переделать на поиск соседних а не всех
             var toRemove = new List<(int, int)>();
 
-            if (firstNode.WireType == WireType.Electricity)
+            if (type == WireType.Electricity)
             {
                 foreach (var line in wireLineViewContainer)
                 {
-                    if (line.Key.Item1 == firstNode.NodeId || line.Key.Item2 == firstNode.NodeId)
+                    if (line.Key.Item1 == nodeId || line.Key.Item2 == nodeId)
                     {
                         Destroy(line.Value.gameObject);
                         toRemove.Add(line.Key);
@@ -82,11 +82,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                     wireLineViewContainer.Remove(line);
                 }
             }
-            else if (firstNode.WireType == WireType.Water)
+            else if (type == WireType.Water)
             {
                 foreach (var line in tubeViewContainer)
                 {
-                    if (line.Key.Item1 == firstNode.NodeId || line.Key.Item2 == firstNode.NodeId)
+                    if (line.Key.Item1 == nodeId || line.Key.Item2 == nodeId)
                     {
                         Destroy(line.Value.gameObject);
                         toRemove.Add(line.Key);

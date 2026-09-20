@@ -42,6 +42,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             if (isServer && NetId != -1)
                 _wireManager.WireNets[NetId].Recalculate();
         }
-        
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
+
     }
 }

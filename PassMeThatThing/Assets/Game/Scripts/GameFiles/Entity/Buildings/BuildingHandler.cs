@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings;
+using DG.Tweening;
 using Game.Gameplay.View.UI;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
@@ -264,9 +265,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
 
             if (Physics.Raycast(ray, out var hit, previewDistance, buildingLayer))
             {
-                _buildingManager.CmdDestroyBuilding(hit.collider.gameObject);
+                Building b;
+                if (hit.collider.gameObject.TryGetComponent<Building>(out b))
+                {
+                    _buildingManager.CmdDestroyBuilding(b);
+                }
+                else
+                {
+                    _buildingManager.CmdDestroyGameObject(hit.collider.gameObject);
+                }
             }
         }
+
 
     }
 }

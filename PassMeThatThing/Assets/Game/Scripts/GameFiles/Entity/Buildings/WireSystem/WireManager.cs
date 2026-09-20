@@ -61,10 +61,10 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [Server]
         public void UnRegisterNode(int nodeId)
         {
-            AllNodes[nodeId] = null;
+            AllNodes.Remove(nodeId);
             if (PortNodes.ContainsKey(nodeId))
             {
-                PortNodes[nodeId] = null;
+                PortNodes.Remove(nodeId);
             }
         }
 
@@ -252,7 +252,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             WireNets[AllNodes[nodeId].NetId].RemoveWireNode(nodeId);
             node.NetId = -1;
             
-            RpcClearNodeLines(node);
+            RpcClearNodeLines(node.WireType, nodeId);
             
             PrintDebugInfo();
         }
@@ -283,9 +283,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         }
         
         [ClientRpc]
-        public void RpcClearNodeLines(WireNode node)
+        public void RpcClearNodeLines(WireType type, int nodeId)
         {
-            wireVisualizer.ClearNodeLines(node);
+            wireVisualizer.ClearNodeLines(type, nodeId);
         }
 
         

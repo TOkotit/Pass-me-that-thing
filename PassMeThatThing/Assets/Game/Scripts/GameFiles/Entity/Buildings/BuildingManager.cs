@@ -30,26 +30,31 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdDestroyBuilding(GameObject obj)
+        public void CmdDestroyBuilding(Building obj)
         {
-            //DestroyBuilding(obj);
-            RpcScale(obj);
+            obj.RpcScaleAndDestroyBuilding();
         }
 
+        [Command(requiresAuthority = false)]
+        public void CmdDestroyGameObject(GameObject obj)
+        {
+            RpcScaleAndDestroyGameObject(obj);
+        }
+
+
         [Server]
-        public void DestroyBuilding(GameObject obj)
+        private void DestroyGameObject(GameObject obj)
         {
             NetworkServer.Destroy(obj);
-            Debug.Log($"Destroy building");
         }
 
         [ClientRpc]
-        public void RpcScale(GameObject obj)
+        public void RpcScaleAndDestroyGameObject(GameObject obj)
         {
             if (isServer)
-                obj.transform.DOScale(0f, 0.3f).OnComplete(() => DestroyBuilding(obj));
+                transform.DOScale(0f, 0.3f).OnComplete(() => DestroyGameObject(obj));
             else
-                obj.transform.DOScale(0f, 0.3f);
+                transform.DOScale(0f, 0.3f);
         }
     }
 }
