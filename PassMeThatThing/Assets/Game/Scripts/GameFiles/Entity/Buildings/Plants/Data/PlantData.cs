@@ -14,5 +14,8 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data
 
         public float growTime;
         public float fruitsAmount;
+
+        public bool infiniteGrowCount;
+        public int growCount;
     }
 }

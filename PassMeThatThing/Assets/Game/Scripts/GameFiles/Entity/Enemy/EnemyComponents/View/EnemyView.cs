@@ -50,7 +50,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
 
         private void OnDestroy()
         {
-            _gameplayUIManager.CloseWindowEnemyView(_windowViewModel);
+            _gameplayUIManager.CloseWindow(_windowViewModel);
         }
 
         public void EnableAnimator() => animator.enabled = true;

@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/World/UiToolkit/EnemyView.uss?fileID=7433441132597879392&amp;guid=e877f6d811b170c469867a9363363a70&amp;type=3#EnemyView"/>
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement name="Bars" style="flex-grow: 1; visibility: visible; display: flex;">
+            <ui:ProgressBar value="0" title="" name="GrowProgress" class="custom-progress-bar stamina-progress-bar" style="flex-grow: 1; height: 24px;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

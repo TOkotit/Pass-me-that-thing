@@ -16,6 +16,8 @@ using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Mirror.Examples.MultipleMatch;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.FarmView;
 
 
 namespace Game.Gameplay.View.UI
@@ -197,9 +199,19 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
 
-        public void CloseWindowEnemyView(WindowEnemyViewViewModel viewModel)
+        public void CloseWindow(WorldWindowViewModel viewModel)
         {
             _worldUI.CloseWorldWindow(viewModel);
+        }
+
+        public WindowFarmViewModel OpenWindowFarmView(Farm farm)
+        {
+            var viewModel = new WindowFarmViewModel(this, Container, farm);
+
+            _worldUI.OpenWorldWindow(viewModel);
+
+
+            return viewModel;
         }
 
         public ScreenMinigameViewModel OpenScreenMinigame(MinigameParameters parameters)

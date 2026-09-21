@@ -13,14 +13,21 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
 {
     public class Farm : NetworkBehaviour
     {
+        [SerializeField] private FarmView farmView;
+
+        [SerializeField] private Transform saplingPosition;
+
         [SerializeField] private ItemSpawner itemSpawner;
 
-        [Inject] private PlantDatabase plantDatabase;
+
+        //[Inject] private PlantDatabase plantDatabase;
 
         private PlantData _currentPlant;
         private bool _isCurrentPlantSet;
         private float _growTimeElapsed;
         private bool _isGrown;
+
+        public FarmView FarmView => farmView;
 
         public event Action<float> OnGrowTimeElapsedPercentChanged;
         public event Action<bool> OnIsGrownChanged;
@@ -36,6 +43,11 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
             }
         }
 
+        public void Start()
+        {
+            farmView.InitUI(this);
+        }
+
         [Server]
         public void SetSeed(PlantSeedData seedData)
         {
@@ -49,6 +61,7 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
             _isCurrentPlantSet = false;
             _growTimeElapsed = 0f;
             _isGrown = false;
+            RpcInvokeGrowPercent(_growTimeElapsed / _currentPlant.growTime);
         }
 
         [Server]
@@ -62,7 +75,7 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
         private void GrowTick()
         {
             _growTimeElapsed += Time.fixedDeltaTime;
-            OnGrowTimeElapsedPercentChanged?.Invoke(_growTimeElapsed / _currentPlant.growTime);
+            RpcInvokeGrowPercent(_growTimeElapsed / _currentPlant.growTime);
             if (_growTimeElapsed >= _currentPlant.growTime)
             {
                 _isGrown = true;
@@ -72,33 +85,21 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
             }
         }
 
+        [ClientRpc]
+        public void RpcInvokeGrowPercent(float v)
+        {
+            OnGrowTimeElapsedPercentChanged?.Invoke(v);
+        }
+
         [Server]
         private void GiveFruits()
         {
             Debug.Log($"[FARM] {_currentPlant.fruitItem.Id}");
-            itemSpawner.ServerSpawnItem(_currentPlant.fruitItem.Id, itemSpawner.transform.position);
+            for (var i=0; i < _currentPlant.fruitsAmount; i++)
+            {
+                itemSpawner.ServerSpawnItem(_currentPlant.fruitItem.Id, saplingPosition.position);
+            }
+            ResetFarm();
         }
-
-        //public void Interact()
-        //{
-
-        //}
-
-        //public void SrbToggle()
-        //{
-
-        //}
-
-        //public void InteractWithItem(PhysicalItem item)
-        //{
-            
-        //}
-
-        //public override void OnStartClient()
-        //{
-        //    base.OnStartClient();
-
-        //    InteractableRegistry.Instance.Register(gameObject, this);
-        //}
     }
 }
