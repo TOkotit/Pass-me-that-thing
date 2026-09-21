@@ -15,6 +15,7 @@ using Assets.Game.Scripts.GameFiles.UIWorld;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescription;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.PopupDescription;
 using Game.Scripts.GameFiles.Entity.Enemy;
+using Mirror.Examples.MultipleMatch;
 
 
 namespace Game.Gameplay.View.UI
@@ -62,17 +63,17 @@ namespace Game.Gameplay.View.UI
             return viewModel;
         }
 
-        public ScreenMinigameViewModel OpenScreenMinigame(MinigameParameters  parameters)
-        {
-            var viewModel = new ScreenMinigameViewModel(this, Container, parameters);
+        //public ScreenMinigameViewModel OpenScreenMinigame(MinigameParameters  parameters)
+        //{
+        //    var viewModel = new ScreenMinigameViewModel(this, Container, parameters);
 
-            UnlockCursor();
-            _gameInputManager.ToggleMap(InputMapType.UI);
+        //    UnlockCursor();
+        //    _gameInputManager.ToggleMap(InputMapType.UI);
             
-            rootUI.OpenScreen(viewModel);
+        //    rootUI.OpenScreen(viewModel);
             
-            return viewModel;
-        }
+        //    return viewModel;
+        //}
         
         
         public ScreenPauseMenuViewModel OpenScreenPauseMenu()
@@ -199,6 +200,19 @@ namespace Game.Gameplay.View.UI
         public void CloseWindowEnemyView(WindowEnemyViewViewModel viewModel)
         {
             _worldUI.CloseWorldWindow(viewModel);
+        }
+
+        public ScreenMinigameViewModel OpenScreenMinigame(MinigameParameters parameters)
+        {
+            var viewModel = new ScreenMinigameViewModel(this, Container, parameters);
+
+            //_gameInputManager.ToggleMap(InputMapType.UI);
+            _gameInputManager.ToggleMap(InputMapType.Gameplay);
+            UnlockCursor();
+
+            rootUI.OpenScreen(viewModel);
+
+            return viewModel;
         }
     }
 }

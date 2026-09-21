@@ -4971,6 +4971,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  minigameContainer: {fileID: 0}
   brokenPumpEvent: {fileID: 7261649635142665317}
   pipeSound: {fileID: 4205012282732326592}
   _particleSystem: {fileID: 6179171907392608596}
@@ -5138,6 +5139,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  minigameContainer: {fileID: 8730228297069767685}
   floodEvent: {fileID: 7277807051642972705}
   port: {fileID: 8735115893247883747}
   outline: {fileID: 3930879256361456384}
@@ -5181,7 +5183,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.5196152, y: 0.45961952, z: 0.45961952}
-  m_Center: {x: -0.00000023841858, y: 0.000000059604645, z: 0}
+  m_Center: {x: -0.39, y: 0.09, z: 0.15}
 --- !u!114 &4532385596491017707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5236,6 +5238,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3085123313540729940}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4261739542535807719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8730228297069767685}
+  m_Layer: 0
+  m_Name: MinigameContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8730228297069767685
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4261739542535807719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.596, y: 0.626, z: 0.02}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2050075757135484324}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &6527752004207200107
 GameObject:
   m_ObjectHideFlags: 0
@@ -5251,7 +5284,7 @@ GameObject:
   - component: {fileID: 3345328305615256671}
   - component: {fileID: 7554864183583413762}
   m_Layer: 0
-  m_Name: BunkerBoiler
+  m_Name: bunkerBoiler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5306,7 +5339,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _baseTriggerChance: 0.2
+  _baseTriggerChance: 1
   eventType: 2
   terminal: {fileID: 2551886650145757741}
   waterMeshPrefab: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
@@ -5506,6 +5539,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3148076384813769}
+  - {fileID: 8730228297069767685}
   m_Father: {fileID: 3085123313540729940}
   m_LocalEulerAnglesHint: {x: -50, y: 0, z: 0}
 --- !u!1001 &1751958193594963488

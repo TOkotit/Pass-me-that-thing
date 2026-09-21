@@ -35,17 +35,17 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.WorldUI.WindowDescripti
         {
             _subs.Add(ViewModel.enabled.Subscribe(SetVisibility));
 
+            ViewModel.enabled.Value = true;
+
+            gameObject.transform.SetParent(ViewModel.parent);
+            gameObject.transform.localPosition = ViewModel.windowOffset;
+
             ViewModel.RequestSubCameraPos(ChangeRotation);
 
             ViewModel.RequestSubEnemyHealth(UpdateHealthBar);
             ViewModel.RequestSubEnemyToughness(UpdateToughnessBar);
             ViewModel.RequestSubEnemyAttack(UpdateElapsedAttackBar);
             ViewModel.RequestSubStun(UpdateStun);
-
-            ViewModel.enabled.Value = true;
-
-            gameObject.transform.SetParent(ViewModel.parent);
-            gameObject.transform.localPosition = ViewModel.windowOffset;
         }
 
         private void OnDestroy()

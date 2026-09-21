@@ -33,19 +33,21 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         {
             if (_startPoint != newStart || _endPoint != newEnd)
             {
-                _startPoint = newStart;
-                _endPoint = newEnd;
+                _startPoint = parent.WorldToLocal(newStart);
+                _endPoint = parent.WorldToLocal(newEnd);
 
-                var direction = newEnd - newStart;
-                var newLen = (newEnd - newStart).magnitude;
+                var direction = _endPoint - _startPoint;
+                var newLen = (_endPoint - _startPoint).magnitude;
 
                 var _currentAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
                 style.rotate = new StyleRotate(new Rotate(new Angle(_currentAngle, AngleUnit.Degree)));
                 style.width = newLen;
 
-                style.left = newStart.x;
-                style.top = newStart.y;
+                style.left = _startPoint.x;
+                style.top = _startPoint.y;
+
+                Debug.Log($"[TEST] LINE {_startPoint} - {_endPoint}");
 
                 MarkDirtyRepaint();
             }

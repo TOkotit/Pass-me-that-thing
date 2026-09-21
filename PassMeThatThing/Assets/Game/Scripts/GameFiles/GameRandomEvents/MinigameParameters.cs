@@ -1,6 +1,7 @@
 using System;
 using Game.Scripts.Enums;
 using Mirror;
+using UnityEngine;
 
 namespace Game.Scripts.GameFiles.GameRandomEvents
 {
@@ -13,5 +14,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         public int difficulty;
         public float timeLimit;
         public EventTerminal eventTerminal;
+
+        public Vector3 position;
+        public Quaternion rotation;
     }
 }

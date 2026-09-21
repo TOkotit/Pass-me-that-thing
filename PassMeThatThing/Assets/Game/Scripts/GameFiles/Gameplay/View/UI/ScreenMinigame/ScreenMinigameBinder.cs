@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.UIWorld;
 using AYellowpaper.SerializedCollections;
 using DG.Tweening;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.UI;
+using R3;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -33,6 +35,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         [Header("blackoutCutWires")]
         [SerializeField] private List<WireColorSpritesData> wireColors;
 
+        private CompositeDisposable _subs = new();
+
         //ui refs
         private VisualElement _root;
         private Button _closeBtn;
@@ -49,7 +53,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         private Vector2 _wheelCenter;
         private float _lastAngle;
         private float _currentAngle;
-        private float _progressSpeed = 0.1f;
+        private float _progressSpeed = -0.1f;
         
         //blackoutBlowFuse
         private VisualElement _p30Img;
@@ -78,17 +82,20 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         private void Start()
         {
             EnableMinigameByType(ViewModel.Parameters);
-            
+
+            transform.position = ViewModel.position;
+            transform.rotation = ViewModel.rotation;
+
             _closeBtn.RegisterCallback<ClickEvent>(CloseMinigame);
         }
 
         private void OnDestroy()
         {
             _closeBtn.UnregisterCallback<ClickEvent>(CloseMinigame);
-
+            _subs.Dispose();
             DisableMinigames();
         }
-        
+
         public void EnableMinigameByType(MinigameParameters parameters)
         {
             _currentMinigame = minigames[parameters.eventType].Instantiate();
@@ -184,6 +191,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             _inputContainer = templateContainer.Q<GroupBox>("InputContainer");
             _outputContainer = templateContainer.Q<GroupBox>("OutputContainer");
 
+            var allCont = templateContainer.Q<VisualElement>("AllContainer");
+
             var rand = new Random();
             wireColors = wireColors.OrderBy(_ => rand.Next()).ToList();
 
@@ -211,11 +220,10 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
                 inputBox.style.width = 120;
                 inputBox.style.height = 120;
-                inputBox.style.marginTop = 30f;
+                inputBox.style.marginTop = 30;
 
                 inputBox.style.scale = new Vector2(-1, 1);
                 inputBox.style.backgroundImage = new StyleBackground(t.end);
-
 
                 var newWireLine = new LineElement(
                     new Vector2(0, 0),
@@ -223,7 +231,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                     t.wire, 120f);
                 
                 newWireLine.style.position = Position.Absolute;
-                
+
                 templateContainer.Add(newWireLine);
                 
                 var newInput = new VisualElement();
@@ -244,6 +252,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 _elemRegistry[newInput] = t.color;
                 newInput.style.width = 110;
                 newInput.style.height = 110;
+
+                //newInput.style.backgroundColor = Color.white;
             }
         }
 
@@ -258,7 +268,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             {
                 _matchedColors.Remove(_elemRegistry[a]);
             }
-            //Debug.Log($"CheckWires {_matchedColors.Count}");
+            Debug.Log($"CheckWires {_matchedColors.Count}");
 
             if (_matchedColors.Count >= wireColors.Count)
             {
@@ -272,10 +282,10 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             _rotationWheel = templateContainer.Q<VisualElement>("RotationWheel");
             _wheelProgressBar = templateContainer.Q<ProgressBar>("WheelProgressBar");
             
-            _rotationWheel.RegisterCallback<PointerDownEvent>(RWOnPointerDown);
-            _rotationWheel.RegisterCallback<PointerUpEvent>(RWOnPointerUp);
-            _rotationWheel.RegisterCallback<PointerCaptureOutEvent>(RWOnPointerCaptureOut);
-            _rotationWheel.RegisterCallback<PointerMoveEvent>(RWOnPointerMove);
+            _rotationWheel.RegisterCallback<PointerDownEvent>(RWOnPointerDown, TrickleDown.TrickleDown);
+            _rotationWheel.RegisterCallback<PointerUpEvent>(RWOnPointerUp, TrickleDown.TrickleDown);
+            _rotationWheel.RegisterCallback<PointerCaptureOutEvent>(RWOnPointerCaptureOut, TrickleDown.TrickleDown);
+            _rotationWheel.RegisterCallback<PointerMoveEvent>(RWOnPointerMove, TrickleDown.TrickleDown);
         }
         
         public void RWOnPointerDown(PointerDownEvent evt)
@@ -315,6 +325,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
                 var angleDelta = Mathf.DeltaAngle(_lastAngle, _currentAngle);
                 _wheelProgressBar.value += angleDelta * _progressSpeed;
+                _wheelProgressBar.value =  Mathf.Clamp(_wheelProgressBar.value,
+                    _wheelProgressBar.lowValue, _wheelProgressBar.highValue);
                 
                 if (_wheelProgressBar.value >= _wheelProgressBar.highValue)
                 {
@@ -323,7 +335,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 }
                 
                 _lastAngle = _currentAngle;
-                _rotationWheel.style.rotate = new StyleRotate(new Rotate(new Angle(_currentAngle, AngleUnit.Degree)));
+                _rotationWheel.style.rotate = new StyleRotate(new Rotate(new Angle(-_currentAngle, AngleUnit.Degree)));
             }
         }
 

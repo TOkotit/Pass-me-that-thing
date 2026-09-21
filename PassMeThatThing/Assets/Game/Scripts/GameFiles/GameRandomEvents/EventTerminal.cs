@@ -7,8 +7,13 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class EventTerminal : NetworkBehaviour
     {
+        [SerializeField]
+        protected Transform minigameContainer;
+
         protected NetworkConnectionToClient currentClient;
         private EventTerminalsRegistry _registry;
+
+
 
         [SyncVar] 
         private bool _isTerminalBusy;
@@ -59,7 +64,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 difficulty = gameEvent.difficulty,
                 timeLimit = gameEvent.timeLimit,
                 
-                eventTerminal = this
+                eventTerminal = this,
+                position = minigameContainer 
+                    == null ? transform.position : minigameContainer.transform.position,
+                rotation = minigameContainer
+                    == null ? transform.rotation : minigameContainer.transform.rotation,
             };
             
             if (senderConnection.identity.TryGetComponent<PlayerMinigameHandler>(out var playerHandler))

@@ -77,6 +77,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             var parent = target.parent;
             if (parent == null) 
                 return;
+
+            //Debug.Log($"[TEST] Pointer {(Vector2)evt.position}");
             
             var pointerCurrent = (Vector2)evt.position;
             var pointerDelta = pointerCurrent - _elementStartWorld;
@@ -91,12 +93,14 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             if (_line != null && _box != null)
             {
                 _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
-                    _box.worldBound.position.y), target.worldBound.position);
+                    _box.worldBound.position.y + _box.worldBound.height), target.worldBound.position);
                 _box.style.scale = new Vector2(1, 1);
                 _box.style.backgroundImage = new StyleBackground(_t.start);
+
+                Debug.Log($"[TEST] box  {_box.worldBound.position}");
             }
-                
-            
+
+
             evt.StopPropagation();
         }
 
@@ -169,10 +173,10 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             if (target.parent == null)
                 return;
             
-            var slotCenterWorld = slot.worldBound.center;
-            var itemSize = new Vector2(target.resolvedStyle.width, target.resolvedStyle.height);
-            
-            var desiredWorld = slotCenterWorld - (itemSize * 0.5f);
+            var slotCenterWorld = new Vector2(slot.worldBound.position.x,
+                slot.worldBound.position.y + slot.worldBound.height);
+
+            var desiredWorld = slotCenterWorld;
             var desiredLocal = target.parent.WorldToLocal(desiredWorld);
             
             target.style.left = desiredLocal.x;
@@ -181,7 +185,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             if (_line != null && _box != null)
             {
                 _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
-                    _box.worldBound.position.y), target.worldBound.position);
+                    _box.worldBound.position.y + _box.worldBound.height),
+                    slotCenterWorld);
                 _box.style.scale = new Vector2(1, 1);
                 _box.style.backgroundImage = new StyleBackground(_t.start);
             }
