@@ -9,8 +9,6 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data
     {
         public string id;
         public string seedName;
-        public GameObject seedPrefab;
-        public Sprite seedImage;
 
         public List<PlantData> plants;
     }

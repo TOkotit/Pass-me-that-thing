@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c9ddbd3aa63c5c4aacb65d7f8f0607e, type: 3}
   m_Name: SeedCarrot
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data.PlantSeedData
-  id: 
-  seedName: 
-  seedPrefab: {fileID: 0}
-  seedImage: {fileID: 0}
-  plants: []
+  id: seedCarrot
+  seedName: seedCarrot
+  plants:
+  - {fileID: 11400000, guid: 0229e62b2625a77478d709270b620a21, type: 2}

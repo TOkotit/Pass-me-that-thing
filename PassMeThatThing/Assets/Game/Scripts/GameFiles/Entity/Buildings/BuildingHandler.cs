@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants;
 using DG.Tweening;
 using Game.Gameplay.View.UI;
 using Game.Scripts.Enums;
@@ -79,6 +80,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _handlerModel.OnCancelBuildPreview += CancelBuildingPreview;
 
                 _handlerModel.OnDestroyBuilding += DestroyBuilding;
+
+                _handlerModel.OnSeed += SetSeed;
                 
                 _inputManager.GameInput.Gameplay.Zoom.performed += ZoomOnperformed;
 
@@ -98,6 +101,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _handlerModel.OnCancelBuildPreview -= CancelBuildingPreview;
 
                 _handlerModel.OnDestroyBuilding -= DestroyBuilding;
+
+                _handlerModel.OnSeed -= SetSeed;
 
                 _inputManager.GameInput.Gameplay.Zoom.performed -= ZoomOnperformed;
 
@@ -266,6 +271,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             if (Physics.Raycast(ray, out var hit, previewDistance, buildingLayer))
             {
                 Building b;
+                //TODO Сделать Building Registry для строений
                 if (hit.collider.gameObject.TryGetComponent<Building>(out b))
                 {
                     _buildingManager.CmdDestroyBuilding(b);
@@ -277,6 +283,19 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             }
         }
 
-
+        public void SetSeed(string seedId, string instId)
+        {
+            var ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            
+            if (Physics.Raycast(ray, out var hit, previewDistance, buildingLayer))
+            {
+                //TODO Сделать Building Registry для строений
+                if (hit.collider.gameObject.TryGetComponent<Farm>(out var f))
+                {
+                    _buildingManager.CmdSetSeed(f, seedId);
+                    _globalInventoryManager.CmdDeleteFromInventory(instId);
+                }
+            }
+        }
     }
 }

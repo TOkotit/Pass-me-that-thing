@@ -1,4 +1,6 @@
 using System;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data;
 using DG.Tweening;
 using Mirror;
 using UnityEngine;
@@ -9,8 +11,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
     public class BuildingManager : NetworkBehaviour
     {
         [Inject] private BuildingsDatabase _buildingsDatabase;
-        
-        
+        [Inject] private PlantDatabase _plantDatabase;
+
+
         [Command(requiresAuthority =  false)]
         public void CmdSpawnBuilding(Vector3 pos, Quaternion rotation, string buildingId)
         {
@@ -55,6 +58,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 transform.DOScale(0f, 0.3f).OnComplete(() => DestroyGameObject(obj));
             else
                 transform.DOScale(0f, 0.3f);
+        }
+
+        [Command(requiresAuthority = false)]
+        public void CmdSetSeed(Farm farm, string seedId)
+        {
+            SetSeed(farm, seedId);
+        }
+
+        [Server]
+        public void SetSeed(Farm farm, string seedId)
+        {
+            farm.SetSeed(_plantDatabase.GetSeed(seedId));
         }
     }
 }

@@ -8,9 +8,9 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data
     {
         public string id;
         public string plantName;
+
         public GameObject saplingPrefab;
-        public GameObject fruitPrefab;
-        public Sprite plantImage;
+        public ItemData fruitItem;
 
         public float growTime;
         public float fruitsAmount;

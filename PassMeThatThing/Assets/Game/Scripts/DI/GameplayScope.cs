@@ -26,6 +26,7 @@ using Assets.Game.Scripts.GameFiles.Items;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data;
 
 namespace DI
 {
@@ -45,8 +46,9 @@ namespace DI
 
         [SerializeField] private ResourceDatabase resourceDatabase;
         [SerializeField] private WorkbenchItemRecipeDatabase recipeDatabase;
-        
-        
+        [SerializeField] private PlantDatabase plantDatabase;
+
+
         [Header("Managers on gameplay scene")]
         [SerializeField] private GameRandomEventManager eventManager;
         [SerializeField] private GlobalStageManager globalStageManager;
@@ -74,6 +76,8 @@ namespace DI
             builder.RegisterInstance(screenHintsDatabase);
             builder.RegisterInstance(resourceDatabase);
             builder.RegisterInstance(recipeDatabase);
+            builder.RegisterInstance(plantDatabase);
+
             //managers
             builder.RegisterComponent(eventManager);
             builder.RegisterComponent(globalStageManager);

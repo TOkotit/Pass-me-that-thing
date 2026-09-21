@@ -5,12 +5,13 @@ using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using VContainer;
 
 namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
 {
-    public class Farm : NetworkBehaviour, Interactable
+    public class Farm : NetworkBehaviour
     {
         [SerializeField] private ItemSpawner itemSpawner;
 
@@ -35,11 +36,25 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
             }
         }
 
-        public void SetPlant(string plantId)
+        [Server]
+        public void SetSeed(PlantSeedData seedData)
         {
-            var data = plantDatabase.GetPlant(plantId);
+            ResetFarm();
+            SetPlant(seedData.plants.First());
+        }
 
-            _currentPlant = data;
+        [Server]
+        public void ResetFarm()
+        {
+            _isCurrentPlantSet = false;
+            _growTimeElapsed = 0f;
+            _isGrown = false;
+        }
+
+        [Server]
+        public void SetPlant(PlantData plantData)
+        {
+            _currentPlant = plantData;
             _isCurrentPlantSet = true;
         }
 
@@ -60,29 +75,30 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
         [Server]
         private void GiveFruits()
         {
-            itemSpawner.ServerSpawnCurrentItem();
+            Debug.Log($"[FARM] {_currentPlant.fruitItem.Id}");
+            itemSpawner.ServerSpawnItem(_currentPlant.fruitItem.Id, itemSpawner.transform.position);
         }
 
-        public void Interact()
-        {
+        //public void Interact()
+        //{
 
-        }
+        //}
 
-        public void SrbToggle()
-        {
+        //public void SrbToggle()
+        //{
 
-        }
+        //}
 
-        public void InteractWithItem(PhysicalItem item)
-        {
+        //public void InteractWithItem(PhysicalItem item)
+        //{
+            
+        //}
 
-        }
+        //public override void OnStartClient()
+        //{
+        //    base.OnStartClient();
 
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-
-            InteractableRegistry.Instance.Register(gameObject, this);
-        }
+        //    InteractableRegistry.Instance.Register(gameObject, this);
+        //}
     }
 }

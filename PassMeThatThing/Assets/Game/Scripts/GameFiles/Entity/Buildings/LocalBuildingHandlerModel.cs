@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data;
 using System;
 using UnityEngine;
 using VContainer;
@@ -13,7 +14,9 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         public event Action OnConfirmBuildPreview;
 
         public event Action OnDestroyBuilding;
-        
+
+        public event Action<string, string> OnSeed;
+
         public void StartBuildPreview(string buildingId, string instanceId=null)
         {
             Debug.Log($"Starting building preview {buildingId}");
@@ -35,6 +38,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         public void DestroyBuilding()
         {
             OnDestroyBuilding?.Invoke();
+        }
+
+        public void SetSeed(string seed, string instId)
+        {
+            OnSeed?.Invoke(seed, instId);
         }
     }
 }
