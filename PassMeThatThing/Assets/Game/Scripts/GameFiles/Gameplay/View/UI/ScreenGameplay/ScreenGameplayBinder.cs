@@ -75,6 +75,8 @@ namespace Game.Gameplay.View.UI
         //private int _maxAddedResCount = 4;
         //private int _currentAddedResCount;
 
+        private List<VisualElement> _disabledPhaseBtns = new();
+
         private void Awake()
         {
 
@@ -109,6 +111,9 @@ namespace Game.Gameplay.View.UI
             _addedResContainer = _root.Q<VisualElement>("AddedResContainer");
 
             _localPlayerAvatar = _root.Q<VisualElement>("Avatar1");
+
+            _disabledPhaseBtns = _root.Q<VisualElement>("DisabledPhaseButtonsContainer")
+                .Children().ToList();
 
             for (var i = 2; i <= 4; i++)
             {
@@ -344,13 +349,27 @@ namespace Game.Gameplay.View.UI
 
         private void UpdateGameGlobalState(Stage newValue)
         {
-            _gameGlobalStateText.text = newValue.Type switch
+            var text = $"Day {newValue.Day} {newValue.Type}";
+
+            foreach (var disPhaseBtn in _disabledPhaseBtns)
             {
-                GlobalStagesType.Fight => "Фаза обороны",
-                GlobalStagesType.Preparation => "Фаза подготовки",
-                GlobalStagesType.Rest => "Отдых",
-                _ => "Неизвестная фаза"
-            };
+                disPhaseBtn.visible = true;
+            }
+
+            if (newValue.Type != GlobalStagesType.Rest)
+            {
+                var l = (newValue.Level - 1) % 3 ; //0, 1, 2
+                if (0 <= l && l < _disabledPhaseBtns.Count)
+                    _disabledPhaseBtns[l].visible = false;
+            }
+            else
+            {
+                if (3 < _disabledPhaseBtns.Count)
+                    _disabledPhaseBtns[3].visible = false;
+            }
+
+
+            _gameGlobalStateText.text = text;
         }
 
         private void ScreenMessageStage(Stage stage)
