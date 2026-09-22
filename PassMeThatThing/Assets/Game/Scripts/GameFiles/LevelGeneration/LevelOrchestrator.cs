@@ -199,7 +199,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
             foreach (var wallData in _solver.PlannedWalls)
             {
-                var instance = Instantiate(wallData.Prefab, wallData.Position, wallData.Rotation, levelContainer);
+                var parentTransform = wallData.OwnerRoom?.PrefabInstance 
+                    ? wallData.OwnerRoom.PrefabInstance.transform 
+                    : levelContainer;
+                var instance = Instantiate(wallData.Prefab, wallData.Position, wallData.Rotation, parentTransform);
                 instance.name = wallData.Name;
                 _placedWalls.Add(instance);
             }

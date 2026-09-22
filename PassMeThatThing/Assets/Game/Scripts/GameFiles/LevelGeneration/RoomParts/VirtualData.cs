@@ -45,5 +45,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         public Vector3 Position;
         public Quaternion Rotation;
         public string Name;
+        public PlacedRoomDataCluster OwnerRoom;
     }
 }

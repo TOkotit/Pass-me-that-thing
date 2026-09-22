@@ -1241,7 +1241,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 Prefab = prefab,
                 Position = wallPos,
                 Rotation = wallRot,
-                Name = instanceName
+                Name = instanceName,
+                OwnerRoom =  roomData
             });
         }
 
