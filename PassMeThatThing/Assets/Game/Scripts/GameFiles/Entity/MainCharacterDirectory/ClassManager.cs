@@ -7,12 +7,15 @@ namespace Game.Entity
     public class ClassManager
     {
         private readonly MainCharacterModel _model;
+        private readonly MCLocalModel _localModel;
         private ClassStats _currentClass;
         private Dictionary<string, ClassStats> _classCache = new Dictionary<string, ClassStats>();
 
-        public ClassManager(MainCharacterModel model)
+        public ClassManager(MainCharacterModel model,
+            MCLocalModel mCLocalModel)
         {
             _model = model;
+            _localModel = mCLocalModel;
             LoadAllClasses();
         }
 
@@ -38,9 +41,14 @@ namespace Game.Entity
         {
             _currentClass = newClass;
             if (newClass)
+            {
                 _model.ApplyMultipliers(newClass);
+                _localModel.SetClassId(newClass.name);
+            }
             else
-                _model.ResetToBase();
+            {
+                ResetToBase();
+            }
         }
 
         public void SetClass(string className)
@@ -55,6 +63,7 @@ namespace Game.Entity
         {
             _currentClass = null;
             _model.ResetToBase();
+            _localModel.ResetClassId();
         }
     }
 }

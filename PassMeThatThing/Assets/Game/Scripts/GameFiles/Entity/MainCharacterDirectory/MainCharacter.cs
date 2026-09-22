@@ -53,6 +53,7 @@ namespace Game.Entity
             get => _isAlive;
             set => _isAlive = value;
         }
+        public ClassManager ClassManager => _classManager;
 
         private void Initialize()
         {
@@ -61,7 +62,7 @@ namespace Game.Entity
             _model.SetPlayerInventory(playerInventory);
             _model.SetBaseStats(stats);
 
-            _classManager = new ClassManager(_model);
+            _classManager = new ClassManager(_model, _localModel);
         }
 
         [Server]
@@ -200,11 +201,40 @@ namespace Game.Entity
             RpcChangeClass(newClass.name);  
         }
 
+        [Server]
+        public void ChangeClass(string classId)
+        {
+            if (_classManager == null || string.IsNullOrEmpty(classId)) return;
+
+            _classManager.SetClass(classId);
+            ServerSetMaxHealth((int)_model.MaxHealth, true);
+            RpcChangeClass(classId);
+        }
+
         [ClientRpc]
         private void RpcChangeClass(string className)
         {
             if (isServer) return;
             _classManager.SetClass(className);   
+            if (isLocalPlayer)
+                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, DamagableModel.HealthPool.MaxHealth);
+        }
+
+        [Server]
+        public void ResetClass()
+        {
+            if (_classManager == null) return;
+
+            _classManager.ResetToBase();
+            ServerSetMaxHealth((int)_model.MaxHealth, true);
+            RpcResetClass();
+        }
+
+        [ClientRpc]
+        private void RpcResetClass()
+        {
+            if (isServer) return;
+            _classManager.ResetToBase();
             if (isLocalPlayer)
                 OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, DamagableModel.HealthPool.MaxHealth);
         }

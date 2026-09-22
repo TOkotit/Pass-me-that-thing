@@ -21,6 +21,8 @@ namespace Game.Entity
         private string _currentInteractableText;
         private Dictionary<Resource, float> _itemRecycleResources = new();
 
+        private ReactiveProperty<string> _currentClassId = new();
+
         public event Action<int, int> OnHealthChanged;
         public event Action<bool> OnDeathChanged;
         public event Action<float> OnCameraYRotationChanged;
@@ -91,6 +93,18 @@ namespace Game.Entity
                 OnPopupDescriptionModeChanged?.Invoke(value);
                 _currentDescriptionMode = value; 
             }
+        }
+
+        public ReactiveProperty<string> CurrentClassId => _currentClassId;
+
+        public void SetClassId(string classId)
+        {
+            _currentClassId.Value = classId;
+        }
+
+        public void ResetClassId()
+        {
+            _currentClassId.Value = "";
         }
 
         public void ReportCameraRotation(float angleY)

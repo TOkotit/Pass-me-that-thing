@@ -61,7 +61,7 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants
             _isCurrentPlantSet = false;
             _growTimeElapsed = 0f;
             _isGrown = false;
-            RpcInvokeGrowPercent(_growTimeElapsed / _currentPlant.growTime);
+            RpcInvokeGrowPercent(0f);
         }
 
         [Server]
