@@ -30,8 +30,11 @@ Shader "Custom/Outline Fill" {
       ColorMask RGB
 
       Stencil {
-        Ref 1
+        Ref 3
+        ReadMask 1
+        WriteMask 2
         Comp NotEqual
+        Pass Replace
       }
 
       CGPROGRAM
