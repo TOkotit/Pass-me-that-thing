@@ -11,6 +11,7 @@ namespace Assets.Game.Scripts.GameFiles.InteractableObjects
     {
         [SerializeField] private ClassData defaultClass;
         [SerializeField] private List<ClassShelfObject> shelfObjects;
+        [SerializeField] private bool infiniteCostumes;
 
         private void Start()
         {
@@ -52,7 +53,8 @@ namespace Assets.Game.Scripts.GameFiles.InteractableObjects
         {
             if (!targetPlayer) return;
 
-            if (targetPlayer.ClassManager.CurrentClass != null)
+            if (!infiniteCostumes
+                && targetPlayer.ClassManager.CurrentClass != null)
                 SetEnabled(targetPlayer.ClassManager.CurrentClass.name, true);
 
             targetPlayer.ResetClass();
@@ -63,12 +65,15 @@ namespace Assets.Game.Scripts.GameFiles.InteractableObjects
         {
             if (!targetPlayer) return;
 
-            if (targetPlayer.ClassManager.CurrentClass != null)
+            
+            if (!infiniteCostumes
+                && targetPlayer.ClassManager.CurrentClass != null)
                 SetEnabled(targetPlayer.ClassManager.CurrentClass.name, true);
 
             targetPlayer.ChangeClass(classId);
 
-            if (classId != "")
+            if (!infiniteCostumes 
+                && classId != "")
                 SetEnabled(classId, false);
         }
 
