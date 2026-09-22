@@ -376,7 +376,7 @@ namespace Game.Gameplay.View.UI
         
         public void RequestLevelGrid(Action<LevelGrid> f)
         {
-            if (_levelOrchestrator != null && _levelOrchestrator.levelGrid != null)
+            if (_levelOrchestrator && _levelOrchestrator.levelGrid)
             {
                 f?.Invoke(_levelOrchestrator.levelGrid);
             }
