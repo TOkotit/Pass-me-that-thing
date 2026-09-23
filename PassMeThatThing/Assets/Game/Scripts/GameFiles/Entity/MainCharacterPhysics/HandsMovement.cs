@@ -33,7 +33,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [SerializeField] private Transform animatorTransform;
 
         [Inject] private PlayerInventoryModel _playerInventoryModel;
-
+        [Header("Free Hand IK Rotation Offset")]
+        [Tooltip("Коррекция ориентации кисти при Free-хвате (в градусах, локально).")]
+        [SerializeField] private Vector3 rightHandFreeRotationOffset = new Vector3(0f, 90f, 0f);
+        [SerializeField] private Vector3 leftHandFreeRotationOffset  = new Vector3(0f, 90f, 0f);
         private MainCharacterModel _model;
 
         public Transform AnimatorTransform => animatorTransform;
@@ -439,16 +442,34 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             if (leftArmIK) leftArmIK.weight = targetLeft;
         }
 
+        
         private void PositionFreeHandTargets(PhysicalItem item, Vector3 localPoint)
         {
+            if (!item || !animatorTransform) return;
+
             var worldPoint = item.transform.TransformPoint(localPoint);
-            var rightDir = animatorTransform.right;
+
+            var rightDir   = animatorTransform.right;
             var separation = 0.1f;
 
-            rightHandIKTarget.position = worldPoint - rightDir * separation;
-            leftHandIKTarget.position = worldPoint + rightDir * separation;
-            rightHandIKTarget.rotation = item.transform.rotation;
-            leftHandIKTarget.rotation = item.transform.rotation;
+            var rightPos = worldPoint - rightDir * separation;
+            var leftPos  = worldPoint + rightDir * separation;
+
+            rightHandIKTarget.position = rightPos;
+            leftHandIKTarget.position  = leftPos;
+
+            var rightAim = worldPoint - rightPos;
+            var leftAim  = worldPoint - leftPos;
+
+            if (rightAim.sqrMagnitude < 1e-6f) rightAim = animatorTransform.forward;
+            if (leftAim.sqrMagnitude  < 1e-6f) leftAim  = animatorTransform.forward;
+
+            var up = animatorTransform.up;
+
+            var rightBase = Quaternion.LookRotation(rightAim, up) * Quaternion.Euler(rightHandFreeRotationOffset);
+            var leftBase  = Quaternion.LookRotation(leftAim,  up) * Quaternion.Euler(leftHandFreeRotationOffset);
+
+            rightHandIKTarget.rotation = rightBase; leftHandIKTarget.rotation  = leftBase * Quaternion.Euler(0f, 180f, 0f);
         }
 
         public void ChargeThrow()
