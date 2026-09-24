@@ -18,13 +18,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         [Header("Spread Distribution")]
         [SerializeField] private AnimationCurve spreadDistributionCurve = AnimationCurve.Linear(0, 0, 1, 1);
-
-        [Header("Recoil (Weapon Physics)")]
-        [SerializeField] private Vector3 baseRecoilForce = new Vector3(0, 0, -5f);
-        [SerializeField] private Vector3 baseRecoilTorque = new Vector3(-2f, 0, 0);
-        [SerializeField] private float recoilPerStability = 0.3f;
-        [SerializeField] private float recoilExponent = 1.5f;
-
+        
         [Header("Camera Recoil")]
         [SerializeField] private Vector2 verticalRecoilRange = new Vector2(0.5f, 2.5f);
         [SerializeField] private Vector2 horizontalRecoilRange = new Vector2(-1f, 1f);
@@ -81,16 +75,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             var baseDir = GetAimDirection();
             var shootDir = GetSpreadDirection(baseDir);
             Shoot(shootDir);
-
-            var recoilScale = Mathf.Pow(_currentStability * recoilPerStability, recoilExponent);
-            var finalRecoilForce = baseRecoilForce * (1 + recoilScale);
-            var finalRecoilTorque = baseRecoilTorque * (1 + recoilScale);
-
-            if (Item && Item.Rigidbody)
-            {
-                Item.Rigidbody.AddRelativeForce(finalRecoilForce, ForceMode.Impulse);
-                Item.Rigidbody.AddRelativeTorque(finalRecoilTorque, ForceMode.Impulse);
-            }
 
             if (Item && Item.Owner)
             {
