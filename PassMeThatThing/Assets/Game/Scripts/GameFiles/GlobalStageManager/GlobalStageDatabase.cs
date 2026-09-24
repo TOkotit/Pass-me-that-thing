@@ -52,10 +52,15 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
             }
         }
 
-        public LevelData GetLevelData(int dayIndex)
+        public LevelData GetLevelData(int levelIndex)
         {
-            Debug.Log($"dayIndex{dayIndex}");
-            return levelsData[dayIndex];
+            Debug.Log($"dayIndex{levelIndex}");
+            if (levelIndex < levelsData.Count)
+                return levelsData[levelIndex];
+            else
+            {
+                return levelsData.Last();
+            }
         }
     }
 
