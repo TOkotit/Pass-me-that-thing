@@ -46,7 +46,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
             _shadowCam.orthographic = false;
             _shadowCam.depthTextureMode = DepthTextureMode.Depth;
             _shadowCam.targetTexture = _shadowMap;
-            _shadowCam.enabled = false; // Отключаем автоматический рендер Unity
+            _shadowCam.enabled = false; 
 
             var urpData = camGo.AddComponent<UniversalAdditionalCameraData>();
             urpData.renderShadows = false;
@@ -56,41 +56,33 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         private void OnEnable()
         {
-            // Подписываемся на кадровую отрисовку URP
             RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
         }
 
         private void OnDisable()
         {
-            // Отписываемся при выключении, чтобы не рендерить лишнее
             RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
         }
 
         private void OnBeginCameraRendering(ScriptableRenderContext context, Camera renderingCamera)
         {
-            // Выполняем рендер теней только перед отрисовкой основной камеры игрока или SceneView
             if (renderingCamera.cameraType != CameraType.Game && renderingCamera.cameraType != CameraType.SceneView)
                 return;
 
             if (!IsActive || !GlobalVisionShaderManager.Instance)
                 return;
 
-            // 1. Актуализируем параметры камеры перед рендером
             _shadowCam.fieldOfView = _light.spotAngle;
             _shadowCam.nearClipPlane = 0.05f;
             _shadowCam.farClipPlane = _light.range;
             _shadowCam.aspect = 1f;
 
-            // 2. Считаем матрицу
             var V = _shadowCam.worldToCameraMatrix;
             var P = GL.GetGPUProjectionMatrix(_shadowCam.projectionMatrix, true);
             WorldToLightMatrix = P * V;
 
-            // 3. ПРИНУДИТЕЛЬНЫЙ РЕНДЕР URP:
-            // Этот вызов заставляет URP отрисовать камеру теней из текущей позиции прямо сейчас
+           
             UniversalRenderPipeline.RenderSingleCamera(context, _shadowCam);
-
-            // 4. Передаем свежий источник в менеджер
             GlobalVisionShaderManager.Instance.RegisterSource(this);
         }
 

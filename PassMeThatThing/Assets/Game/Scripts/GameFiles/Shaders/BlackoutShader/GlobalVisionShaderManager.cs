@@ -40,7 +40,7 @@ public class GlobalVisionShaderManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        int count = _registeredSources.Count;
+        var count = _registeredSources.Count;
         Shader.SetGlobalInt(SourcesCountId, count);
 
         if (count > 0)
@@ -49,9 +49,10 @@ public class GlobalVisionShaderManager : MonoBehaviour
             _conesPosRange.Clear();
             _conesDirAngle.Clear();
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var source = _registeredSources[i];
+                if (!source) return;
                 var t = source.transform;
                 var light = source.LightSource;
                 
@@ -67,7 +68,7 @@ public class GlobalVisionShaderManager : MonoBehaviour
             Shader.SetGlobalBuffer(ConesDirAngleId, _conesDirAngleBuffer);
             Shader.SetGlobalMatrixArray(MatricesId, _matrices);
             
-            if (_registeredSources[0].ShadowMap != null)
+            if (_registeredSources[0].ShadowMap)
                 Shader.SetGlobalTexture(ShadowMapId, _registeredSources[0].ShadowMap);
         }
 
