@@ -8,5 +8,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public abstract void Act();
         /// <summary> Должно ли действие выполняться непрерывно, пока зажата кнопка. </summary>
         public virtual bool IsContinuous => false;
+        public virtual void DeAct(){ }
     }
 }

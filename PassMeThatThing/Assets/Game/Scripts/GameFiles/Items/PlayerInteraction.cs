@@ -48,6 +48,7 @@ namespace Game.Scripts.GameFiles.Items
 
         private float _lastSwingTime = -999f;
         private bool _leftMouseHeld;
+        private bool _rightMouseHeld;
 
         public float InteractionDistance => interactionDistance;
         public PhysicalItemInteractionController PhysicalItemInteractionController => _physicalItemInteractionController;
@@ -90,14 +91,14 @@ namespace Game.Scripts.GameFiles.Items
         private void FixedUpdate()
         {
             if (!isLocalPlayer) return;
-            if (_leftMouseHeld)
-            {
-                var currentItem = _physicalItemInteractionController.CurrentHeldItem;
-                if (currentItem && currentItem.LmbReaction && currentItem.LmbReaction.IsContinuous)
-                {
-                    currentItem.LmbReaction.Act();
-                }
-            }
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+
+            if (_leftMouseHeld && currentItem && currentItem.LmbReaction && currentItem.LmbReaction.IsContinuous)
+                currentItem.LmbReaction.Act();
+
+            if (_rightMouseHeld && currentItem && currentItem.RmbReaction && currentItem.RmbReaction.IsContinuous)
+                currentItem.RmbReaction.Act();
+            
             if (_outlineRegistry.EnabledOutlines.Count > 1)
             {
                 for (var i = _outlineRegistry.EnabledOutlines.Count - 2; i >= 0; i--)
@@ -138,6 +139,8 @@ namespace Game.Scripts.GameFiles.Items
             _gameInput.Gameplay.Drop.performed += OnDropCharge;
             _gameInput.Gameplay.LeftMouse.performed += OnActPerformed;
             _gameInput.Gameplay.LeftMouse.canceled += OnActCanceled;
+            _gameInput.Gameplay.RightMouse.performed += OnRmbPerformed;   
+            _gameInput.Gameplay.RightMouse.canceled  += OnRmbCanceled;  
             _gameInput.Gameplay.Item1.performed += Select1;
             _gameInput.Gameplay.Item2.performed += Select2;
             _gameInput.Gameplay.Item3.performed += Select3;
@@ -166,6 +169,8 @@ namespace Game.Scripts.GameFiles.Items
                 _gameInput.Gameplay.Drop.performed -= OnDropCharge;
                 _gameInput.Gameplay.LeftMouse.performed -= OnActPerformed;
                 _gameInput.Gameplay.LeftMouse.canceled -= OnActCanceled;
+                _gameInput.Gameplay.RightMouse.performed -= OnRmbPerformed;   // ← добавить
+                _gameInput.Gameplay.RightMouse.canceled  -= OnRmbCanceled;  
                 _gameInput.Gameplay.Item1.performed -= Select1;
                 _gameInput.Gameplay.Item2.performed -= Select2;
                 _gameInput.Gameplay.Item3.performed -= Select3;
@@ -345,12 +350,48 @@ namespace Game.Scripts.GameFiles.Items
                     CmdSwing();
             }
         }
-
+        
         private void OnActCanceled(InputAction.CallbackContext context)
         {
+            if (!_leftMouseHeld) return;
             _leftMouseHeld = false;
+
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+            if (currentItem && currentItem.LmbReaction && currentItem.LmbReaction.IsContinuous)
+                currentItem.LmbReaction.DeAct();
+        }
+        
+        private void OnRmbPerformed(InputAction.CallbackContext context)
+        {
+            InterruptCurrentAction();
+
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+            if (!currentItem) return;
+
+            var rmb = currentItem.RmbReaction;
+            if (!rmb) return;
+
+            if (rmb.IsContinuous)
+            {
+                _rightMouseHeld = true;
+                rmb.Act();                 
+            }
+            else
+            {
+                rmb.Act();                 
+            }
         }
 
+        private void OnRmbCanceled(InputAction.CallbackContext context)
+        {
+            if (!_rightMouseHeld) return;
+            _rightMouseHeld = false;
+
+            var currentItem = _physicalItemInteractionController.CurrentHeldItem;
+            if (currentItem && currentItem.RmbReaction && currentItem.RmbReaction.IsContinuous)
+                currentItem.RmbReaction.DeAct();
+        }
+        
         private void OnReload(InputAction.CallbackContext context)
         {
             if (!isLocalPlayer) return;

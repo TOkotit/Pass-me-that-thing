@@ -51,6 +51,14 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private float _currentStability;
         private bool _isOverloading;
+        public float BaseSpread => baseSpread;
+        public float SpreadPerStability => spreadPerStability;
+
+        public void SetSpread(float newBaseSpread, float newSpreadPerStability)
+        {
+            baseSpread = newBaseSpread;
+            spreadPerStability = newSpreadPerStability;
+        }
 
         private void Update()
         {

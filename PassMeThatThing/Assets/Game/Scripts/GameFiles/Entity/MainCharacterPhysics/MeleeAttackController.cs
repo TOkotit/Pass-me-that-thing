@@ -72,7 +72,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
 
             _currentMelee.ClearContacts();
 
-            if (heldItem.Collider != null)
+            if (heldItem.Collider)
                 heldItem.Collider.isTrigger = true;
 
             _lastAttackTime = Time.time;
