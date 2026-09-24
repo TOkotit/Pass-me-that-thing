@@ -298,10 +298,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  baseRecoilForce: {x: 0, y: 0, z: -5}
-  baseRecoilTorque: {x: -2, y: 0, z: 0}
-  recoilPerStability: 0.1
-  recoilExponent: 1.5
   verticalRecoilRange: {x: 0.5, y: -0.1}
   horizontalRecoilRange: {x: -0.1, y: 0.1}
   recoilDistributionCurve:
@@ -484,11 +480,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  aimFov: 40
+  aimFov: 30
   zoomSpeed: 12
-  spreadMultiplier: 0.497
-  raiseOffset: {x: 0, y: 0.3, z: 0}
-  raiseSpeed: 8
+  spreadMultiplier: 0.703
 --- !u!1 &3982902725580917472
 GameObject:
   m_ObjectHideFlags: 0

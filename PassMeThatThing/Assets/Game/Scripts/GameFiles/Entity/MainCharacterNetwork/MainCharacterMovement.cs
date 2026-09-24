@@ -41,6 +41,10 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
     private Vector3 _lastVelocity;
     private PhysicalItem _item;
     private PhysicalItemInteractionController _itemController;
+    [SyncVar(hook = nameof(OnAnimatorSpeedChanged))]
+    private float _syncedAnimatorSpeed;
+
+    private float _lastSentAnimatorSpeed = -1f;
     public Vector3 LastVelocity => _lastVelocity;
     
     public void Control(bool isPressed)
@@ -272,13 +276,24 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
         if (!animator) return;
 
         var currentSpeed = 0f;
-        if (_moveDirection.sqrMagnitude > 0.01f) {
+        if (_moveDirection.sqrMagnitude > 0.01f)
+        {
             var holderCount = Mathf.Max(1, _item ? _item.Holders.Count : 1);
             currentSpeed = _model.Speed * (_movementMultiplier / holderCount) * _model.ExternalSpeedMultiplier;
             if (_isSprinting) currentSpeed *= _model.SprintMultiplier;
         }
 
-        animator.SetFloat("Speed", currentSpeed);
+        if (isLocalPlayer)
+            animator.SetFloat("Speed", currentSpeed);
+
+        if (isLocalPlayer && Mathf.Abs(currentSpeed - _lastSentAnimatorSpeed) > 0.01f)
+        {
+            _lastSentAnimatorSpeed = currentSpeed;
+            if (isServer)
+                _syncedAnimatorSpeed = currentSpeed;
+            else
+                CmdSetAnimatorSpeed(currentSpeed);
+        }
     }
 
     [Command]
@@ -286,7 +301,18 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
     {
         RpcPlayFootstepSound();
     }
+    private void OnAnimatorSpeedChanged(float oldValue, float newValue)
+    {
+        if (!isLocalPlayer && animator)
+            animator.SetFloat("Speed", newValue);
+    }
 
+    [Command]
+    private void CmdSetAnimatorSpeed(float speed)
+    {
+        _syncedAnimatorSpeed = speed;
+    }
+    
     [ClientRpc]
     private void RpcPlayFootstepSound()
     {
