@@ -1,38 +1,74 @@
-#ifndef MULTIPLE_VISION_INCLUDED
-#define MULTIPLE_VISION_INCLUDED
+#ifndef MULTIPLE_VISION_SHADOWS_INCLUDED
+#define MULTIPLE_VISION_SHADOWS_INCLUDED
 
-StructuredBuffer<float4> _VisionConesPosRange; // xyz = позиция, w = дальность
-StructuredBuffer<float4> _VisionConesDirAngle; // xyz = направление, w = cos(halfAngle)
-int _VisionConesCount;
+StructuredBuffer<float4> _VisionConesPosRange;
+StructuredBuffer<float4> _VisionConesDirAngle;
+
+Texture2D _VisionShadowMap;
+SamplerState sampler_VisionShadowMap;
+
+float4x4 _VisionWorldToLightMatrices[16];
+int _VisionSourcesCount;
 
 bool IsInsideCone(float3 O, float3 coneDir, float cosHalfAngle, float range, float3 P)
 {
     float3 toPoint = P - O;
     float dist = length(toPoint);
 
-    if (dist > range || dist < 0.0001)
-        return false;
+    if (dist > range || dist < 0.0001) return false;
 
     float3 dirToPoint = toPoint / dist;
-    float cosAngle = dot(dirToPoint, coneDir);
-
-    return cosAngle >= cosHalfAngle;
+    return dot(dirToPoint, coneDir) >= cosHalfAngle;
 }
 
 void GetMultipleVision_float(float3 WorldPos, out float Visibility)
 {
     float visibility = 0.0;
 
-    for (int c = 0; c < _VisionConesCount; c++)
+    for (int i = 0; i < _VisionSourcesCount; i++)
     {
-        float3 coneOrigin = _VisionConesPosRange[c].xyz;
-        float coneRange = _VisionConesPosRange[c].w;
-        float3 coneDir = _VisionConesDirAngle[c].xyz;
-        float cosHalfAngle = _VisionConesDirAngle[c].w;
+        float3 coneOrigin = _VisionConesPosRange[i].xyz;
+        float coneRange = _VisionConesPosRange[i].w;
+        float3 coneDir = _VisionConesDirAngle[i].xyz;
+        float cosHalfAngle = _VisionConesDirAngle[i].w;
 
         if (IsInsideCone(coneOrigin, coneDir, cosHalfAngle, coneRange, WorldPos))
         {
-            visibility = 1.0;
+            float4 shadowCoord = mul(_VisionWorldToLightMatrices[i], float4(WorldPos, 1.0));
+            
+            if (shadowCoord.w > 0.0)
+            {
+                float3 lightNDC = shadowCoord.xyz / shadowCoord.w;
+                float2 shadowUV = lightNDC.xy * 0.5 + 0.5;
+
+                #if UNITY_UV_STARTS_AT_TOP
+                    shadowUV.y = 1.0 - shadowUV.y;
+                #endif
+
+                if (shadowUV.x >= 0.0 && shadowUV.x <= 1.0 && shadowUV.y >= 0.0 && shadowUV.y <= 1.0)
+                {
+                    float sampledDepth = _VisionShadowMap.SampleLevel(sampler_VisionShadowMap, shadowUV, 0).r;
+                    float currentDepth = lightNDC.z;
+                    float bias = 0.002;
+
+                    #if defined(UNITY_REVERSED_Z)
+                        bool notOccluded = (currentDepth + bias) >= sampledDepth;
+                    #else
+                        bool notOccluded = (currentDepth - bias) <= sampledDepth;
+                    #endif
+
+                    if (notOccluded)
+                    {
+                        visibility = 1.0;
+                        break;
+                    }
+                }
+                else
+                {
+                    visibility = 1.0;
+                    break;
+                }
+            }
         }
     }
 

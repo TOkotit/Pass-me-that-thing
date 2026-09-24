@@ -1,62 +1,109 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 {
+    [RequireComponent(typeof(Light))]
     public class FlashlightVisionSource : NetworkBehaviour
     {
         [SerializeField] private Light _light;
+        [SerializeField] private int _shadowResolution = 512;
+        [SerializeField] private LayerMask _shadowLayerMask = ~0;
 
-        // Синхронизируется по сети — это единственное, что реально нужно разослать другим игрокам.
-        // Позиция/поворот фонарика уже приходят через NetworkTransform на объекте игрока (если он есть).
         [SyncVar]
         private bool _isOn = true;
 
+        private Camera _shadowCam;
+        private RenderTexture _shadowMap;
+
+        public Light LightSource => _light;
+        public RenderTexture ShadowMap => _shadowMap;
+        public Matrix4x4 WorldToLightMatrix { get; private set; }
+
+        public bool IsActive => isActiveAndEnabled && _isOn && _light != null && _light.enabled;
+
         private void Awake()
         {
-            if (!_light)
+            if (!_light) _light = GetComponent<Light>();
+
+            _shadowMap = new RenderTexture(_shadowResolution, _shadowResolution, 16, RenderTextureFormat.Depth)
             {
-                Debug.LogError($"[GameRandomEvents] No light found on {name}");
-                return;
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
             };
 
-            if (_light.type != LightType.Spot)
-                Debug.LogWarning($"[FlashlightVisionSource] На {gameObject.name} Light не Spot — конус видимости может работать некорректно.");
+            var camGo = new GameObject("FlashlightShadowCam");
+            camGo.transform.SetParent(transform, false);
+            camGo.transform.localPosition = Vector3.zero;
+            camGo.transform.localRotation = Quaternion.identity;
+
+            _shadowCam = camGo.AddComponent<Camera>();
+            _shadowCam.clearFlags = CameraClearFlags.Depth;
+            _shadowCam.backgroundColor = Color.black;
+            _shadowCam.cullingMask = _shadowLayerMask;
+            _shadowCam.orthographic = false;
+            _shadowCam.depthTextureMode = DepthTextureMode.Depth;
+            _shadowCam.targetTexture = _shadowMap;
+            _shadowCam.enabled = false; // Отключаем автоматический рендер Unity
+
+            var urpData = camGo.AddComponent<UniversalAdditionalCameraData>();
+            urpData.renderShadows = false;
+            urpData.requiresColorOption = CameraOverrideOption.Off;
+            urpData.requiresDepthOption = CameraOverrideOption.On;
         }
 
-        private void Update()
+        private void OnEnable()
         {
-           
-            if (!_isOn) return;
-            if (!_light.enabled) return;
-            if (GlobalVisionShaderManager.Instance == null) return;
+            // Подписываемся на кадровую отрисовку URP
+            RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+        }
 
-            GlobalVisionShaderManager.Instance.AddConeZone(
-                transform.position,
-                transform.forward,
-                _light.spotAngle * 0.5f,
-                _light.range
-            );
+        private void OnDisable()
+        {
+            // Отписываемся при выключении, чтобы не рендерить лишнее
+            RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+        }
+
+        private void OnBeginCameraRendering(ScriptableRenderContext context, Camera renderingCamera)
+        {
+            // Выполняем рендер теней только перед отрисовкой основной камеры игрока или SceneView
+            if (renderingCamera.cameraType != CameraType.Game && renderingCamera.cameraType != CameraType.SceneView)
+                return;
+
+            if (!IsActive || !GlobalVisionShaderManager.Instance)
+                return;
+
+            // 1. Актуализируем параметры камеры перед рендером
+            _shadowCam.fieldOfView = _light.spotAngle;
+            _shadowCam.nearClipPlane = 0.05f;
+            _shadowCam.farClipPlane = _light.range;
+            _shadowCam.aspect = 1f;
+
+            // 2. Считаем матрицу
+            var V = _shadowCam.worldToCameraMatrix;
+            var P = GL.GetGPUProjectionMatrix(_shadowCam.projectionMatrix, true);
+            WorldToLightMatrix = P * V;
+
+            // 3. ПРИНУДИТЕЛЬНЫЙ РЕНДЕР URP:
+            // Этот вызов заставляет URP отрисовать камеру теней из текущей позиции прямо сейчас
+            UniversalRenderPipeline.RenderSingleCamera(context, _shadowCam);
+
+            // 4. Передаем свежий источник в менеджер
+            GlobalVisionShaderManager.Instance.RegisterSource(this);
         }
 
         [Command]
-        public void CmdSetFlashlightOn(bool state)
+        public void CmdSetFlashlightOn(bool state) => _isOn = state;
+
+        private void OnDestroy()
         {
-            _isOn = state;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            if (_light == null) _light = GetComponent<Light>();
-            if (_light == null) return;
-
-            Gizmos.color = new Color(0.2f, 1f, 0.4f, 0.4f);
-            var halfAngleRad = _light.spotAngle * 0.5f * Mathf.Deg2Rad;
-            var endRadius = Mathf.Tan(halfAngleRad) * _light.range;
-
-            var endCenter = transform.position + transform.forward * _light.range;
-            Gizmos.DrawLine(transform.position, endCenter);
-            Gizmos.DrawWireSphere(endCenter, endRadius);
+            if (_shadowMap != null)
+            {
+                _shadowMap.Release();
+                Destroy(_shadowMap);
+            }
         }
     }
 }
