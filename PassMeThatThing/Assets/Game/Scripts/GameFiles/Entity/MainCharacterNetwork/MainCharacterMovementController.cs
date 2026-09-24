@@ -97,7 +97,7 @@ namespace MainCharacterNetwork
             TrySubscribe();
             
             //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
-            NetworkVisionManager.OnGlobalPowerStateChanged += HandlePowerStateChanged;
+            NetworkVisionManager.OnGlobalPowerStateChanged.AddListener(HandlePowerStateChanged); 
 
             if (NetworkVisionManager.Instance)
             {
@@ -118,7 +118,7 @@ namespace MainCharacterNetwork
                 TryUnsubscribe();
                 
                 //TODO тестовая штука для вкл/выкл шейдера света. Удалить для билда
-                NetworkVisionManager.OnGlobalPowerStateChanged -= HandlePowerStateChanged;
+                NetworkVisionManager.OnGlobalPowerStateChanged.RemoveListener(HandlePowerStateChanged);
             }
 
             SetVisionState(false);
