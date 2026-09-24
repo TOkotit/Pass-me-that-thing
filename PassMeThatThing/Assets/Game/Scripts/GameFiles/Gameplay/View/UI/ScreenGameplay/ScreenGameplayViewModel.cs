@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GameRoot;
 using Game.Entity;
@@ -66,6 +67,10 @@ namespace Game.Gameplay.View.UI
 
         public ResourceDatabase resourceDatabase;
 
+
+        //проводные ресы
+        public readonly LocalGeneralResourcesModel localGeneralResourcesModel;
+
         public BuildingsDatabase BuildingsDatabase => _buildingsDatabase;
         public PlayerInventoryModel PlayerInventoryModel => _playerInventoryModel;
 
@@ -79,6 +84,7 @@ namespace Game.Gameplay.View.UI
             _uiManager = uiManager;
 
             resourceDatabase = container.Resolve<ResourceDatabase>();
+            localGeneralResourcesModel = container.Resolve<LocalGeneralResourcesModel>();
 
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
             _itemDatabase =  container.Resolve<ItemDatabase>();
@@ -127,6 +133,17 @@ namespace Game.Gameplay.View.UI
         public void CancelWirePlacement(InputAction.CallbackContext c)
         {
             _localWireHandlerModel.CancelHighlight();
+        }
+
+        public void RequestSubWireRes(Action f)
+        {
+            f();
+            localGeneralResourcesModel.OnResChanged += f;
+        }
+
+        public void RequestUnSubWireRes(Action f)
+        {
+            localGeneralResourcesModel.OnResChanged -= f;
         }
 
         public void RequestSubAddedRes(Action<Resource, float> f)

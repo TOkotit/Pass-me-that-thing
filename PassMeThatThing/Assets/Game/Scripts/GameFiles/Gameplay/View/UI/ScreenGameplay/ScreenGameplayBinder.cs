@@ -14,6 +14,7 @@ using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using UnityEngine.InputSystem;
 using Stage = Game.Scripts.GameFiles.GlobalStageManager.Stage;
 using System.Collections;
+using System;
 
 
 namespace Game.Gameplay.View.UI
@@ -77,6 +78,10 @@ namespace Game.Gameplay.View.UI
 
         private List<VisualElement> _disabledPhaseBtns = new();
 
+        private Label _electricityWireResText;
+        private Label _waterWireResText;
+        private Label _fuelWireResText;
+
         private void Awake()
         {
 
@@ -114,6 +119,10 @@ namespace Game.Gameplay.View.UI
 
             _disabledPhaseBtns = _root.Q<VisualElement>("DisabledPhaseButtonsContainer")
                 .Children().ToList();
+
+            _electricityWireResText = _root.Q<Label>("electricityResText");
+            _waterWireResText = _root.Q<Label>("waterResText");
+            _fuelWireResText = _root.Q<Label>("fuelResText");
 
             for (var i = 2; i <= 4; i++)
             {
@@ -165,6 +174,8 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubHintsChange(UpdateHints);
 
             ViewModel.RequestSubAddedRes(UpdateAddedRes);
+
+            ViewModel.RequestSubWireRes(UpdateWireRes);
         }
 
         private void OnDestroy()
@@ -186,7 +197,17 @@ namespace Game.Gameplay.View.UI
 
             ViewModel.RequestUnSubHintsChange(UpdateHints);
             ViewModel.RequestUnSubAddedRes(UpdateAddedRes);
+            ViewModel.RequestUnSubWireRes(UpdateWireRes);
             ViewModel.RequestUnsub();
+        }
+
+
+        private void UpdateWireRes()
+        {
+            var d = ViewModel.localGeneralResourcesModel;
+            _electricityWireResText.text = $"{d.GetVal(WireType.Electricity).requiredQuantity}/{d.GetVal(WireType.Electricity).availableQuantity}";
+            _waterWireResText.text = $"{d.GetVal(WireType.Water).requiredQuantity}/{d.GetVal(WireType.Water).availableQuantity}";
+            _fuelWireResText.text = $"0/0";
         }
 
         private void UpdateAddedRes(Resource res, float val)

@@ -27,6 +27,7 @@ using Assets.Game.Scripts.GameFiles.Gameplay.View.OnScreenHints;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 
 namespace DI
 {
@@ -122,7 +123,8 @@ namespace DI
             builder.Register<LocalWireHandlerModel>(Lifetime.Singleton);
             builder.Register<LocalCraftModel>(Lifetime.Singleton);
             builder.Register<LocalMainStorageModel>(Lifetime.Singleton);
-            
+            builder.Register<LocalGeneralResourcesModel>(Lifetime.Singleton);
+
             builder.Register<PlayerReadyManager>(Lifetime.Singleton);
             
             builder.Register<GameoverHandler>(Lifetime.Singleton);

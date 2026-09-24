@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
@@ -14,6 +15,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         private float availableQuantity;
         private float requiredQuantity;
+
 
         public bool IsNetWorking => availableQuantity >= requiredQuantity &&  availableQuantity != 0;
 
@@ -68,10 +70,21 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
             _wireManager.WireNetsData[id] = new WireNetNetworkData(availableQuantity, requiredQuantity);
 
+            _wireManager.ServerSumRes();
 
             Debug.Log($"[W] Net {id} Value {availableQuantity}/{requiredQuantity}");
         }
 
-
+        public WireType GetWireType()
+        {
+            if (nodesId.Count != 0)
+            {
+                return _wireManager.AllNodes[nodesId.First()].WireType;
+            }
+            else
+            {
+                return WireType.Electricity;
+            }
+        }
     }
 }

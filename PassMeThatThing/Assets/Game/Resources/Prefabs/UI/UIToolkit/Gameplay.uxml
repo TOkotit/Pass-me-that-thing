@@ -76,7 +76,23 @@
         <ui:VisualElement name="ScreenMessageContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 100%;">
             <ui:Label text="Label" name="StageChangeMessage" class="screenMessage" style="visibility: hidden; opacity: 1;"/>
         </ui:VisualElement>
-        <ui:VisualElement name="AddedResContainer" style="flex-grow: 1; position: absolute; height: 156px; width: 327px; top: 12px; left: auto; right: 1138px;"/>
+        <ui:VisualElement name="WireResContainer" style="position: absolute; height: 133px; top: 9px; width: 286px; left: 424px; background-image: resource(&quot;Sprites/GameplaySprites/wireRes&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0;">
+            <ui:VisualElement style="flex-grow: 1; position: absolute; width: 252px; flex-direction: row; top: 13px; left: 16px; height: 84px; justify-content: space-evenly;">
+                <ui:VisualElement name="electricityRes" style="flex-grow: 0; width: 80px;">
+                    <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/BuildingSprites/wire&quot;); -unity-background-scale-mode: scale-to-fit;"/>
+                    <ui:Label text="" name="electricityResText" class="wireResText"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="waterRes" style="flex-grow: 0; width: 80px;">
+                    <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/BuildingSprites/pipe&quot;); -unity-background-scale-mode: scale-to-fit;"/>
+                    <ui:Label text="" name="waterResText" class="wireResText"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="fuelRes" style="flex-grow: 0; width: 80px;">
+                    <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/BuildingSprites/fuel&quot;); -unity-background-scale-mode: scale-to-fit;"/>
+                    <ui:Label text="" name="fuelResText" class="wireResText"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="AddedResContainer" style="flex-grow: 1; position: absolute; height: 128px; width: 293px; top: 147px; left: auto; right: 1184px;"/>
     </ui:GroupBox>
     <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex; opacity: 0; justify-content: center; background-color: rgba(0, 0, 0, 0.84); top: 0; left: 0;"/>
 </ui:UXML>

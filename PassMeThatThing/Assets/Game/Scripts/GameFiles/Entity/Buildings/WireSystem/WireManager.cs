@@ -1,7 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using AYellowpaper.SerializedCollections;
+using Game.Scripts.GameFiles.Items;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 {
@@ -11,6 +16,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         [SerializeField] private LayerMask obstacleLayer;
         //[SerializeField] private float maxDistance;
 
+        [Inject] private LocalGeneralResourcesModel localGeneralResourcesModel;
+        private SyncDictionary<WireType, WireNetNetworkData> _sumRes = new();
         
         private SyncDictionary<int, WireNode> allNodes = new ();
 
@@ -19,6 +26,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         private Dictionary<int, List<int>> nodeConnections = new ();
 
         private Dictionary<int, WireNetModel> wireNets = new ();
+
+        //данные сети проводов для синх
         private SyncDictionary<int, WireNetNetworkData> _wireNetsData = new();
 
         private Dictionary<int, WireNodeEntry> _entryObjects = new();
@@ -37,7 +46,19 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
         public SyncDictionary<int, WireNetNetworkData> WireNetsData => _wireNetsData;
         public Dictionary<int, WireNodeEntry> EntryObjects => _entryObjects;
 
-        
+        public IReadOnlyDictionary<WireType, WireNetNetworkData> SumRes => _sumRes;
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            _sumRes.OnChange += OnResChanged;
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            _sumRes.OnChange -= OnResChanged;
+        }
 
         [Server]
         public void RegisterNode(WireNode wireNode)
@@ -288,7 +309,51 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             wireVisualizer.ClearNodeLines(type, nodeId);
         }
 
-        
+        [Server]
+        public void ServerSumRes()
+        {
+            _sumRes.Clear();
+
+            var tempAv = new Dictionary<WireType, float>();
+            var tempReq = new Dictionary<WireType, float>();
+
+            foreach (WireType type in Enum.GetValues(typeof(WireType)))
+            {
+                tempAv.Add(type, 0f);
+                tempReq.Add(type, 0f);
+            }
+
+            foreach (var net in wireNets)
+            {
+                var type = net.Value.GetWireType();
+
+                tempAv[type] += WireNetsData[net.Key].availableQuantity;
+                tempReq[type] += WireNetsData[net.Key].requiredQuantity;
+            }
+
+            foreach (WireType type in Enum.GetValues(typeof(WireType)))
+            {
+                _sumRes.Add(type, new WireNetNetworkData(tempAv[type], tempReq[type]));
+            }
+
+            UpdateLocalResModel();
+        }
+
+        private void OnResChanged(SyncDictionary<WireType, WireNetNetworkData>.Operation op,
+            WireType type, WireNetNetworkData data)
+        {
+            UpdateLocalResModel();
+        }
+
+        private void UpdateLocalResModel()
+        {
+            localGeneralResourcesModel.Res.Clear();
+            foreach (var item in _sumRes)
+            {
+                localGeneralResourcesModel.Res.Add(item.Key, item.Value);
+            }
+            localGeneralResourcesModel.ResChanged();
+        }
 
         private void PrintDebugInfo()
         {
@@ -301,5 +366,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
             Debug.Log("[W] usedEntries" + string.Join("\n", _usedEntries
                 .Select(n => $"{n.Item1} - {n.Item2}")));
         }
+    }
+
+    public struct ResSumData
+    {
+        public WireType wireType;
+        public float availible;
+        public float required;
     }
 }
