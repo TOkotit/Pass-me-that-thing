@@ -49,7 +49,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Rigidbody UniversalPoint => universalPoint;
         public Rigidbody LeftHandPoint => leftHandPoint;
         public Rigidbody RightHandPoint => rightHandPoint;
-        public Vector3 DefaultPosition => defaultPosition;
+        public Vector3 DefaultPosition {get => defaultPosition; set => defaultPosition = value; }
         public bool DoActAndSwing => doActAndSwing;
         public bool CanBeOwned => canBeOwned;
         public MeleeItem Melee => meleeItem;

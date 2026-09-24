@@ -121,7 +121,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
 
             _stage = newStageData;
-
+            NetworkVisionManager.Instance.SetGlobalStateValue(_stage.Type == GlobalStagesType.Fight);
+            Debug.Log($"[GlobalStageManager] Change state to {_stage.Type} and send to the NetworkVisionManager.Instance.SetGlobalStateValue value {_stage.Type == GlobalStagesType.Fight}");
             var duration = _globalStageDatabase.GetStageDuration(_stage.Type, _stage.Level);
 
             if (duration > 0)

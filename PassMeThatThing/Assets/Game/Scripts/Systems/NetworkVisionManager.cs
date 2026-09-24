@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments;
+using Game.Scripts.GameFiles.GlobalStageManager;
 using Mirror;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class NetworkVisionManager : NetworkBehaviour
 {
@@ -10,7 +11,11 @@ public class NetworkVisionManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnGlobalPowerChanged))]
     private bool _isGlobalPowerOn = true;
     public bool IsGlobalPowerOn => _isGlobalPowerOn;
-    public static event System.Action<bool> OnGlobalPowerStateChanged;
+    
+    [SyncVar(hook = nameof(OnGlobalStateChanged))]
+    private bool _isGlobalStateValueFight = false;
+    public bool IsGlobalStateValueFight => _isGlobalStateValueFight;
+    public static UnityEvent<bool> OnGlobalPowerStateChanged = new();
 
     public static NetworkVisionManager Instance { get; private set; }
     public List<RoomLight> RoomLights = new();
@@ -23,33 +28,53 @@ public class NetworkVisionManager : NetworkBehaviour
 
     public void RegisterRoomLight(RoomLight roomLight)
     {
-        if(!RoomLights.Contains(roomLight))
-        {
-            RoomLights.Add(roomLight);
-            roomLight.SetActiveLocal(_isGlobalPowerOn);
-        }
+        if (RoomLights.Contains(roomLight)) return;
+        RoomLights.Add(roomLight);
+        var startingState = _isGlobalPowerOn ? (_isGlobalStateValueFight ? RoomLightState.Warning : RoomLightState.Common) : RoomLightState.Off;
+        roomLight.SetLampState(startingState);
     }
 
     public void UnregisterRoomLight(RoomLight roomLight)
     {
         RoomLights.Remove(roomLight);
     }
+
+    private void UpdateLamps()
+    {
+
+        var currentState = _isGlobalPowerOn ? (_isGlobalStateValueFight? RoomLightState.Warning : RoomLightState.Common)
+            : RoomLightState.Off;
+        
+        Debug.Log($"[NetworkVisionManager] Updating Lamps on value {currentState}");
+        foreach (var roomLight in RoomLights)
+        {
+            roomLight.SetLampState(currentState);
+        }
+    }
     
     private void OnGlobalPowerChanged(bool oldState, bool newState)
     {
         OnGlobalPowerStateChanged?.Invoke(newState);
+        UpdateLamps();
+    }
 
-        for (var i = RoomLights.Count - 1; i >= 0; i--)
-        {
-            var light =  RoomLights[i];
-            if (light) light.SetActiveLocal(newState);
-            else RoomLights.RemoveAt(i);
-        }
+    private void OnGlobalStateChanged(bool oldState, bool newState)
+    {
+        UpdateLamps();
     }
 
     [Server]
     public void SetGlobalPower(bool state)
     {
         _isGlobalPowerOn = state;
+        UpdateLamps();
+    }
+
+    [Server]
+    public void SetGlobalStateValue(bool state)
+    {
+        Debug.Log($"[NetworkVisionManager] SetGlobalStateValue value {state}");
+        _isGlobalStateValueFight = state;   
+        UpdateLamps();
     }
 }

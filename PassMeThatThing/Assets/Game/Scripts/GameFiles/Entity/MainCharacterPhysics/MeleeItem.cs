@@ -14,16 +14,22 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private List<AnimationClip> attackClips = new();
         [SerializeField] private float damage;
         [SerializeField] private int toughnessDamage;
-        [SerializeField] private float impactMultiplier = 1f; 
-        
+        [SerializeField] private float impactMultiplier = 1f;
+
+        private readonly HashSet<Collider> _contacts = new();
+
+        public IReadOnlyCollection<Collider> Contacts => _contacts;
+        public bool HasContacts => _contacts.Count > 0;
         public IReadOnlyList<AnimationClip> AttackClips => attackClips;
 
         private void OnTriggerEnter(Collider other)
         {
             if (!isServer) return;
             if (!item || !item.Rigidbody || physicsApplyer == null) return;
-            var impulse = item.Rigidbody.mass * item.Rigidbody.linearVelocity * impactMultiplier;
 
+            _contacts.Add(other);
+
+            var impulse = item.Rigidbody.mass * item.Rigidbody.linearVelocity * impactMultiplier;
             physicsApplyer.ApplyForceAndDamageToTarget(
                 other.gameObject,
                 impulse,
@@ -32,5 +38,25 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
                 transform.position,
                 forceMode: ForceMode.Impulse);
         }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!isServer) return;
+            _contacts.Remove(other);
+        }
+
+        
+        public bool HasForeignContacts(Transform exclude)
+        {
+            foreach (var c in _contacts)
+            {
+                if (!c) continue;
+                if (exclude && c.transform.IsChildOf(exclude)) continue;
+                return true;
+            }
+            return false;
+        }
+
+        public void ClearContacts() => _contacts.Clear();
     }
 }

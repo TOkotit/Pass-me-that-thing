@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 7947506528768295690}
   - component: {fileID: 3011918908626554960}
   - component: {fileID: 1596847164667920979}
+  - component: {fileID: 3236791510355548376}
   m_Layer: 7
   m_Name: MachineGun
   m_TagString: Item
@@ -172,7 +173,7 @@ MonoBehaviour:
   Resources:
     _serializedList: []
   lmbReaction: {fileID: 5086735289754512083}
-  rmbReaction: {fileID: 0}
+  rmbReaction: {fileID: 3236791510355548376}
   reloadReaction: {fileID: 5086735289754512083}
 --- !u!54 &3445057242232868048
 Rigidbody:
@@ -468,6 +469,26 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &3236791510355548376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912904147735164467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 866d21b7df684fcba7a6e912c7d80147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.ItemPhysics.RmbAimReaction
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  aimFov: 40
+  zoomSpeed: 12
+  spreadMultiplier: 0.497
+  raiseOffset: {x: 0, y: 0.3, z: 0}
+  raiseSpeed: 8
 --- !u!1 &3982902725580917472
 GameObject:
   m_ObjectHideFlags: 0
