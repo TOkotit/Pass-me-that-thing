@@ -23,12 +23,15 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
         public Matrix4x4 WorldToLightMatrix { get; private set; }
 
         public bool IsActive => isActiveAndEnabled && _isOn && _light != null && _light.enabled;
+        
+        // Флаг видимости для текущего кадра, управляется менеджером
+        public bool IsVisibleToPlayer { get; set; }
 
         private void Awake()
         {
             if (!_light) _light = GetComponent<Light>();
 
-            _shadowMap = new RenderTexture(_shadowResolution, _shadowResolution, 16, RenderTextureFormat.Depth)
+            _shadowMap = new RenderTexture(_shadowResolution, _shadowResolution, 32, RenderTextureFormat.Depth)
             {
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp
@@ -92,7 +95,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
             if (renderingCamera == _shadowCam)
                 return;
 
-            if (!IsActive)
+            // Прерываем рендер, если фонарик выключен или находится за спиной/далеко
+            if (!IsActive || !IsVisibleToPlayer)
                 return;
 
             UniversalRenderPipeline.RenderSingleCamera(context, _shadowCam);

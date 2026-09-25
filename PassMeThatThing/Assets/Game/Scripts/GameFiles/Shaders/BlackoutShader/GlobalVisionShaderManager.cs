@@ -6,7 +6,10 @@ public class GlobalVisionShaderManager : MonoBehaviour
 {
     public static GlobalVisionShaderManager Instance { get; private set; }
 
+    [SerializeField] private int _maxActiveSources = 8; // Максимальное число обрабатываемых фонариков
+
     private readonly List<FlashlightVisionSource> _registeredSources = new();
+    private readonly List<FlashlightVisionSource> _visibleSources = new();
     
     private readonly List<Vector4> _conesPosRange = new();
     private readonly List<Vector4> _conesDirAngle = new();
@@ -16,11 +19,26 @@ public class GlobalVisionShaderManager : MonoBehaviour
     private ComputeBuffer _conesDirAngleBuffer;
     private int _bufferCapacity = 1;
 
+    private Camera _mainCamera;
+    private readonly Plane[] _frustumPlanes = new Plane[6];
+
     private static readonly int ConesPosRangeId = Shader.PropertyToID("_VisionConesPosRange");
     private static readonly int ConesDirAngleId = Shader.PropertyToID("_VisionConesDirAngle");
     private static readonly int MatricesId = Shader.PropertyToID("_VisionWorldToLightMatrices");
     private static readonly int ShadowMapId = Shader.PropertyToID("_VisionShadowMap");
     private static readonly int SourcesCountId = Shader.PropertyToID("_VisionSourcesCount");
+
+    // Структура для сортировки списка без выделения памяти
+    private struct SourceDistanceComparer : IComparer<FlashlightVisionSource>
+    {
+        public Vector3 CameraPosition;
+        public int Compare(FlashlightVisionSource a, FlashlightVisionSource b)
+        {
+            float sqrA = (a.transform.position - CameraPosition).sqrMagnitude;
+            float sqrB = (b.transform.position - CameraPosition).sqrMagnitude;
+            return sqrA.CompareTo(sqrB);
+        }
+    }
 
     private void Awake()
     {
@@ -45,10 +63,17 @@ public class GlobalVisionShaderManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        int count = 0;
+        if (!_mainCamera) _mainCamera = Camera.main;
+        if (!_mainCamera) return;
+
+        GeometryUtility.CalculateFrustumPlanes(_mainCamera, _frustumPlanes);
+        Vector3 camPos = _mainCamera.transform.position;
+
+        _visibleSources.Clear();
         _conesPosRange.Clear();
         _conesDirAngle.Clear();
 
+        // 1. Фильтрация выключенных и невидимых источников
         for (int i = _registeredSources.Count - 1; i >= 0; i--)
         {
             var source = _registeredSources[i];
@@ -58,27 +83,46 @@ public class GlobalVisionShaderManager : MonoBehaviour
                 continue;
             }
 
-            if (source.IsActive)
+            source.IsVisibleToPlayer = false;
+
+            if (!source.IsActive) continue;
+
+            float range = source.LightSource.range;
+            Bounds bounds = new Bounds(source.transform.position, new Vector3(range, range, range) * 2f);
+
+            if (GeometryUtility.TestPlanesAABB(_frustumPlanes, bounds))
             {
-                source.UpdateCameraAndMatrix();
-
-                var t = source.transform;
-                var light = source.LightSource;
-                
-                _conesPosRange.Add(new Vector4(t.position.x, t.position.y, t.position.z, light.range));
-                _conesDirAngle.Add(new Vector4(t.forward.x, t.forward.y, t.forward.z, Mathf.Cos(light.spotAngle * 0.5f * Mathf.Deg2Rad)));
-                _matrices[count] = source.WorldToLightMatrix;
-
-                if (count == 0 && source.ShadowMap != null)
-                    Shader.SetGlobalTexture(ShadowMapId, source.ShadowMap);
-
-                count++;
-                if (count >= 16) break;
+                _visibleSources.Add(source);
             }
+        }
+
+        // 2. Сортировка по дистанции до игрока
+        _visibleSources.Sort(new SourceDistanceComparer { CameraPosition = camPos });
+
+        // 3. Выборка ближайших источников (не более _maxActiveSources)
+        int count = Mathf.Min(_visibleSources.Count, _maxActiveSources);
+
+        for (int i = 0; i < count; i++)
+        {
+            var source = _visibleSources[i];
+            
+            source.IsVisibleToPlayer = true;
+            source.UpdateCameraAndMatrix();
+
+            var t = source.transform;
+            var light = source.LightSource;
+            
+            _conesPosRange.Add(new Vector4(t.position.x, t.position.y, t.position.z, light.range));
+            _conesDirAngle.Add(new Vector4(t.forward.x, t.forward.y, t.forward.z, Mathf.Cos(light.spotAngle * 0.5f * Mathf.Deg2Rad)));
+            _matrices[i] = source.WorldToLightMatrix;
+
+            if (i == 0 && source.ShadowMap != null)
+                Shader.SetGlobalTexture(ShadowMapId, source.ShadowMap);
         }
 
         Shader.SetGlobalInt(SourcesCountId, count);
 
+        // 4. Отправка данных в шейдер
         if (count > 0)
         {
             EnsureBuffers(count);
