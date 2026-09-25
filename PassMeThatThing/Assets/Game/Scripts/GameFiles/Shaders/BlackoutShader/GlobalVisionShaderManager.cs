@@ -34,45 +34,61 @@ public class GlobalVisionShaderManager : MonoBehaviour
 
     public void RegisterSource(FlashlightVisionSource source)
     {
-        if (!_registeredSources.Contains(source) && _registeredSources.Count < 16)
+        if (source != null && !_registeredSources.Contains(source))
             _registeredSources.Add(source);
+    }
+
+    public void UnregisterSource(FlashlightVisionSource source)
+    {
+        _registeredSources.Remove(source);
     }
 
     private void LateUpdate()
     {
-        var count = _registeredSources.Count;
-        Shader.SetGlobalInt(SourcesCountId, count);
+        int count = 0;
+        _conesPosRange.Clear();
+        _conesDirAngle.Clear();
 
-        if (count > 0)
+        for (int i = _registeredSources.Count - 1; i >= 0; i--)
         {
-            EnsureBuffers(count);
-            _conesPosRange.Clear();
-            _conesDirAngle.Clear();
-
-            for (var i = 0; i < count; i++)
+            var source = _registeredSources[i];
+            if (source == null)
             {
-                var source = _registeredSources[i];
-                if (!source) return;
+                _registeredSources.RemoveAt(i);
+                continue;
+            }
+
+            if (source.IsActive)
+            {
+                source.UpdateCameraAndMatrix();
+
                 var t = source.transform;
                 var light = source.LightSource;
                 
                 _conesPosRange.Add(new Vector4(t.position.x, t.position.y, t.position.z, light.range));
                 _conesDirAngle.Add(new Vector4(t.forward.x, t.forward.y, t.forward.z, Mathf.Cos(light.spotAngle * 0.5f * Mathf.Deg2Rad)));
-                _matrices[i] = source.WorldToLightMatrix;
-            }
+                _matrices[count] = source.WorldToLightMatrix;
 
+                if (count == 0 && source.ShadowMap != null)
+                    Shader.SetGlobalTexture(ShadowMapId, source.ShadowMap);
+
+                count++;
+                if (count >= 16) break;
+            }
+        }
+
+        Shader.SetGlobalInt(SourcesCountId, count);
+
+        if (count > 0)
+        {
+            EnsureBuffers(count);
             _conesPosRangeBuffer.SetData(_conesPosRange);
             _conesDirAngleBuffer.SetData(_conesDirAngle);
 
             Shader.SetGlobalBuffer(ConesPosRangeId, _conesPosRangeBuffer);
             Shader.SetGlobalBuffer(ConesDirAngleId, _conesDirAngleBuffer);
             Shader.SetGlobalMatrixArray(MatricesId, _matrices);
-            
-            if (_registeredSources[0].ShadowMap)
-                Shader.SetGlobalTexture(ShadowMapId, _registeredSources[0].ShadowMap);
         }
-
-        _registeredSources.Clear();
     }
 
     private void EnsureBuffers(int count)

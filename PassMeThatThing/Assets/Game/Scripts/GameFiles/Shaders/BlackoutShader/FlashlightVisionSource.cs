@@ -56,12 +56,32 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         private void OnEnable()
         {
+            if (GlobalVisionShaderManager.Instance)
+                GlobalVisionShaderManager.Instance.RegisterSource(this);
+
             RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
         }
 
         private void OnDisable()
         {
+            if (GlobalVisionShaderManager.Instance)
+                GlobalVisionShaderManager.Instance.UnregisterSource(this);
+
             RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+        }
+
+        public void UpdateCameraAndMatrix()
+        {
+            _shadowCam.fieldOfView = _light.spotAngle;
+            _shadowCam.nearClipPlane = 0.05f;
+            _shadowCam.farClipPlane = _light.range;
+            _shadowCam.aspect = 1f;
+
+            _shadowCam.ResetProjectionMatrix();
+
+            var V = _shadowCam.worldToCameraMatrix;
+            var P = GL.GetGPUProjectionMatrix(_shadowCam.projectionMatrix, true);
+            WorldToLightMatrix = P * V;
         }
 
         private void OnBeginCameraRendering(ScriptableRenderContext context, Camera renderingCamera)
@@ -69,21 +89,13 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
             if (renderingCamera.cameraType != CameraType.Game && renderingCamera.cameraType != CameraType.SceneView)
                 return;
 
-            if (!IsActive || !GlobalVisionShaderManager.Instance)
+            if (renderingCamera == _shadowCam)
                 return;
 
-            _shadowCam.fieldOfView = _light.spotAngle;
-            _shadowCam.nearClipPlane = 0.05f;
-            _shadowCam.farClipPlane = _light.range;
-            _shadowCam.aspect = 1f;
+            if (!IsActive)
+                return;
 
-            var V = _shadowCam.worldToCameraMatrix;
-            var P = GL.GetGPUProjectionMatrix(_shadowCam.projectionMatrix, true);
-            WorldToLightMatrix = P * V;
-
-           
             UniversalRenderPipeline.RenderSingleCamera(context, _shadowCam);
-            GlobalVisionShaderManager.Instance.RegisterSource(this);
         }
 
         [Command]

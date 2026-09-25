@@ -45,25 +45,19 @@ void GetMultipleVision_float(float3 WorldPos, out float Visibility)
                     shadowUV.y = 1.0 - shadowUV.y;
                 #endif
 
-                if (shadowUV.x >= 0.0 && shadowUV.x <= 1.0 && shadowUV.y >= 0.0 && shadowUV.y <= 1.0)
-                {
-                    float sampledDepth = _VisionShadowMap.SampleLevel(sampler_VisionShadowMap, shadowUV, 0).r;
-                    float currentDepth = lightNDC.z;
-                    float bias = 0.002;
+                float2 clampedUV = clamp(shadowUV, 0.001, 0.999);
 
-                    #if defined(UNITY_REVERSED_Z)
-                        bool notOccluded = (currentDepth + bias) >= sampledDepth;
-                    #else
-                        bool notOccluded = (currentDepth - bias) <= sampledDepth;
-                    #endif
+                float sampledDepth = _VisionShadowMap.SampleLevel(sampler_VisionShadowMap, clampedUV, 0).r;
+                float currentDepth = lightNDC.z;
+                float bias = 0.002;
 
-                    if (notOccluded)
-                    {
-                        visibility = 1.0;
-                        break;
-                    }
-                }
-                else
+                #if defined(UNITY_REVERSED_Z)
+                    bool notOccluded = (currentDepth + bias) >= sampledDepth;
+                #else
+                    bool notOccluded = (currentDepth - bias) <= sampledDepth;
+                #endif
+
+                if (notOccluded)
                 {
                     visibility = 1.0;
                     break;
