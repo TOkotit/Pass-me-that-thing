@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Game.Scripts.GameFiles.GameRandomEvents.Blackout;
+using UnityEngine.Serialization;
 
 public class GlobalVisionShaderManager : MonoBehaviour
 {
     public static GlobalVisionShaderManager Instance { get; private set; }
 
-    [SerializeField] private int _maxActiveSources = 8; // Максимальное число обрабатываемых фонариков
+    [SerializeField] private int maxActiveSources = 8;
 
     private readonly List<FlashlightVisionSource> _registeredSources = new();
     private readonly List<FlashlightVisionSource> _visibleSources = new();
@@ -28,14 +29,13 @@ public class GlobalVisionShaderManager : MonoBehaviour
     private static readonly int ShadowMapId = Shader.PropertyToID("_VisionShadowMap");
     private static readonly int SourcesCountId = Shader.PropertyToID("_VisionSourcesCount");
 
-    // Структура для сортировки списка без выделения памяти
     private struct SourceDistanceComparer : IComparer<FlashlightVisionSource>
     {
         public Vector3 CameraPosition;
         public int Compare(FlashlightVisionSource a, FlashlightVisionSource b)
         {
-            float sqrA = (a.transform.position - CameraPosition).sqrMagnitude;
-            float sqrB = (b.transform.position - CameraPosition).sqrMagnitude;
+            var sqrA = (a.transform.position - CameraPosition).sqrMagnitude;
+            var sqrB = (b.transform.position - CameraPosition).sqrMagnitude;
             return sqrA.CompareTo(sqrB);
         }
     }
@@ -52,7 +52,7 @@ public class GlobalVisionShaderManager : MonoBehaviour
 
     public void RegisterSource(FlashlightVisionSource source)
     {
-        if (source != null && !_registeredSources.Contains(source))
+        if (source && !_registeredSources.Contains(source))
             _registeredSources.Add(source);
     }
 
@@ -67,17 +67,16 @@ public class GlobalVisionShaderManager : MonoBehaviour
         if (!_mainCamera) return;
 
         GeometryUtility.CalculateFrustumPlanes(_mainCamera, _frustumPlanes);
-        Vector3 camPos = _mainCamera.transform.position;
+        var camPos = _mainCamera.transform.position;
 
         _visibleSources.Clear();
         _conesPosRange.Clear();
         _conesDirAngle.Clear();
 
-        // 1. Фильтрация выключенных и невидимых источников
-        for (int i = _registeredSources.Count - 1; i >= 0; i--)
+        for (var i = _registeredSources.Count - 1; i >= 0; i--)
         {
             var source = _registeredSources[i];
-            if (source == null)
+            if (!source)
             {
                 _registeredSources.RemoveAt(i);
                 continue;
@@ -87,8 +86,8 @@ public class GlobalVisionShaderManager : MonoBehaviour
 
             if (!source.IsActive) continue;
 
-            float range = source.LightSource.range;
-            Bounds bounds = new Bounds(source.transform.position, new Vector3(range, range, range) * 2f);
+            var range = source.LightSource.range;
+            var bounds = new Bounds(source.transform.position, new Vector3(range, range, range) * 2f);
 
             if (GeometryUtility.TestPlanesAABB(_frustumPlanes, bounds))
             {
@@ -96,13 +95,11 @@ public class GlobalVisionShaderManager : MonoBehaviour
             }
         }
 
-        // 2. Сортировка по дистанции до игрока
         _visibleSources.Sort(new SourceDistanceComparer { CameraPosition = camPos });
 
-        // 3. Выборка ближайших источников (не более _maxActiveSources)
-        int count = Mathf.Min(_visibleSources.Count, _maxActiveSources);
+        var count = Mathf.Min(_visibleSources.Count, maxActiveSources);
 
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             var source = _visibleSources[i];
             
@@ -116,13 +113,12 @@ public class GlobalVisionShaderManager : MonoBehaviour
             _conesDirAngle.Add(new Vector4(t.forward.x, t.forward.y, t.forward.z, Mathf.Cos(light.spotAngle * 0.5f * Mathf.Deg2Rad)));
             _matrices[i] = source.WorldToLightMatrix;
 
-            if (i == 0 && source.ShadowMap != null)
+            if (i == 0 && source.ShadowMap)
                 Shader.SetGlobalTexture(ShadowMapId, source.ShadowMap);
         }
 
         Shader.SetGlobalInt(SourcesCountId, count);
 
-        // 4. Отправка данных в шейдер
         if (count > 0)
         {
             EnsureBuffers(count);

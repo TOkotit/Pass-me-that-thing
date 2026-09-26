@@ -24,7 +24,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         public bool IsActive => isActiveAndEnabled && _isOn && _light != null && _light.enabled;
         
-        // Флаг видимости для текущего кадра, управляется менеджером
         public bool IsVisibleToPlayer { get; set; }
 
         private void Awake()
@@ -95,7 +94,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
             if (renderingCamera == _shadowCam)
                 return;
 
-            // Прерываем рендер, если фонарик выключен или находится за спиной/далеко
             if (!IsActive || !IsVisibleToPlayer)
                 return;
 
@@ -107,7 +105,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
         private void OnDestroy()
         {
-            if (_shadowMap != null)
+            if (_shadowMap)
             {
                 _shadowMap.Release();
                 Destroy(_shadowMap);
