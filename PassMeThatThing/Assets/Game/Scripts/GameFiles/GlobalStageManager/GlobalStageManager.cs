@@ -170,13 +170,13 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
-                if (_enemySpawner.EnemyCount > 0)
-                {
-                    _inOvertime = true;
-                    _syncRemainingTime = 0f;
-                    RpcStartOvertime();
-                }
-                else
+                //if (_enemySpawner.EnemyCount > 0)
+                //{
+                //    _inOvertime = true;
+                //    _syncRemainingTime = 0f;
+                //    RpcStartOvertime();
+                //}
+                //else
                 {
                     EndFight();
                 }

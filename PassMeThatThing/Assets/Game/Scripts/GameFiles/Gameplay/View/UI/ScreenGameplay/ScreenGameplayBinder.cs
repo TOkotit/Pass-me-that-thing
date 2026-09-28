@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using Stage = Game.Scripts.GameFiles.GlobalStageManager.Stage;
 using System.Collections;
 using System;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenGameplay.CustomTypesForToolkit;
 
 
 namespace Game.Gameplay.View.UI
@@ -30,7 +31,7 @@ namespace Game.Gameplay.View.UI
         private StyleRotate _styleRotate;
         private int _activeSlotIndex = -1;
 
-        private Dictionary<int, TemplateContainer> _gameEvents = new ();
+        private Dictionary<int, CustomGameEvent> _gameEvents = new ();
         
         private GameEventsDatabase _gameEventsDatabase;
         
@@ -149,7 +150,7 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestSubImage(SetItemImageSprite);
 
-            ViewModel.InitGameEvent(Clear, AddGameEvent);
+            ViewModel.InitGameEvent(ClearEvents, AddGameEvent);
             ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
             
             ViewModel.RequestLevelGrid(SetMinimapSource);
@@ -463,6 +464,8 @@ namespace Game.Gameplay.View.UI
             _itemImages[index].style.backgroundImage = new StyleBackground(sprite);
         }
 
+        //EVENTS
+
         private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
         {
             foreach (var i in dict)
@@ -477,7 +480,7 @@ namespace Game.Gameplay.View.UI
             _gameEventsDatabase = gameEventsDatabase;
         }
 
-        private void Clear()
+        private void ClearEvents()
         {
             _gameEvents.Clear();
         }
@@ -486,15 +489,23 @@ namespace Game.Gameplay.View.UI
         {
             if (_gameEvents.ContainsKey(eventId)) return;
             
-            var gameEvent = gameEventPrefab.Instantiate();
-            
-            _gameEventsContainer.Add(gameEvent);
-            _gameEvents.Add(eventId, gameEvent);
-            
-            gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
-            gameEvent.Q<Label>("EventLb").text = $"R-{roomNumber}";
+            var gameEventTempl = gameEventPrefab.Instantiate();
+            _gameEventsContainer.Add(gameEventTempl);
 
-            gameEvent.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
+
+            var customGameEvent = gameEventTempl.Q<CustomGameEvent>("CustomGameEvent");
+            customGameEvent.timeBar = gameEventTempl.Q<ProgressBar>("EventTimeProgress");
+            _gameEvents.Add(eventId, customGameEvent);
+
+            if (ViewModel.gameRandomEventManager.StartedEvents.TryGetValue(eventId, out var ev))
+            {
+                ev.OnSyncTimerChanged += customGameEvent.UpdateTimeProgress;
+            }
+
+            gameEventTempl.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+            gameEventTempl.Q<Label>("EventLb").text = $"R-{roomNumber}";
+
+            gameEventTempl.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
         }
         
         private void UpdateGameEvent(int eventId, Sprite icon, int roomNumber)
@@ -514,12 +525,17 @@ namespace Game.Gameplay.View.UI
                     .From(new Vector2(1f, 1f)).SetEase(Ease.InOutBack)
                     .OnComplete(() =>
                     {
+                        if (ViewModel.gameRandomEventManager.StartedEvents.TryGetValue(eventId, out var ev))
+                        {
+                            ev.OnSyncTimerChanged -= gameEvent.UpdateTimeProgress;
+                        }
+
                         _gameEventsContainer.Remove(gameEvent);
                         _gameEvents.Remove(eventId);
                     });
             }
-                
         }
+        
 
         public void UpdatePlugImages(List<WireType> types)
         {

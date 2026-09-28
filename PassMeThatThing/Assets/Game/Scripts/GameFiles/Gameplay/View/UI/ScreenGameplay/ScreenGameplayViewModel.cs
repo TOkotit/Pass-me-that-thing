@@ -47,7 +47,7 @@ namespace Game.Gameplay.View.UI
 
         private readonly PlayerInventoryModel  _playerInventoryModel;
         private readonly ItemDatabase _itemDatabase;
-        private readonly GameRandomEventManager _gameRandomEventManager;
+        
         private readonly GameEventsDatabase _gameEventsDatabase;
         private readonly BuildingsDatabase _buildingsDatabase;
         private readonly GlobalStageManager _globalStageManager;
@@ -66,7 +66,7 @@ namespace Game.Gameplay.View.UI
         private Action<int> removeEvent;
 
         public ResourceDatabase resourceDatabase;
-
+        public readonly GameRandomEventManager gameRandomEventManager;
 
         //проводные ресы
         public readonly LocalGeneralResourcesModel localGeneralResourcesModel;
@@ -85,13 +85,14 @@ namespace Game.Gameplay.View.UI
 
             resourceDatabase = container.Resolve<ResourceDatabase>();
             localGeneralResourcesModel = container.Resolve<LocalGeneralResourcesModel>();
+            gameRandomEventManager = container.Resolve<GameRandomEventManager>();
 
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
             _itemDatabase =  container.Resolve<ItemDatabase>();
             _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             _buildingsDatabase = container.Resolve<BuildingsDatabase>();
 
-            _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
+            
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
@@ -320,28 +321,39 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Clear();
         }
 
+        //EVENTS
+
         public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
         {
             setupEventDatabase(_gameEventsDatabase);
-            _gameRandomEventManager.OnEventReceived += f;
+            gameRandomEventManager.OnEventReceived += f;
         }
         
         public void UnsubInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
         {
-            _gameRandomEventManager.OnEventReceived -= f;
+            gameRandomEventManager.OnEventReceived -= f;
         }
 
         public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
         {
             clear();
-            foreach (var i in _gameRandomEventManager.StartedEvents)
+            foreach (var i in gameRandomEventManager.StartedEvents)
             {
                 var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
                 add(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
-        
-        
+
+        public void RequestSubGameEvent(Action<int, Sprite, int> add, 
+            Action<int, Sprite, int> update, 
+            Action<int> remove)
+        {
+            addEvent = add;
+            updateEvent = update;
+            removeEvent = remove;
+            gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
+        }
+
         private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
         {
             var e = _gameEventsDatabase.GetEvent(newItem.EventType);
@@ -360,22 +372,11 @@ namespace Game.Gameplay.View.UI
             }
         }
 
-
-        public void RequestSubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, Sprite, int> update, 
-            Action<int> remove)
-        {
-            addEvent = add;
-            updateEvent = update;
-            removeEvent = remove;
-            _gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
-        }
-        
         public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
             Action<int, Sprite, int> update, 
             Action<int> remove)
         {
-            _gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
+            gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
         }
 
 
