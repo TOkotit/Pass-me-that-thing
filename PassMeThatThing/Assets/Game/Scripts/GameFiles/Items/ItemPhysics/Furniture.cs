@@ -16,13 +16,19 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float collisionDamageThreshold = 5f;
         [SerializeField] private float collisionDamageMultiplier = 1f;
         [SerializeField] private float flatDamageReduction = 0f;
-
+        [SerializeField] private int toughness;
         [SerializeField] private PhysicalItem _item;
         [SerializeField] private List<PhysicalItem> _items = new List<PhysicalItem>();
         private readonly List<Collider> _connectedTo = new List<Collider>();
         private string _savedTag = "Item";
-
+    
         public PhysicalItem Item => _item;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            ServerSetMaxToughness(toughness,true);
+        }
 
         public override void OnDeath()
         {
