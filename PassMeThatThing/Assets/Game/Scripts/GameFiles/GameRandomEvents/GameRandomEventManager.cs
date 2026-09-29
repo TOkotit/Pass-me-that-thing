@@ -26,6 +26,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 
         private float _pipebreakChanceBoost;
 
+
+        //TODO вынести в отдельный класс
         //починка станций, сдача предметов и тд
         private Coroutine _timeTickCoroutine;
         private int _idTaskHandlerGenerator = 1;
@@ -33,6 +35,15 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         private int _idTaskGenerator = 1;
         private SyncDictionary<int, GameTask> _gameTasks = new();
         private SyncDictionary<int, GameTaskData> _gameTasksData = new();
+
+        //TODO вынести в отдельный класс
+        //квота
+        [SyncVar]
+        private int _currentStageQuota;
+
+        [SyncVar]
+        private int _requiredStageQuota;
+
 
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
         public SyncDictionary<int, GameTask> GameTasks => _gameTasks;

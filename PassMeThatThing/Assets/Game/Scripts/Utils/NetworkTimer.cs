@@ -13,6 +13,8 @@ namespace Game.Scripts.Utils
         private Coroutine _countdownCoroutine;
         private NetworkBehaviour _context;
         private event Action<float> _onTick;
+
+        private WaitForSeconds _secDelay = new WaitForSeconds(1);
         
         public event Action TimeIsOver;
 
@@ -51,9 +53,9 @@ namespace Game.Scripts.Utils
         {
             while (_remainingTime > 0)
             {
-                _remainingTime -= Time.deltaTime;
+                _remainingTime -= 1;
                 _onTick?.Invoke(_remainingTime);
-                yield return null;
+                yield return _secDelay;
             }
             _remainingTime = 0;
             _onTick?.Invoke(0);

@@ -27,9 +27,12 @@
                 <ui:VisualElement name="VisualElement" style="flex-grow: 1; right: auto; bottom: auto; left: 135px; top: 137px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-2236324273849735119&amp;guid=15e3c10aea467e4489bfdd34048a4004&amp;type=3#arrow-up&quot;); position: absolute; height: 26px; width: 31px;"/>
             </Game.Scripts.GameFiles.LevelGeneration.UI.MinimapView>
             <ui:VisualElement name="MinimapFrame" style="flex-grow: 1; top: -5px; right: -17px; position: absolute; height: 315px; width: 353px; background-image: resource(&quot;Sprites/GameplaySprites/minimap Frame&quot;); -unity-background-scale-mode: scale-to-fit;"/>
-            <ui:GroupBox name="EventsContainer" style="height: 593px; width: 294px; align-items: stretch; position: absolute; background-color: rgba(115, 115, 115, 0); justify-content: flex-start; top: 304px; left: auto; right: 0;"/>
+            <ui:VisualElement name="QuotaContainer" style="flex-grow: 1; position: absolute; height: 84px; width: 312px; top: 306px; left: 0; font-size: 39px; color: rgb(255, 255, 255);">
+                <ui:Label text="#99000/99000" name="QuotaText"/>
+            </ui:VisualElement>
+            <ui:GroupBox name="EventsContainer" style="height: 505px; width: 294px; align-items: stretch; position: absolute; background-color: rgba(115, 115, 115, 0); justify-content: flex-start; top: 392px; left: auto; right: 0;"/>
         </ui:VisualElement>
-        <ui:GroupBox name="PhaseContainer" style="height: 146px; width: 313px; align-items: stretch; align-content: flex-start; align-self: flex-start; position: absolute; flex-direction: row; justify-content: space-between; font-size: 100%; background-image: resource(&quot;Sprites/GameplaySprites/Phase/phaseBackground&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0; top: 0; left: 1204px;">
+        <ui:GroupBox name="PhaseContainer" style="height: 154px; width: 311px; align-items: stretch; align-content: flex-start; align-self: flex-start; position: absolute; flex-direction: row; justify-content: space-between; font-size: 100%; background-image: resource(&quot;Sprites/GameplaySprites/Phase/phaseBackground&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0; top: 0; left: 1206px;">
             <ui:Label text="Label" name="RemainingTimeLb" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); font-size: 22px; position: absolute; height: 23px; width: 116px; top: 21px; left: 92px;"/>
             <ui:Label text="Label" name="PhaseLb" style="flex-grow: 1; font-size: 23%; color: rgb(255, 255, 255); -unity-text-align: lower-left; position: absolute; top: 107px; left: 13px; width: 195px;"/>
             <ui:VisualElement name="EnabledPhaseButtonsContainer" style="flex-grow: 1; flex-direction: row; align-self: auto; position: absolute; top: 60px; left: 18px; width: 277px; justify-content: space-around;">
@@ -76,8 +79,8 @@
         <ui:VisualElement name="ScreenMessageContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 100%;">
             <ui:Label text="Label" name="StageChangeMessage" class="screenMessage" style="visibility: hidden; opacity: 1;"/>
         </ui:VisualElement>
-        <ui:VisualElement name="WireResContainer" style="position: absolute; height: 133px; top: 9px; width: 286px; left: 424px; background-image: resource(&quot;Sprites/GameplaySprites/wireRes&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0;">
-            <ui:VisualElement style="flex-grow: 1; position: absolute; width: 252px; flex-direction: row; top: 13px; left: 16px; height: 84px; justify-content: space-evenly;">
+        <ui:VisualElement name="WireResContainer" style="position: absolute; height: 73px; top: 9px; width: 174px; left: 424px; background-image: resource(&quot;Sprites/GameplaySprites/wireRes&quot;); -unity-background-scale-mode: scale-to-fit; background-position-x: left 0; background-position-y: top 0;">
+            <ui:VisualElement style="flex-grow: 1; position: absolute; width: 148px; flex-direction: row; top: 13px; left: 13px; height: 47px; justify-content: space-evenly;">
                 <ui:VisualElement name="electricityRes" style="flex-grow: 0; width: 80px;">
                     <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/BuildingSprites/wire&quot;); -unity-background-scale-mode: scale-to-fit;"/>
                     <ui:Label text="" name="electricityResText" class="wireResText"/>
@@ -92,7 +95,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="AddedResContainer" style="flex-grow: 1; position: absolute; height: 128px; width: 293px; top: 147px; left: auto; right: 1184px;"/>
+        <ui:VisualElement name="AddedResContainer" style="flex-grow: 1; position: absolute; height: 76px; width: 272px; top: 12px; left: auto; right: 1036px;"/>
     </ui:GroupBox>
     <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex; opacity: 0; justify-content: center; background-color: rgba(0, 0, 0, 0.84); top: 0; left: 0;"/>
 </ui:UXML>

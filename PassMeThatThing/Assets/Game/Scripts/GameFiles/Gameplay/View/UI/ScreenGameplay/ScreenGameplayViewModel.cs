@@ -322,61 +322,74 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Clear();
         }
 
-        //EVENTS
-        public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
+        //EVENTS OLD
+
+        //public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
+        //{
+        //    setupEventDatabase(gameEventsDatabase);
+        //    gameRandomEventManager.OnEventReceived += f;
+        //}
+
+        //public void UnsubInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
+        //{
+        //    gameRandomEventManager.OnEventReceived -= f;
+        //}
+
+        //public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
+        //{
+        //    clear();
+        //    foreach (var i in gameRandomEventManager.StartedEvents)
+        //    {
+        //        var e = gameEventsDatabase.GetEvent(i.Value.EventType);
+        //        add(i.Value.EventId, e.EventImage, i.Value.EventId);
+        //    }
+        //}
+
+        //public void RequestSubGameEvent(Action<int, Sprite, int> add, 
+        //    Action<int, Sprite, int> update, 
+        //    Action<int> remove)
+        //{
+        //    addEvent = add;
+        //    updateEvent = update;
+        //    removeEvent = remove;
+        //    gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
+        //}
+
+        //public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
+        //    Action<int, Sprite, int> update, 
+        //    Action<int> remove)
+        //{
+        //    gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
+        //}
+
+        //private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
+        //{
+        //    var e = gameEventsDatabase.GetEvent(newItem.EventType);
+        //    //Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
+        //    switch (op)
+        //    {
+        //        case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
+        //            addEvent(newItem.EventId, e.EventImage, newItem.EventId);
+        //            break;
+        //        case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
+        //            updateEvent(newItem.EventId, e.EventImage, newItem.EventId);
+        //            break;
+        //        case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
+        //            removeEvent(newItem.EventId);
+        //            break;
+        //    }
+        //}
+
+        public void RequestSubQuota(Action<int, int> f)
         {
-            setupEventDatabase(gameEventsDatabase);
-            gameRandomEventManager.OnEventReceived += f;
-        }
-        
-        public void UnsubInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
-        {
-            gameRandomEventManager.OnEventReceived -= f;
+            f(_globalStageManager.CurrentStageQuota, _globalStageManager.RequiredStageQuota);
+
+            _globalStageManager.OnQuotaChanged += f;
         }
 
-        public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
+        public void RequestUnSubQuota(Action<int, int> f)
         {
-            clear();
-            foreach (var i in gameRandomEventManager.StartedEvents)
-            {
-                var e = gameEventsDatabase.GetEvent(i.Value.EventType);
-                add(i.Value.EventId, e.EventImage, i.Value.EventId);
-            }
-        }
-
-        public void RequestSubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, Sprite, int> update, 
-            Action<int> remove)
-        {
-            addEvent = add;
-            updateEvent = update;
-            removeEvent = remove;
-            gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
-        }
-
-        private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
-        {
-            var e = gameEventsDatabase.GetEvent(newItem.EventType);
-            //Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
-            switch (op)
-            {
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
-                    addEvent(newItem.EventId, e.EventImage, newItem.EventId);
-                    break;
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
-                    updateEvent(newItem.EventId, e.EventImage, newItem.EventId);
-                    break;
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
-                    removeEvent(newItem.EventId);
-                    break;
-            }
-        }
-
-        public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, Sprite, int> update, 
-            Action<int> remove)
-        {
-            gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
+            _globalStageManager.OnQuotaChanged -= f;
         }
 
 

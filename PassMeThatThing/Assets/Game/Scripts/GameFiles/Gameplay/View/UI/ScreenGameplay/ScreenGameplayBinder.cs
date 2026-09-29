@@ -19,6 +19,7 @@ using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenGameplay.CustomTypesF
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine.Windows;
+using Unity.VisualScripting;
 
 
 namespace Game.Gameplay.View.UI
@@ -88,6 +89,8 @@ namespace Game.Gameplay.View.UI
         private Label _waterWireResText;
         private Label _fuelWireResText;
 
+        private Label _quotaText;
+
         private void Awake()
         {
 
@@ -130,6 +133,8 @@ namespace Game.Gameplay.View.UI
             _waterWireResText = _root.Q<Label>("waterResText");
             _fuelWireResText = _root.Q<Label>("fuelResText");
 
+            _quotaText = _root.Q<Label>("QuotaText");
+
             for (var i = 2; i <= 4; i++)
             {
                 _otherPlayerAvatars.Add(_root.Q<VisualElement>($"Avatar{i}"));
@@ -160,6 +165,7 @@ namespace Game.Gameplay.View.UI
             //ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             InitTasks();
             SubTasks();
+            ViewModel.RequestSubQuota(UpdateQuota);
             
             ViewModel.RequestLevelGrid(SetMinimapSource);
             
@@ -196,6 +202,7 @@ namespace Game.Gameplay.View.UI
             //ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
             //ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             UnSubTasks();
+            ViewModel.RequestUnSubQuota(UpdateQuota);
 
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
 
@@ -388,16 +395,31 @@ namespace Game.Gameplay.View.UI
                 disPhaseBtn.visible = true;
             }
 
-            if (newValue.Type != GlobalStagesType.Rest)
+            //если это левелы в одном дне
+            //if (newValue.Type != GlobalStagesType.Rest)
+            //{
+            //    var l = (newValue.Level - 1) % 3 ; //0, 1, 2
+            //    if (0 <= l && l < _disabledPhaseBtns.Count)
+            //        _disabledPhaseBtns[l].visible = false;
+            //}
+            //else
+            //{
+            //    if (3 < _disabledPhaseBtns.Count)
+            //        _disabledPhaseBtns[3].visible = false;
+            //}
+
+            //если один левел в дне и это фазы
+            switch (newValue.Type)
             {
-                var l = (newValue.Level - 1) % 3 ; //0, 1, 2
-                if (0 <= l && l < _disabledPhaseBtns.Count)
-                    _disabledPhaseBtns[l].visible = false;
-            }
-            else
-            {
-                if (3 < _disabledPhaseBtns.Count)
+                case GlobalStagesType.Preparation:
+                    _disabledPhaseBtns[0].visible = false;
+                    break;
+                case GlobalStagesType.Fight:
+                    _disabledPhaseBtns[1].visible = false;
+                    break;
+                case GlobalStagesType.Rest:
                     _disabledPhaseBtns[3].visible = false;
+                    break;
             }
 
 
@@ -475,6 +497,11 @@ namespace Game.Gameplay.View.UI
         }
 
         //EVENTS
+
+        private void UpdateQuota(int current, int required)
+        {
+            _quotaText.text = $"#{current}/{required}";
+        }
 
         private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
         {
