@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items
 {
-    [CreateAssetMenu(fileName = "DamageableStateColorSO", menuName = "Scriptable Objects/DamageableStateColorSO")]
-    public class DamageableStateColorSO : ScriptableObject
+    [CreateAssetMenu(fileName = "DamageableStateColorData", menuName = "Scriptable Objects/DamageableStateColorData")]
+    public class DamageableStateColorData : ScriptableObject
     {
        [SerializedDictionary] public SerializedDictionary<StateSource, Color> colors; 
     }

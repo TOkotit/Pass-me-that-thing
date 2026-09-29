@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using Entity;
 using Mirror;
 using UnityEngine;
@@ -18,7 +19,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float flatDamageReduction = 0f;
         [SerializeField] private int toughness;
         [SerializeField] private PhysicalItem _item;
-        [SerializeField] private List<PhysicalItem> _items = new List<PhysicalItem>();
+        [SerializedDictionary] public SerializedDictionary<ItemData,Transform> _itemsToSpawn;
+        [Inject] ItemSpawner _itemSpawner;
         private readonly List<Collider> _connectedTo = new List<Collider>();
         private string _savedTag = "Item";
     
@@ -34,15 +36,11 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             RagdollHandler?.EnableRagdoll();
 
-            foreach (var item in _items)
+            foreach (var item in _itemsToSpawn)
             {
-                if (item)
-                {
-                    item.gameObject.SetActive(true);
-                    item.transform.SetParent(null);
-                }
+                _itemSpawner.ServerSpawnItem(item.Key.Id, item.Value.position);
             }
-            _items.Clear();
+            _itemsToSpawn.Clear();
 
             if (_item && _item.gameObject != gameObject)
                 NetworkServer.Destroy(_item.gameObject);
