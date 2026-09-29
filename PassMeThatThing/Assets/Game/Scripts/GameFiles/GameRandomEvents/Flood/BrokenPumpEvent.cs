@@ -11,7 +11,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         
         protected override void OnStartEvent()
         {
-            GameRandomEventManager.PipebreakChanceBoost = _chanceBoost;
+            //GameRandomEventManager.PipebreakChanceBoost = _chanceBoost;
 
 
             if (pumpInteractTerminal)
@@ -19,8 +19,14 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 
             RpcEnableOutline();
         }
-        
-        
+
+        [Server]
+        protected override void OnTaskTimerEnd(int taskId)
+        {
+            GameRandomEventManager.PipebreakChanceBoost = _chanceBoost;
+        }
+
+
         [Server]
         public void FixEvent() 
         {

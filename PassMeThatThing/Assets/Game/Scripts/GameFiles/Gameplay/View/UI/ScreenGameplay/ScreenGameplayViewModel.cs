@@ -46,9 +46,9 @@ namespace Game.Gameplay.View.UI
 
 
         private readonly PlayerInventoryModel  _playerInventoryModel;
-        private readonly ItemDatabase _itemDatabase;
-        private readonly GameRandomEventManager _gameRandomEventManager;
-        private readonly GameEventsDatabase _gameEventsDatabase;
+        public readonly ItemDatabase itemDatabase;
+        
+
         private readonly BuildingsDatabase _buildingsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         private readonly GameInputManager _gameInputManager;
@@ -66,7 +66,8 @@ namespace Game.Gameplay.View.UI
         private Action<int> removeEvent;
 
         public ResourceDatabase resourceDatabase;
-
+        public readonly GameEventsDatabase gameEventsDatabase;
+        public readonly GameRandomEventManager gameRandomEventManager;
 
         //проводные ресы
         public readonly LocalGeneralResourcesModel localGeneralResourcesModel;
@@ -85,13 +86,14 @@ namespace Game.Gameplay.View.UI
 
             resourceDatabase = container.Resolve<ResourceDatabase>();
             localGeneralResourcesModel = container.Resolve<LocalGeneralResourcesModel>();
+            gameRandomEventManager = container.Resolve<GameRandomEventManager>();
 
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
-            _itemDatabase =  container.Resolve<ItemDatabase>();
-            _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
+            itemDatabase =  container.Resolve<ItemDatabase>();
+            gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             _buildingsDatabase = container.Resolve<BuildingsDatabase>();
 
-            _gameRandomEventManager =  container.Resolve<GameRandomEventManager>();
+            
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
@@ -294,7 +296,7 @@ namespace Game.Gameplay.View.UI
         {
             foreach (var p in _playerInventoryModel.Inventory)
             {
-                f(p.Key, _itemDatabase
+                f(p.Key, itemDatabase
                     .GetItem(p.Value.itemId).ItemImage);
             }
         }
@@ -303,11 +305,11 @@ namespace Game.Gameplay.View.UI
         {
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveAdd()
                 .Subscribe(e
-                    => f(e.Value.Key, _itemDatabase.GetItem(e.Value.Value.itemId).ItemImage)));
+                    => f(e.Value.Key, itemDatabase.GetItem(e.Value.Value.itemId).ItemImage)));
             
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveReplace()
                 .Subscribe(e
-                    => f(e.NewValue.Key, _itemDatabase.GetItem(e.NewValue.Value.itemId).ItemImage)));
+                    => f(e.NewValue.Key, itemDatabase.GetItem(e.NewValue.Value.itemId).ItemImage)));
             
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveRemove()
                 .Subscribe(e
@@ -320,62 +322,74 @@ namespace Game.Gameplay.View.UI
             _subscriptions.Clear();
         }
 
-        public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
+        //EVENTS OLD
+
+        //public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
+        //{
+        //    setupEventDatabase(gameEventsDatabase);
+        //    gameRandomEventManager.OnEventReceived += f;
+        //}
+
+        //public void UnsubInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
+        //{
+        //    gameRandomEventManager.OnEventReceived -= f;
+        //}
+
+        //public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
+        //{
+        //    clear();
+        //    foreach (var i in gameRandomEventManager.StartedEvents)
+        //    {
+        //        var e = gameEventsDatabase.GetEvent(i.Value.EventType);
+        //        add(i.Value.EventId, e.EventImage, i.Value.EventId);
+        //    }
+        //}
+
+        //public void RequestSubGameEvent(Action<int, Sprite, int> add, 
+        //    Action<int, Sprite, int> update, 
+        //    Action<int> remove)
+        //{
+        //    addEvent = add;
+        //    updateEvent = update;
+        //    removeEvent = remove;
+        //    gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
+        //}
+
+        //public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
+        //    Action<int, Sprite, int> update, 
+        //    Action<int> remove)
+        //{
+        //    gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
+        //}
+
+        //private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
+        //{
+        //    var e = gameEventsDatabase.GetEvent(newItem.EventType);
+        //    //Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
+        //    switch (op)
+        //    {
+        //        case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
+        //            addEvent(newItem.EventId, e.EventImage, newItem.EventId);
+        //            break;
+        //        case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
+        //            updateEvent(newItem.EventId, e.EventImage, newItem.EventId);
+        //            break;
+        //        case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
+        //            removeEvent(newItem.EventId);
+        //            break;
+        //    }
+        //}
+
+        public void RequestSubQuota(Action<int, int> f)
         {
-            setupEventDatabase(_gameEventsDatabase);
-            _gameRandomEventManager.OnEventReceived += f;
-        }
-        
-        public void UnsubInitGameEventToClient(Action<SyncDictionary<int, BaseGameEvent>> f)
-        {
-            _gameRandomEventManager.OnEventReceived -= f;
+            f(_globalStageManager.CurrentStageQuota, _globalStageManager.RequiredStageQuota);
+
+            _globalStageManager.OnQuotaChanged += f;
         }
 
-        public void InitGameEvent(Action clear, Action<int, Sprite, int> add)
+        public void RequestUnSubQuota(Action<int, int> f)
         {
-            clear();
-            foreach (var i in _gameRandomEventManager.StartedEvents)
-            {
-                var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
-                add(i.Value.EventId, e.EventImage, i.Value.EventId);
-            }
-        }
-        
-        
-        private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
-        {
-            var e = _gameEventsDatabase.GetEvent(newItem.EventType);
-            //Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
-            switch (op)
-            {
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_ADD:
-                    addEvent(newItem.EventId, e.EventImage, newItem.EventId);
-                    break;
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_SET:
-                    updateEvent(newItem.EventId, e.EventImage, newItem.EventId);
-                    break;
-                case SyncDictionary<int, BaseGameEvent>.Operation.OP_REMOVE:
-                    removeEvent(newItem.EventId);
-                    break;
-            }
-        }
-
-
-        public void RequestSubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, Sprite, int> update, 
-            Action<int> remove)
-        {
-            addEvent = add;
-            updateEvent = update;
-            removeEvent = remove;
-            _gameRandomEventManager.StartedEvents.OnChange += OnStartedEventsChanged;
-        }
-        
-        public void RequestUnsubGameEvent(Action<int, Sprite, int> add, 
-            Action<int, Sprite, int> update, 
-            Action<int> remove)
-        {
-            _gameRandomEventManager.StartedEvents.OnChange -= OnStartedEventsChanged;
+            _globalStageManager.OnQuotaChanged -= f;
         }
 
 
