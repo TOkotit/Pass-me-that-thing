@@ -15,7 +15,13 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
             RpcEnableOutline();
         }
-        
+
+        [Server]
+        protected override void OnTaskTimerEnd(int taskId)
+        {
+            
+        }
+
         [Server]
         public void FixEvent() 
         {

@@ -34,18 +34,30 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
 
         protected override void OnStartEvent()
         {
-            _isFloodingActive = true;
+            //_isFloodingActive = true;
 
-            _waterMeshInstance = Instantiate(waterMeshPrefab);
-            _waterMeshInstance.transform.position = transform.position;
-            _waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
+            //_waterMeshInstance = Instantiate(waterMeshPrefab);
+            //_waterMeshInstance.transform.position = transform.position;
+            //_waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
             
-            NetworkServer.Spawn(_waterMeshInstance);
+            //NetworkServer.Spawn(_waterMeshInstance);
 
             if (terminal)
                 terminal.IsFixed = false;
 
             RpcEnableOutline();
+        }
+
+        [Server]
+        protected override void OnTaskTimerEnd(int taskId)
+        {
+            _isFloodingActive = true;
+
+            _waterMeshInstance = Instantiate(waterMeshPrefab);
+            _waterMeshInstance.transform.position = transform.position;
+            _waterMeshInstance.transform.Translate(Vector3.down * 0.2f);
+
+            NetworkServer.Spawn(_waterMeshInstance);
         }
 
         [Server]
