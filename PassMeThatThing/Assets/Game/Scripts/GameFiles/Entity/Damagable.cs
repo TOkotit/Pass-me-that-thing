@@ -1,10 +1,10 @@
-﻿using DI;
+﻿using System;
+using DI;
 using Enums;
 using Game.Scripts.GameFiles.Entity;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
 
 namespace Entity
 {
@@ -13,48 +13,48 @@ namespace Entity
         [SerializeField] protected int defaultHealth;
         [SerializeField] protected DamagableType type;
         [SerializeField] protected StatusEffectHandler statusEffectHandler;
+
         [Inject] protected DamagableRegistry Registry { get; private set; }
-        
+
         [SyncVar(hook = nameof(OnSyncedHealthChanged))]
         protected int _syncedHealth;
 
         [SyncVar(hook = nameof(OnSyncedMaxHealthChanged))]
         protected int _syncedMaxHealth;
         
+        public event Action<int, int> HealthChanged;
+
         public abstract DamagableModel DamagableModel { get; }
         public StatusEffectHandler StatusEffectHandler => statusEffectHandler;
-        
+
         public DamagableType Type => type;
 
         protected virtual void Start()
         {
             Debug.LogWarning("Damageable: Start " + gameObject.name);
+
+            if (DamagableModel.HealthPool == null)
+                DamagableModel.HealthPool = new HealthPool(defaultHealth);
+
             if (isServer)
             {
-                if (DamagableModel.HealthPool == null)
-                    DamagableModel.HealthPool = new HealthPool(defaultHealth);
                 DamagableModel.OnHealthChanged += OnHealthChanged;
                 DamagableModel.OnDeath += OnDeath;
 
                 DamagableModel.OnDamage += RpcTakeDamage;
                 DamagableModel.OnHeal += RpcHeal;
             }
-            else
-            {
-                if (DamagableModel.HealthPool == null)
-                    DamagableModel.HealthPool = new HealthPool(defaultHealth);
-            }
 
             Registry?.Register(this);
-        }
 
-        
+            RaiseHealthChanged();
+        }
 
         protected virtual void OnDestroy()
         {
             Registry?.Unregister(this);
-            
-            if (isServer)
+
+            if (isServer && DamagableModel != null)
             {
                 DamagableModel.OnHealthChanged -= OnHealthChanged;
                 DamagableModel.OnDeath -= OnDeath;
@@ -63,34 +63,35 @@ namespace Entity
                 DamagableModel.OnHeal -= RpcHeal;
             }
         }
-
+        
         [Server]
         public void ServerSetHealth(int newHealth)
         {
-            Debug.Log("[DAM] ServerSetHealth");
+            Debug.Log("damageable: ServerSetHealth");
             DamagableModel.SetHealth(newHealth);
             _syncedHealth = DamagableModel.HealthPool.CurrentHealth;
+            RaiseHealthChanged();
         }
-        
+
         [Server]
-        public void ServerSetMaxHealth(int newHealth, bool fullHeal=false)
+        public void ServerSetMaxHealth(int newHealth, bool fullHeal = false)
         {
-            Debug.Log("[DAM] ServerSetMaxHealth");
+            Debug.Log("damageable: ServerSetMaxHealth");
             DamagableModel.SetMaxHealth(newHealth, fullHeal);
             _syncedMaxHealth = DamagableModel.HealthPool.MaxHealth;
+            RaiseHealthChanged();
         }
 
         [Client]
         protected void ClientInitMaxHealth(int newHealth, bool fullHeal = false)
         {
-            //Debug.Log("[DAM] ClientInit");
-
             if (DamagableModel.HealthPool == null)
                 DamagableModel.HealthPool = new HealthPool(defaultHealth);
 
             DamagableModel.SetMaxHealth(newHealth, fullHeal);
             OnHealthChanged(DamagableModel.HealthPool.CurrentHealth,
-                    DamagableModel.HealthPool.MaxHealth);
+                            DamagableModel.HealthPool.MaxHealth);
+            RaiseHealthChanged();
         }
 
         [Server]
@@ -98,6 +99,7 @@ namespace Entity
         {
             DamagableModel.TakeDamage(damage);
             _syncedHealth = DamagableModel.HealthPool.CurrentHealth;
+            RaiseHealthChanged();
         }
 
         [Server]
@@ -105,21 +107,22 @@ namespace Entity
         {
             DamagableModel.Heal(value);
             _syncedHealth = DamagableModel.HealthPool.CurrentHealth;
+            RaiseHealthChanged();
         }
-
-
-
-        // Хуки 
+        
         private void OnSyncedHealthChanged(int oldHealth, int newHealth)
         {
-            if (!isServer) 
+            if (!isServer)
             {
                 DamagableModel.SetHealth(newHealth);
-                
-                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth, 
-                    DamagableModel.HealthPool.MaxHealth);
+
+                OnHealthChanged(DamagableModel.HealthPool.CurrentHealth,
+                                DamagableModel.HealthPool.MaxHealth);
+
                 if (newHealth <= 0) OnDeath();
             }
+
+            RaiseHealthChanged();
         }
 
         private void OnSyncedMaxHealthChanged(int oldMax, int newMax)
@@ -128,14 +131,24 @@ namespace Entity
             {
                 DamagableModel.SetMaxHealth(newMax, false);
             }
-        }
 
+            RaiseHealthChanged();
+        }
+        
+        protected void RaiseHealthChanged()
+        {
+            if (DamagableModel?.HealthPool == null) return;
+
+            HealthChanged?.Invoke(DamagableModel.HealthPool.CurrentHealth,
+                                  DamagableModel.HealthPool.MaxHealth);
+        }
+        
         public abstract void OnDeath();
         public abstract void OnHealthChanged(int currentHealth, int maxHealth);
 
-        // Доп коллбеки (TODO переделать чтобы все было единообразно)
         [ClientRpc]
         private void RpcTakeDamage(int deltaHp) => OnTakeDamage(deltaHp);
+
         [ClientRpc]
         private void RpcHeal(int deltaHp) => OnHeal(deltaHp);
 
