@@ -46,9 +46,9 @@ namespace Game.Gameplay.View.UI
 
 
         private readonly PlayerInventoryModel  _playerInventoryModel;
-        private readonly ItemDatabase _itemDatabase;
+        public readonly ItemDatabase itemDatabase;
         
-        private readonly GameEventsDatabase _gameEventsDatabase;
+
         private readonly BuildingsDatabase _buildingsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         private readonly GameInputManager _gameInputManager;
@@ -66,6 +66,7 @@ namespace Game.Gameplay.View.UI
         private Action<int> removeEvent;
 
         public ResourceDatabase resourceDatabase;
+        public readonly GameEventsDatabase gameEventsDatabase;
         public readonly GameRandomEventManager gameRandomEventManager;
 
         //проводные ресы
@@ -88,8 +89,8 @@ namespace Game.Gameplay.View.UI
             gameRandomEventManager = container.Resolve<GameRandomEventManager>();
 
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
-            _itemDatabase =  container.Resolve<ItemDatabase>();
-            _gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
+            itemDatabase =  container.Resolve<ItemDatabase>();
+            gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             _buildingsDatabase = container.Resolve<BuildingsDatabase>();
 
             
@@ -295,7 +296,7 @@ namespace Game.Gameplay.View.UI
         {
             foreach (var p in _playerInventoryModel.Inventory)
             {
-                f(p.Key, _itemDatabase
+                f(p.Key, itemDatabase
                     .GetItem(p.Value.itemId).ItemImage);
             }
         }
@@ -304,11 +305,11 @@ namespace Game.Gameplay.View.UI
         {
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveAdd()
                 .Subscribe(e
-                    => f(e.Value.Key, _itemDatabase.GetItem(e.Value.Value.itemId).ItemImage)));
+                    => f(e.Value.Key, itemDatabase.GetItem(e.Value.Value.itemId).ItemImage)));
             
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveReplace()
                 .Subscribe(e
-                    => f(e.NewValue.Key, _itemDatabase.GetItem(e.NewValue.Value.itemId).ItemImage)));
+                    => f(e.NewValue.Key, itemDatabase.GetItem(e.NewValue.Value.itemId).ItemImage)));
             
             _subscriptions.Add(_playerInventoryModel.Inventory.ObserveRemove()
                 .Subscribe(e
@@ -322,10 +323,9 @@ namespace Game.Gameplay.View.UI
         }
 
         //EVENTS
-
         public void InitGameEventToClient(Action<GameEventsDatabase> setupEventDatabase, Action<SyncDictionary<int, BaseGameEvent>> f)
         {
-            setupEventDatabase(_gameEventsDatabase);
+            setupEventDatabase(gameEventsDatabase);
             gameRandomEventManager.OnEventReceived += f;
         }
         
@@ -339,7 +339,7 @@ namespace Game.Gameplay.View.UI
             clear();
             foreach (var i in gameRandomEventManager.StartedEvents)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
+                var e = gameEventsDatabase.GetEvent(i.Value.EventType);
                 add(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
@@ -356,7 +356,7 @@ namespace Game.Gameplay.View.UI
 
         private void OnStartedEventsChanged(SyncDictionary<int, BaseGameEvent>.Operation op, int key, BaseGameEvent newItem)
         {
-            var e = _gameEventsDatabase.GetEvent(newItem.EventType);
+            var e = gameEventsDatabase.GetEvent(newItem.EventType);
             //Debug.Log($"[EVENT GVM] {newItem.EventType} {e.GameEventType}");
             switch (op)
             {

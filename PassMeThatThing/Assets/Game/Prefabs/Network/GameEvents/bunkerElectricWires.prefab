@@ -348,6 +348,7 @@ GameObject:
   - component: {fileID: 6532971872521347822}
   - component: {fileID: -5375425646137256716}
   - component: {fileID: 2601856279654359222}
+  - component: {fileID: 7923371221813459718}
   m_Layer: 0
   m_Name: bunkerElectricWires
   m_TagString: Untagged
@@ -402,8 +403,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _baseTriggerChance: 1
-  _timeLimit: 30
   eventType: 4
+  gameTaskHandler: {fileID: 7923371221813459718}
+  taskTimeLimit: 15
+  taskCost: 50
   terminal: {fileID: 5454080473861667871}
 --- !u!114 &-5375425646137256716
 MonoBehaviour:
@@ -437,6 +440,22 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &7923371221813459718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7297448871904005542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 962d142da4217fe41aef06480b940024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks.GameTaskHandler
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _timeLimit: 30
 --- !u!1001 &2014495255462965718
 PrefabInstance:
   m_ObjectHideFlags: 0

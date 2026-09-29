@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using DI;
 using Game.Scripts.Enums;
 using Game.Scripts.Utils;
@@ -12,8 +13,13 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
     public class BaseGameEvent : NetworkBehaviour
     {
         [SerializeField, Range(0f, 1f)] private float _baseTriggerChance = 0.2f;
-        [SerializeField] private int _timeLimit;
+
         [SerializeField] private GameEventsType eventType;
+
+        [SerializeField] private GameTaskHandler gameTaskHandler;
+
+        [SerializeField] private float taskTimeLimit;
+        [SerializeField] private int taskCost;
 
         [SyncVar] 
         private int _eventId;
@@ -24,14 +30,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         [SyncVar] 
         private int _roomNumber;
 
-        [SyncVar(hook = nameof(OnTimeChanged))]
-        private float _syncRemainingTime;
-
         [Inject] private GameRandomEventManager _gameRandomEventManager;
 
-        private NetworkTimer _timer;
         private float _currentTriggerChance;
 
+        private GameTask _currentTask;
 
         public int EventId => _eventId;
         public bool IsEventActive => _isEventActive;
@@ -39,7 +42,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         public float CurrentTriggerChance => _currentTriggerChance;
         public GameRandomEventManager GameRandomEventManager => _gameRandomEventManager;
         public GameEventsType EventType => eventType;
-        public int TimeLimit => _timeLimit;
+
 
         public event Action<float> OnSyncTimerChanged;
 
@@ -47,12 +50,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         {
             _currentTriggerChance = Mathf.Clamp01(_baseTriggerChance + chanceToAdd);
             Debug.Log($"[EVENT] UpdateCurrentTriggerChance {EventId} - {CurrentTriggerChance}");
-        }
-
-        private void Awake()
-        {
-            _timer = new NetworkTimer(this, OnTimerTick);
-            _timer.TimeIsOver += OnTimerFinished;
         }
 
         [Server]
@@ -63,14 +60,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             RegisterEvent();
         }
 
-        private void OnDestroy()
-        {
-            if (_timer != null)
-            {
-                _timer.TimeIsOver -= OnTimerFinished;
-                _timer.Stop();
-            }
-        }
 
         private void RegisterEvent()
         {
@@ -90,8 +79,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             _isEventActive = true;
             OnStartEvent();
 
-            StartTimer(_timeLimit);
-
+            _currentTask = gameTaskHandler.CreateGameTask(GetEventTaskParams());
+            _currentTask.OnTaskTimerEnd += OnTaskTimerEnd;
 
             Debug.Log($"[Server] Ивент ID:{_eventId} ({EventType}) ЗАПУЩЕН.");
         }
@@ -104,35 +93,29 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             _isEventActive = false;
             OnStopEvent();
 
-            _timer.Stop();
+            _currentTask.OnTaskTimerEnd -= OnTaskTimerEnd;
+            gameTaskHandler.DestroyGameTask(_currentTask.gameTaskId);
+
 
             Debug.Log($"[Server] Ивент ID:{_eventId} ({EventType}) ЗАВЕРШЕН.");
         }
 
+
         [Server]
-        public void StartTimer(float duration)
+        private GameTaskParameters GetEventTaskParams()
         {
-            _timer.Set(duration);
-            _timer.Start();
-        }
+            var testPars = new GameTaskParameters();
+            testPars.gameTaskType = GameTaskType.GameEvent;
+            testPars.timeLimit = taskTimeLimit;
+            testPars.taskField = eventType.ToString();
+            testPars.cost = taskCost;
 
-        private void OnTimerTick(float remainingTime)
-        {
-            _syncRemainingTime = remainingTime;
-        }
-
-        private void OnTimeChanged(float oldTime, float newTime)
-        {
-            OnSyncTimerChanged?.Invoke(newTime / _timeLimit);
-        }
-
-        private void OnTimerFinished()
-        {
-            OnTimerEnd();
+            return testPars;
         }
 
         [Server] protected virtual void OnStartEvent() { }
         [Server] protected virtual void OnStopEvent() { }
-        [Server] protected virtual void OnTimerEnd() { }
+
+        [Server] protected virtual void OnTaskTimerEnd(int taskId) { }
     }
 }

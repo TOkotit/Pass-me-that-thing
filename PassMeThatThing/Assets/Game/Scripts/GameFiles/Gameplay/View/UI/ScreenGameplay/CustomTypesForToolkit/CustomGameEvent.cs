@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,16 @@ namespace Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenGameplay.CustomTy
     [UxmlElement("CustomGameEvent")]
     public partial class CustomGameEvent : VisualElement
     {
-        public ProgressBar timeBar;
+        //задается при создании элемента из темплейта
+        public ProgressBar timeBar; 
 
-        //public CustomGameEvent()
-        //{
-        //    timeBar = this.Q<ProgressBar>("EventTimeProgress");
-        //}
-
-        public void UpdateTimeProgress(float percent)
+        public void UpdateTimeProgress(float time, float limit)
         {
-            timeBar.value = percent * 100;
+            var newValue = (limit - time) / limit * 100;
+            DOTween.To(
+                () => timeBar.value,
+                x => timeBar.value = x,
+                newValue, 0.5f).SetEase(Ease.OutQuad);
         }
     }
 }
