@@ -1,4 +1,5 @@
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using DI;
 using Game.Scripts.Enums;
 using Game.Scripts.Utils;
@@ -19,7 +20,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         [SerializeField] private GameTaskHandler gameTaskHandler;
 
         [SerializeField] private float taskTimeLimit;
-        [SerializeField] private int taskCost;
+        [SerializeField] private int taskPoints;
 
         [SyncVar] 
         private int _eventId;
@@ -31,6 +32,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         private int _roomNumber;
 
         [Inject] private GameRandomEventManager _gameRandomEventManager;
+
+        [Inject] private GlobalStageDatabase _globalStageDatabase;
 
         private float _currentTriggerChance;
 
@@ -94,7 +97,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             OnStopEvent();
 
             _currentTask.OnTaskTimerEnd -= OnTaskTimerEnd;
-            gameTaskHandler.DestroyGameTask(_currentTask.gameTaskId);
+            gameTaskHandler.CompleteAndDestroyGameTask(_currentTask.gameTaskId);
 
 
             Debug.Log($"[Server] Ивент ID:{_eventId} ({EventType}) ЗАВЕРШЕН.");
@@ -108,7 +111,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             testPars.gameTaskType = GameTaskType.GameEvent;
             testPars.timeLimit = taskTimeLimit;
             testPars.taskField = eventType.ToString();
-            testPars.cost = taskCost;
+            testPars.cost = taskPoints * _globalStageDatabase.BaseQuotaConst;
 
             return testPars;
         }

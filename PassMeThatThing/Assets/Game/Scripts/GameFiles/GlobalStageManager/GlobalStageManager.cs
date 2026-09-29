@@ -6,6 +6,7 @@ using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.Systems;
 using Game.Scripts.Utils;
 using Mirror;
 using UnityEngine;
@@ -24,6 +25,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [Inject] private PlayerReadyManager _playerReadyManager;
 
         [Inject] private GameplayUIManager _gameplayUIManager;
+
+        [Inject] private GameoverHandler _gameOverHandler;
 
         private NetworkTimer _timer;
         private bool _inOvertime;
@@ -73,7 +76,15 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             base.OnStartServer();
             _playerReadyManager.OnAllPlayersReady += () => TrySkipPreparationStage();
+            _gameRandomEventManager.OnQuotaValueAdded += AddQuota;
             StartStage(GlobalStagesType.Preparation);
+        }
+
+        public override void OnStopServer()
+        {
+            base.OnStopServer();
+
+            _gameRandomEventManager.OnQuotaValueAdded -= AddQuota;
         }
 
         private void Update()
@@ -216,7 +227,14 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
             if (_stage.Level % _globalStageDatabase.LevelInDayAmount == 0)
             {
-                StartStage(GlobalStagesType.Rest);
+                if (CheckQuota())
+                {
+                    StartStage(GlobalStagesType.Rest);
+                }
+                else
+                {
+                    _gameOverHandler.SetGameOver();
+                }
             }
             else
             {
@@ -285,15 +303,15 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         }
 
         [Server]
-        private void AddQuota(int toAdd)
+        public void AddQuota(int toAdd)
         {
             _currentStageQuota += toAdd;
         }
 
         [Server]
-        private void CheckQuota()
+        private bool CheckQuota()
         {
-            
+            return _currentStageQuota >= _requiredStageQuota;
         }
 
         [ClientRpc]

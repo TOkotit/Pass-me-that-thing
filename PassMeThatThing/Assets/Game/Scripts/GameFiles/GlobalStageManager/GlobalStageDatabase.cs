@@ -51,6 +51,8 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
             }
         }
 
+        public int BaseQuotaConst => baseQuotaConst;
+
         public LevelData GetLevelData(int levelNumber)
         {
             Debug.Log($"level number {levelNumber}");
@@ -141,7 +143,7 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
 
             var quotaSum = c.QuotaPoints * baseQuotaConst;
 
-            var randQuotaSum = RandomUtilities.RandNearMult(quotaSum, quotaSpreadPercent / 100f);
+            var randQuotaSum = RandomUtilities.RandNearMult(quotaSum, quotaSpreadPercent / 100f, 0);
 
             return (int)randQuotaSum;
         }

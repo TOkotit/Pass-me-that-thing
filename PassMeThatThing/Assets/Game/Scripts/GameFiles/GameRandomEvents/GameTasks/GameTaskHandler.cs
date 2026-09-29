@@ -40,6 +40,12 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         }
 
         [Server]
+        public void CompleteAndDestroyGameTask(int taskId)
+        {
+            _gameRandomEventManager.CompleteAndDestroyGameTask(taskId);
+        }
+
+        [Server]
         public void DestroyGameTask(int taskId)
         {
             _gameRandomEventManager.DestroyGameTask(taskId);

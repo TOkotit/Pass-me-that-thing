@@ -5,7 +5,6 @@ using System.Linq;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Game.Scripts.Enums;
 using Mirror;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
@@ -36,14 +35,6 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         private SyncDictionary<int, GameTask> _gameTasks = new();
         private SyncDictionary<int, GameTaskData> _gameTasksData = new();
 
-        //TODO вынести в отдельный класс
-        //квота
-        [SyncVar]
-        private int _currentStageQuota;
-
-        [SyncVar]
-        private int _requiredStageQuota;
-
 
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
         public SyncDictionary<int, GameTask> GameTasks => _gameTasks;
@@ -64,6 +55,8 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         
 
         public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
+
+        public event Action<int> OnQuotaValueAdded;
         
         
         public event Action<SyncDictionary<int, BaseGameEvent>> OnEventReceived;
@@ -259,6 +252,30 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             {
                 _gameTasksData.Remove(taskId);
             }
+        }
+
+        [Server]
+        public void CompleteAndDestroyGameTask(int taskId)
+        {
+            if (_gameTasksData.TryGetValue(taskId, out var taskData))
+            {
+                if (!taskData.isTaskOverdue)
+                {
+                    AddTaskCostQuota(taskData.cost);
+                }
+                else
+                {
+                    AddTaskCostQuota(taskData.cost / 2);
+                }
+            }
+
+            DestroyGameTask(taskId);
+        }
+
+        [Server]
+        public void AddTaskCostQuota(int value)
+        {
+            OnQuotaValueAdded?.Invoke(value);
         }
 
         //просчет таймеров происходит и на сервере и на клиенте
