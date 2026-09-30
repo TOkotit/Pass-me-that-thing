@@ -123,7 +123,11 @@ public class PlayerInventory : NetworkBehaviour
         }
         _physicalСontroller.ServerClearHeldItem();
 
-        if (!ServerInventory.TryGetValue(index, out var value)) return;
+        if (!ServerInventory.TryGetValue(index, out var value))
+        {
+            _physicalСontroller.HandsMovement.ResetHands();
+            return;
+        }
         var itemToDrop = _itemPoolManager.GetFromPool(value.instanceId);
 
         itemToDrop.transform.position = pointToSpawn;
