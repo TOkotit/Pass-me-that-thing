@@ -28,7 +28,17 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             allInventories[connection].ServerDeleteItem(instanceId);
         }
         
-        
+        [Server]
+        public void RemoveFromAllInventories(string instanceId)
+        {
+            if (string.IsNullOrEmpty(instanceId)) return;
+
+            foreach (var kvp in allInventories)
+            {
+                if (!kvp.Value) continue;
+                kvp.Value.ServerRemoveItemByInstanceId(instanceId);
+            }
+        }
         
     }
 }

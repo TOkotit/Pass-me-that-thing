@@ -350,4 +350,27 @@ public class PlayerInventory : NetworkBehaviour
         
         _playerInventoryModel.HintsChanged();
     }
+    
+    [Server]
+    public void ServerRemoveItemByInstanceId(string instanceId)
+    {
+        if (string.IsNullOrEmpty(instanceId)) return;
+
+        var slotToRemove = -1;
+        foreach (var kvp in ServerInventory)
+        {
+            if (kvp.Value.instanceId == instanceId)
+            {
+                slotToRemove = kvp.Key;
+                break;
+            }
+        }
+        if (slotToRemove != -1)
+            ServerInventory.Remove(slotToRemove);
+        var held = _physicalСontroller ? _physicalСontroller.CurrentHeldItem : null;
+        if (held && held.Network && held.Network.instanceId == instanceId)
+        {
+            _physicalСontroller.ReleaseCurrentItem(0f, false);
+        }
+    }
 }
