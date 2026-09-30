@@ -120,6 +120,7 @@ public class PlayerInventory : NetworkBehaviour
         if (_physicalСontroller.CurrentHeldItem)
         {
             _itemPoolManager.ReturnToPool(_physicalСontroller.CurrentHeldItem.Network);
+            _physicalСontroller.HandsMovement.ResetHands();
         }
         _physicalСontroller.ServerClearHeldItem();
 
