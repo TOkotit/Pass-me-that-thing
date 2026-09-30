@@ -140,6 +140,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             {
                 _gameRandomEventManager.TryTriggerRandomEvents();
 
+                _gameRandomEventManager.TryTriggerRandomItemTasks();
+
                 _enemySpawner.SpawnWave(GetEnemies());
             }
             else if (_currentGameStage == GlobalStagesType.Rest)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks;
 using Game.Scripts.Enums;
 using Mirror;
 using UnityEngine;
@@ -34,6 +35,12 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         private int _idTaskGenerator = 1;
         private SyncDictionary<int, GameTask> _gameTasks = new();
         private SyncDictionary<int, GameTaskData> _gameTasksData = new();
+
+        //TODO вынести в отдельный класс
+        //терминалы сдачи предметов
+        private int _idItemTaskDepotGenerator = 1;
+        private readonly SyncDictionary<int, ItemTaskDepotPoint> _itemTasksDepots = new();
+
 
 
         public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
@@ -298,6 +305,50 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 }
                 yield return _waitTasksTick;
             }
+        }
+
+        //TODO в отдельный класс
+        //ITEM DEPOT TASKS
+        [Server]
+        public int RegisterSceneItemTaskDepot(ItemTaskDepotPoint itemTaskDepot)
+        {
+            var assignedId = _idItemTaskDepotGenerator;
+
+            _idItemTaskDepotGenerator++;
+            Debug.Log($"ItemTaskDepot, id: {assignedId}");
+
+            _itemTasksDepots.Add(assignedId, itemTaskDepot);
+
+            return assignedId;
+        }
+
+        [Server]
+        public void UnregisterSceneItemTaskDepot(int itemTaskDepotId)
+        {
+            if (_itemTasksDepots.ContainsKey(itemTaskDepotId))
+            {
+                _itemTasksDepots.Remove(itemTaskDepotId);
+            }
+        }
+
+        [Server]
+        public void TryTriggerRandomItemTasks(int taskCount = 1)
+        {
+            //foreach (var kvp in _itemTasksDepots)
+            //{
+            //    var gameEvent = kvp.Value;
+
+            //    if (gameEvent.IsEventActive) continue;
+
+            //    if (Random.value <= gameEvent.CurrentTriggerChance)
+            //    {
+            //        ActivateEvent(gameEvent.EventId);
+            //    }
+            //}
+
+            var depot = _itemTasksDepots.Values.First();
+            if (depot == null) return;
+            depot.CreateItemTask("wrench");
         }
     }
 }
