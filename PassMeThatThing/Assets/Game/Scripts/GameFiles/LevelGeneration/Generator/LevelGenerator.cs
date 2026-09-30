@@ -184,14 +184,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
             if (events.Count > 0)
             {
-                if (_targetRoomCount >= _config.HighEventThreshold)
-                {
-                    pool.AddRange(events);
-                }
-                else if (_targetRoomCount >= _config.LowEventThreshold)
-                {
-                    pool.Add(events[_random.Next(events.Count)]);
-                }
+                pool.AddRange(events);
             }
 
             ShuffleList(pool);
