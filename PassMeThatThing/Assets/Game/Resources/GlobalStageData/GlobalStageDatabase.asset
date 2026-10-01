@@ -16,6 +16,7 @@ MonoBehaviour:
   restDuration: 15
   baseQuotaConst: 50
   quotaSpreadPercent: 5
+  taskCreateStepSpreadPercent: 20
   levelConfig:
     _serializedList:
     - Key:
@@ -26,7 +27,7 @@ MonoBehaviour:
         FightPhaseTime: 120
         EnemyDiffPoints: 1
         QuotaPoints: 1
-        TasksPoints: 1
+        TasksPoints: 4
     - Key:
         minVal: 2
         maxVal: 2
@@ -35,7 +36,7 @@ MonoBehaviour:
         FightPhaseTime: 60
         EnemyDiffPoints: 3
         QuotaPoints: 2
-        TasksPoints: 1
+        TasksPoints: 4
     - Key:
         minVal: 3
         maxVal: 3
@@ -44,4 +45,4 @@ MonoBehaviour:
         FightPhaseTime: 60
         EnemyDiffPoints: 3
         QuotaPoints: 3
-        TasksPoints: 1
+        TasksPoints: 4
