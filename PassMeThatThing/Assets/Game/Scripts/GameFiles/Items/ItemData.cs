@@ -14,7 +14,10 @@ public class ItemData : ScriptableObject
     [SerializeField] private string itemName;
     [SerializeField] private GameObject worldPrefab;
     [SerializeField] private Sprite itemImage;
+
+    [Header("Misc")]
     [SerializeField] private bool isStackable;
+    [SerializeField] private bool canAppearInTask;
 
     [Header("Control hints")]
     [SerializeField] private List<ControlHint> controlHints;
@@ -29,6 +32,8 @@ public class ItemData : ScriptableObject
     public List<ControlHint> ControlHints => controlHints;
 
     public List<UseHint> UseHints => useHints;
+
+    public bool CanAppearInTask => canAppearInTask;
 }
 
 [Serializable]

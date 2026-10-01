@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Gameplay.View.UI;
@@ -31,6 +32,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private NetworkTimer _timer;
         private bool _inOvertime;
         private bool _fightEnded;
+
+        private Coroutine _taskTriggerCoroutine;
 
         [SyncVar]
         private GlobalStagesType _currentGameStage;
@@ -119,7 +122,6 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             if (_currentGameStage == GlobalStagesType.Preparation)
             {
                 _playerReadyManager.ResetReady();
-                //_gameRandomEventManager.TryTriggerRandomEvents();
 
                 newStageData.Level++;
 
@@ -138,9 +140,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
-                _gameRandomEventManager.TryTriggerRandomEvents();
+                var lData = _globalStageDatabase.GetLevelData(newStageData.Level);
+                var stepDuration = (lData.FightPhaseTime - 10) / lData.TasksPoints;
 
-                _gameRandomEventManager.TryTriggerRandomItemTasks();
+                _taskTriggerCoroutine = StartCoroutine(
+                    TaskTriggerCoroutine(lData.TasksPoints, stepDuration));
 
                 _enemySpawner.SpawnWave(GetEnemies());
             }
@@ -162,6 +166,26 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 StartTimer(duration);
             else
                 _syncRemainingTime = 0f;
+        }
+
+        [Server]
+        private IEnumerator TaskTriggerCoroutine(int number, float stepDuration)
+        {
+            for (var i=0; i < number; i++)
+            {
+                if (Random.value >= 0.5f)
+                {
+                    _gameRandomEventManager.TriggerManyGameEvents();
+                }
+                else
+                {
+                    _gameRandomEventManager.TryTriggerRandomItemTasks();
+                }
+
+                yield return new WaitForSeconds(
+                    RandomUtilities.RandNearMult(stepDuration, 
+                        _globalStageDatabase.TaskCreateStepSpreadPercent / 100f, 0f));
+            }
         }
 
         [Server]
@@ -226,6 +250,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             if (_fightEnded) return;
             _fightEnded = true;
             _inOvertime = false;
+            StopCoroutine(_taskTriggerCoroutine);
 
             if (_stage.Level % _globalStageDatabase.LevelInDayAmount == 0)
             {
@@ -263,7 +288,6 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [Server]
         private void OnDayEnd()
         {
-            
         }
 
         [Server]

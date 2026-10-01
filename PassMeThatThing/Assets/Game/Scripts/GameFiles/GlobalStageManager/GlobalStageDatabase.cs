@@ -22,10 +22,12 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
         [SerializeField] private int baseQuotaConst = 50;
         [SerializeField] private int quotaSpreadPercent = 5;
 
+        [SerializeField] private int taskCreateStepSpreadPercent = 20;
+
         [Header("Конфиг уровней на диапазон левелов (включ./включ.)")]
         public SerializedDictionary<LevelRange, LevelData> levelConfig;
 
-
+        
 
         public int LevelInDayAmount => levelInDayAmount;
         public float RestDuration => restDuration;
@@ -52,6 +54,8 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
         }
 
         public int BaseQuotaConst => baseQuotaConst;
+
+        public int TaskCreateStepSpreadPercent => taskCreateStepSpreadPercent;
 
         public LevelData GetLevelData(int levelNumber)
         {
@@ -157,8 +161,6 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
 
         public int EnemyDiffPoints = 1;
         public int QuotaPoints = 1;
-
-        [Header("wip")]
         public int TasksPoints = 1;
     }
 

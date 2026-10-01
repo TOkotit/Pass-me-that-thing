@@ -136,7 +136,6 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
             if (other.CompareTag("Item"))
             {
                 if (!registry.TryGetItem(other.gameObject, out var item)) return;
-                if (item.Resources.Count == 0) return;
                 if (!_requiredItems.Any(x => x.Value.ItemId == item.Network.itemId)) return;
 
 

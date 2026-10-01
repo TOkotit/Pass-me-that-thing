@@ -14,8 +14,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class GameRandomEventManager : NetworkBehaviour
     {
+        [Inject] private ItemDatabase _itemDatabase;
+
         private WaitForSeconds _waitTasksTick = new WaitForSeconds(1f);
 
+        //все объекты ивентов
         private int _idGenerator = 1;
         private readonly SyncDictionary<int, BaseGameEvent> _sceneEvents = new();
         
@@ -187,6 +190,27 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             }
         }
 
+        [Server]
+        public void TriggerManyGameEvents(int eventCount = 1)
+        {
+            var curCount = 0;
+
+            foreach (var kvp in _sceneEvents)
+            {
+                var gameEvent = kvp.Value;
+
+                if (gameEvent.IsEventActive) continue;
+
+                //if (Random.value <= gameEvent.CurrentTriggerChance)
+                {
+                    ActivateEvent(gameEvent.EventId);
+                    curCount++;
+                }
+
+                if (curCount >= eventCount) return;
+            }
+        }
+
         //GAME TASKS
         [Server]
         public int RegisterSceneTaskHandler(GameTaskHandler taskHandler)
@@ -334,21 +358,16 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         [Server]
         public void TryTriggerRandomItemTasks(int taskCount = 1)
         {
-            //foreach (var kvp in _itemTasksDepots)
-            //{
-            //    var gameEvent = kvp.Value;
-
-            //    if (gameEvent.IsEventActive) continue;
-
-            //    if (Random.value <= gameEvent.CurrentTriggerChance)
-            //    {
-            //        ActivateEvent(gameEvent.EventId);
-            //    }
-            //}
-
             var depot = _itemTasksDepots.Values.First();
             if (depot == null) return;
-            depot.CreateItemTask("wrench");
+
+            for (var i = 0; i < taskCount; i++)
+            {
+                var randomItemData = _itemDatabase
+                    .TaskItems[Random.Range(0, _itemDatabase.TaskItems.Count)];
+                
+                depot.CreateItemTask(randomItemData.Id);
+            }
         }
     }
 }
