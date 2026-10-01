@@ -52,7 +52,17 @@ namespace Game.Scripts.GameFiles.Items
             var physItem = itemToDrop.GetComponent<PhysicalItem>();
             _physicalItemRegistry.Register(physItem);
         }
+        [Server]
+        public void ServerSpawnItem(string itemId, Vector3 pos, out PhysicalItem item)
+        {
+            item = null;
+            var itemToDrop = _itemPoolManager.CreateNewObject(itemId);
+            itemToDrop.transform.position = pos;
 
+            var physItem = itemToDrop.GetComponent<PhysicalItem>();
+            _physicalItemRegistry.Register(physItem);
+            if (physItem) item = physItem;
+        }
         [Server]
         public void ServerSpawnItemsFromChanceDict(Dictionary<ItemRarityData, float> drops, Vector3 pos)
         {

@@ -30,6 +30,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         protected override void Awake()
         {
             base.Awake();
+            if (item.Rigidbody.isKinematic) tag = _savedTag;
             ServerSetMaxToughness(toughness,true);
         }
 
@@ -41,7 +42,11 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             RagdollHandler?.EnableRagdoll();
 
             foreach (var kvp in _itemsToSpawn)
-                _itemSpawner.ServerSpawnItem(kvp.Key.Id, kvp.Value.position);
+            {
+                _itemSpawner.ServerSpawnItem(kvp.Key.Id, kvp.Value.position, out var physicalItem);
+                physicalItem.transform.rotation = kvp.Value.rotation;
+            }
+
             _itemsToSpawn.Clear();
 
             if (item && item.gameObject != gameObject)

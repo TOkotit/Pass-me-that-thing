@@ -13,7 +13,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class BaseGameEvent : NetworkBehaviour
     {
-        [SerializeField, Range(0f, 1f)] private float _baseTriggerChance = 0.2f;
+        [SerializeField, Range(0f, 1f)] private float baseTriggerChance = 0.2f;
 
         [SerializeField] private GameEventsType eventType;
 
@@ -51,7 +51,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 
         public void UpdateCurrentTriggerChance(float chanceToAdd)
         {
-            _currentTriggerChance = Mathf.Clamp01(_baseTriggerChance + chanceToAdd);
+            _currentTriggerChance = Mathf.Clamp01(baseTriggerChance + chanceToAdd);
             Debug.Log($"[EVENT] UpdateCurrentTriggerChance {EventId} - {CurrentTriggerChance}");
         }
 
@@ -59,7 +59,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         public override void OnStartServer()
         {
             base.OnStartServer();
-            _currentTriggerChance = _baseTriggerChance;
+            _currentTriggerChance = baseTriggerChance;
             RegisterEvent();
         }
 
