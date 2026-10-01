@@ -645,8 +645,8 @@ namespace Game.Gameplay.View.UI
                         {
                             task.OnTaskTimerTicked -= gameEvent.UpdateTimeProgress;
                         }
-
-                        _gameEventsContainer.Remove(gameEvent);
+                        
+                        _gameEventsContainer.Remove(gameEvent.parent);
                         _gameEvents.Remove(taskId);
                     });
             }
