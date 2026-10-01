@@ -7,9 +7,22 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
     public class PhysicalItemRegistry
     {
+        public class PhysicalItemEntry
+        {
+            public PhysicalItem Item;
+            public Rigidbody Body;
+
+            public PhysicalItemEntry(PhysicalItem item, Rigidbody body)
+            {
+                Item = item;
+                Body = body;
+            }
+        }
         public static PhysicalItemRegistry Instance { get; private set; }
-        private Dictionary<GameObject, PhysicalItem> _physicalItems = new Dictionary<GameObject, PhysicalItem>();
-        public List<PhysicalItem> GetItems() => _physicalItems.Values.ToList();
+        private Dictionary<GameObject, PhysicalItemEntry> _physicalItems = new Dictionary<GameObject, PhysicalItemEntry>();
+        public List<PhysicalItem> GetItems()
+            => _physicalItems.Values.Select(e => e.Item).Distinct().ToList();
+        public List<PhysicalItemEntry> GetItemsEntries() => _physicalItems.Values.ToList();
 
         public PhysicalItemRegistry()
         {
@@ -17,39 +30,71 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         }
         public void Register(PhysicalItem item)
         {
-            var itemObject = item.gameObject;
+            if (!item) return;
+            Register(item, item.Rigidbody);
+        }
+        public void Register(PhysicalItem item, Rigidbody body)
+        {
+            if (!item || !body)
+            {
+                Debug.LogError($"[Registry] Register: item={(item ? item.name : "NULL")}, " +
+                               $"body={(body ? body.name : "NULL")}");
+                return;
+            }
+            var itemObject = body.gameObject;
             if (!_physicalItems.ContainsKey(itemObject))
-                _physicalItems.Add(itemObject, item); 
+                _physicalItems.Add(itemObject, new PhysicalItemEntry(item,body)); 
             Debug.Log($"{item.gameObject.name} has been registered");
         }
         
-        
         public void Unregister(PhysicalItem item)
         {
-            var itemObject = item.gameObject;
-            if (_physicalItems.ContainsKey(itemObject))
-                _physicalItems.Remove(itemObject);
-            
+            if (!item) return;
+
+            var keysToRemove = new List<GameObject>();
+            foreach (var kvp in _physicalItems)
+                if (kvp.Value.Item == item)
+                    keysToRemove.Add(kvp.Key);
+
+            foreach (var key in keysToRemove)
+                _physicalItems.Remove(key);
         }
 
-        public PhysicalItem GetItem(GameObject item)
+        public PhysicalItem GetItem(GameObject itemObject)
         {
-            if (_physicalItems.ContainsKey(item))
+            if (_physicalItems.ContainsKey(itemObject))
             {
-                return _physicalItems[item];
+                return _physicalItems[itemObject].Item;
             }
             return null;
         }
-        public PhysicalItem TryGetItem(GameObject itemObject, out PhysicalItem item)
+        public bool TryGetItem(GameObject itemObject, out PhysicalItem item)
         {
             if (_physicalItems.ContainsKey(itemObject))
             {
-                item = _physicalItems[itemObject];
+                item = _physicalItems[itemObject].Item;
                 return item;
             }
             item = null;
             return item;
         }
-        
+        public PhysicalItemEntry GetItemEntry(GameObject itemObject)
+        {
+            if (_physicalItems.ContainsKey(itemObject))
+            {
+                return _physicalItems[itemObject];
+            }
+            return null;
+        }
+        public bool TryGetItemEntry(GameObject itemObject, out PhysicalItemEntry item)
+        {
+            if (_physicalItems.ContainsKey(itemObject))
+            {
+                item = _physicalItems[itemObject];
+                return item != null;
+            }
+            item = null;
+            return item != null;
+        }
     }
 }
