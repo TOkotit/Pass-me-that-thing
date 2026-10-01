@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Ami.BroAudio;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Gameplay.View.UI;
 using Game.Scripts.Enums;
@@ -18,6 +19,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 {
     public class GlobalStageManager : NetworkBehaviour
     {
+        [SerializeField] private SoundSource sound;
+
         [Inject] private GameRandomEventManager _gameRandomEventManager;
         [Inject] private EnemyDatabase _enemyDatabase;
         [Inject] private GlobalStageDatabase _globalStageDatabase;
@@ -147,6 +150,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                     TaskTriggerCoroutine(lData.TasksPoints, stepDuration));
 
                 _enemySpawner.SpawnWave(GetEnemies());
+
+                RpcPlaySound();
             }
             else if (_currentGameStage == GlobalStagesType.Rest)
             {
@@ -251,6 +256,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _fightEnded = true;
             _inOvertime = false;
             StopCoroutine(_taskTriggerCoroutine);
+
+            RpcStopSound();
 
             if (_stage.Level % _globalStageDatabase.LevelInDayAmount == 0)
             {
@@ -375,6 +382,24 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         private void OnStageChanged(Stage oldStage, Stage newStage)
         {
             OnStageChangedUI?.Invoke(newStage);
+        }
+
+        [ClientRpc]
+        private void RpcPlaySound()
+        {
+            if (sound != null)
+            {
+                sound.Play();
+            }
+        }
+
+        [ClientRpc]
+        private void RpcStopSound()
+        {
+            if (sound != null)
+            {
+                sound.Stop();
+            }
         }
     }
 
