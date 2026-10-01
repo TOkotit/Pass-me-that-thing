@@ -20,7 +20,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
                 _physicalItemRegistry.TryGetItem(other.gameObject, out var item);
                 if ((item && item.Rigidbody.linearVelocity.magnitude < 0.1f) || !item) return;
                 Debug.Log("Предмет брошен:"+item.IsThrown);
-                if (item && item.IsThrown)
+                if (item && item.IsThrown && !item.Owner)
                 {
                     if (item.Rigidbody && (item.Rigidbody.linearVelocity.normalized
                         + dir.forward).magnitude < 0.7f)
