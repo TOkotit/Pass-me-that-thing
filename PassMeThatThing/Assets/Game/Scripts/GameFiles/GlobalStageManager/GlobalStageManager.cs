@@ -270,7 +270,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 }
                 else
                 {
-                    _gameOverHandler.SetGameOver();
+                    SetGameOver();
                 }
             }
             else
@@ -279,6 +279,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
         }
 
+        [ClientRpc]
+        private void SetGameOver()
+        {
+            _gameOverHandler.SetGameOver();
+        }
         [Server]
         private void OnDayBegin()
         {
