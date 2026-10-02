@@ -4708,6 +4708,8 @@ MonoBehaviour:
   grabJoint: {fileID: 1323866539399521512}
   camera: {fileID: 3355288843335198720}
   animatorTransform: {fileID: 5452809853429047121}
+  rightHandFreeRotationOffset: {x: 0, y: 90, z: 0}
+  leftHandFreeRotationOffset: {x: 0, y: 90, z: 0}
 --- !u!114 &4478196668402527849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4899,6 +4901,7 @@ MonoBehaviour:
   mainCharacter: {fileID: 3471299420040406428}
   pivotAnimator: {fileID: 524437659641354089}
   comboResetTime: 1.2
+  maxSolidRestoreDelay: 3
 --- !u!114 &7420071182345406038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5317,6 +5320,10 @@ MonoBehaviour:
     m_Bits: 8192
   defaultBuildingPreview: {fileID: 2142656091706315903, guid: 2efd16b933c833642abe60d6624b54b4, type: 3}
   camera: {fileID: 3355288843335198720}
+  buildingSound:
+    _entity: {fileID: 11400000, guid: 05ead536722f8ce45a9a20655ca1c686, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8847557260216196345}
 --- !u!114 &6540347869492288861
 MonoBehaviour:
   m_ObjectHideFlags: 0
