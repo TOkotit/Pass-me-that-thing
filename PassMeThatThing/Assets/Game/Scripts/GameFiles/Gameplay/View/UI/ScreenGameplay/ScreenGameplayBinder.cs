@@ -17,9 +17,7 @@ using System.Collections;
 using System;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenGameplay.CustomTypesForToolkit;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
-using UnityEditorInternal.Profiling.Memory.Experimental;
-using UnityEngine.Windows;
-using Unity.VisualScripting;
+
 
 
 namespace Game.Gameplay.View.UI
