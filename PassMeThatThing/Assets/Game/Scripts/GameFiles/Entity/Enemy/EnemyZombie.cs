@@ -96,6 +96,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             DisableRagdoll();
         }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            
+            if (ZombieEnemyView != null)
+            {
+                ZombieEnemyView.Animator.Rebind();
+            }
+        }
+
         public void OnElapsedChanged(float oldElapsed, float newElapsed)
         {
             EnemyElapsedAttackChanged(newElapsed, AttackCooldown);
