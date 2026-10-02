@@ -6,11 +6,16 @@ namespace Game.Entity
 {
     public class DamagableImpactReceiver : MonoBehaviour
     {
-        [SerializeField] private float treshold = 2f;                 //базовый порог для объектов с массой = baseMass
-        [SerializeField] private float damageMultiplier = 1f;
-        [SerializeField] private float baseMass = 5f;                 // эталонная масса для нормализации
-        [SerializeField] private float nonPhysicalMultiplier = 0.3f;  // множитель урона для стен/нефизических объектов
-        [SerializeField] private float nonPhysicalTresholdMultiplier = 1f; // множитель порога для стен 
+        [Header("Threshold")]
+        [SerializeField] private float thresholdSpeed = 2f;          // скорость, ниже которой удара нет (м/с)
+        [SerializeField] private float baseMass = 5f;                // эталонная масса
+
+        [Header("Damage")]
+        [SerializeField] private float damageMultiplier = 1f;        // множитель урона
+        [SerializeField] private float baseDamageSpeed = 5f;         // эталонная скорость для нормализации урона
+        [SerializeField] private float nonPhysicalMultiplier = 0.3f; // множитель для стен / не-PhysicalItem
+        [SerializeField] private float nonPhysicalTresholdMultiplier = 1f;
+
         [SerializeField] private Damageable damageable;
 
         public void SetDamagable(Damageable damageable) => this.damageable = damageable;
@@ -20,28 +25,34 @@ namespace Game.Entity
             if (!damageable || damageable.DamagableModel?.HealthPool == null)
                 return;
 
-            float velocity = collision.relativeVelocity.magnitude;
+            var velocity = collision.relativeVelocity.magnitude;
 
-            float massMultiplier;
+            float mass;
             float effectiveThreshold;
 
             if (PhysicalItemRegistry.Instance != null &&
                 PhysicalItemRegistry.Instance.TryGetItem(collision.gameObject, out var physicalItem))
             {
-                effectiveThreshold = treshold;
-                float mass = physicalItem.Rigidbody ? physicalItem.Rigidbody.mass : 1f;
-                massMultiplier = mass / baseMass;
+                mass = physicalItem.Rigidbody ? physicalItem.Rigidbody.mass : 1f;
+                effectiveThreshold = thresholdSpeed;
             }
             else
             {
-                effectiveThreshold = treshold * nonPhysicalTresholdMultiplier;
-                massMultiplier = nonPhysicalMultiplier;
+                mass = baseMass * nonPhysicalMultiplier;
+                effectiveThreshold = thresholdSpeed * nonPhysicalTresholdMultiplier;
             }
 
             if (velocity < effectiveThreshold)
                 return;
 
-            int damage = (int)(velocity * damageMultiplier * massMultiplier);
+            var energy = 0.5f * mass * velocity * velocity;
+            var thresholdEnergy = 0.5f * mass * effectiveThreshold * effectiveThreshold;
+            var baseEnergy = 0.5f * baseMass * baseDamageSpeed * baseDamageSpeed;
+            var excessEnergy = energy - thresholdEnergy;
+            if (excessEnergy <= 0f) return;
+            var damage = (int)(excessEnergy / baseEnergy * damageMultiplier);
+
+            if (damage <= 0) return;
             damageable.ServerTakeDamage(damage);
         }
     }

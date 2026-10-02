@@ -307,7 +307,7 @@ namespace Game.Scripts.GameFiles.Items
                 return;
             if (entry.Item == _physicalItemInteractionController.CurrentHeldItem) return;
 
-            int partIndex = entry.Body ? entry.Item.IndexOf(entry.Body) : -1;
+            var partIndex = entry.Body ? entry.Item.IndexOf(entry.Body) : -1;
             inventory.CmdPickUpItem(entry.Item, partIndex, _playerInventoryModel.ActiveSlotIndex, localPoint);
         }
 

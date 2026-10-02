@@ -4386,6 +4386,7 @@ GameObject:
   - component: {fileID: 2157982894449120892}
   - component: {fileID: 8170641314587154669}
   - component: {fileID: 7420071182345406038}
+  - component: {fileID: 3940849181779201633}
   m_Layer: 8
   m_Name: MainCharacterNew
   m_TagString: Player
@@ -4918,6 +4919,25 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   owner: {fileID: 3471299420040406428}
+--- !u!114 &3940849181779201633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7528151646145926360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e1e3af5fbad4b58b2afab8322494807, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Entity.DamagableImpactReceiver
+  thresholdSpeed: 1
+  baseMass: 1
+  damageMultiplier: 1
+  baseDamageSpeed: 1
+  nonPhysicalMultiplier: 0.3
+  nonPhysicalTresholdMultiplier: 1
+  damageable: {fileID: 3471299420040406428}
 --- !u!1 &8313002827743973345
 GameObject:
   m_ObjectHideFlags: 0

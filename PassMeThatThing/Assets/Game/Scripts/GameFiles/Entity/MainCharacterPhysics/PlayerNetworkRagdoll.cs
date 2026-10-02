@@ -76,7 +76,7 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
                 if (_ragdollAudioListener) _ragdollAudioListener.enabled = true;
             }
             foreach (var bone in ragdollBones) 
-                bone.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
+                bone.gameObject.layer = LayerMask.NameToLayer("Interactable");
             networkMeshRenderer.enabled = true;
         }
 
