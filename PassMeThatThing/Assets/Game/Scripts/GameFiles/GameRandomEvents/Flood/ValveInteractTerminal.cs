@@ -20,7 +20,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         //view
         [SerializeField] private Outline outline;
         [SerializeField] private ParticleSystem impactParticles;
-        [SerializeField] private SoundSource valveSound = default;
+        [SerializeField] private SoundID valveSound;
 
         private Vector3 _initEulerAngles;
         private float _currentYOffset;
@@ -49,6 +49,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             }
 
             RpcPlayImpactParticles();
+            RpcPlayImpactSound();
         }
 
         [Command(requiresAuthority = false)]
@@ -110,7 +111,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         {
             _rotationProggress = 0f;
 
-            float startAngle = _currentYOffset;
+            var startAngle = _currentYOffset;
 
             while (_rotationProggress < rotationTime)
             {
@@ -139,10 +140,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
         [ClientRpc]
         private void RpcPlayImpactSound()
         {
-            if (valveSound && !valveSound.IsPlaying)
-            {
-                valveSound.Play();
-            }
+                BroAudio.Play(valveSound, transform.position);
         }
     }
 }

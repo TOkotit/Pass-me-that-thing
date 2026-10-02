@@ -37,6 +37,8 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         
         [Tooltip("Звук постройки")]
         [SerializeField] private SoundID buildingSound;
+        
+        
         [Inject] private LocalBuildingHandlerModel _handlerModel;
         [Inject] private BuildingManager _buildingManager;
         [Inject] private GlobalInventoryManager _globalInventoryManager;

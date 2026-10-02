@@ -4851,7 +4851,6 @@ GameObject:
   - component: {fileID: 1552082763083779855}
   - component: {fileID: 8858356453811586708}
   - component: {fileID: 6332060579218840703}
-  - component: {fileID: 4205012282732326592}
   m_Layer: 7
   m_Name: Cube.002
   m_TagString: Untagged
@@ -4973,7 +4972,10 @@ MonoBehaviour:
   syncInterval: 0
   minigameContainer: {fileID: 0}
   brokenPumpEvent: {fileID: 7261649635142665317}
-  pipeSound: {fileID: 4205012282732326592}
+  pipeSound:
+    _entity: {fileID: 0}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 2973638612984926717}
   _particleSystem: {fileID: 6179171907392608596}
   _outline: {fileID: 6332060579218840703}
 --- !u!114 &6332060579218840703
@@ -4994,29 +4996,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &4205012282732326592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2973638612984926717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onlyPlayOnce: 0
-  _playOnEnable: 0
-  _stopOnDisable: 0
-  _overrideFadeOut: -1
-  _sound:
-    _entity: {fileID: 11400000, guid: 03f46f29273576644a4f38103d470c50, type: 2}
-    ID: 0
-    <DebugObject>k__BackingField: {fileID: 2973638612984926717}
-  _overrideGroup: {fileID: 0}
-  _positionMode: 2
-  _delay: 0
 --- !u!1 &3147923291709419819
 GameObject:
   m_ObjectHideFlags: 0
@@ -5032,7 +5011,6 @@ GameObject:
   - component: {fileID: 2551886650145757741}
   - component: {fileID: 3930879256361456384}
   - component: {fileID: 2765379546846822346}
-  - component: {fileID: 4532385596491017707}
   m_Layer: 7
   m_Name: Cylinder.001
   m_TagString: Untagged
@@ -5144,7 +5122,10 @@ MonoBehaviour:
   port: {fileID: 8735115893247883747}
   outline: {fileID: 3930879256361456384}
   impactParticles: {fileID: 8603068229621543009}
-  valveSound: {fileID: 4532385596491017707}
+  valveSound:
+    _entity: {fileID: 11400000, guid: 6cb790a1264e57644b03db0f52cb88a3, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 3147923291709419819}
 --- !u!114 &3930879256361456384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5184,29 +5165,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5196152, y: 0.45961952, z: 0.45961952}
   m_Center: {x: -0.39, y: 0.09, z: 0.15}
---- !u!114 &4532385596491017707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3147923291709419819}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onlyPlayOnce: 0
-  _playOnEnable: 0
-  _stopOnDisable: 0
-  _overrideFadeOut: -1
-  _sound:
-    _entity: {fileID: 11400000, guid: 6cb790a1264e57644b03db0f52cb88a3, type: 2}
-    ID: 0
-    <DebugObject>k__BackingField: {fileID: 3147923291709419819}
-  _overrideGroup: {fileID: 0}
-  _positionMode: 2
-  _delay: 0
 --- !u!1 &3802787454916930085
 GameObject:
   m_ObjectHideFlags: 0
@@ -5340,7 +5298,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _baseTriggerChance: 1
+  baseTriggerChance: 0.2
   eventType: 2
   gameTaskHandler: {fileID: 2793080550672530899}
   taskTimeLimit: 40
@@ -5364,7 +5322,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _baseTriggerChance: 0.2
+  baseTriggerChance: 0.2
   eventType: 1
   gameTaskHandler: {fileID: 2793080550672530899}
   taskTimeLimit: 40
