@@ -334,6 +334,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
 
             return result;
+            //return new List<EnemyData>() { _enemyDatabase.GetEnemy("zombie") };
         }
 
         [Server]
