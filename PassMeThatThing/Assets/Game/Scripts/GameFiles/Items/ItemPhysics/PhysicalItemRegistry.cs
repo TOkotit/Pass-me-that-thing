@@ -5,19 +5,19 @@ using UnityEngine;
 
 namespace Game.Scripts.GameFiles.Items.ItemPhysics
 {
+    public class PhysicalItemEntry
+    {
+        public PhysicalItem Item;
+        public Rigidbody Body;
+
+        public PhysicalItemEntry(PhysicalItem item, Rigidbody body)
+        {
+            Item = item;
+            Body = body;
+        }
+    }
     public class PhysicalItemRegistry
     {
-        public class PhysicalItemEntry
-        {
-            public PhysicalItem Item;
-            public Rigidbody Body;
-
-            public PhysicalItemEntry(PhysicalItem item, Rigidbody body)
-            {
-                Item = item;
-                Body = body;
-            }
-        }
         public static PhysicalItemRegistry Instance { get; private set; }
         private Dictionary<GameObject, PhysicalItemEntry> _physicalItems = new Dictionary<GameObject, PhysicalItemEntry>();
         public List<PhysicalItem> GetItems()
