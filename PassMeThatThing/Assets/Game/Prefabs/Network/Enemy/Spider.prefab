@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2374939795949959038}
-  netAnimator: {fileID: 386844695717747939}
+  netAnimator: {fileID: 2121513623455527046}
   particles: {fileID: 6112999842049516912}
   attackPreviewSphere: {fileID: 1139912504305809014}
   isSkinnedMeshRenderer: 1
@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: 5475941992780067928}
   - component: {fileID: -7848420249468526302}
   - component: {fileID: 7179818156917931822}
+  - component: {fileID: 2121513623455527046}
   - component: {fileID: 4204966111963307030}
   - component: {fileID: 5723206330310296497}
   m_Layer: 0
@@ -494,6 +495,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &2121513623455527046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkAnimator
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 2374939795949959038}
 --- !u!114 &4204966111963307030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -696,21 +714,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1607231920899976161, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
+    - {fileID: 5284101230764202989, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
---- !u!114 &386844695717747939 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5284101230764202989, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
-  m_PrefabInstance: {fileID: 5479402048584124174}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkAnimator
 --- !u!95 &2374939795949959038 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7854211816412328048, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}

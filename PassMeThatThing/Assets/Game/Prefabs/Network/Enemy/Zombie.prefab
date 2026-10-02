@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 3016993096030587551}
-  netAnimator: {fileID: 1242582476760067040}
+  netAnimator: {fileID: 8756426002187437656}
   particles: {fileID: 136479865338665025}
   attackPreviewSphere: {fileID: 7017092975039700443}
   isSkinnedMeshRenderer: 1
@@ -305,6 +305,7 @@ GameObject:
   - component: {fileID: 8309401126575335136}
   - component: {fileID: 3809508609198974759}
   - component: {fileID: 5286021340439170528}
+  - component: {fileID: 8756426002187437656}
   - component: {fileID: 7370826059491095980}
   - component: {fileID: 1931763817442211047}
   - component: {fileID: 5741704439451843267}
@@ -508,6 +509,23 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8756426002187437656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkAnimator
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 3016993096030587551}
 --- !u!114 &7370826059491095980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -883,6 +901,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 686566096813627161, guid: 67eec1a399099f24dbfcb8c30706ce40, type: 3}
+    - {fileID: -8479245275289082904, guid: 67eec1a399099f24dbfcb8c30706ce40, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -948,17 +967,6 @@ CapsuleCollider:
   m_CorrespondingSourceObject: {fileID: 814841890859503706, guid: 67eec1a399099f24dbfcb8c30706ce40, type: 3}
   m_PrefabInstance: {fileID: 1976272597906917384}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1242582476760067040 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -8479245275289082904, guid: 67eec1a399099f24dbfcb8c30706ce40, type: 3}
-  m_PrefabInstance: {fileID: 1976272597906917384}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkAnimator
 --- !u!54 &1708093472948438267 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 925908103635258611, guid: 67eec1a399099f24dbfcb8c30706ce40, type: 3}
