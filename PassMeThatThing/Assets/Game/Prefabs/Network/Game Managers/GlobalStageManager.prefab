@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6407337208885911709}
   - component: {fileID: 4620398340723882454}
   - component: {fileID: 192287741668668507}
+  - component: {fileID: 3580007968496648961}
+  - component: {fileID: 1232165542925114334}
   m_Layer: 0
   m_Name: GlobalStageManager
   m_TagString: Untagged
@@ -49,7 +51,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  sound: {fileID: 192287741668668507}
+  fightMusic: {fileID: 192287741668668507}
+  warningSound: {fileID: 3580007968496648961}
+  restSound: {fileID: 1232165542925114334}
 --- !u!114 &4620398340723882454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +89,52 @@ MonoBehaviour:
   _overrideFadeOut: -1
   _sound:
     _entity: {fileID: 11400000, guid: 21cfc6bb99efa66499fd0f1c184c20be, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 6823797918808819171}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 0
+  _delay: 0
+--- !u!114 &3580007968496648961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6823797918808819171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 1b962a92be3c3da4b841962a81a1cbc8, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 6823797918808819171}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 0
+  _delay: 0
+--- !u!114 &1232165542925114334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6823797918808819171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 2823b03000ec2cf49b0c0fb5460c0ca6, type: 2}
     ID: 0
     <DebugObject>k__BackingField: {fileID: 6823797918808819171}
   _overrideGroup: {fileID: 0}

@@ -307,6 +307,8 @@ GameObject:
   - component: {fileID: 5286021340439170528}
   - component: {fileID: 7370826059491095980}
   - component: {fileID: 1931763817442211047}
+  - component: {fileID: 5741704439451843267}
+  - component: {fileID: 8354531728045960327}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -386,6 +388,9 @@ MonoBehaviour:
   targetDetector: {fileID: 7330507488948991796}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
+  ambientSounds: {fileID: 8354531728045960327}
+  minAmbientDelay: 25
+  maxAmbientDelay: 35
   enemyView: {fileID: 1685545026476552139}
 --- !u!114 &1833560880880073641
 MonoBehaviour:
@@ -403,6 +408,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackCubeCenter: {fileID: 387873943417241419}
+  attackSound: {fileID: 5741704439451843267}
   damageTypes:
     _serializedList:
     - Key: 0
@@ -553,6 +559,52 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &5741704439451843267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: c3cc6a1e71b2feb43873d8628465d679, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8090700475096468142}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
+--- !u!114 &8354531728045960327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 40df1070d64b9b743a7d9ca1e1937749, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8090700475096468142}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
 --- !u!1001 &1976272597906917384
 PrefabInstance:
   m_ObjectHideFlags: 0

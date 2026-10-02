@@ -200,6 +200,8 @@ GameObject:
   - component: {fileID: 5475941992780067928}
   - component: {fileID: -7848420249468526302}
   - component: {fileID: 7179818156917931822}
+  - component: {fileID: 4204966111963307030}
+  - component: {fileID: 5723206330310296497}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -283,6 +285,9 @@ MonoBehaviour:
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
+  ambientSounds: {fileID: 4204966111963307030}
+  minAmbientDelay: 20
+  maxAmbientDelay: 30
   enemyView: {fileID: 4264136277298202069}
   ceilingLayer:
     serializedVersion: 2
@@ -327,6 +332,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackCubeCenter: {fileID: 387873943417241419}
+  attackSound: {fileID: 5723206330310296497}
   damageTypes:
     _serializedList:
     - Key: 0
@@ -488,6 +494,52 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &4204966111963307030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 73aa3c37e8046bf449923cd8ff3f9983, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8090700475096468142}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
+--- !u!114 &5723206330310296497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 0fbf2224b3050e24b9785ce590fe88e9, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8090700475096468142}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
 --- !u!1 &8440172985222778063
 GameObject:
   m_ObjectHideFlags: 0

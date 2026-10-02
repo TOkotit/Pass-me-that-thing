@@ -191,5 +191,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ragdollHandler.DisableColliders();
             enemyView.EnableAnimator();
         }
+        
+        protected override bool CanPlayAmbientSound()
+        {
+            return stateMachine.CurrentState == ZombieWander || stateMachine.CurrentState == ZombieWalk;
+        }
     }
 }
