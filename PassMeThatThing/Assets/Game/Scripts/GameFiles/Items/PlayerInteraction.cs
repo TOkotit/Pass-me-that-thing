@@ -302,9 +302,13 @@ namespace Game.Scripts.GameFiles.Items
         public void TryPickUp(Collider target, Vector3 localPoint)
         {
             InterruptCurrentAction();
-            var item = _physicalItemRegistry.GetItem(target.gameObject);
-            if (item == _physicalItemInteractionController.CurrentHeldItem) return;
-            inventory.CmdPickUpItem(item, _playerInventoryModel.ActiveSlotIndex, localPoint);
+
+            if (!_physicalItemRegistry.TryGetItemEntry(target.gameObject, out var entry) || entry?.Item == null)
+                return;
+            if (entry.Item == _physicalItemInteractionController.CurrentHeldItem) return;
+
+            int partIndex = entry.Body ? entry.Item.IndexOf(entry.Body) : -1;
+            inventory.CmdPickUpItem(entry.Item, partIndex, _playerInventoryModel.ActiveSlotIndex, localPoint);
         }
 
         [Server]

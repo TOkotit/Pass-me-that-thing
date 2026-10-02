@@ -83,11 +83,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void GrabItem(PhysicalItem item, Vector3 localPoint)
+        public void GrabItem(PhysicalItem item, Rigidbody body, Vector3 localPoint)
         {
             _localPoint = localPoint;
             _heldItem = item;
-            _heldRb = item.Rigidbody;
+            _heldRb = body ? body : item.Rigidbody;
             _holdPivot = animatorTransform;
             _shouldAlignRotation = item.HasToBeAligned;
 
@@ -100,14 +100,17 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             MoveHands(item, localPoint);
             _isHolding = true;
 
-            RpcGrabItem(item, _initialLocalRotation, _shouldAlignRotation, localPoint);
+            var partIndex = item.IndexOf(_heldRb);
+            RpcGrabItem(item, partIndex, _initialLocalRotation, _shouldAlignRotation, localPoint);
         }
 
         [ClientRpc]
-        private void RpcGrabItem(PhysicalItem item, Quaternion initRot, bool align, Vector3 localPoint)
+        private void RpcGrabItem(PhysicalItem item, int partIndex, Quaternion initRot, bool align, Vector3 localPoint)
         {
             _heldItem = item;
-            _heldRb = item.Rigidbody;
+            _heldRb = (item && partIndex >= 0) ? item.GetPart(partIndex) : null;
+            if (!_heldRb && item) _heldRb = item.Rigidbody;
+
             _holdPivot = animatorTransform;
             _initialLocalRotation = initRot;
             _shouldAlignRotation = align;
@@ -120,6 +123,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
             MoveHands(item, localPoint);
             _isHolding = true;
         }
+
 
         [Server]
         public void ReleaseItem(PhysicalItem item, float throwForce, bool canThrow)
@@ -141,7 +145,9 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 item.IsThrown = true;
                 var force = throwForce * camera.transform.forward;
                 _heldRb.AddForce(force, ForceMode.Impulse);
-                RpcApplyThrowForce(item, force);
+
+                int partIndex = item.IndexOf(_heldRb);
+                RpcApplyThrowForce(item, partIndex, force);
             }
 
             _heldRb = null;
@@ -152,10 +158,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [ClientRpc]
-        private void RpcApplyThrowForce(PhysicalItem item, Vector3 force)
+        private void RpcApplyThrowForce(PhysicalItem item, int partIndex, Vector3 force)
         {
-            if (item && item.Rigidbody)
-                item.Rigidbody.AddForce(force, ForceMode.Impulse);
+            var body = (item && partIndex >= 0) ? item.GetPart(partIndex) : null;
+            if (!body && item) body = item.Rigidbody;
+            if (body) body.AddForce(force, ForceMode.Impulse);
         }
 
         [ClientRpc]

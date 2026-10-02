@@ -97,10 +97,14 @@ public class PlayerInventory : NetworkBehaviour
         _playerInventoryModel.ActiveSlotIndex = activeSlot; 
     }
     [Command]
-    public void CmdPickUpItem(PhysicalItem physicalItem, int preferredSlot, Vector3 localPoint)
+    public void CmdPickUpItem(PhysicalItem physicalItem, int partIndex, int preferredSlot, Vector3 localPoint)
     {
+        if (!physicalItem) return;
+
         physicalItem.ConnectionToClient = connectionToClient;
-        TryPickUpItemInternal(physicalItem, preferredSlot, localPoint);
+
+        var body = partIndex >= 0 ? physicalItem.GetPart(partIndex) : null;
+        TryPickUpItemInternal(physicalItem, body, preferredSlot, localPoint);
     }
 
     [Command]
@@ -138,7 +142,7 @@ public class PlayerInventory : NetworkBehaviour
         if (!physicalItem) {Debug.LogError("КУДА-ТО ДЕЛСЯ ПРЕДМЕТ");}
         if (physicalItem)
         {
-            _physicalСontroller.PhysicalPickUpItem(physicalItem, Vector3.zero);
+            _physicalСontroller.PhysicalPickUpItem(physicalItem, physicalItem.Rigidbody, Vector3.zero);
             activeSlot = index;   
             physicalItem.ConnectionToClient = connectionToClient;
         }
@@ -205,16 +209,16 @@ public class PlayerInventory : NetworkBehaviour
             instanceId = item.Network.instanceId
         };
 
-        targetController.PhysicalPickUpItem(item, Vector3.zero);
+        targetController.PhysicalPickUpItem(item, item.Rigidbody, Vector3.zero);
     }
     
     [Server]
     public void ServerPickUpItem(PhysicalItem physicalItem, int preferredSlot, Vector3 localPoint)
     {
-        TryPickUpItemInternal(physicalItem, preferredSlot, localPoint);
+        TryPickUpItemInternal(physicalItem, null, preferredSlot, localPoint);
     }
     
-    private void TryPickUpItemInternal(PhysicalItem physicalItem, int preferredSlot, Vector3 localPoint)
+    private void TryPickUpItemInternal(PhysicalItem physicalItem, Rigidbody body, int preferredSlot, Vector3 localPoint)
     {
         if (!physicalItem) return;
         var networkItem = physicalItem.Network;
@@ -255,7 +259,7 @@ public class PlayerInventory : NetworkBehaviour
             _physicalСontroller.ReleaseCurrentItem(0f, false);
         }
 
-        _physicalСontroller.PhysicalPickUpItem(physicalItem, localPoint);
+        _physicalСontroller.PhysicalPickUpItem(physicalItem, body, localPoint);
         activeSlot = targetSlot;
     }
     

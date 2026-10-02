@@ -13,6 +13,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         public PhysicalItem CurrentHeldItem => _heldItem;
 
         [SerializeField] private PhysicalItem _heldItem;
+        private Rigidbody _heldBody;
+        private int _heldPartIndex = -1;
+        public Rigidbody CurrentHeldBody => _heldBody;
+        public int CurrentHeldPartIndex => _heldPartIndex;
+        
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private float strength;
         [SerializeField] private MainCharacterMovement movement;
@@ -82,23 +87,30 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void PhysicalPickUpItem(PhysicalItem item, Vector3 localPoint)
+        public void PhysicalPickUpItem(PhysicalItem item, Rigidbody body,  Vector3 localPoint)
         {
             _heldItem = item;
+            _heldBody = body ? body : item.Rigidbody;
+            _heldPartIndex = body ? item.IndexOf(body) : -1;
             movement.SetMovementMultiplier(item);
             SetOwnerAndLayer(item);
-            TargetPickUpItem(item, localPoint);
-            _handsMovement.GrabItem(item, localPoint);
+            TargetPickUpItem(item, _heldPartIndex, localPoint);
+            _handsMovement.GrabItem(item, _heldBody, localPoint);
         }
 
         [TargetRpc]
-        private void TargetPickUpItem(PhysicalItem item, Vector3 localPoint)
+        private void TargetPickUpItem(PhysicalItem item, int partIndex, Vector3 localPoint)
         {
             _heldItem = item;
+            _heldPartIndex = partIndex;
+            _heldBody = (item && partIndex >= 0) ? item.GetPart(partIndex) : null;
+            if (!_heldBody && item) _heldBody = item.Rigidbody;
+
             movement.SetMovementMultiplier(item);
-            if (_heldItem)
-                _handsMovement.GrabItem(_heldItem, localPoint);
+            if (_heldItem && _heldBody)
+                _handsMovement.GrabItem(_heldItem, _heldBody, localPoint);
         }
+
         
         [Server]
         public void ReleaseCurrentItem(float throwForce, bool canThrow)
@@ -141,10 +153,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         [TargetRpc]
         public void TargetSyncPositionForDrop(NetworkConnection target, Vector3 position, Quaternion rotation)
         {
-            if (_heldItem)
+            if (_heldBody)
             {
-                _heldItem.Rigidbody.MovePosition(position);
-                _heldItem.Rigidbody.MoveRotation(rotation);
+                _heldBody.MovePosition(position);
+                _heldBody.MoveRotation(rotation);
             }
         }
     }

@@ -71,7 +71,12 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public Collider Collider => collider;
         public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
-
+        
+        [SerializeField] private Rigidbody[] itemParts; 
+        public int IndexOf(Rigidbody body) => System.Array.IndexOf(itemParts, body);
+        public Rigidbody GetPart(int index) => (index >= 0 && index < itemParts.Length) ? itemParts[index] : null;
+        public int PartsCount => itemParts.Length;
+        
         private void Start()
         {
             _outline = GetComponent<Outline>();
@@ -100,6 +105,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             base.OnStartClient();
             if (!isServer)
                 PhysicalItemRegistry.Instance.Register(this);
+            if (itemParts != null )
+            {
+                foreach (var rb in itemParts)
+                {
+                    PhysicalItemRegistry.Instance.Register(this, rb);
+                }
+            }
         }
 
         private void OnDestroy()
@@ -112,6 +124,13 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             if (!isServer && PhysicalItemRegistry.Instance.GetItem(gameObject) == null)
                 PhysicalItemRegistry.Instance.Register(this);
+            if (itemParts != null )
+            {
+                foreach (var rb in itemParts)
+                {
+                    PhysicalItemRegistry.Instance.Register(this, rb);
+                }
+            }
         }
     }
 }

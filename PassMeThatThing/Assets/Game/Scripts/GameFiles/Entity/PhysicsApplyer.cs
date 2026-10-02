@@ -91,28 +91,28 @@ namespace Game.Scripts.GameFiles.Entity
         }
 
         public void ApplyForceAndDamageToTarget(
-            GameObject target,
-            Vector3 force,
-            float damage,
-            int toughDamage,
-            Vector3 hitPoint,
-            bool callHitOnToughness = false,
-            ForceMode forceMode = ForceMode.Force)
+            GameObject target, Vector3 force, float damage, int toughDamage,
+            Vector3 hitPoint, bool callHitOnToughness = false, ForceMode forceMode = ForceMode.Force)
         {
             if (!target) return;
 
-            if (physicalItemRegistry.TryGetItem(target, out var item) && item.Rigidbody)
+            Rigidbody body = null;
+            if (physicalItemRegistry.TryGetItemEntry(target, out var entry) && entry != null)
+                body = entry.Body;
+
+            if (!body && physicalItemRegistry.TryGetItem(target, out var item) && item != null)
+                body = item.Rigidbody;
+
+            if (body)
             {
                 if (forceMode == ForceMode.Impulse)
-                    item.Rigidbody.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
+                    body.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
                 else
-                    item.Rigidbody.AddForce(force, forceMode);
+                    body.AddForce(force, forceMode);
             }
 
             if (damagableRegistry.TryGetDamagable(target, out var damagable))
-            {
                 ApplyDamageToTarget(damagable, damage, toughDamage, callHitOnToughness, hitPoint, force);
-            }
         }
 
         private void ApplyDamageToTarget(
