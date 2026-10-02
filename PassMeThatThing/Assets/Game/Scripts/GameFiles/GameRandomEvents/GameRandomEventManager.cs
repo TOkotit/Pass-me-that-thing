@@ -5,6 +5,7 @@ using System.Linq;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks;
 using Game.Scripts.Enums;
+using kcp2k;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -193,21 +194,16 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         [Server]
         public void TriggerManyGameEvents(int eventCount = 1)
         {
-            var curCount = 0;
-
-            foreach (var kvp in _sceneEvents)
+            for (var i = 0; i < eventCount; i++)
             {
-                var gameEvent = kvp.Value;
+                var scIds = _sceneEvents.Keys;
+                var randId = scIds.OrderBy(x => Random.value >= 0.5f).First();
+
+                var gameEvent = _sceneEvents[randId];
 
                 if (gameEvent.IsEventActive) continue;
 
-                //if (Random.value <= gameEvent.CurrentTriggerChance)
-                {
-                    ActivateEvent(gameEvent.EventId);
-                    curCount++;
-                }
-
-                if (curCount >= eventCount) return;
+                ActivateEvent(gameEvent.EventId);
             }
         }
 
