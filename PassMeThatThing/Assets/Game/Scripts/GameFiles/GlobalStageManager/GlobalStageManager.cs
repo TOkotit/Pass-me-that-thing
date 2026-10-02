@@ -19,8 +19,10 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 {
     public class GlobalStageManager : NetworkBehaviour
     {
-        [SerializeField] private SoundSource sound;
-
+        [SerializeField] private SoundSource fightMusic;
+        [SerializeField] private SoundSource warningSound;
+        [SerializeField] private SoundSource restSound;
+        
         [Inject] private GameRandomEventManager _gameRandomEventManager;
         [Inject] private EnemyDatabase _enemyDatabase;
         [Inject] private GlobalStageDatabase _globalStageDatabase;
@@ -150,13 +152,14 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                     TaskTriggerCoroutine(lData.TasksPoints, stepDuration));
 
                 _enemySpawner.SpawnWave(GetEnemies());
-
-                RpcPlaySound();
+                RpcPlayWarningSound();
+                RpcPlayMusic();
             }
             else if (_currentGameStage == GlobalStagesType.Rest)
             {
                 RunRestLogic();
                 OnDayEnd();
+                RpcPlayRestSound();
             }
 
             _stage = newStageData;
@@ -257,7 +260,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _inOvertime = false;
             StopCoroutine(_taskTriggerCoroutine);
 
-            RpcStopSound();
+            RpcStopMusic();
 
             if (_stage.Level % _globalStageDatabase.LevelInDayAmount == 0)
             {
@@ -267,7 +270,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 }
                 else
                 {
-                    _gameOverHandler.SetGameOver();
+                    SetGameOver();
                 }
             }
             else
@@ -276,6 +279,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
         }
 
+        [ClientRpc]
+        private void SetGameOver()
+        {
+            _gameOverHandler.SetGameOver();
+        }
         [Server]
         private void OnDayBegin()
         {
@@ -385,20 +393,38 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         }
 
         [ClientRpc]
-        private void RpcPlaySound()
+        private void RpcPlayMusic()
         {
-            if (sound != null)
+            if (fightMusic)
             {
-                sound.Play();
+                fightMusic.Play();
             }
         }
 
         [ClientRpc]
-        private void RpcStopSound()
+        private void RpcStopMusic()
         {
-            if (sound != null)
+            if (fightMusic)
             {
-                sound.Stop();
+                fightMusic.Stop();
+            }
+        }
+        
+        [ClientRpc]
+        private void RpcPlayWarningSound()
+        {
+            if (warningSound)
+            {
+                warningSound.Play();
+            }
+        }
+        
+        [ClientRpc]
+        private void RpcPlayRestSound()
+        {
+            if (restSound)
+            {
+                restSound.Play();
             }
         }
     }

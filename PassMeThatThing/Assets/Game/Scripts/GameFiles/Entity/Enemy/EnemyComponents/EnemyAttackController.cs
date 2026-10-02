@@ -1,4 +1,5 @@
 using System;
+using Ami.BroAudio;
 using AYellowpaper.SerializedCollections;
 using DG.Tweening;
 using Entity;
@@ -11,7 +12,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.Entity.Enemy
 {
-    
+
     public class EnemyAttackController : NetworkBehaviour
     {
         private LayerMask _targetLayer;
@@ -19,19 +20,20 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [Inject] private DamageSystem _damageSystem;
 
         [SerializeField] private Transform attackCubeCenter;
+        [SerializeField] private SoundSource attackSound;
         [SerializedDictionary] public SerializedDictionary<DamagableType, float> damageTypes;
 
         public Transform AttackCubeCenter => attackCubeCenter;
 
         public event Action OnAttackMelee;
-        
+
         public override void OnStartServer()
         {
             base.OnStartServer();
-            
+
             _targetLayer = LayerMask.GetMask("Player", "BunkerDoor", "Building", "Interactable");
-            
-            if (attackCubeCenter == null) 
+
+            if (!attackCubeCenter)
                 attackCubeCenter = transform;
         }
 
@@ -42,7 +44,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             var size = Physics.OverlapBox(
                 attackCubeCenter.position,
                 halfExtents,
-                transform.rotation, 
+                transform.rotation,
                 _targetLayer
             );
 
@@ -53,11 +55,18 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             }
 
             OnAttackMelee?.Invoke();
-            
+            RpcPlayAttackSound();
             Debug.Log("Zombie AttackMelee");
         }
-        
-        private void OnDrawGizmosSelected()
+
+        [ClientRpc]
+        private void RpcPlayAttackSound()
+        {
+            if(attackSound)
+                attackSound.Play();
+        }
+
+    private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.softRed;
             Gizmos.DrawCube(attackCubeCenter.position, new Vector3(0.2f, 0.2f, 0.2f));

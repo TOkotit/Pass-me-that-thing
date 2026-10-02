@@ -4,6 +4,7 @@ using Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM;
 using Game.Scripts.GameFiles.Entity.Enemy.View;
 using Mirror;
 using System;
+using Ami.BroAudio;
 using UnityEngine;
 using VContainer;
 
@@ -16,10 +17,16 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
         [SerializeField] protected EnemyMovementController movementController;
         [SerializeField] protected EnemyAttackController attackController;
 
+        [SerializeField] protected SoundSource ambientSounds;
+        [SerializeField] protected float minAmbientDelay = 20f;
+        [SerializeField] protected float maxAmbientDelay = 30f;
+        
         private float SMLogicTimer;
         private float SMLogicInterval = 0.1f;
         private bool isAlive = true;
-
+        protected float ambientTimer;
+        
+        
         protected EnemyModel EnemyModel;
         protected EnemyStateMachine stateMachine;
 
@@ -96,6 +103,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             base.OnStartServer();
 
             stateMachine = new EnemyStateMachine();
+            ambientTimer = UnityEngine.Random.Range(minAmbientDelay, maxAmbientDelay);
         }
 
         protected void Update()
@@ -109,6 +117,15 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
                 stateMachine.CurrentState.LogicUpdate();
                 SMLogicTimer = 0f;
             }
+            if (CanPlayAmbientSound())
+            {
+                ambientTimer -= Time.deltaTime;
+                if (ambientTimer <= 0)
+                {
+                    RpcPlayAmbientSound();
+                    ambientTimer = UnityEngine.Random.Range(minAmbientDelay, maxAmbientDelay);
+                }
+            }
         }
 
         protected void FixedUpdate()
@@ -116,6 +133,17 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             if(!isServer) return;
             
             stateMachine.CurrentState.PhysicsUpdate();
+        }
+        
+        protected virtual bool CanPlayAmbientSound()
+        {
+            return false;
+        }
+
+        [ClientRpc]
+        private void RpcPlayAmbientSound()
+        {
+            ambientSounds.Play();
         }
     }
 }

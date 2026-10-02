@@ -137,5 +137,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
                 NetworkServer.Destroy(gameObject);
             }
         }
+        protected override bool CanPlayAmbientSound()
+        {
+            return stateMachine.CurrentState == SpiderWander || stateMachine.CurrentState == SpiderWalk;
+        }
     }
 }

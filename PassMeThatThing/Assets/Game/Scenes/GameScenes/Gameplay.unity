@@ -172,6 +172,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6407337208885911709, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
+      propertyPath: fightMusic
+      value: 
+      objectReference: {fileID: 5673065}
+    - target: {fileID: 6407337208885911709, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
+      propertyPath: warningSound
+      value: 
+      objectReference: {fileID: 5673064}
+    - target: {fileID: 6407337208885911709, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
       propertyPath: fightStageDuration
       value: 40
       objectReference: {fileID: 0}
@@ -193,6 +201,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5827416169646040984, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
   m_PrefabInstance: {fileID: 5673062}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5673064 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3580007968496648961, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
+  m_PrefabInstance: {fileID: 5673062}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+--- !u!114 &5673065 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 192287741668668507, guid: 2bbf7f3ca47ab154787b87cb23f233c0, type: 3}
+  m_PrefabInstance: {fileID: 5673062}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
 --- !u!1 &20414879
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
     {
         [SerializeField] private BrokenPumpEvent brokenPumpEvent;
 
-        [SerializeField] private SoundSource pipeSound = default;
+        [SerializeField] private SoundID pipeSound;
         [SerializeField] private ParticleSystem _particleSystem;
         [SerializeField] public Outline _outline;
 
@@ -37,14 +37,10 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Flood
             }
         }
 
-        //View
         [ClientRpc]
         private void RpcPlayImpactSound()
-        {
-            if (pipeSound && !pipeSound.IsPlaying) 
-            {
-                pipeSound.Play();
-            }
+        { 
+            BroAudio.Play(pipeSound, transform.position);
         }
         
         [ClientRpc]

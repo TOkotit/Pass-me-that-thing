@@ -69,6 +69,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
 
         private Dictionary<VisualElement, Color> _elemRegistry = new();
         private List<Color> _matchedColors = new();
+
+        private bool _isMGCompleted;
         
         private void Awake()
         {
@@ -342,6 +344,9 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
         //general
         public void CompleteMinigame()
         {
+            if (_isMGCompleted) return;
+            _isMGCompleted = true;
+
             var anim =  DOTween.Sequence();
             
             _successImg.visible = true;
@@ -355,6 +360,7 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
                 .OnComplete(() =>
                 {
                     ViewModel.RequestCompleteMinigame();
+                    
                 });
         }
 

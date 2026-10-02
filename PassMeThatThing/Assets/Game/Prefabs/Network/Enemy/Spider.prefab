@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2374939795949959038}
-  netAnimator: {fileID: 386844695717747939}
+  netAnimator: {fileID: 2121513623455527046}
   particles: {fileID: 6112999842049516912}
   attackPreviewSphere: {fileID: 1139912504305809014}
   isSkinnedMeshRenderer: 1
@@ -200,6 +200,9 @@ GameObject:
   - component: {fileID: 5475941992780067928}
   - component: {fileID: -7848420249468526302}
   - component: {fileID: 7179818156917931822}
+  - component: {fileID: 2121513623455527046}
+  - component: {fileID: 4204966111963307030}
+  - component: {fileID: 5723206330310296497}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -283,6 +286,9 @@ MonoBehaviour:
   targetDetector: {fileID: 1118780070767854037}
   movementController: {fileID: 2949989233195922033}
   attackController: {fileID: 1833560880880073641}
+  ambientSounds: {fileID: 4204966111963307030}
+  minAmbientDelay: 20
+  maxAmbientDelay: 30
   enemyView: {fileID: 4264136277298202069}
   ceilingLayer:
     serializedVersion: 2
@@ -327,6 +333,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackCubeCenter: {fileID: 387873943417241419}
+  attackSound: {fileID: 5723206330310296497}
   damageTypes:
     _serializedList:
     - Key: 0
@@ -488,6 +495,69 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &2121513623455527046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkAnimator
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 2374939795949959038}
+--- !u!114 &4204966111963307030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 73aa3c37e8046bf449923cd8ff3f9983, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8090700475096468142}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
+--- !u!114 &5723206330310296497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8090700475096468142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 0fbf2224b3050e24b9785ce590fe88e9, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 8090700475096468142}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 1
+  _delay: 0
 --- !u!1 &8440172985222778063
 GameObject:
   m_ObjectHideFlags: 0
@@ -602,6 +672,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: spider
       objectReference: {fileID: 0}
+    - target: {fileID: 7854211816412328048, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
+      propertyPath: m_UpdateMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8001589143263614329, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -644,21 +718,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1607231920899976161, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
+    - {fileID: 5284101230764202989, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
---- !u!114 &386844695717747939 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5284101230764202989, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}
-  m_PrefabInstance: {fileID: 5479402048584124174}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkAnimator
 --- !u!95 &2374939795949959038 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7854211816412328048, guid: b95b50d6683237b4e82e8f208bd330b4, type: 3}

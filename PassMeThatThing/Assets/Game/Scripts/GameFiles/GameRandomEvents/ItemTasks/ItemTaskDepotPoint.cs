@@ -35,7 +35,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
         [SerializeField] private ItemTaskDepotPointView view;
         [SerializeField] private GameTaskHandler taskHandler;
         [SerializeField] private float taskTimeLimit = 30;
-
+        [SerializeField] private Outline outlineComponent;
         [Inject] private PhysicalItemRegistry registry;
         [Inject] private ItemPoolManager _itemPoolManager;
         [Inject] private GlobalStageDatabase _globalStageDatabase;
@@ -43,6 +43,10 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
 
         private int _itemTaskDepotId;
 
+        
+        [SyncVar(hook = nameof(OnHasActiveTaskChanged))]
+        private bool _hasActiveTask;
+        
         //taskId, (itemId, gameTask)
         private Dictionary<int, ItemGameTask> _requiredItems = new();
 
@@ -63,6 +67,8 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
             task.OnTaskTimerEnd += OnTaskTimerEnd;
 
             _requiredItems.Add(task.gameTaskId, new ItemGameTask(itemId, task));
+            
+            UpdateOutlineState();
         }
 
         private void OnTaskTimerEnd(int taskId)
@@ -74,6 +80,8 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
             _requiredItems.Remove(taskId);
 
             _randomEventManager.DestroyGameTask(taskId);
+            
+            UpdateOutlineState();
         }
 
         [Server]
@@ -89,9 +97,23 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
             _requiredItems.Remove(task.gameTaskId);
 
             _randomEventManager.CompleteAndDestroyGameTask(task.gameTaskId);
+            
+            UpdateOutlineState();
 
         }
-
+        [Server]
+        private void UpdateOutlineState()
+        {
+            _hasActiveTask = _requiredItems.Count > 0;
+        }
+        
+        private void OnHasActiveTaskChanged(bool oldValue, bool newValue)
+        {
+            if (outlineComponent)
+            {
+                outlineComponent.enabled = newValue;
+            }
+        }
 
         [Server]
         public override void OnStartServer()

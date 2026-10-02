@@ -1,6 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Gameplay/Gameplay.uss?fileID=7433441132597879392&amp;guid=e152551381caab343a416b55f7bf77d3&amp;type=3#Gameplay"/>
     <ui:GroupBox picking-mode="Ignore" style="height: 100%; justify-content: center;">
-        <ui:ProgressBar value="22" name="WheelProgressBar" picking-mode="Ignore" style="width: 913px; align-self: center; height: 25px; scale: 1 3; margin-bottom: 113px;"/>
+        <ui:ProgressBar value="22" name="WheelProgressBar" picking-mode="Ignore" class="stamina-progress-bar" style="width: 913px; align-self: center; height: 25px; scale: 1 3; margin-bottom: 113px;"/>
         <ui:VisualElement name="RotationWheel" focusable="true" style="flex-grow: 0; height: 432px; width: 432px; align-self: center; background-image: resource(&quot;Sprites/MinigameSprites/rotate_arrows&quot;);"/>
     </ui:GroupBox>
 </ui:UXML>
