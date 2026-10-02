@@ -106,7 +106,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
         {
             base.OnDeath();
 
-            stateMachine.ChangeState(SpiderDeath);
+            if (isServer)
+                stateMachine.ChangeState(SpiderDeath);
         }
 
         public void OnElapsedChanged(float oldElapsed, float newElapsed)
@@ -136,6 +137,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.EnemyFSM
             {
                 NetworkServer.Destroy(gameObject);
             }
+        }
+        protected override bool CanPlayAmbientSound()
+        {
+            return stateMachine.CurrentState == SpiderWander || stateMachine.CurrentState == SpiderWalk;
         }
     }
 }

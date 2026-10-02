@@ -37,6 +37,9 @@ namespace Game.Scripts.GameFiles.Entity.Enemy.View
         private MaterialPropertyBlock propBlock;
         private Coroutine flashRoutine;
 
+        public Animator Animator => animator;
+
+        public NetworkAnimator NetAnimator => netAnimator;
 
         private void Awake()
         {

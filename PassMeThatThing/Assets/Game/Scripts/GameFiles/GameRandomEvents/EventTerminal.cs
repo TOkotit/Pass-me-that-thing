@@ -60,9 +60,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
             {
                 eventId = gameEvent.EventId,
                 eventType = gameEvent.EventType,
-                description = gameEvent.description,
-                difficulty = gameEvent.difficulty,
-                timeLimit = gameEvent.timeLimit,
+                //description = gameEvent.description,
+                //difficulty = gameEvent.difficulty,
+                //timeLimit = gameEvent.TimeLimit,
                 
                 eventTerminal = this,
                 position = minigameContainer 

@@ -15,6 +15,11 @@ using UnityEngine.InputSystem;
 using Stage = Game.Scripts.GameFiles.GlobalStageManager.Stage;
 using System.Collections;
 using System;
+using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenGameplay.CustomTypesForToolkit;
+using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using UnityEditorInternal.Profiling.Memory.Experimental;
+using UnityEngine.Windows;
+using Unity.VisualScripting;
 
 
 namespace Game.Gameplay.View.UI
@@ -30,14 +35,16 @@ namespace Game.Gameplay.View.UI
         private StyleRotate _styleRotate;
         private int _activeSlotIndex = -1;
 
-        private Dictionary<int, TemplateContainer> _gameEvents = new ();
+        private Dictionary<int, CustomGameEvent> _gameEvents = new ();
         
-        private GameEventsDatabase _gameEventsDatabase;
+        //private GameEventsDatabase _gameEventsDatabase;
         
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset gameEventPrefab;
         [SerializeField] private VisualTreeAsset hintPrefab;
         [SerializeField] private VisualTreeAsset addedResPrefab;
+
+        [SerializeField] private Sprite defaultTestSprite;
 
         private VisualElement _root;
         private VisualElement _cursor;
@@ -82,6 +89,8 @@ namespace Game.Gameplay.View.UI
         private Label _waterWireResText;
         private Label _fuelWireResText;
 
+        private Label _quotaText;
+
         private void Awake()
         {
 
@@ -124,6 +133,8 @@ namespace Game.Gameplay.View.UI
             _waterWireResText = _root.Q<Label>("waterResText");
             _fuelWireResText = _root.Q<Label>("fuelResText");
 
+            _quotaText = _root.Q<Label>("QuotaText");
+
             for (var i = 2; i <= 4; i++)
             {
                 _otherPlayerAvatars.Add(_root.Q<VisualElement>($"Avatar{i}"));
@@ -149,12 +160,16 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestSubImage(SetItemImageSprite);
 
-            ViewModel.InitGameEvent(Clear, AddGameEvent);
-            ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
+            //ViewModel.InitGameEvent(ClearEvents, AddGameEvent);
+            //ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
+            //ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            InitTasks();
+            SubTasks();
+            ViewModel.RequestSubQuota(UpdateQuota);
             
             ViewModel.RequestLevelGrid(SetMinimapSource);
             
-            ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            
             ViewModel.RequestSubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestSubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestSubThrowCharge(UpdateThrowChargeText);
@@ -184,13 +199,16 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubPlayersInfo(UpdatePlayerInfo);
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
 
-            ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
-            
+            //ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
+            //ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            UnSubTasks();
+            ViewModel.RequestUnSubQuota(UpdateQuota);
+
             ViewModel.RequestUnsubActiveSlot(SetActiveItemSlot);
 
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
-            ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+            
             ViewModel.RequestUnsubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestUnsubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
@@ -377,16 +395,31 @@ namespace Game.Gameplay.View.UI
                 disPhaseBtn.visible = true;
             }
 
-            if (newValue.Type != GlobalStagesType.Rest)
+            //если это левелы в одном дне
+            //if (newValue.Type != GlobalStagesType.Rest)
+            //{
+            //    var l = (newValue.Level - 1) % 3 ; //0, 1, 2
+            //    if (0 <= l && l < _disabledPhaseBtns.Count)
+            //        _disabledPhaseBtns[l].visible = false;
+            //}
+            //else
+            //{
+            //    if (3 < _disabledPhaseBtns.Count)
+            //        _disabledPhaseBtns[3].visible = false;
+            //}
+
+            //если один левел в дне и это фазы
+            switch (newValue.Type)
             {
-                var l = (newValue.Level - 1) % 3 ; //0, 1, 2
-                if (0 <= l && l < _disabledPhaseBtns.Count)
-                    _disabledPhaseBtns[l].visible = false;
-            }
-            else
-            {
-                if (3 < _disabledPhaseBtns.Count)
+                case GlobalStagesType.Preparation:
+                    _disabledPhaseBtns[0].visible = false;
+                    break;
+                case GlobalStagesType.Fight:
+                    _disabledPhaseBtns[1].visible = false;
+                    break;
+                case GlobalStagesType.Rest:
                     _disabledPhaseBtns[3].visible = false;
+                    break;
             }
 
 
@@ -463,63 +496,162 @@ namespace Game.Gameplay.View.UI
             _itemImages[index].style.backgroundImage = new StyleBackground(sprite);
         }
 
+        //EVENTS
+
+        private void UpdateQuota(int current, int required)
+        {
+            _quotaText.text = $"#{current}/{required}";
+        }
+
         private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
         {
             foreach (var i in dict)
             {
-                var e = _gameEventsDatabase.GetEvent(i.Value.EventType);
-                AddGameEvent(i.Value.EventId, e.EventImage, i.Value.EventId);
+                var e = ViewModel.gameEventsDatabase.GetEvent(i.Value.EventType);
+                //AddGameTask(i.Value.EventId, e.EventImage, i.Value.EventId);
             }
         }
 
-        private void SetupEventDatabase(GameEventsDatabase gameEventsDatabase)
-        {
-            _gameEventsDatabase = gameEventsDatabase;
-        }
-
-        private void Clear()
+        private void ClearEvents()
         {
             _gameEvents.Clear();
         }
-        
-        private void AddGameEvent(int eventId, Sprite icon, int roomNumber)
-        {
-            if (_gameEvents.ContainsKey(eventId)) return;
-            
-            var gameEvent = gameEventPrefab.Instantiate();
-            
-            _gameEventsContainer.Add(gameEvent);
-            _gameEvents.Add(eventId, gameEvent);
-            
-            gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
-            gameEvent.Q<Label>("EventLb").text = $"R-{roomNumber}";
 
-            gameEvent.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
-        }
-        
-        private void UpdateGameEvent(int eventId, Sprite icon, int roomNumber)
+        public void InitTasks()
         {
-            if (_gameEvents.TryGetValue(eventId, out var gameEvent) && gameEvent != null)
+            ClearEvents();
+            foreach (var task in ViewModel.gameRandomEventManager.GameTasksData.Values)
             {
-                gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
-                gameEvent.Q<Label>("EventLb").text = $"R-{roomNumber}";
+                Sprite s = defaultTestSprite;
+
+                switch (task.gameTaskType)
+                {
+                    case GameTaskType.GameEvent:
+                        if (Enum.TryParse(task.taskField, out GameEventsType result))
+                        {
+                            var eData = ViewModel.gameEventsDatabase.GetEvent(result);
+                            s = eData.EventImage;
+                        }
+                        break;
+                    case GameTaskType.Item:
+                        var itemData = ViewModel.itemDatabase.GetItem(task.taskField);
+                        s = itemData.ItemImage;
+                        break;
+                }
+
+                AddGameTask(task.gameTaskId, s, task.cost, task.isTaskOverdue);
             }
         }
 
-        private void RemoveGameEvent(int eventId)
+        private void SubTasks()
         {
-            if (_gameEvents.TryGetValue(eventId, out var gameEvent) && gameEvent != null)
+            ViewModel.gameRandomEventManager.GameTasksData.OnChange += OnGameTasksChanged;
+        }
+
+        private void UnSubTasks()
+        {
+            ViewModel.gameRandomEventManager.GameTasksData.OnChange -= OnGameTasksChanged;
+        }
+
+        private void OnGameTasksChanged(SyncDictionary<int, GameTaskData>.Operation op, int key, GameTaskData task)
+        {
+            if (op == SyncDictionary<int, GameTaskData>.Operation.OP_REMOVE)
+            {
+                RemoveGameEvent(key);
+                return;
+            }
+
+            Sprite s = defaultTestSprite;
+            
+            var newTaskData = ViewModel.gameRandomEventManager.GameTasksData[key];
+
+            switch (newTaskData.gameTaskType)
+            {
+                case GameTaskType.GameEvent:
+                    if (Enum.TryParse(newTaskData.taskField, out GameEventsType result))
+                    {
+                        var eData = ViewModel.gameEventsDatabase.GetEvent(result);
+                        s = eData.EventImage;
+                    }
+                    break;
+                case GameTaskType.Item:
+                    var itemData = ViewModel.itemDatabase.GetItem(newTaskData.taskField);
+                    s = itemData.ItemImage;
+                    break;
+            }
+
+            switch (op)
+            {
+                case SyncDictionary<int, GameTaskData>.Operation.OP_ADD:
+
+                    AddGameTask(newTaskData.gameTaskId, s, newTaskData.cost, newTaskData.isTaskOverdue);
+                    break;
+                case SyncDictionary<int, GameTaskData>.Operation.OP_SET:
+
+                    //Debug.Log("[TASKS] DATA OP_SET");
+                    UpdateGameTask(newTaskData.gameTaskId, s, newTaskData.cost, newTaskData.isTaskOverdue);
+                    break;
+                case SyncDictionary<int, GameTaskData>.Operation.OP_REMOVE:
+                    break;
+            }
+        }
+
+        private void AddGameTask(int taskId, Sprite icon, int cost, bool isOverdue)
+        {
+            if (_gameEvents.ContainsKey(taskId)) return;
+            
+            var gameEventTempl = gameEventPrefab.Instantiate();
+            _gameEventsContainer.Add(gameEventTempl);
+
+
+            var customGameEvent = gameEventTempl.Q<CustomGameEvent>("CustomGameEvent");
+            customGameEvent.timeBar = gameEventTempl.Q<ProgressBar>("EventTimeProgress");
+            _gameEvents.Add(taskId, customGameEvent);
+
+            if (ViewModel.gameRandomEventManager.GameTasks.TryGetValue(taskId, out var task))
+            {
+                customGameEvent.UpdateTimeProgress(task.time, task.timeLimit);
+                task.OnTaskTimerTicked += customGameEvent.UpdateTimeProgress;
+            }
+
+            gameEventTempl.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+            gameEventTempl.Q<Label>("EventLb").text = $"#{cost}";
+            gameEventTempl.Q<VisualElement>("OverdueInd").visible = isOverdue;
+
+
+            gameEventTempl.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
+        }
+        
+        private void UpdateGameTask(int taskId, Sprite icon, int cost, bool isOverdue)
+        {
+            if (_gameEvents.TryGetValue(taskId, out var gameEvent) && gameEvent != null)
+            {
+                gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+                gameEvent.Q<Label>("EventLb").text = $"#{cost}";
+                //Debug.Log($"[TASKS] OverdueInd).visible {taskData.isTaskOverdue}");
+                gameEvent.Q<VisualElement>("OverdueInd").visible = isOverdue;
+            }
+        }
+
+        private void RemoveGameEvent(int taskId)
+        {
+            if (_gameEvents.TryGetValue(taskId, out var gameEvent) && gameEvent != null)
             {
                 gameEvent.DOScale(0f, 0.2f)
                     .From(new Vector2(1f, 1f)).SetEase(Ease.InOutBack)
                     .OnComplete(() =>
                     {
-                        _gameEventsContainer.Remove(gameEvent);
-                        _gameEvents.Remove(eventId);
+                        if (ViewModel.gameRandomEventManager.GameTasks.TryGetValue(taskId, out var task))
+                        {
+                            task.OnTaskTimerTicked -= gameEvent.UpdateTimeProgress;
+                        }
+                        
+                        _gameEventsContainer.Remove(gameEvent.parent);
+                        _gameEvents.Remove(taskId);
                     });
             }
-                
         }
+        
 
         public void UpdatePlugImages(List<WireType> types)
         {

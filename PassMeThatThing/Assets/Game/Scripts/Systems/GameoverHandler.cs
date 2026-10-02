@@ -49,12 +49,17 @@ namespace Game.Scripts.Systems
             }
             else
             {
-                Debug.Log("Game over!");
-                // конец игры
-                gameManager.SetState(GameState.GameOver);
-                //сделать ui или выход со сцены
-                _gameplayUIManager.OpenScreenDefeat();
+                SetGameOver();
             }
+        }
+
+        public void SetGameOver()
+        {
+            Debug.Log("Game over!");
+            // конец игры
+            gameManager.SetState(GameState.GameOver);
+            //сделать ui или выход со сцены
+            _gameplayUIManager.OpenScreenDefeat();
         }
     }
 }

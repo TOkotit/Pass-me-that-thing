@@ -1,5 +1,6 @@
 ﻿using AYellowpaper.SerializedCollections;
 using Game.Scripts.Enums;
+using Game.Scripts.Utils;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
 {
@@ -16,51 +18,138 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
         [SerializeField] private int levelInDayAmount = 3;
 
         [SerializeField] private float restDuration;
-        [SerializeField] private List<LevelData> levelsData;
 
-        [Header("Конфиг мобов на диапазон левелов (включ./включ.)")]
-        public SerializedDictionary<LevelRange, List<EnemyPackData>> levelEnemiesConfig;
+        [SerializeField] private int baseQuotaConst = 50;
+        [SerializeField] private int quotaSpreadPercent = 5;
+
+        [SerializeField] private int taskCreateStepSpreadPercent = 20;
+
+        [Header("Конфиг уровней на диапазон левелов (включ./включ.)")]
+        public SerializedDictionary<LevelRange, LevelData> levelConfig;
+
+        
 
         public int LevelInDayAmount => levelInDayAmount;
-        public List<LevelData> LevelsData => levelsData;
-
         public float RestDuration => restDuration;
+        public IReadOnlyDictionary<LevelRange, LevelData> LevelConfig => levelConfig;
+
+        private int _maxConfigLevel = -1;
+
+        public int MaxConfigLevel 
+        {  
+            get 
+            {
+                if (_maxConfigLevel == -1)
+                {
+                    foreach (var ld in levelConfig)
+                    {
+                        if (ld.Key.maxVal > _maxConfigLevel)
+                        {
+                            _maxConfigLevel = ld.Key.maxVal;
+                        }
+                    }
+                }
+                return _maxConfigLevel;
+            }
+        }
+
+        public int BaseQuotaConst => baseQuotaConst;
+
+        public int TaskCreateStepSpreadPercent => taskCreateStepSpreadPercent;
+
+        public LevelData GetLevelData(int levelNumber)
+        {
+            Debug.Log($"level number {levelNumber}");
+
+            if (levelNumber <= MaxConfigLevel)
+            {
+                var c = levelConfig
+                    .FirstOrDefault(kp => kp.Key.minVal <= levelNumber
+                        && levelNumber <= kp.Key.maxVal);
+
+                return c.Value;
+            }
+            else
+            {
+                return levelConfig.Last().Value;
+            }
+        }
+
+
+        public List<EnemyPackData> GetEnemyPacksByLevel(int level)
+        {
+            var c = GetLevelData(level);
+
+            var enemyDiffPoints = c.EnemyDiffPoints;
+
+            return GetRandomEnemypackByDiffPoints(enemyDiffPoints);
+        }
+
+        private List<EnemyPackData> GetRandomEnemypackByDiffPoints(int enemyDiffPoints)
+        {
+            var allDifficulties = Enum.GetValues(typeof(EnemyDifficulty))
+                .Cast<EnemyDifficulty>()
+                .ToList();
+
+            var currPoints = enemyDiffPoints;
+            var tempResult = new Dictionary<EnemyDifficulty, int>();
+
+            while (currPoints > 0)
+            {
+                int randDiffIndex;
+
+                if (currPoints == 1)
+                {
+                    randDiffIndex = 0;
+                }
+                else
+                {
+                    randDiffIndex = Random.Range(0, Math.Min(allDifficulties.Count, currPoints - 1));
+                }
+                
+                if (tempResult.ContainsKey(allDifficulties[randDiffIndex]))
+                {
+                    tempResult[allDifficulties[randDiffIndex]]++;
+                }
+                else
+                {
+                    tempResult.Add(allDifficulties[randDiffIndex], 1);
+                }
+
+                currPoints = currPoints - 1 - randDiffIndex;
+            }
+
+            var result = new List<EnemyPackData>();
+
+            foreach (var p in tempResult)
+            {
+                result.Add(new EnemyPackData() { enemyDiff=p.Key, count=p.Value });
+            }
+
+            return result;
+        }
 
         public float GetStageDuration(GlobalStagesType type, int level)
         {
             var duration = type switch
             {
-                GlobalStagesType.Preparation => GetLevelData(level-1).PreparationPhaseTime,
-                GlobalStagesType.Fight => GetLevelData(level-1).FightPhaseTime,
+                GlobalStagesType.Preparation => GetLevelData(level).PreparationPhaseTime,
+                GlobalStagesType.Fight => GetLevelData(level).FightPhaseTime,
                 GlobalStagesType.Rest => RestDuration,
                 _ => 5f
             };
             return duration;
         }
 
-        public List<EnemyPackData> GetEnemyPacksByLevel(int level)
+        public int GetQuotaSumByLevel(int level)
         {
-            var c = levelEnemiesConfig
-                .Where(kp => kp.Key.minVal <= level && level <= kp.Key.maxVal);
-            if (c.Count() > 0)
-            {
-                return c.First().Value;
-            }
-            else
-            {
-                return levelEnemiesConfig.Last().Value;
-            }
-        }
+            var c = GetLevelData(level);
 
-        public LevelData GetLevelData(int levelIndex)
-        {
-            Debug.Log($"dayIndex{levelIndex}");
-            if (levelIndex < levelsData.Count)
-                return levelsData[levelIndex];
-            else
-            {
-                return levelsData.Last();
-            }
+            var quotaSum = c.QuotaPoints * baseQuotaConst;
+
+            var randQuotaSum = RandomUtilities.RandNearMult(quotaSum, quotaSpreadPercent / 100f, 0);
+
+            return (int)randQuotaSum;
         }
     }
 
@@ -69,10 +158,14 @@ namespace Assets.Game.Scripts.GameFiles.GlobalStageManager
     {
         public float PreparationPhaseTime = 200f;
         public float FightPhaseTime = 300f;
+
+        public int EnemyDiffPoints = 1;
+        public int QuotaPoints = 1;
+        public int TasksPoints = 1;
     }
 
     [Serializable]
-    public class EnemyPackData
+    public struct EnemyPackData
     {
         public int count;
         public EnemyDifficulty enemyDiff;

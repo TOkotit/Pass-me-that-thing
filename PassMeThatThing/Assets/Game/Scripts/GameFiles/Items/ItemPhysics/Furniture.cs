@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using Entity;
 using Mirror;
 using UnityEngine;
@@ -16,30 +17,40 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         [SerializeField] private float collisionDamageThreshold = 5f;
         [SerializeField] private float collisionDamageMultiplier = 1f;
         [SerializeField] private float flatDamageReduction = 0f;
-
-        [SerializeField] private PhysicalItem _item;
-        [SerializeField] private List<PhysicalItem> _items = new List<PhysicalItem>();
+        [SerializeField] private int toughness;
+        [SerializeField] private PhysicalItem item;
+        [SerializedDictionary] public SerializedDictionary<ItemData,Transform> _itemsToSpawn;
+        [Inject] ItemSpawner _itemSpawner;
+        [Inject] private GlobalInventoryManager _globalInventoryManager;
         private readonly List<Collider> _connectedTo = new List<Collider>();
         private string _savedTag = "Item";
+    
+        public PhysicalItem Item => item;
 
-        public PhysicalItem Item => _item;
+        protected override void Awake()
+        {
+            base.Awake();
+            if (item.Rigidbody.isKinematic) tag = _savedTag;
+            ServerSetMaxToughness(toughness,true);
+        }
 
         public override void OnDeath()
         {
+            if (item && item.Network)
+                _globalInventoryManager.RemoveFromAllInventories(item.Network.instanceId);
+
             RagdollHandler?.EnableRagdoll();
 
-            foreach (var item in _items)
+            foreach (var kvp in _itemsToSpawn)
             {
-                if (item)
-                {
-                    item.gameObject.SetActive(true);
-                    item.transform.SetParent(null);
-                }
+                _itemSpawner.ServerSpawnItem(kvp.Key.Id, kvp.Value.position, out var physicalItem);
+                physicalItem.transform.rotation = kvp.Value.rotation;
             }
-            _items.Clear();
 
-            if (_item && _item.gameObject != gameObject)
-                NetworkServer.Destroy(_item.gameObject);
+            _itemsToSpawn.Clear();
+
+            if (item && item.gameObject != gameObject)
+                NetworkServer.Destroy(item.gameObject);
 
             NetworkServer.Destroy(gameObject);
         }
@@ -53,9 +64,9 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             RagdollHandler?.EnableRagdoll();
             tag = _savedTag;
 
-            if (_item && _item.Connections != null)
+            if (item && item.Connections != null)
             {
-                foreach (var connection in _item.Connections)
+                foreach (var connection in item.Connections)
                 {
                     connection?.Disconnect();
                 }

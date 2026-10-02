@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ami.BroAudio;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants;
 using DG.Tweening;
@@ -33,6 +34,11 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
         [SerializeField] private GameObject defaultBuildingPreview; 
         [SerializeField] private Camera camera;
 
+        
+        [Tooltip("Р—РІСѓРє РїРѕСЃС‚СЂРѕР№РєРё")]
+        [SerializeField] private SoundID buildingSound;
+        
+        
         [Inject] private LocalBuildingHandlerModel _handlerModel;
         [Inject] private BuildingManager _buildingManager;
         [Inject] private GlobalInventoryManager _globalInventoryManager;
@@ -209,18 +215,18 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             _preview = true;
             enabled = true;
             
-            //спавн
+            //пїЅпїЅпїЅпїЅпїЅ
             var prevPrefab = _currentBuildingData.previewPrefab;
             if (prevPrefab != null)
                 _buildingPreview = Instantiate(prevPrefab);
             else
                 _buildingPreview = Instantiate(defaultBuildingPreview);
 
-            //вращение
+            //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (_currentBuildingData.rotationType == Enums.BuildingRotationType.Locked)
                 _previewRotation = 0f;
 
-            //расположение
+            //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             _currentBuildingPlacementTags.Clear();
             if (_currentBuildingData.placementType.HasFlag(BuildingPlacementType.Floor))
                 _currentBuildingPlacementTags.Add(_floorTag);
@@ -231,7 +237,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             if (_currentBuildingData.placementType.HasFlag(BuildingPlacementType.Ceiling))
                 _currentBuildingPlacementTags.Add(_ceilingTag);
 
-            //коллизии и расположение
+            //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             _buildingPreview.TryGetComponent(out _currentBuildingHandler);
 
             OpenBuildingPreviewScreen();
@@ -251,6 +257,20 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
                 _globalInventoryManager.CmdDeleteFromInventory(_handlerModel.InstanceId);
                 CancelBuildingPreview();
             }
+
+            CmdPlaySound(position);
+        }
+        
+        [Command(requiresAuthority = false)]
+        private void CmdPlaySound(Vector3 position)
+        {
+            RpcPlaySound(position);
+        }
+
+        [ClientRpc]
+        private void RpcPlaySound(Vector3 position)
+        {
+            BroAudio.Play(buildingSound, position);
         }
         
         public void CancelBuildingPreview()
@@ -271,7 +291,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             if (Physics.Raycast(ray, out var hit, previewDistance, buildingLayer))
             {
                 Building b;
-                //TODO Сделать Building Registry для строений
+                //TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Building Registry пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 if (hit.collider.gameObject.TryGetComponent<Building>(out b))
                 {
                     _buildingManager.CmdDestroyBuilding(b);
@@ -289,7 +309,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings
             
             if (Physics.Raycast(ray, out var hit, previewDistance, buildingLayer))
             {
-                //TODO Сделать Building Registry для строений
+                //TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Building Registry пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 if (hit.collider.gameObject.TryGetComponent<Farm>(out var f))
                 {
                     _buildingManager.CmdSetSeed(f, seedId);

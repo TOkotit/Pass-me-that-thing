@@ -48,5 +48,6 @@ namespace Entity
             if (newMaxHealth < HealthPool.CurrentHealth || fullHeal ) 
                 SetHealth(newMaxHealth);
         }
+        public int MaxHealth => HealthPool.MaxHealth;
     }
 }

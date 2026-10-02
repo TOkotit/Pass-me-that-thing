@@ -467,6 +467,7 @@ namespace Game.Scripts.GameFiles.Items
                 _playerInventoryModel.ActiveSlotIndex = index;
                 inventory.CmdDrawItem(index, _physicalItemInteractionController.AnimatorTransform.position);
             }
+            
         }
 
         [Command]

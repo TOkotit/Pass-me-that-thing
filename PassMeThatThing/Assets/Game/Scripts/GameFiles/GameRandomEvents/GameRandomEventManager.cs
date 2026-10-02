@@ -1,8 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks;
 using Game.Scripts.Enums;
+using kcp2k;
 using Mirror;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
@@ -11,6 +15,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 {
     public class GameRandomEventManager : NetworkBehaviour
     {
+        [Inject] private ItemDatabase _itemDatabase;
+
+        private WaitForSeconds _waitTasksTick = new WaitForSeconds(1f);
+
+        //все объекты ивентов
         private int _idGenerator = 1;
         private readonly SyncDictionary<int, BaseGameEvent> _sceneEvents = new();
         
@@ -21,8 +30,26 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 
         private float _pipebreakChanceBoost;
 
-        public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
 
+        //TODO вынести в отдельный класс
+        //починка станций, сдача предметов и тд
+        private Coroutine _timeTickCoroutine;
+        private int _idTaskHandlerGenerator = 1;
+        private SyncDictionary<int, GameTaskHandler> _gameTaskHandlers = new();
+        private int _idTaskGenerator = 1;
+        private SyncDictionary<int, GameTask> _gameTasks = new();
+        private SyncDictionary<int, GameTaskData> _gameTasksData = new();
+
+        //TODO вынести в отдельный класс
+        //терминалы сдачи предметов
+        private int _idItemTaskDepotGenerator = 1;
+        private readonly SyncDictionary<int, ItemTaskDepotPoint> _itemTasksDepots = new();
+
+
+
+        public SyncDictionary<int, BaseGameEvent> StartedEvents => _startedEvents;
+        public SyncDictionary<int, GameTask> GameTasks => _gameTasks;
+        public SyncDictionary<int, GameTaskData> GameTasksData => _gameTasksData;
         public float PipebreakChanceBoost 
         { 
             get => _pipebreakChanceBoost; 
@@ -36,7 +63,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 
         public IReadOnlyDictionary<GameEventsType, int> FixedEvents => _fixedEvents;
 
+        
+
         public IEnumerable<BaseGameEvent> GetAllEvents() => _sceneEvents.Values;
+
+        public event Action<int> OnQuotaValueAdded;
         
         
         public event Action<SyncDictionary<int, BaseGameEvent>> OnEventReceived;
@@ -46,6 +77,12 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         public override void OnStartClient()
         {
             OnEventReceived?.Invoke(StartedEvents);
+            _timeTickCoroutine = StartCoroutine(CalcGameTasksTime());
+        }
+
+        public override void OnStopClient()
+        {
+            StopCoroutine(_timeTickCoroutine);
         }
 
         [Server]
@@ -151,6 +188,181 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 {
                     ActivateEvent(gameEvent.EventId);
                 }
+            }
+        }
+
+        [Server]
+        public void TriggerManyGameEvents(int eventCount = 1)
+        {
+            for (var i = 0; i < eventCount; i++)
+            {
+                var scIds = _sceneEvents.Keys;
+                var randId = scIds.OrderBy(x => Random.value >= 0.5f).First();
+
+                var gameEvent = _sceneEvents[randId];
+
+                if (gameEvent.IsEventActive) continue;
+
+                ActivateEvent(gameEvent.EventId);
+            }
+        }
+
+        //GAME TASKS
+        [Server]
+        public int RegisterSceneTaskHandler(GameTaskHandler taskHandler)
+        {
+            var assignedId = _idTaskHandlerGenerator;
+
+            _idTaskHandlerGenerator++;
+            Debug.Log($"RegisterSceneTaskHandler, id: {assignedId}");
+
+            _gameTaskHandlers.Add(assignedId, taskHandler);
+
+            return assignedId;
+        }
+
+        [Server]
+        public void UnregisterTaskHandler(int id)
+        {
+            if (_gameTaskHandlers.ContainsKey(id))
+            {
+                _gameTaskHandlers.Remove(id);
+            }
+        }
+
+        [Server]
+        public GameTask CreateGameTask(GameTaskParameters parameters)
+        {
+            _idTaskGenerator++;
+
+            var newTask = new GameTask();
+
+            newTask.gameTaskId = _idTaskGenerator;
+            newTask.InitTask(parameters.timeLimit);
+            newTask.OnTaskTimerEnd += OverdueGameTask;
+
+            var newTaskData = new GameTaskData();
+
+            newTaskData.gameTaskId = _idTaskGenerator;
+            newTaskData.gameTaskType = parameters.gameTaskType;
+            newTaskData.taskField = parameters.taskField;
+            newTaskData.cost = parameters.cost;
+
+            _gameTasks.Add(_idTaskGenerator, newTask);
+            _gameTasksData.Add(_idTaskGenerator, newTaskData);
+
+            return newTask;
+        }
+
+        [Server]
+        public void OverdueGameTask(int taskId)
+        {
+            if (_gameTasksData.TryGetValue(taskId, out var taskData))
+            {
+                taskData.isTaskOverdue = true;
+
+                _gameTasksData[taskId] = taskData;
+            }
+        }
+
+        [Server]
+        public void DestroyGameTask(int taskId)
+        {
+            if (_gameTasks.TryGetValue(taskId, out var task))
+            {
+                task.OnTaskTimerEnd -= OverdueGameTask;
+                task.DestroyTask();
+                _gameTasks.Remove(taskId);
+            }
+
+            if (_gameTasksData.TryGetValue(taskId, out var taskData))
+            {
+                _gameTasksData.Remove(taskId);
+            }
+        }
+
+        [Server]
+        public void CompleteAndDestroyGameTask(int taskId)
+        {
+            if (_gameTasksData.TryGetValue(taskId, out var taskData))
+            {
+                if (!taskData.isTaskOverdue)
+                {
+                    AddTaskCostQuota(taskData.cost);
+                }
+                else
+                {
+                    AddTaskCostQuota(taskData.cost / 2);
+                }
+            }
+
+            DestroyGameTask(taskId);
+        }
+
+        [Server]
+        public void AddTaskCostQuota(int value)
+        {
+            OnQuotaValueAdded?.Invoke(value);
+        }
+
+        //просчет таймеров происходит и на сервере и на клиенте
+        public IEnumerator CalcGameTasksTime()
+        {
+            while (true)
+            {
+                var taskIds = _gameTasks.Keys.ToArray();
+
+                foreach (var taskId in taskIds)
+                {
+                    if (_gameTasks.TryGetValue(taskId, out var task) &&
+                        _gameTasksData.TryGetValue(taskId, out var taskData))
+                    {
+                        if (!taskData.isTaskOverdue)
+                        {
+                            task.TickTimer(); 
+                        }
+                    }
+                }
+                yield return _waitTasksTick;
+            }
+        }
+
+        //TODO в отдельный класс
+        //ITEM DEPOT TASKS
+        [Server]
+        public int RegisterSceneItemTaskDepot(ItemTaskDepotPoint itemTaskDepot)
+        {
+            var assignedId = _idItemTaskDepotGenerator;
+
+            _idItemTaskDepotGenerator++;
+            Debug.Log($"ItemTaskDepot, id: {assignedId}");
+
+            _itemTasksDepots.Add(assignedId, itemTaskDepot);
+
+            return assignedId;
+        }
+
+        [Server]
+        public void UnregisterSceneItemTaskDepot(int itemTaskDepotId)
+        {
+            if (_itemTasksDepots.ContainsKey(itemTaskDepotId))
+            {
+                _itemTasksDepots.Remove(itemTaskDepotId);
+            }
+        }
+
+        [Server]
+        public void TryTriggerRandomItemTasks(int taskCount = 1)
+        {
+            var depot = _itemTasksDepots.Values.First();
+            if (depot == null) return;
+
+            for (var i = 0; i < taskCount; i++)
+            {
+                var randomItemData = _itemDatabase
+                    .TaskItems[Random.Range(0, _itemDatabase.TaskItems.Count)];
+                
+                depot.CreateItemTask(randomItemData.Id);
             }
         }
     }

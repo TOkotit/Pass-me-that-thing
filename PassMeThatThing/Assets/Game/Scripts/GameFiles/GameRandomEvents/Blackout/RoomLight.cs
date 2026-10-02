@@ -18,6 +18,7 @@ public class RoomLight : MonoBehaviour
 {
     
     [SerializeField] private float rotationSpeed = 30f;
+    [SerializeField] private float warningDuration = 5f;
     
     [Tooltip("Ссылки на компоненты Light")]
     [SerializeField] private Light commonLightComponent;
@@ -89,7 +90,6 @@ public class RoomLight : MonoBehaviour
                 commonLightComponent.enabled = false;
                 warningLighContainerPrefab.SetActive(false);
                 Debug.Log($"[RoomLight] Off is activate");
-
                 break;
             
             case RoomLightState.Warning:
@@ -100,7 +100,7 @@ public class RoomLight : MonoBehaviour
                 lampOffPrefab.SetActive(false);
                 commonLightComponent.enabled = false;
                 Debug.Log($"[RoomLight] Warning is activate");
-
+                StartCoroutine(LampWarning(warningDuration));
                 break;
             
             default:
@@ -108,11 +108,23 @@ public class RoomLight : MonoBehaviour
         }
     }
 
-    public void Update()
+    private IEnumerator LampWarning(float duration)
     {
-        if (CurrentState == RoomLightState.Warning)
+        var elapsedTime = 0f;
+        while (elapsedTime < duration)
         {
-            warningLighContainerPrefab.transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+            var progress = elapsedTime / duration;
+            
+            if (CurrentState == RoomLightState.Warning)
+            {
+                warningLighContainerPrefab.transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+            }
+            
+            elapsedTime += Time.deltaTime;
+
+            yield return null; 
         }
+        SetLampState(RoomLightState.Common);
+        Debug.Log("[RoomLight]  Lamp warning off");
     }
 }

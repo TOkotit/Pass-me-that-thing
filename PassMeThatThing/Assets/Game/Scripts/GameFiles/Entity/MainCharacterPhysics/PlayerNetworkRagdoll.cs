@@ -14,6 +14,10 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private SkinnedMeshRenderer networkMeshRenderer;
         private Dictionary<string, Rigidbody> _playerBoneDict;
         private MainCharacter _player;
+        
+        private AudioListener _mainAudioListener;
+        private AudioListener _ragdollAudioListener;
+        
         private Camera _playerCamera;
         public Camera Camera => _playerCamera;
         public void Setup(Damageable mainCharacter, Dictionary<string, Rigidbody> playerBoneDict)
@@ -25,6 +29,18 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             }
             else { return; }
             _playerBoneDict = playerBoneDict;
+            
+            if (ragdollCamera)
+                _ragdollAudioListener = ragdollCamera.GetComponent<AudioListener>();
+
+            if (_ragdollAudioListener)
+                _ragdollAudioListener.enabled = false;
+
+            if (!_player.isLocalPlayer)
+            {
+                if (_mainAudioListener) _mainAudioListener.enabled = false;
+                if (_ragdollAudioListener) _ragdollAudioListener.enabled = false;
+            }
         }
 
         private void SyncBones(bool toRagdoll)
@@ -55,6 +71,9 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             {
                 ragdollCamera.transform.rotation = _playerCamera.transform.rotation;
                 ragdollCamera.enabled = true;
+                
+                if (_mainAudioListener) _mainAudioListener.enabled = false;
+                if (_ragdollAudioListener) _ragdollAudioListener.enabled = true;
             }
             foreach (var bone in ragdollBones) 
                 bone.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
@@ -65,6 +84,13 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         {
             SyncBones(false);
             ragdollCamera.enabled = false;
+            
+            if (_player && _player.isLocalPlayer)
+            {
+                if (_ragdollAudioListener) _ragdollAudioListener.enabled = false;
+                if (_mainAudioListener) _mainAudioListener.enabled = true;
+            }
+            
             foreach (var bone in ragdollBones) 
                 bone.gameObject.layer = LayerMask.NameToLayer("OutOfBounds");
             networkMeshRenderer.enabled = false;

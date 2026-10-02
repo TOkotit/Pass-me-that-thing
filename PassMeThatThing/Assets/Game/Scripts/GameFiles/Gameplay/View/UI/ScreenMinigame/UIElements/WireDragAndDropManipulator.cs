@@ -93,7 +93,8 @@ namespace Game.Gameplay.View.UI.ScreenMinigame
             if (_line != null && _box != null)
             {
                 _line.UpdatePositions(new Vector2(_box.worldBound.position.x + _box.worldBound.width,
-                    _box.worldBound.position.y + _box.worldBound.height), target.worldBound.position);
+                    _box.worldBound.position.y + _box.worldBound.height),
+                    new Vector2(target.worldBound.position.x, target.worldBound.position.y + target.worldBound.height));
                 _box.style.scale = new Vector2(1, 1);
                 _box.style.backgroundImage = new StyleBackground(_t.start);
 

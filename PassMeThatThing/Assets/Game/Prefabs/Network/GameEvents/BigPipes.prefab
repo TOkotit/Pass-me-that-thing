@@ -298,6 +298,7 @@ GameObject:
   - component: {fileID: 3224683437702632670}
   - component: {fileID: 7989009915996929182}
   - component: {fileID: 1032108084039664460}
+  - component: {fileID: 7529433830310686631}
   - component: {fileID: 6468441584140739080}
   - component: {fileID: 6609596328987690964}
   - component: {fileID: 8801093466208183907}
@@ -379,10 +380,28 @@ MonoBehaviour:
   syncInterval: 0
   _baseTriggerChance: 0.2
   eventType: 2
+  gameTaskHandler: {fileID: 7529433830310686631}
+  taskTimeLimit: 40
+  taskPoints: 1
   terminal: {fileID: 1202088884199672489}
   waterMeshPrefab: {fileID: 3254914551686333841, guid: 6f821f1095f9b154e8ca980f2f2b1b94, type: 3}
   waterMeshTransform: {fileID: 2958257391534694994}
   maxWaterWidth: 10
+--- !u!114 &7529433830310686631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6398786016326100300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 962d142da4217fe41aef06480b940024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks.GameTaskHandler
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &6468441584140739080
 MonoBehaviour:
   m_ObjectHideFlags: 0

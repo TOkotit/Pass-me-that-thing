@@ -68,6 +68,8 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
 
             ZombieEnemyView.Initialize();
 
+            DisableRagdoll();
+
             if (isServer)
             {
                 ServerSetMaxHealth(MaxHealth, true);
@@ -93,8 +95,19 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             
             stateMachine.Initialize(ZombieWander);
             
-            DisableRagdoll();
+            //RpcDisableRagdoll();
         }
+
+        //public override void OnStartClient()
+        //{
+        //    base.OnStartClient();
+            
+        //    if (ZombieEnemyView != null)
+        //    {
+        //        ZombieEnemyView.Animator.Rebind();
+        //        ZombieEnemyView.Animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        //    }
+        //}
 
         public void OnElapsedChanged(float oldElapsed, float newElapsed)
         {
@@ -168,6 +181,7 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             EnableRagdoll();
         }
 
+        
         public void EnableRagdoll()
         {
             movementController.DisableNavAgent();
@@ -183,6 +197,10 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             enemyView.PlayStandingUp((() => DisableRagdoll()));
 
         }
+
+        [ClientRpc]
+        public void RpcDisableRagdoll() => DisableRagdoll();
+
         public void DisableRagdoll()
         {
             movementController.EnableNavAgent();
@@ -190,6 +208,11 @@ namespace Game.Scripts.GameFiles.Entity.Enemy
             ragdollHandler.DisableRagdoll();
             ragdollHandler.DisableColliders();
             enemyView.EnableAnimator();
+        }
+        
+        protected override bool CanPlayAmbientSound()
+        {
+            return stateMachine.CurrentState == ZombieWander || stateMachine.CurrentState == ZombieWalk;
         }
     }
 }

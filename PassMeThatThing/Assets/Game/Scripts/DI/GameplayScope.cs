@@ -44,11 +44,11 @@ namespace DI
         [SerializeField] private BuildingsDatabase buildingDatabase;
         [SerializeField] private TurretDatabase turretDatabase;
         [SerializeField] private ScreenHintsDatabase screenHintsDatabase;
-
+        
         [SerializeField] private ResourceDatabase resourceDatabase;
         [SerializeField] private WorkbenchItemRecipeDatabase recipeDatabase;
         [SerializeField] private PlantDatabase plantDatabase;
-
+        [SerializeField] private DamageableStateColorData damageableStateColorData;
 
         [Header("Managers on gameplay scene")]
         [SerializeField] private GameRandomEventManager eventManager;
@@ -78,7 +78,8 @@ namespace DI
             builder.RegisterInstance(resourceDatabase);
             builder.RegisterInstance(recipeDatabase);
             builder.RegisterInstance(plantDatabase);
-
+            builder.RegisterInstance(damageableStateColorData);
+            
             //managers
             builder.RegisterComponent(eventManager);
             builder.RegisterComponent(globalStageManager);
@@ -131,7 +132,8 @@ namespace DI
             builder.Register<GameplayUIRootViewModel>(Lifetime.Singleton);
             builder.Register<WorldUIRootViewModel>(Lifetime.Singleton);
             builder.Register<GameplayUIManager>(Lifetime.Singleton);
-
+            builder.Register<ItemSpawner>(Lifetime.Singleton);
+            
             builder.RegisterEntryPoint<GameplayEntryPoint>(Lifetime.Singleton);
         }
         

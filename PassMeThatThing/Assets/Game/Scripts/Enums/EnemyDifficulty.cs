@@ -4,8 +4,7 @@
     {
         Light,
         Normal,
-        Hard,
-        VeryHard,
-
+        //Hard,
+        //VeryHard
     }
 }
