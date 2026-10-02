@@ -9,6 +9,7 @@ using Game.Scripts.GameFiles.LevelGeneration.Editor_Grid;
 using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using UnityEngine;
+using UnityEngine.Events;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
@@ -73,7 +74,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] private GameObject wallWithPassagePrefab;
 
         public static Transform ActiveLevelContainer { get; private set; }
-
+        public event UnityAction OnLevelGenerated;
         private LevelGeneratorSolver _solver;
         private List<GameObject> _placedWalls = new();
 
@@ -163,6 +164,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             networkRarityItemsOrchestrator.SpawnNetworkRarityItem(AllLevelRarityItemSpots);
 
             Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_solver.AllPlacedRooms.Count}.");
+            
+            OnLevelGenerated?.Invoke();
         }
 
         /// <summary>

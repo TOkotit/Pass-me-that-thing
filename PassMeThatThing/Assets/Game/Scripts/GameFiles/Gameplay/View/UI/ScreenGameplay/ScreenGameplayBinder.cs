@@ -168,7 +168,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubQuota(UpdateQuota);
             
             ViewModel.RequestLevelGrid(SetMinimapSource);
-            
+            ViewModel.RequestSubGlobalPower(UpdateMinimapPower);
             
             ViewModel.RequestSubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestSubPlayerPosition(UpdateMiniMapPosition);
@@ -198,7 +198,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubHealthUI(UpdateCurrHealthUI);
             ViewModel.RequestUnsubPlayersInfo(UpdatePlayerInfo);
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
-
+            ViewModel.RequestUnsubLevelGrid();
             //ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
             //ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             UnSubTasks();
@@ -208,7 +208,7 @@ namespace Game.Gameplay.View.UI
 
             ViewModel.RequestUnsubThrowCharge(UpdateThrowChargeText);
             ViewModel.RequestUnsubGlobalState(UpdateGameGlobalState);
-            
+            ViewModel.RequestUnsubGlobalPower(UpdateMinimapPower);
             ViewModel.RequestUnsubCameraRotation(UpdateMiniMapRotation);
             ViewModel.RequestUnsubPlayerPosition(UpdateMiniMapPosition);
             ViewModel.RequestUnsubGlobalStateTimer(UpdateGameGlobalStateTimer);
@@ -714,6 +714,7 @@ namespace Game.Gameplay.View.UI
             }
 
             _miniMap.SetSource(levelGrid);
+            _miniMap.Refresh();
         }
         private void UpdateMiniMapPosition(Vector3 playerPosition)
         {
@@ -724,6 +725,11 @@ namespace Game.Gameplay.View.UI
             var exactCellPos = new Vector2(localPos.x / cellSize.x, localPos.z / cellSize.z);
             
             _miniMap.SetCenter(exactCellPos);
+        }
+        
+        private void UpdateMinimapPower(bool isPowered)
+        {
+            _miniMap?.SetPowered(isPowered);
         }
     }
 }

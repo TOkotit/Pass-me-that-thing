@@ -20,6 +20,7 @@ using R3;
 using Root;
 using Systems;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using Utils;
 using VContainer;
@@ -64,7 +65,7 @@ namespace Game.Gameplay.View.UI
         private Action<int, Sprite, int> addEvent;
         private Action<int, Sprite, int> updateEvent;
         private Action<int> removeEvent;
-
+        private Action<LevelGrid> _onLevelGeneratedCallback;
         public ResourceDatabase resourceDatabase;
         public readonly GameEventsDatabase gameEventsDatabase;
         public readonly GameRandomEventManager gameRandomEventManager;
@@ -407,10 +408,30 @@ namespace Game.Gameplay.View.UI
         
         public void RequestLevelGrid(Action<LevelGrid> f)
         {
-            if (_levelOrchestrator && _levelOrchestrator.levelGrid)
+            if (_levelOrchestrator)
             {
-                f?.Invoke(_levelOrchestrator.levelGrid);
+                _onLevelGeneratedCallback = f;
+                _levelOrchestrator.OnLevelGenerated += OnLevelGeneratedHandler;
+
+                if (_levelOrchestrator.levelGrid != null)
+                {
+                    f?.Invoke(_levelOrchestrator.levelGrid);
+                }
             }
+        }
+        
+        public void RequestUnsubLevelGrid()
+        {
+            if (_levelOrchestrator && _onLevelGeneratedCallback != null)
+            {
+                _levelOrchestrator.OnLevelGenerated -= OnLevelGeneratedHandler;
+                _onLevelGeneratedCallback = null;
+            }
+        }
+
+        private void OnLevelGeneratedHandler()
+        {
+            _onLevelGeneratedCallback?.Invoke(_levelOrchestrator.levelGrid);
         }
         
         public void RequestSubPlayerPosition(Action<Vector3> f)
@@ -421,6 +442,19 @@ namespace Game.Gameplay.View.UI
         public void RequestUnsubPlayerPosition(Action<Vector3> f)
         {
             _mcLocalModel.OnPlayerPositionChanged -= f;
+        }
+        
+        public void RequestSubGlobalPower(UnityAction<bool> f)
+        {
+            var vision = NetworkVisionManager.Instance;
+            f(!vision || vision.IsGlobalPowerOn);  
+
+            NetworkVisionManager.OnGlobalPowerStateChanged.AddListener(f);
+        }
+
+        public void RequestUnsubGlobalPower(UnityAction<bool> f)
+        {
+            NetworkVisionManager.OnGlobalPowerStateChanged.RemoveListener(f);
         }
 
     }
