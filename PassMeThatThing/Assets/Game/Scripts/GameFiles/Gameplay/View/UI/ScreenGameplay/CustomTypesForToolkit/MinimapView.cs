@@ -68,7 +68,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                 _gridLayer.MarkDirtyRepaint();
             }
         }
- 
+        private bool _isPowered = true;
+        public bool IsPowered => _isPowered;
         public Vector2 Center { get; private set; }
  
         private bool _centerIsManual;
@@ -370,6 +371,17 @@ namespace Game.Scripts.GameFiles.LevelGeneration.UI
                     }
                 }
             }
+        }
+        
+        public void SetPowered(bool isPowered)
+        {
+            if (_isPowered == isPowered) return;
+            _isPowered = isPowered;
+
+            _gridLayer.style.display = isPowered ? DisplayStyle.Flex : DisplayStyle.None;
+
+            if (isPowered)
+                _gridLayer.MarkDirtyRepaint();
         }
  
         private static float Mod(float a, float b)

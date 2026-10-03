@@ -195,12 +195,15 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 {
                     var foundOrigin = FindFreeSpaceAroundCore(candidates, direction);
                     if (!foundOrigin.HasValue) continue;
-                    
+
                     origin = foundOrigin.Value;
                     rotation = (RoomRotation)_random.Next(4);
                 }
-
                 var entry = candidates[_random.Next(candidates.Count)];
+
+                if (!isCore && !RoomCollisionValidator.IsPlacementValid(_levelGrid, entry, rotation, origin))
+                    continue;
+
                 var startData = RegisterVirtualRoom(entry, origin, rotation, cluster);
 
                 var placedRooms = new List<PlacedRoomDataCluster> { startData };
@@ -407,6 +410,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             {
                 foreach (var cellPos in roomData.OccupiedCells)
                 {
+                    if (_levelGrid.TryGetCellData(cellPos, out var d) && d.RoomId != roomData.RoomId)
+                        continue;
                     _levelGrid.SetCellState(cellPos, false);
                 }
                 _usedConnections.RemoveAll(uc => uc.Room == roomData);
@@ -482,7 +487,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         private Vector3Int? FindFreeSpaceAroundCore(List<RoomDataEntry> candidates, Vector3Int preferredDirection)
         {
             if (_allPlacedRooms.Count == 0) return Vector3Int.zero;
-
+            
             var coreRoom = _allPlacedRooms.FirstOrDefault(r => r.RoomType == RoomType.CommandCenter);
             if (coreRoom == null) return null;
 
@@ -964,7 +969,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         /// <param name="allFreeConnections">Данные кластера с точкой соединения</param>
         /// <param name="tunnelPrefabs">Данные о тоннеле</param>
         /// <param name="clusterLinks">Словарь с кластерами</param>
-        /// <param name="maxPathLength">максимальная длинна тоннеля</param>
+        /// <param name="maxPathLength">Максимальная длинна тоннеля</param>
         private void ConnectFreeExitPairs(
             List<(PlacedRoomDataCluster Room, ConnectionPoint Conn)> allFreeConnections,
             List<RoomDataEntry> tunnelPrefabs,
