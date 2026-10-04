@@ -35,13 +35,13 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         private void Setup()
         {
             var go = Instantiate(ragdollPrefab, transform.position, transform.rotation);
-            if(NetworkServer.active) NetworkServer.Spawn(go); 
-            var physItem = GetComponent<PhysicalItem>();
+            var physItem = go.GetComponentInChildren<PhysicalItem>(true);
             if (physItem && physItem.Network && string.IsNullOrEmpty(physItem.Network.itemId))
             {
-                physItem.Network.itemId = "ragdoll";   
-                physItem.Network.instanceId = System.Guid.NewGuid().ToString();
+                physItem.Network.itemId = "ragdoll";
+                physItem.Network.instanceId = Guid.NewGuid().ToString();
             }
+            if(NetworkServer.active) NetworkServer.Spawn(go); 
             _ragdollInstance = go.GetComponent<PlayerNetworkRagdoll>();
             _playerBoneDict = new Dictionary<string, Rigidbody>();
             foreach (var rb in rigidbodies)
