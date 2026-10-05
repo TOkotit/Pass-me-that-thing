@@ -1,3 +1,5 @@
+using Game.Scripts.GameFiles.InteractableObjects;
+using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
@@ -5,7 +7,7 @@ using VContainer;
 
 namespace Game.Scripts.GameFiles.GameRandomEvents
 {
-    public class EventTerminal : NetworkBehaviour
+    public class EventTerminal : NetworkBehaviour, Interactable
     {
         [SerializeField]
         protected Transform minigameContainer;
@@ -13,7 +15,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         protected NetworkConnectionToClient currentClient;
         private EventTerminalsRegistry _registry;
 
-
+        [SerializeField] protected ItemData fixItem;
 
         [SyncVar] 
         private bool _isTerminalBusy;
@@ -30,14 +32,25 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         public override void OnStartClient()
         {
             base.OnStartClient();
+
             _registry = EventTerminalsRegistry.Instance;
-            _registry.Register(this); 
+            _registry.Register(this);
+
+            InteractableRegistry.Instance.Register(gameObject, this);
+            if (!InteractableRegistry.Instance.TryGetInteractable(gameObject, out Interactable interactable))
+            {
+                Debug.LogError("Interactable not found");
+            }
         }
 
         public override void OnStopClient()
         {
             base.OnStopClient();
-            _registry.Unregister(this); 
+
+
+            _registry.Unregister(this);
+
+            InteractableRegistry.Instance.Unregister(gameObject);
         } 
 
         public virtual void OnFixedChanged(bool oldValue, bool newValue) { }
@@ -96,6 +109,28 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 Debug.Log($"[EVENT] closed to {senderConnection.connectionId}");
                 playerHandler.TargetCloseMinigame();
             }
+        }
+
+        public virtual void Interact()
+        {
+            Debug.Log("[EVENT TERM] Interact");
+        }
+
+        public virtual void SrbToggle()
+        {
+            
+        }
+
+        [Command(requiresAuthority = false)]
+        public virtual void InteractWithItem(PhysicalItem item)
+        {
+            Debug.Log("[EVENT TERM] InteractWithItem");
+
+            if (item.Network.itemId == fixItem.Id)
+            {
+                TerminalAct(item.ConnectionToClient);
+            }
+        
         }
     }
 }

@@ -309,6 +309,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 5427651173099785813, guid: ac1a865792a1cab46aee405a9bf7d8bd, type: 3}
+      propertyPath: m_TagString
+      value: InteractableItem
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -368,6 +372,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   minigameContainer: {fileID: 2566855055791851575}
+  fixItem: {fileID: 11400000, guid: 088b278f4ad8d19459a74203ae443e03, type: 2}
   blowFuseEvent: {fileID: 385060330208022780}
   impactParticles: {fileID: 114956174001918755}
   outline: {fileID: 4446392943490996900}

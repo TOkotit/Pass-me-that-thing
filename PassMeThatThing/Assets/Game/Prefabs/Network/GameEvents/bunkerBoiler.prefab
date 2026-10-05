@@ -4853,7 +4853,7 @@ GameObject:
   - component: {fileID: 6332060579218840703}
   m_Layer: 7
   m_Name: Cube.002
-  m_TagString: Untagged
+  m_TagString: InteractableItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4971,6 +4971,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   minigameContainer: {fileID: 0}
+  fixItem: {fileID: 11400000, guid: 25c345c1f71bbd146831c6431eabc2cf, type: 2}
   brokenPumpEvent: {fileID: 7261649635142665317}
   pipeSound:
     _entity: {fileID: 11400000, guid: 03f46f29273576644a4f38103d470c50, type: 2}
@@ -5013,7 +5014,7 @@ GameObject:
   - component: {fileID: 2765379546846822346}
   m_Layer: 7
   m_Name: Cylinder.001
-  m_TagString: Untagged
+  m_TagString: InteractableItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5118,6 +5119,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   minigameContainer: {fileID: 8730228297069767685}
+  fixItem: {fileID: 11400000, guid: 25c345c1f71bbd146831c6431eabc2cf, type: 2}
   floodEvent: {fileID: 7277807051642972705}
   port: {fileID: 8735115893247883747}
   outline: {fileID: 3930879256361456384}

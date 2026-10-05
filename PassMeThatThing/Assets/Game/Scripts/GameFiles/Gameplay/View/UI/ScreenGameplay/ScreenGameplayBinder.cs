@@ -35,8 +35,6 @@ namespace Game.Gameplay.View.UI
 
         private Dictionary<int, CustomGameEvent> _gameEvents = new ();
         
-        //private GameEventsDatabase _gameEventsDatabase;
-        
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset gameEventPrefab;
         [SerializeField] private VisualTreeAsset hintPrefab;
@@ -158,9 +156,6 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestSubImage(SetItemImageSprite);
 
-            //ViewModel.InitGameEvent(ClearEvents, AddGameEvent);
-            //ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
-            //ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             InitTasks();
             SubTasks();
             ViewModel.RequestSubQuota(UpdateQuota);
@@ -197,8 +192,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubPlayersInfo(UpdatePlayerInfo);
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
             ViewModel.RequestUnsubLevelGrid();
-            //ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
-            //ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+
             UnSubTasks();
             ViewModel.RequestUnSubQuota(UpdateQuota);
 
@@ -499,15 +493,6 @@ namespace Game.Gameplay.View.UI
         private void UpdateQuota(int current, int required)
         {
             _quotaText.text = $"#{current}/{required}";
-        }
-
-        private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
-        {
-            foreach (var i in dict)
-            {
-                var e = ViewModel.gameEventsDatabase.GetEvent(i.Value.EventType);
-                //AddGameTask(i.Value.EventId, e.EventImage, i.Value.EventId);
-            }
         }
 
         private void ClearEvents()
