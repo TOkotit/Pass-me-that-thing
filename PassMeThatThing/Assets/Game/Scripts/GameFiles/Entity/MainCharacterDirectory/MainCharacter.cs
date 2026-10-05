@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using DI;
 using Entity;
 using Game.Entity.Stats;
@@ -36,6 +38,7 @@ namespace Game.Entity
         [SerializeField] private PhysicalItemInteractionController physicalItemInteractionController;
 
         private ClassManager _classManager;
+        private List<Collider> _colliders = new List<Collider>();
 
         public MainCharacterModel MainCharacterModel => _model;
         public override DamagableModel DamagableModel => _model;
@@ -44,7 +47,7 @@ namespace Game.Entity
         public MeleeAttackController MeleeAttackController => meleeAttackController;
         public PhysicalItemInteractionController PhysicalItemInteractionController => physicalItemInteractionController;
         public float Strength => _model?.Strength ?? 0f;
-
+        
         [SyncVar(hook = nameof(OnIsAliveChanged))]
         private bool _isAlive = true;
 
@@ -57,6 +60,7 @@ namespace Game.Entity
 
         private void Initialize()
         {
+            _colliders = GetComponentsInChildren<Collider>(true).ToList();
             view.Initialize();
             _model.SetPlayerInteraction(playerInteraction);
             _model.SetPlayerInventory(playerInventory);
@@ -77,13 +81,43 @@ namespace Game.Entity
         {
             Fall(delay, impulse);
         }
+        
+        private void ApplyRagdollState()
+        {
+            movement.LockUpMovement();
+            if (mCamera) mCamera.IsCameraRotating = false;
+
+            ragdollHandler.EnableRagdoll();
+            ragdollHandler.DisableColliders();
+
+            SetPlayerCollidersEnabled(false);
+            movement.CharacterController.enabled = false;
+        }
+        
+        private void ApplyStandingState()
+        {
+            ragdollHandler.DisableRagdoll();
+            ragdollHandler.EnableColliders();
+
+            SetPlayerCollidersEnabled(true);
+            movement.CharacterController.enabled = true;
+
+            if (mCamera) mCamera.IsCameraRotating = true;
+        }
+
+        private void SetPlayerCollidersEnabled(bool value)
+        {
+            for (int i = 0; i < _colliders.Count; i++)
+            {
+                var col = _colliders[i];
+                if (col) col.enabled = value;
+            }
+        }
 
         [Server]
         public void Fall(float delay, Vector3 impulse = new Vector3())
         {
-            movement.LockUpMovement();
-            if (mCamera) mCamera.IsCameraRotating = false;
-            ragdollHandler.EnableRagdoll();
+            ApplyRagdollState();
             RpcFall(impulse);
             StartCoroutine(GetUpAfterDelay(delay));
         }
@@ -92,20 +126,19 @@ namespace Game.Entity
         private void RpcFall(Vector3 additionalImpulse)
         {
             playerInteraction.Drop();
-            movement.LockUpMovement();
             movement.DisableController();
-            if (mCamera) mCamera.IsCameraRotating = false;
             view.DisableAnimator();
-            ragdollHandler.EnableRagdoll();
+
+            ApplyRagdollState();
         }
 
         [Server]
         public void StandUp()
         {
             if (!_isAlive) return;
+
             movement.UnlockMovement();
-            ragdollHandler.DisableRagdoll();
-            if (mCamera) mCamera.IsCameraRotating = true;
+            ApplyStandingState();
             RpcStandUp();
         }
 
@@ -114,12 +147,12 @@ namespace Game.Entity
         {
             view.PlayStandingUp(() =>
             {
-                ragdollHandler.DisableRagdoll();
+                ApplyStandingState();
+
                 if (animator) animator.Rebind();
                 view.EnableAnimator();
                 movement.UnlockMovement();
                 movement.EnableController();
-                if (mCamera) mCamera.IsCameraRotating = true;
             });
         }
 

@@ -46,7 +46,7 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
 
     private float _lastSentAnimatorSpeed = -1f;
     public Vector3 LastVelocity => _lastVelocity;
-    
+    public CharacterController CharacterController => characterController;
     public void Control(bool isPressed)
     {
         throw new NotImplementedException();
