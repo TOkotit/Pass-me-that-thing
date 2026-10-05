@@ -8,6 +8,8 @@ using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks.Quota;
 using Game.Scripts.Systems;
 using Game.Scripts.Utils;
 using Mirror;
@@ -24,6 +26,9 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [SerializeField] private SoundSource restSound;
         
         [Inject] private GameRandomEventManager _gameRandomEventManager;
+        [Inject] private GameTasksManager _gameTaskManager;
+        [Inject] private QuotaManager _quotaManager;
+
         [Inject] private EnemyDatabase _enemyDatabase;
         [Inject] private GlobalStageDatabase _globalStageDatabase;
 
@@ -49,14 +54,6 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime; //TODO переделать на локальный таймер
 
-        //TODO вынести в отдельный класс
-        //квота
-        [SyncVar(hook = nameof(OnCurrentQuotaChanged))]
-        private int _currentStageQuota;
-
-        [SyncVar(hook = nameof(OnRequiredQuotaChanged))]
-        private int _requiredStageQuota;
-
         public static GlobalStageManager Instance { get; private set; }
 
         public GlobalStagesType CurrentGameStage => _currentGameStage;
@@ -64,14 +61,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         public Stage Stage => _stage;
 
-        public int CurrentStageQuota => _currentStageQuota;
-
-        public int RequiredStageQuota => _requiredStageQuota;
-
         public event Action<float> OnTimerChangedUI;
         public event Action<Stage> OnStageChangedUI;
-
-        public event Action<int, int> OnQuotaChanged;
 
         private void Awake()
         {
@@ -80,11 +71,22 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _timer.TimeIsOver += OnTimerFinished;
         }
 
+        private void OnDestroy()
+        {
+            if (_timer != null)
+            {
+                _timer.TimeIsOver -= OnTimerFinished;
+                _timer.Stop();
+            }
+            if (Instance == this)
+                Instance = null;
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
             _playerReadyManager.OnAllPlayersReady += () => TrySkipPreparationStage();
-            _gameRandomEventManager.OnQuotaValueAdded += AddQuota;
+            _gameTaskManager.OnQuotaValueAdded += _quotaManager.AddQuota;
             StartStage(GlobalStagesType.Preparation);
         }
 
@@ -92,7 +94,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             base.OnStopServer();
 
-            _gameRandomEventManager.OnQuotaValueAdded -= AddQuota;
+            _gameTaskManager.OnQuotaValueAdded -= _quotaManager.AddQuota;
         }
 
         private void Update()
@@ -134,12 +136,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
                 if (newStageData.Day > _stage.Day)
                 {
-                    GetQuota(newStageData.Level);
+                    _quotaManager.GetQuota(newStageData.Level);
 
                     OnDayBegin();
                     if (newStageData.Day != 1)
                     {
-                        OnDayP1Begin();
+                        OnDayAfter1Begin();
                     }
                 }
             }
@@ -183,11 +185,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             {
                 if (Random.value >= 0.5f)
                 {
+                    //таск от ивента появляется в самом ивенте при старте
                     _gameRandomEventManager.TriggerManyGameEvents();
                 }
                 else
                 {
-                    _gameRandomEventManager.TryTriggerRandomItemTasks();
+                    _gameTaskManager.TryTriggerRandomItemTasks();
                 }
 
                 yield return new WaitForSeconds(
@@ -264,7 +267,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
             if (_stage.Level % _globalStageDatabase.LevelInDayAmount == 0)
             {
-                if (CheckQuota())
+                if (_quotaManager.CheckQuota())
                 {
                     StartStage(GlobalStagesType.Rest);
                 }
@@ -291,7 +294,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         }
 
         [Server]
-        private void OnDayP1Begin() //дни после 1
+        private void OnDayAfter1Begin()
         {
             _gameRandomEventManager.ClearFixedEvent();
             _enemySpawner.ClearEnemyKilled();
@@ -337,24 +340,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             //return new List<EnemyData>() { _enemyDatabase.GetEnemy("zombie") };
         }
 
-        [Server]
-        private void GetQuota(int level)
-        {
-            _currentStageQuota = 0;
-            _requiredStageQuota  = _globalStageDatabase.GetQuotaSumByLevel(level);
-        }
 
-        [Server]
-        public void AddQuota(int toAdd)
-        {
-            _currentStageQuota += toAdd;
-        }
-
-        [Server]
-        private bool CheckQuota()
-        {
-            return _currentStageQuota >= _requiredStageQuota;
-        }
 
         [ClientRpc]
         private void RpcStartOvertime()
@@ -362,26 +348,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             Debug.Log("Овертайм! Убейте оставшихся врагов.");
         }
 
-        private void OnDestroy()
-        {
-            if (_timer != null)
-            {
-                _timer.TimeIsOver -= OnTimerFinished;
-                _timer.Stop();
-            }
-            if (Instance == this)
-                Instance = null;
-        }
 
-        private void OnCurrentQuotaChanged(int oldQuota, int newQuota)
-        {
-            OnQuotaChanged?.Invoke(_currentStageQuota, _requiredStageQuota);
-        }
-
-        private void OnRequiredQuotaChanged(int oldReqQuota, int newReqQuota)
-        {
-            OnQuotaChanged?.Invoke(_currentStageQuota, _requiredStageQuota);
-        }
 
         private void OnTimeChanged(float oldTime, float newTime)
         {
@@ -393,6 +360,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             OnStageChangedUI?.Invoke(newStage);
         }
 
+        //View
         [ClientRpc]
         private void RpcPlayMusic()
         {

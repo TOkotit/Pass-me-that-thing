@@ -1,5 +1,6 @@
 ﻿
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Mirror;
 using VContainer;
 
@@ -7,40 +8,37 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
 {
     public class GameTaskHandler : NetworkBehaviour
     {
-        [Inject] private GameRandomEventManager _gameRandomEventManager;
+        [Inject] private GameTasksManager _gameTasksManager;
 
         [SyncVar]
         private int _handlerId;
 
+        public GameTasksManager GameTasksManager => _gameTasksManager;
+
         [Server]
         public GameTask CreateGameTask(GameTaskParameters gameTaskParameters)
         {
-            //var testPars = new GameTaskParameters();
-            //testPars.gameTaskType = GameTaskType.GameEvent;
-            //testPars.timeLimit = 6;
-            //testPars.taskField = GameEventsType.BlackoutCutWires.ToString();
-            //testPars.cost = 100;
 
-            var t = _gameRandomEventManager.CreateGameTask(gameTaskParameters);
+            var t = _gameTasksManager.CreateGameTask(gameTaskParameters);
             return t;
         }
 
         [Server]
         public void OverdueGameTask(int taskId)
         {
-            _gameRandomEventManager.OverdueGameTask(taskId);
+            _gameTasksManager.OverdueGameTask(taskId);
         }
 
         [Server]
         public void CompleteAndDestroyGameTask(int taskId)
         {
-            _gameRandomEventManager.CompleteAndDestroyGameTask(taskId);
+            _gameTasksManager.CompleteAndDestroyGameTask(taskId);
         }
 
         [Server]
         public void DestroyGameTask(int taskId)
         {
-            _gameRandomEventManager.DestroyGameTask(taskId);
+            _gameTasksManager.DestroyGameTask(taskId);
         }
 
 
@@ -63,17 +61,17 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
 
         private void RegisterTaskHandler()
         {
-            if (_gameRandomEventManager != null)
+            if (_gameTasksManager != null)
             {
-                _handlerId = _gameRandomEventManager.RegisterSceneTaskHandler(this);
+                _handlerId = _gameTasksManager.RegisterSceneTaskHandler(this);
             }
         }
 
         private void UnRegisterTaskHandler()
         {
-            if (_gameRandomEventManager != null)
+            if (_gameTasksManager != null)
             {
-                _gameRandomEventManager.UnregisterTaskHandler(_handlerId);
+                _gameTasksManager.UnregisterTaskHandler(_handlerId);
             }
         }
     }

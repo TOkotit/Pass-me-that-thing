@@ -9,6 +9,8 @@ using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks.Quota;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.LevelGeneration;
@@ -62,13 +64,15 @@ namespace Game.Gameplay.View.UI
         private readonly ConnectedPlayers _connectedPlayers;
         private readonly LocalMainStorageModel _localMainStorageModel;
 
-        private Action<int, Sprite, int> addEvent;
-        private Action<int, Sprite, int> updateEvent;
-        private Action<int> removeEvent;
+        //private Action<int, Sprite, int> addEvent;
+        //private Action<int, Sprite, int> updateEvent;
+        //private Action<int> removeEvent;
         private Action<LevelGrid> _onLevelGeneratedCallback;
         public ResourceDatabase resourceDatabase;
         public readonly GameEventsDatabase gameEventsDatabase;
-        public readonly GameRandomEventManager gameRandomEventManager;
+        //public readonly GameRandomEventManager gameRandomEventManager;
+        public readonly GameTasksManager gameTasksManager;
+        public readonly QuotaManager quotaManager;
 
         //проводные ресы
         public readonly LocalGeneralResourcesModel localGeneralResourcesModel;
@@ -87,7 +91,9 @@ namespace Game.Gameplay.View.UI
 
             resourceDatabase = container.Resolve<ResourceDatabase>();
             localGeneralResourcesModel = container.Resolve<LocalGeneralResourcesModel>();
-            gameRandomEventManager = container.Resolve<GameRandomEventManager>();
+            //gameRandomEventManager = container.Resolve<GameRandomEventManager>();
+            gameTasksManager = container.Resolve<GameTasksManager>();
+            quotaManager = container.Resolve<QuotaManager>();
 
             _playerInventoryModel = container.Resolve<PlayerInventoryModel>();
             itemDatabase =  container.Resolve<ItemDatabase>();
@@ -383,14 +389,14 @@ namespace Game.Gameplay.View.UI
 
         public void RequestSubQuota(Action<int, int> f)
         {
-            f(_globalStageManager.CurrentStageQuota, _globalStageManager.RequiredStageQuota);
+            f(quotaManager.CurrentStageQuota, quotaManager.RequiredStageQuota);
 
-            _globalStageManager.OnQuotaChanged += f;
+            quotaManager.OnQuotaChanged += f;
         }
 
         public void RequestUnSubQuota(Action<int, int> f)
         {
-            _globalStageManager.OnQuotaChanged -= f;
+            quotaManager.OnQuotaChanged -= f;
         }
 
 

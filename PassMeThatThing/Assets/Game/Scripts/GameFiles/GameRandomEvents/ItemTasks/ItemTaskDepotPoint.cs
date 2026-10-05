@@ -2,6 +2,7 @@
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
@@ -33,10 +34,10 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
         [SerializeField] private GameTaskHandler taskHandler;
         [SerializeField] private float taskTimeLimit = 30;
         [SerializeField] private Outline outlineComponent;
+
         [Inject] private PhysicalItemRegistry registry;
         [Inject] private ItemPoolManager _itemPoolManager;
         [Inject] private GlobalStageDatabase _globalStageDatabase;
-        [Inject] private GameRandomEventManager _randomEventManager;
 
         private int _itemTaskDepotId;
 
@@ -76,7 +77,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
 
             _requiredItems.Remove(taskId);
 
-            _randomEventManager.DestroyGameTask(taskId);
+            taskHandler.GameTasksManager.DestroyGameTask(taskId);
             
             UpdateOutlineState();
         }
@@ -93,7 +94,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
 
             _requiredItems.Remove(task.gameTaskId);
 
-            _randomEventManager.CompleteAndDestroyGameTask(task.gameTaskId);
+            taskHandler.GameTasksManager.CompleteAndDestroyGameTask(task.gameTaskId);
             
             UpdateOutlineState();
 
@@ -129,18 +130,18 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
         [Server]
         private void RegisterItemTaskDepot()
         {
-            if (_randomEventManager != null)
+            if (taskHandler.GameTasksManager != null)
             {
-                _itemTaskDepotId = _randomEventManager.RegisterSceneItemTaskDepot(this);
+                _itemTaskDepotId = taskHandler.GameTasksManager.RegisterSceneItemTaskDepot(this);
             }
         }
 
         [Server]
         private void UnRegisterItemTaskDepot()
         {
-            if (_randomEventManager != null)
+            if (taskHandler.GameTasksManager != null)
             {
-                _randomEventManager.UnregisterSceneItemTaskDepot(_itemTaskDepotId);
+                taskHandler.GameTasksManager.UnregisterSceneItemTaskDepot(_itemTaskDepotId);
             }
         }
 
