@@ -518,7 +518,7 @@ namespace Game.Gameplay.View.UI
         public void InitTasks()
         {
             ClearEvents();
-            foreach (var task in ViewModel.gameRandomEventManager.GameTasksData.Values)
+            foreach (var task in ViewModel.gameTasksManager.GameTasksData.Values)
             {
                 Sprite s = defaultTestSprite;
 
@@ -543,12 +543,12 @@ namespace Game.Gameplay.View.UI
 
         private void SubTasks()
         {
-            ViewModel.gameRandomEventManager.GameTasksData.OnChange += OnGameTasksChanged;
+            ViewModel.gameTasksManager.GameTasksData.OnChange += OnGameTasksChanged;
         }
 
         private void UnSubTasks()
         {
-            ViewModel.gameRandomEventManager.GameTasksData.OnChange -= OnGameTasksChanged;
+            ViewModel.gameTasksManager.GameTasksData.OnChange -= OnGameTasksChanged;
         }
 
         private void OnGameTasksChanged(SyncDictionary<int, GameTaskData>.Operation op, int key, GameTaskData task)
@@ -561,7 +561,7 @@ namespace Game.Gameplay.View.UI
 
             Sprite s = defaultTestSprite;
             
-            var newTaskData = ViewModel.gameRandomEventManager.GameTasksData[key];
+            var newTaskData = ViewModel.gameTasksManager.GameTasksData[key];
 
             switch (newTaskData.gameTaskType)
             {
@@ -606,7 +606,7 @@ namespace Game.Gameplay.View.UI
             customGameEvent.timeBar = gameEventTempl.Q<ProgressBar>("EventTimeProgress");
             _gameEvents.Add(taskId, customGameEvent);
 
-            if (ViewModel.gameRandomEventManager.GameTasks.TryGetValue(taskId, out var task))
+            if (ViewModel.gameTasksManager.GameTasks.TryGetValue(taskId, out var task))
             {
                 customGameEvent.UpdateTimeProgress(task.time, task.timeLimit);
                 task.OnTaskTimerTicked += customGameEvent.UpdateTimeProgress;
@@ -639,7 +639,7 @@ namespace Game.Gameplay.View.UI
                     .From(new Vector2(1f, 1f)).SetEase(Ease.InOutBack)
                     .OnComplete(() =>
                     {
-                        if (ViewModel.gameRandomEventManager.GameTasks.TryGetValue(taskId, out var task))
+                        if (ViewModel.gameTasksManager.GameTasks.TryGetValue(taskId, out var task))
                         {
                             task.OnTaskTimerTicked -= gameEvent.UpdateTimeProgress;
                         }

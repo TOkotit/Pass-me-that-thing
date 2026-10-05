@@ -28,6 +28,8 @@ using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Misc;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using Game.Scripts.GameFiles.GameRandomEvents.GameTasks.Quota;
 
 namespace DI
 {
@@ -52,6 +54,8 @@ namespace DI
 
         [Header("Managers on gameplay scene")]
         [SerializeField] private GameRandomEventManager eventManager;
+        [SerializeField] private GameTasksManager gameTasksManager;
+        [SerializeField] private QuotaManager quotaManager;
         [SerializeField] private GlobalStageManager globalStageManager;
         [SerializeField] private ItemPoolManager itemPoolManager;
         [SerializeField] private EnemySpawner enemySpawner;
@@ -82,6 +86,8 @@ namespace DI
             
             //managers
             builder.RegisterComponent(eventManager);
+            builder.RegisterComponent(gameTasksManager);
+            builder.RegisterComponent(quotaManager);
             builder.RegisterComponent(globalStageManager);
             builder.RegisterComponent(itemPoolManager);
             builder.RegisterComponent(enemySpawner);
