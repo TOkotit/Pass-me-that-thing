@@ -528,8 +528,6 @@ GameObject:
   - component: {fileID: 2711707405350218870}
   - component: {fileID: 4250069258308397130}
   - component: {fileID: 5471844799854690812}
-  - component: {fileID: 5844761606390115175}
-  - component: {fileID: 5280449468549823177}
   m_Layer: 15
   m_Name: PlayerNetworkRagdoll
   m_TagString: Untagged
@@ -608,77 +606,6 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &5844761606390115175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3380579513481197260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0f9e8e728a840ce825c961393f3a63d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.ItemPhysics.PhysicalItem
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  hardness: 0
-  durability: 0
-  handleType: 0
-  universalPoint: {fileID: 0}
-  leftHandPoint: {fileID: 0}
-  rightHandPoint: {fileID: 0}
-  defaultPosition: {x: 0, y: 0, z: -0.5}
-  canBeOwned: 0
-  doActAndSwing: 0
-  rigidBody: {fileID: 2732781041161288567}
-  _network: {fileID: 5280449468549823177}
-  hasToBeAligned: 0
-  collider: {fileID: 2735088011189009032}
-  meleeItem: {fileID: 0}
-  _isThrown: 0
-  Resources:
-    _serializedList: []
-  lmbReaction: {fileID: 0}
-  rmbReaction: {fileID: 0}
-  reloadReaction: {fileID: 0}
-  itemParts:
-  - {fileID: 2732781041161288567}
-  - {fileID: 2917243388553348230}
-  - {fileID: 7527440298069478191}
-  - {fileID: 1306662255296442457}
-  - {fileID: 529283915870102219}
-  - {fileID: 184194461923162749}
-  - {fileID: 2144802620286690762}
-  - {fileID: 8601953702065609024}
-  - {fileID: 4167162990408111942}
-  - {fileID: 8494737050302169887}
-  - {fileID: 5183427474978581937}
-  - {fileID: 9012078384029458851}
-  - {fileID: 7249845982431207944}
-  - {fileID: 965312873132233550}
-  - {fileID: 1710189938981343125}
-  - {fileID: 4754315734113295855}
-  - {fileID: 9161135124524694600}
-  - {fileID: 7622274098847312203}
---- !u!114 &5280449468549823177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3380579513481197260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ae67d9c9ee84b2c8b846408fb2cf3ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.NetworkItem
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  itemId: player_ragdoll
-  instanceId: player_ragdoll
 --- !u!1 &3747334405887977805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1941,6 +1868,8 @@ GameObject:
   - component: {fileID: 2735088011189009032}
   - component: {fileID: 2732781041161288567}
   - component: {fileID: 2216273389800853652}
+  - component: {fileID: 3351349485540994778}
+  - component: {fileID: 5579763868983266175}
   m_Layer: 15
   m_Name: Bone.002
   m_TagString: Item
@@ -2049,6 +1978,78 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &3351349485540994778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4883166308011506454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f9e8e728a840ce825c961393f3a63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.ItemPhysics.PhysicalItem
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  hardness: 0
+  durability: 0
+  handleType: 0
+  universalPoint: {fileID: 0}
+  leftHandPoint: {fileID: 0}
+  rightHandPoint: {fileID: 0}
+  defaultPosition: {x: 0, y: 0, z: -0.5}
+  canBeOwned: 0
+  doActAndSwing: 0
+  rigidBody: {fileID: 2732781041161288567}
+  _network: {fileID: 5579763868983266175}
+  hasToBeAligned: 0
+  collider: {fileID: 2735088011189009032}
+  meleeItem: {fileID: 0}
+  _isThrown: 0
+  Resources:
+    _serializedList: []
+  lmbReaction: {fileID: 0}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
+  itemParts:
+  - {fileID: 2732781041161288567}
+  - {fileID: 2917243388553348230}
+  - {fileID: 7527440298069478191}
+  - {fileID: 1306662255296442457}
+  - {fileID: 529283915870102219}
+  - {fileID: 184194461923162749}
+  - {fileID: 2144802620286690762}
+  - {fileID: 8601953702065609024}
+  - {fileID: 4167162990408111942}
+  - {fileID: 8494737050302169887}
+  - {fileID: 5183427474978581937}
+  - {fileID: 9012078384029458851}
+  - {fileID: 7249845982431207944}
+  - {fileID: 965312873132233550}
+  - {fileID: 1710189938981343125}
+  - {fileID: 4754315734113295855}
+  - {fileID: 9161135124524694600}
+  - {fileID: 7622274098847312203}
+  networkGuard: {fileID: 0}
+--- !u!114 &5579763868983266175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4883166308011506454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ae67d9c9ee84b2c8b846408fb2cf3ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.NetworkItem
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  itemId: player_ragdoll
+  instanceId: player_ragdoll
 --- !u!1 &5058831246677955800
 GameObject:
   m_ObjectHideFlags: 0
