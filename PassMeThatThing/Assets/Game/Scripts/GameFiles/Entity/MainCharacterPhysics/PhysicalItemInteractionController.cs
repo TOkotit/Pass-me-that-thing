@@ -17,41 +17,79 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         private int _heldPartIndex = -1;
         public Rigidbody CurrentHeldBody => _heldBody;
         public int CurrentHeldPartIndex => _heldPartIndex;
-        
+
         [SerializeField] private MainCharacter mainCharacter;
         [SerializeField] private float strength;
         [SerializeField] private MainCharacterMovement movement;
-        
+
         private HandsMovement _handsMovement;
         public Transform AnimatorTransform => _handsMovement.AnimatorTransform;
         public HandsMovement HandsMovement => _handsMovement;
-        
 
-        public override void OnStartLocalPlayer()
-        {
-            InjectSelf();
-        }
+        public override void OnStartLocalPlayer() => InjectSelf();
 
-        private void Start()
-        {
-            _handsMovement = GetComponentInChildren<HandsMovement>();
-        }
+        private void Start() => _handsMovement = GetComponentInChildren<HandsMovement>();
 
         private void InjectSelf()
         {
             var scope = FindObjectOfType<GameplayScope>();
-            if (scope)
-                scope.Container.Inject(this);
-            else
-                Debug.LogError("GameplayScope not found!");
+            if (scope) scope.Container.Inject(this);
+            else Debug.LogError("GameplayScope not found!");
         }
+
+        // =========================================================================
+        //  Владение / авторитет
+        // =========================================================================
+
+        [Server]
+        private void TakeOwnership(PhysicalItem item)
+        {
+            if (!item || !item.CanBeOwned) return;
+
+            if (item.netIdentity)
+            {
+                var newOwner = connectionToClient;
+                if (item.netIdentity.connectionToClient != newOwner)
+                {
+                    if (item.netIdentity.connectionToClient != null)
+                        item.netIdentity.RemoveClientAuthority();
+
+                    if (!item.netIdentity.AssignClientAuthority(newOwner))
+                        Debug.LogWarning($"[Controller] AssignClientAuthority failed для '{item.name}'");
+                }
+            }
+
+            TargetSetHeld(item, true);
+        }
+
+        [Server]
+        private void ReleaseOwnership(PhysicalItem item)
+        {
+            if (!item || !item.CanBeOwned) return;
+
+            if (item.netIdentity && item.netIdentity.connectionToClient == connectionToClient)
+                item.netIdentity.RemoveClientAuthority();
+
+            TargetSetHeld(item, false);
+        }
+
+        [TargetRpc]
+        private void TargetSetHeld(PhysicalItem item, bool held)
+        {
+            if (!item) return;
+            item.NetworkGuard?.SetHeld(held);
+        }
+
+        // =========================================================================
+        //  Владение: слои / Owner
+        // =========================================================================
 
         [Server]
         private void SetOwnerAndLayer(PhysicalItem item)
         {
             if (item.CanBeOwned) item.Owner = mainCharacter;
             item.Holders.Add(netIdentity);
-            RpcSetLayer(item);   
+            RpcSetLayer(item);
         }
 
         [ClientRpc]
@@ -80,6 +118,10 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 item.gameObject.layer = LayerMask.NameToLayer("Interactable");
         }
 
+        // =========================================================================
+        //  Подбор / отпускание
+        // =========================================================================
+
         public void ChargeDrop()
         {
             if (_heldItem)
@@ -87,13 +129,16 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         }
 
         [Server]
-        public void PhysicalPickUpItem(PhysicalItem item, Rigidbody body,  Vector3 localPoint)
+        public void PhysicalPickUpItem(PhysicalItem item, Rigidbody body, Vector3 localPoint)
         {
             _heldItem = item;
             _heldBody = body ? body : item.Rigidbody;
             _heldPartIndex = body ? item.IndexOf(body) : -1;
+
             movement.SetMovementMultiplier(item);
             SetOwnerAndLayer(item);
+            TakeOwnership(item);
+
             TargetPickUpItem(item, _heldPartIndex, localPoint);
             _handsMovement.GrabItem(item, _heldBody, localPoint);
         }
@@ -111,43 +156,46 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 _handsMovement.GrabItem(_heldItem, _heldBody, localPoint);
         }
 
-        
         [Server]
         public void ReleaseCurrentItem(float throwForce, bool canThrow)
         {
-            if (_heldItem)
-            {
-                RestoreLayerAndClear(_heldItem);
-                _handsMovement.ReleaseItem(_heldItem, throwForce, canThrow);
-                _heldItem = null;
-                
-                movement.ResetMovementMultiplier();
-                TargetClearHeldItem();
-            }
+            if (!_heldItem) return;
+
+            var item = _heldItem;
+
+            ReleaseOwnership(item);
+            RestoreLayerAndClear(item);
+            _handsMovement.ReleaseItem(item, throwForce, canThrow);
+
+            _heldItem = null;
+            movement.ResetMovementMultiplier();
+            TargetClearHeldItem();
         }
 
         [Server]
         public void ServerClearHeldItem()
         {
-            if (_heldItem)
-            {
-                RestoreLayerAndClear(_heldItem);
-                _heldItem = null;
-                movement.ResetMovementMultiplier();
-            }
+            if (!_heldItem) return;
+
+            var item = _heldItem;
+
+            ReleaseOwnership(item);
+            RestoreLayerAndClear(item);
+
+            _heldItem = null;
+            movement.ResetMovementMultiplier();
             TargetClearHeldItem();
         }
 
         [TargetRpc]
         public void TargetClearHeldItem()
         {
-            if (_heldItem)
-            {
-                _heldItem.gameObject.layer = LayerMask.NameToLayer("Interactable");
-                _handsMovement.ReleaseItem(_heldItem, 0f, false);
-                _heldItem = null;
-                movement.ResetMovementMultiplier();
-            }
+            if (!_heldItem) return;
+
+            _heldItem.gameObject.layer = LayerMask.NameToLayer("Interactable");
+            _handsMovement.ReleaseItem(_heldItem, 0f, false);
+            _heldItem = null;
+            movement.ResetMovementMultiplier();
         }
 
         [TargetRpc]

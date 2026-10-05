@@ -76,7 +76,8 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         public int IndexOf(Rigidbody body) => System.Array.IndexOf(itemParts, body);
         public Rigidbody GetPart(int index) => (index >= 0 && index < itemParts.Length) ? itemParts[index] : null;
         public int PartsCount => itemParts.Length;
-        
+        [SerializeField] private HeldItemNetworkGuard networkGuard;
+        public HeldItemNetworkGuard NetworkGuard => networkGuard;
         private void Start()
         {
             _outline = GetComponent<Outline>();
@@ -119,7 +120,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             if (!isServer)
                 PhysicalItemRegistry.Instance.Unregister(this);
         }
-
+        
         private void OnEnable()
         {
             if (!isServer && PhysicalItemRegistry.Instance.GetItem(gameObject) == null)
