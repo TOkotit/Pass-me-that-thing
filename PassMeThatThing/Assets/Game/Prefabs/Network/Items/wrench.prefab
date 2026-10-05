@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -8057965060867532312}
   - component: {fileID: -5545228456256839850}
   - component: {fileID: 1133097560999102908}
+  - component: {fileID: 878781694952837987}
   - component: {fileID: 1613968117439040548}
   - component: {fileID: 1686371426209873383}
   - component: {fileID: 5340831970347749924}
@@ -19,9 +20,9 @@ GameObject:
   - component: {fileID: 7776855572588576369}
   - component: {fileID: 7803437061417197889}
   - component: {fileID: 6213635256034360291}
-  - component: {fileID: 878781694952837987}
   - component: {fileID: 1964319016268103446}
   - component: {fileID: 6093663108410566228}
+  - component: {fileID: -4351523049459521880}
   m_Layer: 7
   m_Name: wrench
   m_TagString: Item
@@ -108,6 +109,40 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2, y: 1.7, z: 0.5}
   m_Center: {x: 0.013393037, y: 0.06729245, z: -0.12690616}
+--- !u!114 &878781694952837987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 6629826876720411779}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  useFixedUpdate: 0
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!114 &1613968117439040548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,8 +175,8 @@ MonoBehaviour:
   onlySyncOnChangeCorrectionMultiplier: 2
   useFixedUpdate: 0
   rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  positionPrecision: 0.0001
+  scalePrecision: 0.0001
 --- !u!114 &1686371426209873383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,6 +266,8 @@ MonoBehaviour:
   lmbReaction: {fileID: 7803437061417197889}
   rmbReaction: {fileID: 0}
   reloadReaction: {fileID: 0}
+  itemParts: []
+  networkGuard: {fileID: -4351523049459521880}
 --- !u!114 &7803437061417197889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,40 +299,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _outline: {fileID: 2742765135364868261}
---- !u!114 &878781694952837987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6289893463516360249}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6629826876720411779}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!114 &1964319016268103446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,6 +350,21 @@ MonoBehaviour:
   damage: 5
   toughnessDamage: 5
   impactMultiplier: 1
+--- !u!114 &-4351523049459521880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289893463516360249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9ff550d5ff844e588e552b433108760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeldItemNetworkGuard
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!1 &8680451967811087079
 GameObject:
   m_ObjectHideFlags: 0

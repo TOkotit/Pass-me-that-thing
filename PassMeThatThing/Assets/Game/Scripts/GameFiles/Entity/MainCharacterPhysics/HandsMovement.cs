@@ -193,7 +193,7 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 }
             }
 
-            if (_isHolding && _heldRb && _holdPivot && isServer)
+            if (_isHolding && _heldRb && _holdPivot && (isServer || isOwned))
             {
                 if (_shouldAlignRotation)
                     ManualHoldUpdateAligned();
