@@ -147,13 +147,21 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
-                var lData = _globalStageDatabase.GetLevelData(newStageData.Level);
-                var stepDuration = (lData.FightPhaseTime - 10) / lData.TasksPoints;
+                if (newStageData.Level == 1)
+                {
+                    FirstTask();
+                }
+                else
+                {
+                    var lData = _globalStageDatabase.GetLevelData(newStageData.Level);
+                    var stepDuration = (lData.FightPhaseTime - 10) / lData.TasksPoints;
 
-                _taskTriggerCoroutine = StartCoroutine(
-                    TaskTriggerCoroutine(lData.TasksPoints, stepDuration));
+                    _taskTriggerCoroutine = StartCoroutine(
+                        TaskTriggerCoroutine(lData.TasksPoints, stepDuration));
 
-                _enemySpawner.SpawnWave(GetEnemies());
+                    _enemySpawner.SpawnWave(GetEnemies());
+                }
+
                 RpcPlayWarningSound();
                 RpcPlayMusic();
             }
@@ -176,6 +184,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 StartTimer(duration);
             else
                 _syncRemainingTime = 0f;
+        }
+
+        [Server]
+        private void FirstTask()
+        {
+            _gameRandomEventManager.TriggerEventByType(GameEventsType.BlackoutBlowFuse);
         }
 
         [Server]

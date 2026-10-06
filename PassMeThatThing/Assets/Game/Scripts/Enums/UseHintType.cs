@@ -3,9 +3,15 @@ namespace Assets.Game.Scripts.Enums
 {
     public enum UseHintType
     {
+        None,
         Hit,
-        DamageHit,
-        RepairHit,
-        FixHit,
+        Damage,
+        Repair,
+
+        Fix,
+        BlowFuse,
+        CutWires,
+        PipeBreak,
+        BrokenPump,
     }
 }

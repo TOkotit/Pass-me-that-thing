@@ -7,24 +7,22 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
 {
     public struct GameTaskParameters
     {
-        public GameTaskType gameTaskType;
-        public string taskField; //тип ивента или id предмета
         public int cost;
-
         public float timeLimit;
 
-        public bool canBeOverdue;
+        public GameTaskType gameTaskType;
+        public string taskField; //тип ивента или id предмета
     }
 
     public struct GameTaskData
     {
         public int gameTaskId;
-
         public bool isTaskOverdue;
+        public int cost;
 
         public GameTaskType gameTaskType;
         public string taskField; //тип ивента или id предмета
-        public int cost;
+        
     }
 
     // только таймеры

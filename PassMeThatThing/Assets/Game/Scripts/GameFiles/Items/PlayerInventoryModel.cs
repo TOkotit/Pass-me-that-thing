@@ -12,8 +12,6 @@ namespace Game.Scripts.GameFiles.Items
 
         private int _throwCharge;
 
-        private List<UseHint> _sceneUseHints = new();
-        private List<UseHint> _itemUseHints = new();
         private List<ControlHint> _sceneControlHints = new();
         private List<ControlHint> _itemControlHints = new();
 
@@ -41,8 +39,6 @@ namespace Game.Scripts.GameFiles.Items
             }
         }
 
-        public List<UseHint> SceneUseHints { get => _sceneUseHints; set => _sceneUseHints = value; }
-        public List<UseHint> ItemUseHints { get => _itemUseHints; set => _itemUseHints = value; }
         public List<ControlHint> SceneControlHints { get => _sceneControlHints; set => _sceneControlHints = value; }
         public List<ControlHint> ItemControlHints { get => _itemControlHints; set => _itemControlHints = value; }
 

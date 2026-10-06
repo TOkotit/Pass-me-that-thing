@@ -21,7 +21,6 @@ public class ItemData : ScriptableObject
 
     [Header("Control hints")]
     [SerializeField] private List<ControlHint> controlHints;
-    [SerializeField] private List<UseHint> useHints;
 
     public string Id => id;
     public string ItemName => itemName;
@@ -31,28 +30,16 @@ public class ItemData : ScriptableObject
 
     public List<ControlHint> ControlHints => controlHints;
 
-    public List<UseHint> UseHints => useHints;
-
     public bool CanAppearInTask => canAppearInTask;
 }
 
 [Serializable]
 public class ControlHint
 {
+    public UseHintType useHintIcon1;
+    public UseHintType useHintIcon2;
+    public UseHintType useHintIcon3;
     public InputActionReference bind;
-    public string name;
-
-    public ControlHint(InputActionReference bind, string name)
-    {
-        this.bind = bind;
-        this.name = name;
-    }
-}
-
-[Serializable]
-public class UseHint
-{
-    public UseHintType useHintType;
     public string name;
 }
 

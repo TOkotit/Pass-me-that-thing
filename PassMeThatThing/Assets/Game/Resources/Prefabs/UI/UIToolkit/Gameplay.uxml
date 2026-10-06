@@ -63,9 +63,9 @@
             <ui:VisualElement style="flex-grow: 1; background-image: resource(&quot;Sprites/GameplaySprites/player_hud_clear&quot;);"/>
             <ui:ProgressBar title="" value="29.4" name="Health1" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 186px; top: 35px; left: 185px; height: 19px;"/>
             <ui:ProgressBar title="" value="100" name="Stamina" class="custom-progress-bar stamina-progress-bar" style="position: absolute; width: 126px; top: 87px; left: 179px; height: 8px;"/>
-            <ui:ProgressBar title="" value="29.4" name="Health2" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 152px; left: 136px; height: 11px;"/>
-            <ui:ProgressBar title="" value="29.4" name="Health3" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 242px; left: 136px; height: 11px;"/>
-            <ui:ProgressBar title="" value="29.4" name="Health4" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 330px; left: 136px; height: 11px;"/>
+            <ui:ProgressBar title="" value="29.4" name="Health2" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 152px; left: 136px; height: 11px; display: none;"/>
+            <ui:ProgressBar title="" value="29.4" name="Health3" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 242px; left: 136px; height: 11px; display: none;"/>
+            <ui:ProgressBar title="" value="29.4" name="Health4" class="custom-progress-bar health-progress-bar" style="position: absolute; width: 74px; top: 330px; left: 136px; height: 11px; display: none;"/>
             <ui:VisualElement name="Avatar1" class="avatar-image" style="flex-grow: 1; position: absolute; height: 86px; width: 87px; top: 25px; left: 72px;"/>
             <ui:VisualElement name="Avatar2" class="avatar-image" style="flex-grow: 1; position: absolute; height: 59px; width: 60px; top: 154px; left: 65px;"/>
             <ui:VisualElement name="Avatar3" class="avatar-image" style="flex-grow: 1; position: absolute; height: 59px; width: 57px; top: 242px; left: 66px;"/>
@@ -98,4 +98,21 @@
         <ui:VisualElement name="AddedResContainer" style="flex-grow: 1; position: absolute; height: 76px; width: 272px; top: 12px; left: auto; right: 1036px;"/>
     </ui:GroupBox>
     <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex; opacity: 0; justify-content: center; background-color: rgba(0, 0, 0, 0.84); top: 0; left: 0;"/>
+    <ui:VisualElement name="TutorContainer" class="tektur-font" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: none;">
+        <ui:VisualElement name="LookTimerPrepare" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 148px; width: 392px; top: 86px; left: 798px;">
+            <ui:VisualElement style="flex-grow: 1; position: absolute; height: 38px; width: 38px; top: 9px; left: 345px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=4154780841294389669&amp;guid=15e3c10aea467e4489bfdd34048a4004&amp;type=3#arrow-down&quot;); rotate: 231deg;"/>
+            <ui:Label text="Это этапы твоего дня&#10;Нажми [G] для скипа подготовки"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="LookQuota" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 148px; width: 596px; top: 278px; left: 946px; justify-content: flex-start;">
+            <ui:VisualElement style="flex-grow: 1; position: absolute; height: 38px; width: 38px; top: 18px; left: 547px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=4154780841294389669&amp;guid=15e3c10aea467e4489bfdd34048a4004&amp;type=3#arrow-down&quot;); rotate: -90deg;"/>
+            <ui:Label text="Это квота&#10;Вы выполняете ее за задания"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="LookTasks" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 209px; width: 372px; top: 381px; left: 1190px; justify-content: flex-start; align-self: stretch; align-content: center; align-items: stretch;">
+            <ui:Label text="Это ваше первое задание"/>
+            <ui:Label text="Найди фонарик &#10;и включи свет обратно"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="LookItemSkills" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 194px; width: 346px; top: 801px; left: 1083px; justify-content: flex-start; align-self: stretch; align-content: center; align-items: stretch;">
+            <ui:Label text="У предметов&#10; есть навыки"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>
