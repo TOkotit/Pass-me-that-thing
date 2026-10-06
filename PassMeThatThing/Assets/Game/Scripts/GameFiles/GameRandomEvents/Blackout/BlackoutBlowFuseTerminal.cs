@@ -1,4 +1,5 @@
 using Ami.BroAudio;
+using Game.Scripts.GameFiles.Items.ItemPhysics;
 using Mirror;
 using UnityEngine;
 
@@ -62,6 +63,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
                 blowFuseEvent.FixEvent();
             }
         }
+
 
         //View
         [ClientRpc]

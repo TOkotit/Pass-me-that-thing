@@ -178,5 +178,15 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
                 ActivateEvent(gameEvent.EventId);
             }
         }
+
+        [Server]
+        public void TriggerEventByType(GameEventsType eventType)
+        {
+            var gameEvent = _sceneEvents.Values.First(x => x.EventType == eventType);
+
+            if (gameEvent == null || gameEvent.IsEventActive) return;
+
+            ActivateEvent(gameEvent.EventId);
+        }
     }
 }

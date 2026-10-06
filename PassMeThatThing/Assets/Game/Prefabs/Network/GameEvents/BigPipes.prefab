@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4301122828989730178}
   m_Layer: 7
   m_Name: Valve
-  m_TagString: Untagged
+  m_TagString: InteractableItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,11 +66,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   minigameContainer: {fileID: 7032796477472204110}
+  itemToFix: {fileID: 0}
   floodEvent: {fileID: 1032108084039664460}
   port: {fileID: 3858860607167916054}
   outline: {fileID: 4680887058531560655}
   impactParticles: {fileID: 2367443740266242791}
-  valveSound: {fileID: 4301122828989730178}
+  valveSound:
+    _entity: {fileID: 0}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 842273362364740348}
 --- !u!65 &6024597353830638933
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -378,7 +382,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _baseTriggerChance: 0.2
+  baseTriggerChance: 0.2
   eventType: 2
   gameTaskHandler: {fileID: 7529433830310686631}
   taskTimeLimit: 40

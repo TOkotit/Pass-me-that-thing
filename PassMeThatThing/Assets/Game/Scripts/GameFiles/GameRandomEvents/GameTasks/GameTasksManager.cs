@@ -125,6 +125,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
             if (_gameTasksData.TryGetValue(taskId, out var taskData))
             {
                 taskData.isTaskOverdue = true;
+                taskData.cost /= 2;
 
                 _gameTasksData[taskId] = taskData;
             }
@@ -151,14 +152,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         {
             if (_gameTasksData.TryGetValue(taskId, out var taskData))
             {
-                if (!taskData.isTaskOverdue)
-                {
-                    AddTaskCostQuota(taskData.cost);
-                }
-                else
-                {
-                    AddTaskCostQuota(taskData.cost / 2);
-                }
+                AddTaskCostQuota(taskData.cost);
             }
 
             DestroyGameTask(taskId);

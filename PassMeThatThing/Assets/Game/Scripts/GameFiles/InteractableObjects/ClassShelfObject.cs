@@ -56,5 +56,12 @@ namespace Assets.Game.Scripts.GameFiles.InteractableObjects
                 Debug.LogError("Interactable not found");
             }
         }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+
+            InteractableRegistry.Instance.Unregister(gameObject);
+        }
     }
 }

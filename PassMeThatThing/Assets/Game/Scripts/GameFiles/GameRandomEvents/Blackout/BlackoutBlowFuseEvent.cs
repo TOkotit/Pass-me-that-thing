@@ -16,13 +16,13 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.Blackout
 
             RpcEnableOutline();
             
-            //NetworkVisionManager.Instance.SetGlobalPower(false);
+            NetworkVisionManager.Instance.SetGlobalPower(false);
         }
 
         [Server]
         protected override void OnTaskTimerEnd(int taskId)
         {
-            NetworkVisionManager.Instance.SetGlobalPower(false);
+            //NetworkVisionManager.Instance.SetGlobalPower(false);
         }
 
         [Server]

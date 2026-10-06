@@ -17,6 +17,9 @@ using System.Collections;
 using System;
 using Assets.Game.Scripts.GameFiles.Gameplay.View.UI.ScreenGameplay.CustomTypesForToolkit;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+using AYellowpaper.SerializedCollections;
+using Assets.Game.Scripts.Enums;
+using UnityEngine.InputSystem.HID;
 
 
 
@@ -35,14 +38,14 @@ namespace Game.Gameplay.View.UI
 
         private Dictionary<int, CustomGameEvent> _gameEvents = new ();
         
-        //private GameEventsDatabase _gameEventsDatabase;
-        
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset gameEventPrefab;
         [SerializeField] private VisualTreeAsset hintPrefab;
         [SerializeField] private VisualTreeAsset addedResPrefab;
 
         [SerializeField] private Sprite defaultTestSprite;
+
+        [SerializeField] private SerializedDictionary<GameTaskType, Color> taskTintColors;
 
         private VisualElement _root;
         private VisualElement _cursor;
@@ -158,9 +161,6 @@ namespace Game.Gameplay.View.UI
             
             ViewModel.RequestSubImage(SetItemImageSprite);
 
-            //ViewModel.InitGameEvent(ClearEvents, AddGameEvent);
-            //ViewModel.InitGameEventToClient(SetupEventDatabase, ReceiveEvents);
-            //ViewModel.RequestSubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
             InitTasks();
             SubTasks();
             ViewModel.RequestSubQuota(UpdateQuota);
@@ -197,8 +197,7 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestUnsubPlayersInfo(UpdatePlayerInfo);
             ViewModel.RequestUnsubDeathUI(UpdateDeathUI);
             ViewModel.RequestUnsubLevelGrid();
-            //ViewModel.UnsubInitGameEventToClient(ReceiveEvents);
-            //ViewModel.RequestUnsubGameEvent(AddGameEvent, UpdateGameEvent, RemoveGameEvent);
+
             UnSubTasks();
             ViewModel.RequestUnSubQuota(UpdateQuota);
 
@@ -249,56 +248,44 @@ namespace Game.Gameplay.View.UI
         {
             _hintsContainer.Clear();
 
-            foreach (var e in ViewModel.PlayerInventoryModel.SceneUseHints)
+            var allHints = ViewModel.PlayerInventoryModel.SceneControlHints
+                .Concat(ViewModel.PlayerInventoryModel.ItemControlHints);
+
+            foreach (var e in allHints)
             {
                 var h = hintPrefab.Instantiate();
                 _hintsContainer.Add(h);
 
-                h.Q<VisualElement>("HintIcon").style.backgroundImage 
-                    = new StyleBackground( 
-                        ViewModel.ScreenHintsDatabase.GetHintIcon(e.useHintType));
-                h.Q<Label>("HintText").text = e.name;
-                h.Q<Label>("Bind").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            }
-
-            foreach (var e in ViewModel.PlayerInventoryModel.ItemUseHints)
-            {
-                var h = hintPrefab.Instantiate();
-                _hintsContainer.Add(h);
-
-                h.Q<VisualElement>("HintIcon").style.backgroundImage
-                    = new StyleBackground(
-                        ViewModel.ScreenHintsDatabase.GetHintIcon(e.useHintType));
-                h.Q<Label>("HintText").text = e.name;
-                h.Q<Label>("Bind").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            }
-
-            foreach (var e in ViewModel.PlayerInventoryModel.SceneControlHints)
-            {
-                var h = hintPrefab.Instantiate();
-                _hintsContainer.Add(h);
-
-                var bindString = "[" + InputControlPath.ToHumanReadableString(
+                var bindString = e.bind == null 
+                    ? ""
+                    : "[" + InputControlPath.ToHumanReadableString(
                         e.bind.action.bindings[0].effectivePath,
-                        InputControlPath.HumanReadableStringOptions.OmitDevice) + "]";
+                        InputControlPath.HumanReadableStringOptions.OmitDevice
+                        | InputControlPath.HumanReadableStringOptions.UseShortNames) + "]";
 
-                h.Q<VisualElement>("HintIcon").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                SetControlHintIcon(h.Q<VisualElement>("HintIcon1"), e.useHintIcon1);
+                SetControlHintIcon(h.Q<VisualElement>("HintIcon2"), e.useHintIcon2);
+                SetControlHintIcon(h.Q<VisualElement>("HintIcon3"), e.useHintIcon3);
+
+
                 h.Q<Label>("HintText").text = e.name;
                 h.Q<Label>("Bind").text = bindString;
             }
+        }
 
-            foreach (var e in ViewModel.PlayerInventoryModel.ItemControlHints)
+        private void SetControlHintIcon(VisualElement hi1, UseHintType type)
+        {
+            if (type == UseHintType.None)
             {
-                var h = hintPrefab.Instantiate();
-                _hintsContainer.Add(h);
-
-                var bindString = "[" + InputControlPath.ToHumanReadableString(
-                        e.bind.action.bindings[0].effectivePath,
-                        InputControlPath.HumanReadableStringOptions.OmitDevice) + "]";
-
-                h.Q<VisualElement>("HintIcon").style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                h.Q<Label>("HintText").text = e.name;
-                h.Q<Label>("Bind").text = bindString;
+                hi1.style.backgroundImage
+                    = new StyleBackground();
+                hi1.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            }
+            else
+            {
+                hi1.style.backgroundImage
+                    = new StyleBackground(ViewModel.ScreenHintsDatabase.GetHintIcon(type));
+                hi1.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
             }
         }
 
@@ -501,15 +488,6 @@ namespace Game.Gameplay.View.UI
             _quotaText.text = $"#{current}/{required}";
         }
 
-        private void ReceiveEvents(SyncDictionary<int, BaseGameEvent> dict)
-        {
-            foreach (var i in dict)
-            {
-                var e = ViewModel.gameEventsDatabase.GetEvent(i.Value.EventType);
-                //AddGameTask(i.Value.EventId, e.EventImage, i.Value.EventId);
-            }
-        }
-
         private void ClearEvents()
         {
             _gameEvents.Clear();
@@ -537,7 +515,7 @@ namespace Game.Gameplay.View.UI
                         break;
                 }
 
-                AddGameTask(task.gameTaskId, s, task.cost, task.isTaskOverdue);
+                AddGameTask(task.gameTaskId, s, task.cost, task.isTaskOverdue, task.gameTaskType);
             }
         }
 
@@ -582,7 +560,7 @@ namespace Game.Gameplay.View.UI
             {
                 case SyncDictionary<int, GameTaskData>.Operation.OP_ADD:
 
-                    AddGameTask(newTaskData.gameTaskId, s, newTaskData.cost, newTaskData.isTaskOverdue);
+                    AddGameTask(newTaskData.gameTaskId, s, newTaskData.cost, newTaskData.isTaskOverdue, newTaskData.gameTaskType);
                     break;
                 case SyncDictionary<int, GameTaskData>.Operation.OP_SET:
 
@@ -594,7 +572,7 @@ namespace Game.Gameplay.View.UI
             }
         }
 
-        private void AddGameTask(int taskId, Sprite icon, int cost, bool isOverdue)
+        private void AddGameTask(int taskId, Sprite icon, int cost, bool isOverdue, GameTaskType taskType)
         {
             if (_gameEvents.ContainsKey(taskId)) return;
             
@@ -611,6 +589,7 @@ namespace Game.Gameplay.View.UI
                 customGameEvent.UpdateTimeProgress(task.time, task.timeLimit);
                 task.OnTaskTimerTicked += customGameEvent.UpdateTimeProgress;
             }
+            customGameEvent.style.unityBackgroundImageTintColor = taskTintColors[taskType];
 
             gameEventTempl.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
             gameEventTempl.Q<Label>("EventLb").text = $"#{cost}";

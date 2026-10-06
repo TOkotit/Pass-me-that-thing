@@ -337,20 +337,12 @@ public class PlayerInventory : NetworkBehaviour
             _playerInventoryModel.ItemControlHints.Add(c);
         }
 
-        _playerInventoryModel.ItemUseHints.Clear();
-        foreach (var c in itemData.UseHints)
-        {
-            _playerInventoryModel.ItemUseHints.Add(c);
-        }
-
-
         _playerInventoryModel.HintsChanged();
     }
 
     public void ClearHintsAboutItem()
     {
         _playerInventoryModel.ItemControlHints.Clear();
-        _playerInventoryModel.ItemUseHints.Clear();
         
         _playerInventoryModel.HintsChanged();
     }

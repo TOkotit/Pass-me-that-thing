@@ -11,19 +11,5 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
         {
             Debug.Log($"Act {nameof(LmbWireCutters)}");
         }
-
-        public void OnCollisionEnter(Collision other)
-        {
-            if (EventTerminalsRegistry.Instance.TryGetItem(other.gameObject, out var terminal))
-            {
-                Debug.Log($"<color=orange>Collision Enter {nameof(LmbWireCutters)}");
-                
-                if (terminal is BlackoutCutWiresTerminal && _item.Owner) 
-                {
-                    Debug.Log("<color=green> Interacting</color>");
-                    terminal.TerminalAct(_item.ConnectionToClient);
-                }
-            }
-        }
     }
 }

@@ -113,8 +113,8 @@ namespace Game.Scripts.GameFiles.Items
                 if (_outlineRegistry.TryGetOutline(hit.collider.gameObject, out var outline))
                 {
                     _outlineRegistry.EnableOutline(outline);
-                    _mcLocalModel.CurrentCursor.Value = CursorViewType.Circle;
                 }
+                _mcLocalModel.CurrentCursor.Value = CursorViewType.Circle;
             }
             else
             {
@@ -262,7 +262,11 @@ namespace Game.Scripts.GameFiles.Items
                         if (item)
                         {
                             if (InteractableRegistry.Instance.TryGetInteractable(hit.collider.gameObject, out var interactable))
-                                CmdInteractWithItem(hit.collider.gameObject, item);
+                            {
+                                interactable.InteractWithItem(item);
+                                //CmdInteractWithItem(hit.collider.gameObject, item);
+                            }
+                                
                         }
                         else
                         {
