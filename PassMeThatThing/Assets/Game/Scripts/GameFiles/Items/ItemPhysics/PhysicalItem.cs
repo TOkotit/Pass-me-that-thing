@@ -39,7 +39,6 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
         private Outline _outline;
         private CollisionDamageDealer damageDealer;
-        private NetworkTransformReliable _networkTransform;
 
         [Inject] private ParticlePoolManager _particlePool;
 
@@ -66,22 +65,20 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
             ? new[] { universalPoint } 
             : new[] { leftHandPoint, rightHandPoint };
         public Rigidbody Rigidbody => rigidBody;
+        private NetworkRigidbodyCustom networkRigidbody;
+        public NetworkRigidbodyCustom NetworkRigidbody => networkRigidbody;
         public NetworkItem Network => _network;
         public bool HasToBeAligned => hasToBeAligned;
         public Collider Collider => collider;
-        public NetworkTransformReliable NetworkTransform => _networkTransform;
         public bool IsThrown { get => _isThrown; set => _isThrown = value; }
         
         [SerializeField] private Rigidbody[] itemParts; 
         public int IndexOf(Rigidbody body) => System.Array.IndexOf(itemParts, body);
         public Rigidbody GetPart(int index) => (index >= 0 && index < itemParts.Length) ? itemParts[index] : null;
         public int PartsCount => itemParts.Length;
-        [SerializeField] private HeldItemNetworkGuard networkGuard;
-        public HeldItemNetworkGuard NetworkGuard => networkGuard;
         private void Start()
         {
             _outline = GetComponent<Outline>();
-            _networkTransform = GetComponent<NetworkTransformReliable>();
 
             if (lmbReaction)
                 lmbReaction.Item = this;   
@@ -92,6 +89,7 @@ namespace Game.Scripts.GameFiles.Items.ItemPhysics
 
             if (TryGetComponent<CollisionDamageDealer>(out damageDealer))
                 damageDealer.OnTakeDamage += RpcPlayParticlesOnHit;
+            networkRigidbody = GetComponent<NetworkRigidbodyCustom>();
         }
 
         [ClientRpc]

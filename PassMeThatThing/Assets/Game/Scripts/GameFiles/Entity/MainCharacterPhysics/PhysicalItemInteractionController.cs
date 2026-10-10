@@ -59,7 +59,8 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
                 }
             }
 
-            TargetSetHeld(item, true);
+            if (item.NetworkRigidbody)
+                item.NetworkRigidbody.SetOwnerAuthority(true);
         }
 
         [Server]
@@ -67,17 +68,11 @@ namespace Game.Scripts.GameFiles.Entity.NewMainCharacterPhysics
         {
             if (!item || !item.CanBeOwned) return;
 
+            if (item.NetworkRigidbody)
+                item.NetworkRigidbody.SetOwnerAuthority(false);
+
             if (item.netIdentity && item.netIdentity.connectionToClient == connectionToClient)
                 item.netIdentity.RemoveClientAuthority();
-
-            TargetSetHeld(item, false);
-        }
-
-        [TargetRpc]
-        private void TargetSetHeld(PhysicalItem item, bool held)
-        {
-            if (!item) return;
-            item.NetworkGuard?.SetHeld(held);
         }
 
         // =========================================================================

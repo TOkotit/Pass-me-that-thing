@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 6213635256034360291}
   - component: {fileID: 1964319016268103446}
   - component: {fileID: 6093663108410566228}
-  - component: {fileID: -4351523049459521880}
+  - component: {fileID: 8592319152222278244}
   m_Layer: 7
   m_Name: wrench
   m_TagString: Item
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6289893463516360249}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
   m_Name: 
@@ -267,7 +267,6 @@ MonoBehaviour:
   rmbReaction: {fileID: 0}
   reloadReaction: {fileID: 0}
   itemParts: []
-  networkGuard: {fileID: -4351523049459521880}
 --- !u!114 &7803437061417197889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,7 +349,7 @@ MonoBehaviour:
   damage: 5
   toughnessDamage: 5
   impactMultiplier: 1
---- !u!114 &-4351523049459521880
+--- !u!114 &8592319152222278244
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -359,12 +358,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 6289893463516360249}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9ff550d5ff844e588e552b433108760, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HeldItemNetworkGuard
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  sendRate: 25
+  positionThreshold: 0.01
+  rotationThreshold: 0.5
+  velocityThreshold: 0.1
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 6
+  blend: 0.33
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 1.5
+  teleportRotationThreshold: 30
+  _log: 0
 --- !u!1 &8680451967811087079
 GameObject:
   m_ObjectHideFlags: 0
