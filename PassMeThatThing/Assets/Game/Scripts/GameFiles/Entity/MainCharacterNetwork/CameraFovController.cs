@@ -8,6 +8,10 @@ namespace MainCharacterNetwork
         [SerializeField] private Camera targetCamera;
         [SerializeField] private float smoothSpeed = 10f;
 
+        [Header("Safety")]
+        [SerializeField] private float minValidFov = 10f;
+        [SerializeField] private float maxValidFov = 170f;
+
         private float _baseFov = 60f;
         private float _currentFovIncrease = 0f;
         private float _targetFov;
@@ -15,19 +19,36 @@ namespace MainCharacterNetwork
 
         public void Initialize(float baseFov)
         {
+            if (float.IsNaN(baseFov) || float.IsInfinity(baseFov) ||
+                baseFov < minValidFov || baseFov > maxValidFov)
+            {
+                Debug.LogWarning($"[CameraFovController] Некорректный baseFov = {baseFov}. " +
+                                 $"Использую fallback 60.");
+                baseFov = 60f;
+            }
+
             _baseFov = baseFov;
-            _targetFov = baseFov;
+            _currentFovIncrease = 0f;
+            _targetFov = _baseFov;
+
             if (targetCamera)
-                targetCamera.fieldOfView = _baseFov;
+            {
+                if (float.IsNaN(targetCamera.fieldOfView) ||
+                    targetCamera.fieldOfView < minValidFov ||
+                    targetCamera.fieldOfView > maxValidFov)
+                {
+                    targetCamera.fieldOfView = _baseFov;
+                }
+            }
+            else
+            {
+                Debug.LogError($"[CameraFovController] targetCamera == null на {name}. " +
+                               $"FOV не будет работать.");
+            }
+
             _isInitialized = true;
         }
 
-        /// <summary>
-        /// Временно увеличивает FOV (например, при выстреле).
-        /// </summary>
-        /// <param name="amount">Насколько увеличить за один вызов.</param>
-        /// <param name="maxIncrease">Максимально допустимое суммарное увеличение от этого источника.</param>
-        /// <param name="duration">Время, за которое увеличение плавно вернётся к нулю.</param>
         public void AddFovKick(float amount, float maxIncrease, float duration)
         {
             if (!_isInitialized) return;
@@ -58,7 +79,28 @@ namespace MainCharacterNetwork
         private void LateUpdate()
         {
             if (!_isInitialized || !targetCamera) return;
-            targetCamera.fieldOfView = Mathf.Lerp(targetCamera.fieldOfView, _targetFov, Time.deltaTime * smoothSpeed);
+            var currentFov = targetCamera.fieldOfView;
+            if (float.IsNaN(currentFov) ||
+                currentFov < minValidFov ||
+                currentFov > maxValidFov)
+            {
+                Debug.LogWarning($"[CameraFovController] Camera FOV сломан ({currentFov}), " +
+                                 $"сброс на {_baseFov}");
+                targetCamera.fieldOfView = _baseFov;
+                return;
+            }
+
+            if (float.IsNaN(_targetFov) ||
+                _targetFov < minValidFov ||
+                _targetFov > maxValidFov)
+            {
+                Debug.LogWarning($"[CameraFovController] _targetFov сломан ({_targetFov}), " +
+                                 $"сброс на {_baseFov}");
+                _targetFov = _baseFov;
+            }
+
+            var t = Mathf.Clamp01(Time.deltaTime * smoothSpeed);
+            targetCamera.fieldOfView = Mathf.Lerp(currentFov, _targetFov, t);
         }
     }
 }
