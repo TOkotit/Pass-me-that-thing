@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ui:UXML
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ui="UnityEngine.UIElements"
-    xmlns:uie="UnityEditor.UIElements"
-    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
->
-    
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/Resources/Prefabs/UI/Options/Options.uss?fileID=7433441132597879392&amp;guid=b029a61c8e29dda409e19c040001d6df&amp;type=3#Options"/>
+    <ui:GroupBox class="custom-toggle" style="flex-direction: row; align-self: center;">
+        <ui:Toggle label="" name="TutorialToggle" class="custom-toggle"/>
+        <ui:Label text="Mini tutorial"/>
+    </ui:GroupBox>
 </ui:UXML>

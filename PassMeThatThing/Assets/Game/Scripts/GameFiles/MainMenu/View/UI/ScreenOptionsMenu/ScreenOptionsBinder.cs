@@ -20,10 +20,11 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         private VisualElement _root;
         private Button _closeBtn;
         private Button _saveBtn;
+        private Button _resetBtn;
         private VisualElement _rebindBlockImage;
 
         //gameSettings
-        //
+        private Toggle _tutorialToggle;
 
         //audio
         private Slider _allSlider;
@@ -49,7 +50,10 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _root = uiDocument.rootVisualElement;
             _closeBtn = _root.Q<Button>("CloseBtn");
             _saveBtn = _root.Q<Button>("SaveBtn");
+            _resetBtn = _root.Q<Button>("ResetBtn");
             _rebindBlockImage = _root.Q<VisualElement>("RebindBlockImg");
+
+            _tutorialToggle = _root.Q<Toggle>("TutorialToggle");
 
             _allSlider = _root.Q<Slider>("AllAudioSlider");
             _musicSlider = _root.Q<Slider>("MusicAudioSlider");
@@ -66,6 +70,9 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         private void Start()
         {
             ViewModel.RequestInitLoadOptions(InitUpdate);
+            ViewModel.RequestSubIsDataSaved(UpdateIsDataSaved);
+
+            _tutorialToggle.RegisterValueChangedCallback<bool>(OnTutorialToggleValueChanged);
 
             _allSlider.RegisterValueChangedCallback<float>(OnAllSliderValueChanged);
             _musicSlider.RegisterValueChangedCallback<float>(OnMusicSliderValueChanged);
@@ -76,12 +83,17 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
             _closeBtn.RegisterCallback<ClickEvent>(OnCloseButtonClicked);
             _saveBtn.RegisterCallback<ClickEvent>(OnSaveButtonClicked);
+            _resetBtn.RegisterCallback<ClickEvent>(OnResetButtonClicked);
 
             _sensitivitySlider.RegisterValueChangedCallback<float>(OnMouseSensitivitySliderValueChanged);
         }
         
         private void OnDestroy()
         {
+            ViewModel.RequestUnsubIsDataSaved(UpdateIsDataSaved);
+
+            _tutorialToggle.UnregisterValueChangedCallback<bool>(OnTutorialToggleValueChanged);
+
             _allSlider.UnregisterValueChangedCallback<float>(OnAllSliderValueChanged);
             _musicSlider.UnregisterValueChangedCallback<float>(OnMusicSliderValueChanged);
             _sfxSlider.UnregisterValueChangedCallback<float>(OnSFXSliderValueChanged);
@@ -91,6 +103,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
             _closeBtn.UnregisterCallback<ClickEvent>(OnCloseButtonClicked);
             _saveBtn.UnregisterCallback<ClickEvent>(OnSaveButtonClicked);
+            _resetBtn.UnregisterCallback<ClickEvent>(OnResetButtonClicked);
 
             _sensitivitySlider.UnregisterValueChangedCallback<float>(OnMouseSensitivitySliderValueChanged);
 
@@ -100,18 +113,15 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             }
         }
 
-        private void OnCloseButtonClicked(ClickEvent e)
+        private void UpdateIsDataSaved(bool isDataSaved)
         {
-            ViewModel.RequestGoToPrevScreen();
-        }
-        
-        private void OnSaveButtonClicked(ClickEvent e)
-        {
-            ViewModel.RequestSaveOptions();
+            _saveBtn.visible = !isDataSaved;
         }
 
         private void InitUpdate(OptionsData data, Resolution[] resolutions)
         {
+            UpdateTutorialToggle(data.isTutorShow);
+
             foreach (var p in data.audioValues)
             {
                 UpdateSliderValue(p.Key, p.Value);
@@ -191,6 +201,11 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             }
         }
 
+        private void UpdateTutorialToggle(bool value)
+        {
+            _tutorialToggle.value = value;
+        }
+
         private void UpdateSliderValue(BroAudioType type, float value)
         {
             switch (type)
@@ -243,7 +258,27 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _fullscreenDropdown.SetChoices(_screenNames);
             _fullscreenDropdown.value = value.ToString();
         }
-        
+
+        private void OnCloseButtonClicked(ClickEvent e)
+        {
+            ViewModel.RequestGoToPrevScreen();
+        }
+
+        private void OnSaveButtonClicked(ClickEvent e)
+        {
+            ViewModel.RequestSaveOptions();
+        }
+
+        private void OnResetButtonClicked(ClickEvent e)
+        {
+            ViewModel.RequestResetOptions(InitUpdate);
+        }
+
+        private void OnTutorialToggleValueChanged(ChangeEvent<bool> e)
+        {
+            ViewModel.RequestChangeTutorial(e.newValue);
+        }
+
         private void OnAllSliderValueChanged(ChangeEvent<float> e)
         {
             ViewModel.RequestChangeAudioValueOptions(BroAudioType.All, e.newValue);

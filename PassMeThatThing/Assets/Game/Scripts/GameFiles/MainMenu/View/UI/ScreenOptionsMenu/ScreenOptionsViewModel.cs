@@ -67,11 +67,22 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
             _optionsManager.SaveSettings();
         }
 
+        public void RequestResetOptions(Action<OptionsData, Resolution[]> update)
+        {
+            _optionsManager.ResetToDefault();
+            update(_optionsManager.OptionsData, _optionsManager.Resolutions);
+        }
+
         public void RequestInitLoadOptions(Action<OptionsData, Resolution[]> update)
         {
             update(_optionsManager.OptionsData, _optionsManager.Resolutions);
         }
-        
+
+        public void RequestChangeTutorial(bool value)
+        {
+            _optionsManager.SetTutor(value);
+        }
+
         public void RequestChangeAudioValueOptions(BroAudioType broAudioType, float value)
         {
             _optionsManager.SetAudioVolume(broAudioType, value);
@@ -80,11 +91,6 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         public void RequestChangeResolution(int index)
         {
             _optionsManager.SetResolution(index);
-        }
-
-        private void GetAllActionRefs()
-        {
-            _optionsManager.GetAllActions();
         }
 
         public void RequestChangeFullscreen(OptionsScreenMode isFullscreen)
@@ -105,6 +111,17 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
         public Dictionary<InputMapType,List<InputAction>> RequestGetAllInputActions()
         {
             return _optionsManager.GetAllActions();
+        }
+
+        public void RequestSubIsDataSaved(Action<bool> f)
+        {
+            f(_optionsManager.IsDataSaved);
+            _optionsManager.OnIsDataSavedChanged += f;
+        }
+
+        public void RequestUnsubIsDataSaved(Action<bool> f)
+        {
+            _optionsManager.OnIsDataSavedChanged -= f;
         }
     }
 }
