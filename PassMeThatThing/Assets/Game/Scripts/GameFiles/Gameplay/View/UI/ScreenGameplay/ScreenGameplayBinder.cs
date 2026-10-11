@@ -92,6 +92,15 @@ namespace Game.Gameplay.View.UI
 
         private Label _quotaText;
 
+        private VisualElement _tutorContainer;
+
+        private VisualElement _lookTimerPrepare;
+        private VisualElement _lookQuota;
+        private VisualElement _lookEvents;
+        private VisualElement _lookItemSkills;
+        //private VisualElement _lookAllEventsDone;
+        private VisualElement _lookRest;
+
         private void Awake()
         {
 
@@ -135,6 +144,12 @@ namespace Game.Gameplay.View.UI
             _fuelWireResText = _root.Q<Label>("fuelResText");
 
             _quotaText = _root.Q<Label>("QuotaText");
+
+            _lookTimerPrepare = _root.Q<VisualElement>("LookTimerPrepare");
+            _lookQuota = _root.Q<VisualElement>("LookQuota");
+            _lookEvents = _root.Q<VisualElement>("LookTasks");
+            _lookItemSkills = _root.Q<VisualElement>("LookItemSkills");
+            _lookRest = _root.Q<VisualElement>("LookRest");
 
             for (var i = 2; i <= 4; i++)
             {
@@ -189,6 +204,14 @@ namespace Game.Gameplay.View.UI
             ViewModel.RequestSubAddedRes(UpdateAddedRes);
 
             ViewModel.RequestSubWireRes(UpdateWireRes);
+
+
+            ViewModel.RequestSubLookTimerPrepare(UpdateLookTimerPrepare);
+            ViewModel.RequestSubLookQuota(UpdateLookQuota);
+            ViewModel.RequestSubLookEvent(UpdateLookEvent);
+            ViewModel.RequestSubLookItemSkills(UpdateLookItemSkills);
+            //ViewModel.RequestSubLookAllEventsDone(UpdateLookAllEventsDone);
+            ViewModel.RequestSubLookRest(UpdateLookRest);
         }
 
         private void OnDestroy()
@@ -707,6 +730,33 @@ namespace Game.Gameplay.View.UI
         private void UpdateMinimapPower(bool isPowered)
         {
             _miniMap?.SetPowered(isPowered);
+        }
+
+        
+
+        private void UpdateLookTimerPrepare(bool value)
+        {
+            _lookTimerPrepare.visible = value;
+        }
+        private void UpdateLookQuota(bool value)
+        {
+            _lookQuota.visible = value;
+        }
+        private void UpdateLookEvent(bool value)
+        {
+            _lookEvents.visible = value;
+        }
+        private void UpdateLookItemSkills(bool value)
+        {
+            _lookItemSkills.visible = value;
+        }
+        private void UpdateLookAllEventsDone(bool value)
+        {
+            //_lookAllEventsDone.visible = value;
+        }
+        private void UpdateLookRest(bool value)
+        {
+            _lookRest.visible = value;
         }
     }
 }

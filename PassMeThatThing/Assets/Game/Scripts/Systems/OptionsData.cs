@@ -18,5 +18,6 @@ namespace Game.Scripts.Systems
         
         public SerializedDictionary<BroAudioType, float> audioValues; //% from 0 to 100
 
+        public bool isTutorShow;
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Ami.BroAudio;
@@ -10,6 +10,7 @@ using Game.Scripts.GameFiles.Entity.Enemy;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Game.Scripts.GameFiles.GameRandomEvents.GameTasks.Quota;
+using Game.Scripts.GameFiles.GameRoot;
 using Game.Scripts.Systems;
 using Game.Scripts.Utils;
 using Mirror;
@@ -39,9 +40,12 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         [Inject] private GameoverHandler _gameOverHandler;
 
+        [Inject] private TutorialManager _tutorialManager;
+
         private NetworkTimer _timer;
         private bool _inOvertime;
         private bool _fightEnded;
+        private LevelData _currentLevelData;
 
         private Coroutine _taskTriggerCoroutine;
 
@@ -50,6 +54,8 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
 
         [SyncVar(hook = nameof(OnStageChanged))]
         private Stage _stage = new();
+
+
 
         [SyncVar(hook = nameof(OnTimeChanged))]
         private float _syncRemainingTime; //TODO переделать на локальный таймер
@@ -69,10 +75,23 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             Instance = this;
             _timer = new NetworkTimer(this, OnTimerTick);
             _timer.TimeIsOver += OnTimerFinished;
+
+            _tutorialManager.SetLookTimerPrepare(true);
+
+            OnStageChangedUI += OnTutorFightBegin;
+
+            
+
+            _quotaManager.OnQuotaChanged += OnTutorFirstTaskComplete;
         }
 
         private void OnDestroy()
         {
+            OnStageChangedUI -= OnTutorFightBegin;
+
+            if (_quotaManager != null)
+                _quotaManager.OnQuotaChanged -= OnTutorFirstTaskComplete;
+
             if (_timer != null)
             {
                 _timer.TimeIsOver -= OnTimerFinished;
@@ -87,6 +106,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             base.OnStartServer();
             _playerReadyManager.OnAllPlayersReady += () => TrySkipPreparationStage();
             _gameTaskManager.OnQuotaValueAdded += _quotaManager.AddQuota;
+            _gameTaskManager.OnDestroyGameTasksCountChanged += EndFightAfterAllComplete;
             StartStage(GlobalStagesType.Preparation);
         }
 
@@ -95,24 +115,25 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             base.OnStopServer();
 
             _gameTaskManager.OnQuotaValueAdded -= _quotaManager.AddQuota;
+            _gameTaskManager.OnDestroyGameTasksCountChanged -= EndFightAfterAllComplete;
         }
 
-        private void Update()
-        {
-            if (!isServer) return;
+        //private void Update()
+        //{
+        //    if (!isServer) return;
 
-            if (_currentGameStage == GlobalStagesType.Fight && !_inOvertime && !_fightEnded)
-            {
-                if (_enemySpawner.EnemyCount == 0)
-                    EndFight();
-            }
+        //    if (_currentGameStage == GlobalStagesType.Fight && !_inOvertime && !_fightEnded)
+        //    {
+        //        if (_enemySpawner.EnemyCount == 0)
+        //            EndFight();
+        //    }
 
-            if (_inOvertime && !_fightEnded)
-            {
-                if (_enemySpawner.EnemyCount == 0)
-                    EndFight();
-            }
-        }
+        //    if (_inOvertime && !_fightEnded)
+        //    {
+        //        if (_enemySpawner.EnemyCount == 0)
+        //            EndFight();
+        //    }
+        //}
 
         [Server]
         private void StartStage(GlobalStagesType newStage)
@@ -147,17 +168,19 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             }
             else if (_currentGameStage == GlobalStagesType.Fight)
             {
+                _gameTaskManager.ResetDestroyedGameTasksCount();
+                _currentLevelData = _globalStageDatabase.GetLevelData(newStageData.Level);
+
                 if (newStageData.Level == 1)
                 {
-                    FirstTask();
+                    StartCoroutine(FirstTaskCoroutine());
                 }
                 else
                 {
-                    var lData = _globalStageDatabase.GetLevelData(newStageData.Level);
-                    var stepDuration = (lData.FightPhaseTime - 10) / lData.TasksPoints;
+                    var stepDuration = (_currentLevelData.FightPhaseTime - 10) / _currentLevelData.TasksPoints;
 
                     _taskTriggerCoroutine = StartCoroutine(
-                        TaskTriggerCoroutine(lData.TasksPoints, stepDuration));
+                        TaskTriggerCoroutine(_currentLevelData.TasksPoints, stepDuration));
 
                     _enemySpawner.SpawnWave(GetEnemies());
                 }
@@ -175,7 +198,6 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
             _stage = newStageData;
 
             NetworkVisionManager.Instance.SetGlobalStateValue(_stage.Type == GlobalStagesType.Fight);
-            
             Debug.Log($"[GlobalStageManager] Change state to {_stage.Type} and send to the NetworkVisionManager.Instance.SetGlobalStateValue value {_stage.Type == GlobalStagesType.Fight}");
             
             var duration = _globalStageDatabase.GetStageDuration(_stage.Type, _stage.Level);
@@ -187,9 +209,18 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         }
 
         [Server]
+        private IEnumerator FirstTaskCoroutine()
+        {
+            yield return new WaitForSeconds(5f);
+            FirstTask();
+        }
+
+        [Server]
         private void FirstTask()
         {
-            _gameRandomEventManager.TriggerEventByType(GameEventsType.BlackoutBlowFuse);
+            _gameRandomEventManager.TriggerEventByType(GameEventsType.BlackoutBlowFuse, 180);
+
+            RpcTutorFirstTaskBegin();
         }
 
         [Server]
@@ -270,12 +301,23 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         }
 
         [Server]
+        private void EndFightAfterAllComplete(int destroyedTasksCount)
+        {
+            if (_currentGameStage == GlobalStagesType.Fight
+                && destroyedTasksCount >= _currentLevelData.TasksPoints)
+            {
+                OnTimerFinished();
+            }
+        }
+
+        [Server]
         private void EndFight()
         {
             if (_fightEnded) return;
             _fightEnded = true;
             _inOvertime = false;
-            StopCoroutine(_taskTriggerCoroutine);
+            if (_taskTriggerCoroutine != null)
+                StopCoroutine(_taskTriggerCoroutine);
 
             RpcStopMusic();
 
@@ -373,6 +415,47 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             OnStageChangedUI?.Invoke(newStage);
         }
+
+        //tutor
+        private void OnTutorFightBegin(Stage stage)
+        {
+            if (stage.Type == GlobalStagesType.Fight)
+            {
+                _tutorialManager.SetLookTimerPrepare(false);
+
+                _tutorialManager.SetLookQuota(true);
+            }
+            else if (stage.Type == GlobalStagesType.Rest)
+            {
+                _tutorialManager.SetLookRest(true);
+            }
+            else if (stage.Type == GlobalStagesType.Preparation)
+            {
+                if (stage.Day > 1)
+                {
+                    _tutorialManager.SetLookRest(false);
+                    _tutorialManager.EndTutor();
+                }
+            }
+        }
+
+        [ClientRpc]
+        private void RpcTutorFirstTaskBegin()
+        {
+            _tutorialManager.SetLookQuota(false);
+
+            _tutorialManager.SetLookEvent(true);
+
+            _tutorialManager.SetLookItemSkills(true);
+        }
+        
+
+        private void OnTutorFirstTaskComplete(int quota, int reqQuota)
+        {
+            _tutorialManager.SetLookEvent(false);
+            _tutorialManager.SetLookItemSkills(false);
+        }
+
 
         //View
         [ClientRpc]

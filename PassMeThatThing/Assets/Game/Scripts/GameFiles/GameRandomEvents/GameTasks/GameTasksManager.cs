@@ -28,6 +28,9 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         private SyncDictionary<int, GameTask> _gameTasks = new();
         private SyncDictionary<int, GameTaskData> _gameTasksData = new();
 
+        [SyncVar(hook = nameof(OnDestroyGameTasksCountHook))]
+        private int _destroyedGameTaskCount;
+
         //терминалы сдачи предметов
         private int _idItemTaskDepotGenerator = 1;
         private readonly SyncDictionary<int, ItemTaskDepotPoint> _itemTasksDepots = new();
@@ -35,7 +38,10 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         public SyncDictionary<int, GameTask> GameTasks => _gameTasks;
         public SyncDictionary<int, GameTaskData> GameTasksData => _gameTasksData;
 
+        public int DestroyedGameTaskCount => _destroyedGameTaskCount;
+
         public event Action<int> OnQuotaValueAdded;
+        public event Action<int> OnDestroyGameTasksCountChanged;
 
         public override void OnStartClient()
         {
@@ -45,6 +51,18 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         public override void OnStopClient()
         {
             StopCoroutine(_timeTickCoroutine);
+        }
+
+        public void OnDestroyGameTasksCountHook(int oldValue, int newValue)
+        {
+            OnDestroyGameTasksCountChanged?.Invoke(newValue);
+        }
+
+
+        [Server]
+        public void ResetDestroyedGameTasksCount()
+        {
+            _destroyedGameTaskCount = 0;
         }
 
 
@@ -144,6 +162,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
             if (_gameTasksData.TryGetValue(taskId, out var taskData))
             {
                 _gameTasksData.Remove(taskId);
+                _destroyedGameTaskCount++;
             }
         }
 

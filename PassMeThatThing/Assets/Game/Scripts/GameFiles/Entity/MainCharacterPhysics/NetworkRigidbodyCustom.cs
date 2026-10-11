@@ -56,7 +56,6 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     private Quaternion _authRot;
     private Vector3 _authVel;
     private Vector3 _authAngVel;
-
     private Vector3 _lastSentPos;
     private Quaternion _lastSentRot;
     private Vector3 _lastSentVel;
@@ -64,7 +63,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.interpolation = RigidbodyInterpolation.Interpolate;
+        _rb.interpolation = RigidbodyInterpolation.None;
     }
 
     [Server]
@@ -164,12 +163,13 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         while (_buffer.Count > maxBufferSize) _buffer.Dequeue();
     }
 
+    /// <summary>
+    /// Владелец шлёт свой стейт на сервер.
+    /// </summary>
     [Command(channel = Channels.Unreliable)]
     private void CmdPushOwnerState(Vector3 pos, Quaternion rot, Vector3 vel, Vector3 angVel)
     {
         if (!_ownerAuthority) return;
-        
-        // Lerp 0.5 защищает от рывка при потере пакета.
         _rb.position = Vector3.Lerp(_rb.position, pos, 0.5f);
         _rb.rotation = Quaternion.Slerp(_rb.rotation, rot, 0.5f);
         _rb.linearVelocity = vel;
@@ -258,7 +258,17 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     // =====================================================================
     //  Reconciliation (владелец)
     // =====================================================================
+    private void UpdateInterpolation()
+    {
+        var isAuthoritative = isServer || (_ownerAuthority && isOwned);
 
+        var desired = isAuthoritative
+            ? RigidbodyInterpolation.Interpolate
+            : RigidbodyInterpolation.None;
+
+        if (_rb.interpolation != desired)
+            _rb.interpolation = desired;
+    }
     private void ApplyOwnerReconciliation()
     {
         var posError = _authPos - _rb.position;
