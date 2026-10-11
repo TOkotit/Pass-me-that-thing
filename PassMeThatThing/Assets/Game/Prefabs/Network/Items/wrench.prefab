@@ -365,19 +365,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   sendRate: 25
-  positionThreshold: 0.01
-  rotationThreshold: 0.5
+  positionThreshold: 0.5
+  rotationThreshold: 1
   velocityThreshold: 0.1
   interpolationDelay: 0.1
   maxBufferSize: 32
-  positionSpring: 6
-  rotationSpring: 6
-  maxLinearCorrection: 3
-  maxAngularCorrection: 6
-  blend: 0.33
+  positionSpring: 1.5
+  rotationSpring: 1.5
+  maxLinearCorrection: 1.5
+  maxAngularCorrection: 1.5
   minPositionError: 0.02
   minRotationError: 1.5
-  teleportPositionThreshold: 1.5
+  teleportPositionThreshold: 5
   teleportRotationThreshold: 30
   _log: 0
 --- !u!1 &8680451967811087079
