@@ -26,37 +26,37 @@ namespace Game.Scripts.GameFiles.GameRoot
 
         public void SetLookTimerPrepare(bool value)
         {
-            if (!_optionsmanager.isTutorShow) return;
+            if (!_optionsmanager.IsTutorShow) return;
             lookTimerPrepare.Value = value;
         }
 
         public void SetLookQuota(bool value)
         {
-            if (!_optionsmanager.isTutorShow) return;
+            if (!_optionsmanager.IsTutorShow) return;
             lookQuota.Value = value;
         }
 
         public void SetLookEvent(bool value)
         {
-            if (!_optionsmanager.isTutorShow) return;
+            if (!_optionsmanager.IsTutorShow) return;
             lookEvent.Value = value;
         }
 
         public void SetLookItemSkills(bool value)
         {
-            if (!_optionsmanager.isTutorShow) return;
+            if (!_optionsmanager.IsTutorShow) return;
             lookItemSkills.Value = value;
         }
 
         //public void SetLookAllEventsDone(bool value)
         //{
-        //    if (!_optionsmanager.isTutorShow) return;
+        //    if (!_optionsmanager.IsTutorShow) return;
         //    lookAllEventsDone.Value = value;
         //}
 
         public void SetLookRest(bool value)
         {
-            if (!_optionsmanager.isTutorShow) return;
+            if (!_optionsmanager.IsTutorShow) return;
             lookRest.Value = value;
         }
 
@@ -72,7 +72,7 @@ namespace Game.Scripts.GameFiles.GameRoot
 
         public void EndTutor()
         {
-            if (!_optionsmanager.isTutorShow) return;
+            if (!_optionsmanager.IsTutorShow) return;
 
             DisableAll();
 

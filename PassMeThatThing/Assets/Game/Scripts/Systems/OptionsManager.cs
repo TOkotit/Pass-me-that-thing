@@ -22,13 +22,25 @@ namespace Game.Scripts.Systems
         private InputActionRebindingExtensions.RebindingOperation _rebindingOperation;
 
         public OptionsData OptionsData;
-        public bool IsDataSaved;
+        private bool isDataSaved;
 
         public Resolution[] Resolutions => Screen.resolutions;
 
         public event Action<float> OnSensitivityChanged;
+        public event Action<bool> OnIsDataSavedChanged;
 
-        public bool isTutorShow => OptionsData.isTutorShow;
+        public bool IsTutorShow => OptionsData.isTutorShow;
+
+        public bool IsDataSaved
+        {
+            get => isDataSaved;
+            set
+            {
+                if (value != isDataSaved) OnIsDataSavedChanged?.Invoke(value);
+                isDataSaved = value;
+            }
+        }
+
         public void SetInitialSettings()
         {
             Debug.Log("OptionsManager SetInitialSettings");
@@ -36,65 +48,83 @@ namespace Game.Scripts.Systems
             
             if (OptionsData == null)
             {
-                OptionsData = new OptionsData()
+                OptionsData = GetDefaultOptionsData();
+            }
+
+            SetSettingsFromOptionsData(true);
+            IsDataSaved = true;
+        }
+
+        public void ResetToDefault()
+        {
+            Debug.Log("OptionsManager ResetToDefault");
+            OptionsData = GetDefaultOptionsData();
+
+            SetSettingsFromOptionsData(false);
+            ResetKeyBindings();
+        }
+
+        public void SetSettingsFromOptionsData(bool init)
+        {
+            SetLanguage(OptionsData.language, init);
+            SetTutor(OptionsData.isTutorShow, init);
+            SetResolution(OptionsData.resolutionIndex, init);
+            SetFullScreen(OptionsData.isFullScreen, init);
+            var audioValCopy = OptionsData.audioValues.ToDictionary(k => k.Key, v => v.Value);
+            foreach (var pair in audioValCopy)
+            {
+                SetAudioVolume(pair.Key, pair.Value, init: init);
+            }
+            SetMouseSensitivity(OptionsData.mouseSensitivity, init);
+        }
+
+        private OptionsData GetDefaultOptionsData()
+        {
+            return new OptionsData()
                 {
                     isFullScreen = 0,
                     resolutionIndex = 0,
                     language = "English",
                     mouseSensitivity = 15f,
-                    audioValues = new ()
-                    {
-                        {BroAudioType.All, 10f},
-                        {BroAudioType.Music, 10f},
-                        {BroAudioType.SFX, 10f}
-                    },
+                    audioValues = new()
+                        {
+                            {BroAudioType.All, 10f},
+                            {BroAudioType.Music, 10f},
+                            {BroAudioType.SFX, 10f}
+                        },
                     isTutorShow = true
                 };
-                
-            }
-            
-            SetLanguage(OptionsData.language, true);
-            SetTutor(OptionsData.isTutorShow, true);
-            SetResolution(OptionsData.resolutionIndex, true);
-            SetFullScreen(OptionsData.isFullScreen, true);
-            foreach (var pair in OptionsData.audioValues)
-            {
-                SetAudioVolume(pair.Key, pair.Value, init: true);
-            }
-            SetMouseSensitivity(OptionsData.mouseSensitivity, true);
         }
-        
+
         //general game settings
         public void SetLanguage(string language, bool init=false)
         {
             if (!init)
-                OptionsData.language = language;
-            else
             {
+                OptionsData.language = language;
                 IsDataSaved = false;
             }
+
             //
         }
         public void SetTutor(bool value, bool init = false)
         {
             if (!init)
-                OptionsData.isTutorShow = value;
-            else
             {
+                OptionsData.isTutorShow = value;
                 IsDataSaved = false;
             }
-            //
         }
 
         //audio settings 
         public void SetAudioVolume(BroAudioType audioType, float volumePercent, float fadeTime=0f, bool init=false)
         {
-            if (!init)
-                OptionsData.audioValues[audioType] = volumePercent;
-            else
+            if (!init) 
             {
+                OptionsData.audioValues[audioType] = volumePercent;
                 IsDataSaved = false;
             }
+
             BroAudio.SetVolume(audioType, volumePercent / 10f, fadeTime);
         }
         
@@ -102,11 +132,11 @@ namespace Game.Scripts.Systems
         public void SetResolution(int resolutionIndex, bool init=false)
         {
             if (!init)
-                OptionsData.resolutionIndex = resolutionIndex;
-            else
             {
+                OptionsData.resolutionIndex = resolutionIndex;
                 IsDataSaved = false;
             }
+            
             resolutionIndex = Mathf.Clamp(resolutionIndex, 0, Resolutions.Length-1);
             Screen.SetResolution(Resolutions[resolutionIndex].width, 
                 Resolutions[resolutionIndex].height, Screen.fullScreen);
@@ -115,9 +145,8 @@ namespace Game.Scripts.Systems
         public void SetFullScreen(OptionsScreenMode isFullScreen, bool init=false)
         {
             if (!init)
-                OptionsData.isFullScreen = isFullScreen;
-            else
             {
+                OptionsData.isFullScreen = isFullScreen;
                 IsDataSaved = false;
             }
 
@@ -181,6 +210,7 @@ namespace Game.Scripts.Systems
         {
             _rebindingOperation.Dispose();
             inputAction.Enable();
+            IsDataSaved = false;
             if (callback != null)
                 callback();
         }
@@ -209,10 +239,15 @@ namespace Game.Scripts.Systems
                 _inputManager.GameInput.LoadBindingOverridesFromJson(jsonData);
             }
         }
-        
-        
+
+        public void ResetKeyBindings()
+        {
+            _inputManager.GameInput.RemoveAllBindingOverrides();
+        }
+
+
         //save
-        
+
         public void SaveSettings() => SaveToJson();
         
         public void SaveToJson()
