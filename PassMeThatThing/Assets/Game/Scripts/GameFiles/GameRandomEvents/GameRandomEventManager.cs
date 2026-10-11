@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,11 +91,11 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         }
         
         [Server]
-        public void ActivateEvent(int eventId)
+        public void ActivateEvent(int eventId, float taskTime=-1)
         {
             if (_sceneEvents.TryGetValue(eventId, out var gameEvent))
             {
-                gameEvent.StartEvent();
+                gameEvent.StartEvent(taskTime);
                 StartedEvents.Add(eventId, gameEvent);
             }
             else
@@ -180,13 +180,13 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         }
 
         [Server]
-        public void TriggerEventByType(GameEventsType eventType)
+        public void TriggerEventByType(GameEventsType eventType, float taskTime=-1)
         {
             var gameEvent = _sceneEvents.Values.First(x => x.EventType == eventType);
 
             if (gameEvent == null || gameEvent.IsEventActive) return;
 
-            ActivateEvent(gameEvent.EventId);
+            ActivateEvent(gameEvent.EventId, taskTime);
         }
     }
 }

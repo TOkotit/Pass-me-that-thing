@@ -1,4 +1,4 @@
-
+﻿
 using System.Linq;
 using DI;
 using Game.Entity;
@@ -9,6 +9,7 @@ using UnityEngine;
 using Mirror;
 using VContainer;
 using VContainer.Unity;
+using Game.Scripts.GameFiles.GameRoot;
 
 public class PlayerInventory : NetworkBehaviour
 {
@@ -20,7 +21,6 @@ public class PlayerInventory : NetworkBehaviour
     [Inject] private PhysicalItemRegistry _physicalItemRegistry;
     [Inject] private GlobalInventoryManager  _globalInventoryManager;
     [Inject] private ItemDatabase _itemDatabase;
-    
 
     [SerializeField] private PhysicalItemInteractionController _physicalСontroller;
 

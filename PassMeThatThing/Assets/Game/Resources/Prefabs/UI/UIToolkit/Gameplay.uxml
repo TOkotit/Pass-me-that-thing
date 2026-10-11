@@ -98,7 +98,7 @@
         <ui:VisualElement name="AddedResContainer" style="flex-grow: 1; position: absolute; height: 76px; width: 272px; top: 12px; left: auto; right: 1036px;"/>
     </ui:GroupBox>
     <ui:VisualElement enabled="true" name="DeathVisualImg" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex; opacity: 0; justify-content: center; background-color: rgba(0, 0, 0, 0.84); top: 0; left: 0;"/>
-    <ui:VisualElement name="TutorContainer" class="tektur-font" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: none;">
+    <ui:VisualElement name="TutorContainer" class="tektur-font" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; display: flex;">
         <ui:VisualElement name="LookTimerPrepare" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 148px; width: 392px; top: 86px; left: 798px;">
             <ui:VisualElement style="flex-grow: 1; position: absolute; height: 38px; width: 38px; top: 9px; left: 345px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=4154780841294389669&amp;guid=15e3c10aea467e4489bfdd34048a4004&amp;type=3#arrow-down&quot;); rotate: 231deg;"/>
             <ui:Label text="Это этапы твоего дня&#10;Нажми [G] для скипа подготовки"/>
@@ -112,7 +112,10 @@
             <ui:Label text="Найди фонарик &#10;и включи свет обратно"/>
         </ui:VisualElement>
         <ui:VisualElement name="LookItemSkills" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 194px; width: 346px; top: 801px; left: 1083px; justify-content: flex-start; align-self: stretch; align-content: center; align-items: stretch;">
-            <ui:Label text="У предметов&#10; есть навыки"/>
+            <ui:Label text="У предметов&#10;есть способы &#10;применения"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="LookRest" class="tutor-hint" style="flex-grow: 1; position: absolute; height: 259px; width: 584px; top: 783px; left: 702px; justify-content: flex-start; align-self: stretch; align-content: center; align-items: stretch;">
+            <ui:Label text="После выполнения всех &#10;заданий наступает отдых &#10;и начинается новый день.&#10;&#10;Выполняй различные задания&#10;и исследуй разные интересности&#10;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -1,4 +1,4 @@
-using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
+﻿using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Assets.Game.Scripts.GameFiles.GlobalStageManager;
 using DI;
 using Game.Scripts.Enums;
@@ -75,14 +75,16 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
         }
         
         [Server]
-        public void StartEvent()
+        public void StartEvent(float taskTime = -1)
         {
             if (_isEventActive) return;
             
             _isEventActive = true;
             OnStartEvent();
 
-            _currentTask = gameTaskHandler.CreateGameTask(GetEventTaskParams());
+            if (taskTime == -1) taskTime = taskTimeLimit;
+
+            _currentTask = gameTaskHandler.CreateGameTask(GetEventTaskParams(taskTime));
             _currentTask.OnTaskTimerEnd += OnTaskTimerEnd;
 
             Debug.Log($"[Server] Ивент ID:{_eventId} ({EventType}) ЗАПУЩЕН.");
@@ -105,13 +107,14 @@ namespace Game.Scripts.GameFiles.GameRandomEvents
 
 
         [Server]
-        private GameTaskParameters GetEventTaskParams()
+        private GameTaskParameters GetEventTaskParams(float taskTime)
         {
             var testPars = new GameTaskParameters();
+
             testPars.gameTaskType = GameTaskType.GameEvent;
-            testPars.timeLimit = taskTimeLimit;
+            testPars.timeLimit = taskTime;
             testPars.taskField = eventType.ToString();
-            testPars.cost = taskPoints * _globalStageDatabase.BaseQuotaConst;
+            testPars.cost = taskPoints * _globalStageDatabase.BaseQuotaConst * 2;
 
             return testPars;
         }

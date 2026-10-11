@@ -11,6 +11,7 @@ using Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.GameRandomEvents;
 using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Game.Scripts.GameFiles.GameRandomEvents.GameTasks.Quota;
+using Game.Scripts.GameFiles.GameRoot;
 using Game.Scripts.GameFiles.GlobalStageManager;
 using Game.Scripts.GameFiles.Items;
 using Game.Scripts.GameFiles.LevelGeneration;
@@ -47,16 +48,15 @@ namespace Game.Gameplay.View.UI
         private readonly CompositeDisposable _subscriptions = new();
         public override string Id => "ScreenGameplay";
 
+        
 
         private readonly PlayerInventoryModel  _playerInventoryModel;
         public readonly ItemDatabase itemDatabase;
-        
 
         private readonly BuildingsDatabase _buildingsDatabase;
         private readonly GlobalStageManager _globalStageManager;
         private readonly GameInputManager _gameInputManager;
         private readonly ScreenHintsDatabase _screenHintsDatabase;
-
         
         private readonly MCLocalModel  _mcLocalModel;
         private readonly LocalWireHandlerModel _localWireHandlerModel;
@@ -65,6 +65,7 @@ namespace Game.Gameplay.View.UI
         private readonly LocalMainStorageModel _localMainStorageModel;
 
         private Action<LevelGrid> _onLevelGeneratedCallback;
+
         public ResourceDatabase resourceDatabase;
         public readonly GameEventsDatabase gameEventsDatabase;
         //public readonly GameRandomEventManager gameRandomEventManager;
@@ -73,6 +74,8 @@ namespace Game.Gameplay.View.UI
 
         //проводные ресы
         public readonly LocalGeneralResourcesModel localGeneralResourcesModel;
+
+        public readonly TutorialManager tutorialManager;
 
         public BuildingsDatabase BuildingsDatabase => _buildingsDatabase;
         public PlayerInventoryModel PlayerInventoryModel => _playerInventoryModel;
@@ -97,7 +100,8 @@ namespace Game.Gameplay.View.UI
             gameEventsDatabase  = container.Resolve<GameEventsDatabase>();
             _buildingsDatabase = container.Resolve<BuildingsDatabase>();
 
-            
+            tutorialManager = container.Resolve<TutorialManager>();
+
             _globalStageManager = container.Resolve<GlobalStageManager>();
             
             _mcLocalModel = container.Resolve<MCLocalModel>();
@@ -403,5 +407,43 @@ namespace Game.Gameplay.View.UI
             NetworkVisionManager.OnGlobalPowerStateChanged.RemoveListener(f);
         }
 
+        //public ReactiveProperty<bool> lookTimerPrepare = new();
+        //public ReactiveProperty<bool> lookQuota = new();
+        //public ReactiveProperty<bool> lookEvent = new();
+        //public ReactiveProperty<bool> lookItemSkills = new();
+        //public ReactiveProperty<bool> lookAllEventsDone = new();
+        //public ReactiveProperty<bool> lookRest = new();
+
+        //tutor
+        public void RequestSubLookTimerPrepare(Action<bool> f)
+        {
+            f(tutorialManager.lookTimerPrepare.Value);
+            _subscriptions.Add(tutorialManager.lookTimerPrepare.Subscribe(f));
+        }
+        public void RequestSubLookQuota(Action<bool> f)
+        {
+            f(tutorialManager.lookQuota.Value);
+            _subscriptions.Add(tutorialManager.lookQuota.Subscribe(f));
+        }
+        public void RequestSubLookEvent(Action<bool> f)
+        {
+            f(tutorialManager.lookEvent.Value);
+            _subscriptions.Add(tutorialManager.lookEvent.Subscribe(f));
+        }
+        public void RequestSubLookItemSkills(Action<bool> f)
+        {
+            f(tutorialManager.lookItemSkills.Value);
+            _subscriptions.Add(tutorialManager.lookItemSkills.Subscribe(f));
+        }
+        //public void RequestSubLookAllEventsDone(Action<bool> f)
+        //{
+        //    f(tutorialManager.lookAllEventsDone.Value);
+        //    _subscriptions.Add(tutorialManager.lookAllEventsDone.Subscribe(f));
+        //}
+        public void RequestSubLookRest(Action<bool> f)
+        {
+            f(tutorialManager.lookRest.Value);
+            _subscriptions.Add(tutorialManager.lookRest.Subscribe(f));
+        }
     }
 }

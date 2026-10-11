@@ -51,6 +51,7 @@ namespace Game.MainMenu.View.UI.ScreenOptionsMenu
 
         public void RequestGoToPrevScreen()
         {
+            _optionsManager.SetInitialSettings();
             if (_uiManager == null)
             {
                 _gameplayUIManager.OpenScreenPauseMenu();

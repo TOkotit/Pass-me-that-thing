@@ -30,6 +30,7 @@ using Assets.Game.Scripts.GameFiles.Entity.Buildings.Plants.Data;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
 using Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Game.Scripts.GameFiles.GameRandomEvents.GameTasks.Quota;
+using Game.Scripts.GameFiles.GameRoot;
 
 namespace DI
 {
@@ -118,7 +119,9 @@ namespace DI
 
             var eventTerminalRegistry = new EventTerminalsRegistry();
             builder.RegisterInstance(eventTerminalRegistry);
-            
+
+            builder.Register<TutorialManager>(Lifetime.Singleton);
+
             builder.Register<MainCharacterModel>(Lifetime.Transient);
             builder.Register<VaultDoorDamagableModel>(Lifetime.Transient);
             builder.Register<DamagableModel>(Lifetime.Transient);

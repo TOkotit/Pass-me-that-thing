@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,6 +27,8 @@ namespace Game.Scripts.Systems
         public Resolution[] Resolutions => Screen.resolutions;
 
         public event Action<float> OnSensitivityChanged;
+
+        public bool isTutorShow => OptionsData.isTutorShow;
         public void SetInitialSettings()
         {
             Debug.Log("OptionsManager SetInitialSettings");
@@ -45,12 +47,14 @@ namespace Game.Scripts.Systems
                         {BroAudioType.All, 10f},
                         {BroAudioType.Music, 10f},
                         {BroAudioType.SFX, 10f}
-                    }
+                    },
+                    isTutorShow = true
                 };
                 
             }
             
             SetLanguage(OptionsData.language, true);
+            SetTutor(OptionsData.isTutorShow, true);
             SetResolution(OptionsData.resolutionIndex, true);
             SetFullScreen(OptionsData.isFullScreen, true);
             foreach (var pair in OptionsData.audioValues)
@@ -71,7 +75,17 @@ namespace Game.Scripts.Systems
             }
             //
         }
-        
+        public void SetTutor(bool value, bool init = false)
+        {
+            if (!init)
+                OptionsData.isTutorShow = value;
+            else
+            {
+                IsDataSaved = false;
+            }
+            //
+        }
+
         //audio settings 
         public void SetAudioVolume(BroAudioType audioType, float volumePercent, float fadeTime=0f, bool init=false)
         {

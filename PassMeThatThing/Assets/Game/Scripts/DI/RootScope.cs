@@ -1,4 +1,5 @@
 ﻿using Assets.Game.Scripts.GameFiles.GameRoot;
+using Game.Scripts.GameFiles.GameRoot;
 using Game.Scripts.Systems;
 using Mirror;
 using Root;
@@ -59,9 +60,9 @@ namespace DI
             
             builder.Register<GameInputManager>(Lifetime.Singleton);
             builder.Register<GameManager>(Lifetime.Singleton);
+
             
-            
-            
+
             // var activeSceneName = SceneManager.GetActiveScene().name;
             //
             //
@@ -73,7 +74,7 @@ namespace DI
             // {
             //     builder.RegisterEntryPoint<Root.EntryPoint>();
             // }
-            
+
             builder.RegisterEntryPoint<Root.EntryPoint>();
         }
         
