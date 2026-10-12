@@ -22,11 +22,11 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     [SerializeField] private float positionSpring = 6f;
     [SerializeField] private float rotationSpring = 6f;
     [SerializeField] private float maxLinearCorrection = 3f;
-    [SerializeField] private float maxAngularCorrection = 6f;
+    [SerializeField] private float maxAngularCorrection = 12f;
     [SerializeField] private float minPositionError = 0.02f;
     [SerializeField] private float minRotationError = 1.5f;
-    [SerializeField] private float teleportPositionThreshold = 1.5f;
-    [SerializeField] private float teleportRotationThreshold = 30f;
+    [SerializeField] private float teleportPositionThreshold = 5.125f;
+    [SerializeField] private float teleportRotationThreshold = 90f;
 
     [Header("Debug")]
     [SerializeField] private bool _log;

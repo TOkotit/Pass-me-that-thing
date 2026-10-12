@@ -365,19 +365,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   sendRate: 25
-  positionThreshold: 0.5
-  rotationThreshold: 1
-  velocityThreshold: 0.1
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
   interpolationDelay: 0.1
   maxBufferSize: 32
-  positionSpring: 1.5
-  rotationSpring: 1.5
+  positionSpring: 3
+  rotationSpring: 3
   maxLinearCorrection: 1.5
-  maxAngularCorrection: 1.5
+  maxAngularCorrection: 3
   minPositionError: 0.02
   minRotationError: 1.5
-  teleportPositionThreshold: 5
-  teleportRotationThreshold: 30
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
   _log: 0
 --- !u!1 &8680451967811087079
 GameObject:

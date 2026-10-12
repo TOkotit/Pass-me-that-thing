@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1871003559037832544}
   - component: {fileID: 4505748420433402460}
   - component: {fileID: 32706613993721709}
+  - component: {fileID: 3164025119906456460}
   m_Layer: 7
   m_Name: NailGun
   m_TagString: Item
@@ -142,6 +143,7 @@ MonoBehaviour:
   lmbReaction: {fileID: 1871003559037832544}
   rmbReaction: {fileID: 0}
   reloadReaction: {fileID: 1871003559037832544}
+  itemParts: []
 --- !u!114 &1871003559037832544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,6 +190,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c47511a99045e4b8cd812d04fe0437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.Items.AutoGameplayScopeInjector
+--- !u!114 &3164025119906456460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2275998427684139798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 6
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &4358395142192470213
 GameObject:
   m_ObjectHideFlags: 0

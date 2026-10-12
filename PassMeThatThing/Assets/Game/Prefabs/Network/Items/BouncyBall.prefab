@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 1513859172288341958}
   - component: {fileID: 2426252766943924567}
   - component: {fileID: 3436207650286123728}
-  - component: {fileID: 2118476682954749404}
+  - component: {fileID: -226325376035313020}
   m_Layer: 7
   m_Name: BouncyBall
   m_TagString: Item
@@ -85,6 +85,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -106,9 +108,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8013061766732872780
 MonoBehaviour:
@@ -238,9 +242,14 @@ MonoBehaviour:
   _network: {fileID: 4807185805299827097}
   hasToBeAligned: 0
   collider: {fileID: 8601212722988204660}
+  meleeItem: {fileID: 0}
   _isThrown: 0
   Resources:
     _serializedList: []
+  lmbReaction: {fileID: 0}
+  rmbReaction: {fileID: 0}
+  reloadReaction: {fileID: 0}
+  itemParts: []
 --- !u!114 &3436207650286123728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,7 +266,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _outline: {fileID: 8013061766732872780}
---- !u!114 &2118476682954749404
+--- !u!114 &-226325376035313020
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -266,31 +275,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 4664816843917106700}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 1309703237056432753}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 6
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &4861903026031687481
 GameObject:
   m_ObjectHideFlags: 0

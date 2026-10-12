@@ -109,8 +109,8 @@ GameObject:
   - component: {fileID: 1779960031621699863}
   - component: {fileID: 7947506528768295690}
   - component: {fileID: 3011918908626554960}
-  - component: {fileID: 1596847164667920979}
   - component: {fileID: 3236791510355548376}
+  - component: {fileID: -58423375405444760}
   m_Layer: 7
   m_Name: MachineGun
   m_TagString: Item
@@ -175,6 +175,7 @@ MonoBehaviour:
   lmbReaction: {fileID: 5086735289754512083}
   rmbReaction: {fileID: 3236791510355548376}
   reloadReaction: {fileID: 5086735289754512083}
+  itemParts: []
 --- !u!54 &3445057242232868048
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -431,40 +432,6 @@ MonoBehaviour:
   _overrideGroup: {fileID: 0}
   _positionMode: 1
   _delay: 0
---- !u!114 &1596847164667920979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2912904147735164467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkRigidbodyReliable
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6181099747316425347}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!114 &3236791510355548376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,6 +450,36 @@ MonoBehaviour:
   aimFov: 30
   zoomSpeed: 12
   spreadMultiplier: 0.703
+--- !u!114 &-58423375405444760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912904147735164467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 6
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &3982902725580917472
 GameObject:
   m_ObjectHideFlags: 0
