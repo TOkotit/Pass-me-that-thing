@@ -31,13 +31,10 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     [Header("Debug")]
     [SerializeField] private bool _log;
 
-
     private Rigidbody _rb;
 
     private float _sendInterval;
-
     private float _cosHalfRotationThreshold;
-
     private float _sendTimer;
 
     [SyncVar(hook = nameof(OnOwnerAuthorityChanged))]
@@ -45,10 +42,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
 
     public bool IsOwnerAuthority => _ownerAuthority;
 
-    // =====================================================================
-    //  Буфер снапшотов (наблюдатели)
-    // =====================================================================
-
+    //  Буфер снапшотов
     private struct Snapshot
     {
         public double Time;
@@ -59,15 +53,21 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     }
 
     private readonly Queue<Snapshot> _buffer = new();
-    private double _lastAppliedTime = double.MinValue;
+
+    //  Последний серверный стейт 
+
     private bool _hasAuthState;
     private Vector3 _authPos;
     private Quaternion _authRot;
     private Vector3 _authVel;
     private Vector3 _authAngVel;
+    
+    //  Dead-zone
+
     private Vector3 _lastSentPos;
     private Quaternion _lastSentRot;
     private Vector3 _lastSentVel;
+
     private bool _wasSleeping;
 
 
@@ -91,7 +91,13 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     [Server]
     public void SetOwnerAuthority(bool on)
     {
+        if (_ownerAuthority == on) return;
         _ownerAuthority = on;
+
+        if (on)
+        {
+            _rb.WakeUp();
+        }
     }
 
     private void OnOwnerAuthorityChanged(bool oldVal, bool newVal)
@@ -113,7 +119,6 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
                 Vel = _rb.linearVelocity,
                 AngVel = _rb.angularVelocity,
             });
-            _lastAppliedTime = double.MinValue;
         }
 
         if (_log)
@@ -121,28 +126,29 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
                       $"isServer={isServer}, isOwned={isOwned}");
     }
 
-    // =====================================================================
     //  FixedUpdate
-    //  - Сервер: рассылка. Спит — не рассылаем.
+    //  - Сервер: рассылка. Held item — форсированно, free item — по сну.
     //  - Клиент-овнер: reconciliation через AddForce / AddTorque.
-    // =====================================================================
 
     private void FixedUpdate()
     {
         if (isServer)
         {
-            bool sleeping = _rb.IsSleeping();
-
-            if (sleeping)
+            if (!_ownerAuthority)
             {
-                _wasSleeping = true;
-                return;
-            }
+                var sleeping = _rb.IsSleeping();
 
-            if (_wasSleeping)
-            {
-                _wasSleeping = false;
-                _sendTimer = _sendInterval;
+                if (sleeping)
+                {
+                    _wasSleeping = true;
+                    return;
+                }
+
+                if (_wasSleeping)
+                {
+                    _wasSleeping = false;
+                    _sendTimer = _sendInterval;
+                }
             }
 
             _sendTimer += Time.fixedDeltaTime;
@@ -162,14 +168,16 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         var pos = _rb.position;
         var rot = _rb.rotation;
         var vel = _rb.linearVelocity;
+        var angVel = _rb.angularVelocity;
 
-        if (!NeedsSend(pos, rot, vel)) return;
+        if (!_ownerAuthority && !NeedsSend(pos, rot, vel))
+            return;
 
         _lastSentPos = pos;
         _lastSentRot = rot;
         _lastSentVel = vel;
 
-        RpcPushState(pos, rot, vel, _rb.angularVelocity, NetworkTime.time);
+        RpcPushState(pos, rot, vel, angVel, NetworkTime.time);
     }
 
     private bool NeedsSend(Vector3 pos, Quaternion rot, Vector3 vel)
@@ -184,9 +192,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         return (vel - _lastSentVel).sqrMagnitude > velocityThreshold * velocityThreshold;
     }
 
-    // =====================================================================
     //  Приём серверного стейта
-    // =====================================================================
 
     [ClientRpc(channel = Channels.Unreliable)]
     private void RpcPushState(Vector3 pos, Quaternion rot, Vector3 vel, Vector3 angVel, double serverTime)
@@ -214,9 +220,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         while (_buffer.Count > maxBufferSize) _buffer.Dequeue();
     }
 
-    // =====================================================================
     //  Update — интерполяция наблюдателя
-    // =====================================================================
 
     private void Update()
     {
@@ -242,23 +246,15 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         {
             foreach (var s in _buffer) { from = s; break; }
             if (from == null) return;
-
-            if (from.Value.Time <= _lastAppliedTime) return;
-            _lastAppliedTime = from.Value.Time;
             ApplySnapshot(from.Value);
             return;
         }
 
         if (to == null)
         {
-            if (from.Value.Time <= _lastAppliedTime) return;
-            _lastAppliedTime = from.Value.Time;
             ApplySnapshot(from.Value);
             return;
         }
-
-        if (to.Value.Time <= _lastAppliedTime) return;
-        _lastAppliedTime = to.Value.Time;
 
         var span = to.Value.Time - from.Value.Time;
         var t = span > 1e-6 ? (float)((renderTime - from.Value.Time) / span) : 1f;
@@ -281,9 +277,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         _rb.angularVelocity = s.AngVel;
     }
 
-    // =====================================================================
-    //  Reconciliation — только клиент-овнер, только мягкая коррекция
-    // =====================================================================
+    //  Reconciliation — только клиент-овнер
 
     private void ApplyOwnerReconciliation()
     {
