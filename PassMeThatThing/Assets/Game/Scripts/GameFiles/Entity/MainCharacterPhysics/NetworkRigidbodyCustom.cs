@@ -31,13 +31,23 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     [Header("Debug")]
     [SerializeField] private bool _log;
 
+
     private Rigidbody _rb;
+
+    private float _sendInterval;
+
+    private float _cosHalfRotationThreshold;
+
     private float _sendTimer;
 
     [SyncVar(hook = nameof(OnOwnerAuthorityChanged))]
     private bool _ownerAuthority;
 
     public bool IsOwnerAuthority => _ownerAuthority;
+
+    // =====================================================================
+    //  Буфер снапшотов (наблюдатели)
+    // =====================================================================
 
     private struct Snapshot
     {
@@ -49,20 +59,33 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     }
 
     private readonly Queue<Snapshot> _buffer = new();
-
+    private double _lastAppliedTime = double.MinValue;
     private bool _hasAuthState;
     private Vector3 _authPos;
     private Quaternion _authRot;
     private Vector3 _authVel;
     private Vector3 _authAngVel;
-
     private Vector3 _lastSentPos;
     private Quaternion _lastSentRot;
     private Vector3 _lastSentVel;
+    private bool _wasSleeping;
+
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        RecalculateSendInterval();
+        RecalculateRotationThreshold();
+    }
+
+    private void RecalculateSendInterval()
+    {
+        _sendInterval = 1f / Mathf.Max(5f, sendRate);
+    }
+
+    private void RecalculateRotationThreshold()
+    {
+        _cosHalfRotationThreshold = Mathf.Cos(rotationThreshold * Mathf.Deg2Rad * 0.5f);
     }
 
     [Server]
@@ -90,6 +113,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
                 Vel = _rb.linearVelocity,
                 AngVel = _rb.angularVelocity,
             });
+            _lastAppliedTime = double.MinValue;
         }
 
         if (_log)
@@ -99,7 +123,7 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
 
     // =====================================================================
     //  FixedUpdate
-    //  - Сервер: рассылает стейт.
+    //  - Сервер: рассылка. Спит — не рассылаем.
     //  - Клиент-овнер: reconciliation через AddForce / AddTorque.
     // =====================================================================
 
@@ -107,9 +131,22 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     {
         if (isServer)
         {
+            bool sleeping = _rb.IsSleeping();
+
+            if (sleeping)
+            {
+                _wasSleeping = true;
+                return;
+            }
+
+            if (_wasSleeping)
+            {
+                _wasSleeping = false;
+                _sendTimer = _sendInterval;
+            }
+
             _sendTimer += Time.fixedDeltaTime;
-            var interval = 1f / Mathf.Max(5f, sendRate);
-            if (_sendTimer < interval) return;
+            if (_sendTimer < _sendInterval) return;
             _sendTimer = 0f;
 
             BroadcastState();
@@ -125,7 +162,6 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         var pos = _rb.position;
         var rot = _rb.rotation;
         var vel = _rb.linearVelocity;
-        var angVel = _rb.angularVelocity;
 
         if (!NeedsSend(pos, rot, vel)) return;
 
@@ -133,13 +169,18 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         _lastSentRot = rot;
         _lastSentVel = vel;
 
-        RpcPushState(pos, rot, vel, angVel, NetworkTime.time);
+        RpcPushState(pos, rot, vel, _rb.angularVelocity, NetworkTime.time);
     }
 
     private bool NeedsSend(Vector3 pos, Quaternion rot, Vector3 vel)
     {
-        if ((pos - _lastSentPos).sqrMagnitude > positionThreshold * positionThreshold) return true;
-        if (Quaternion.Angle(rot, _lastSentRot) > rotationThreshold) return true;
+        if ((pos - _lastSentPos).sqrMagnitude > positionThreshold * positionThreshold)
+            return true;
+
+        var dot = Mathf.Abs(Quaternion.Dot(rot, _lastSentRot));
+        if (dot < _cosHalfRotationThreshold)
+            return true;
+
         return (vel - _lastSentVel).sqrMagnitude > velocityThreshold * velocityThreshold;
     }
 
@@ -201,15 +242,23 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
         {
             foreach (var s in _buffer) { from = s; break; }
             if (from == null) return;
+
+            if (from.Value.Time <= _lastAppliedTime) return;
+            _lastAppliedTime = from.Value.Time;
             ApplySnapshot(from.Value);
             return;
         }
 
         if (to == null)
         {
+            if (from.Value.Time <= _lastAppliedTime) return;
+            _lastAppliedTime = from.Value.Time;
             ApplySnapshot(from.Value);
             return;
         }
+
+        if (to.Value.Time <= _lastAppliedTime) return;
+        _lastAppliedTime = to.Value.Time;
 
         var span = to.Value.Time - from.Value.Time;
         var t = span > 1e-6 ? (float)((renderTime - from.Value.Time) / span) : 1f;
@@ -253,10 +302,11 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
             _rb.angularVelocity = _authAngVel;
 
             if (_log)
-                Debug.LogWarning($"[NetRB] {name} HARD reset: posErr={posErrMag:F3}, rotErr={angleDeg:F1}°");
+                Debug.LogWarning($"[NetRB] {name} HARD reset: " +
+                                 $"posErr={posErrMag:F3}, rotErr={angleDeg:F1}°");
             return;
         }
-        
+
         if (posErrMag > minPositionError)
         {
             var corr = Vector3.ClampMagnitude(posError * positionSpring, maxLinearCorrection);
@@ -277,6 +327,12 @@ public class NetworkRigidbodyCustom : NetworkBehaviour
     {
         sendRate = Mathf.Max(5f, sendRate);
         interpolationDelay = Mathf.Clamp(interpolationDelay, 0f, 0.3f);
+
+        if (Application.isPlaying)
+        {
+            RecalculateSendInterval();
+            RecalculateRotationThreshold();
+        }
     }
 #endif
 }
