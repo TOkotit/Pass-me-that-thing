@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6994763640148584160}
   - component: {fileID: 769732946101677498}
-  - component: {fileID: 2767698410208855198}
   - component: {fileID: 3929916606286768084}
   m_Layer: 15
   m_Name: Bone
@@ -62,40 +61,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2767698410208855198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383673466267882650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6994763640148584160}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!138 &3929916606286768084
 FixedJoint:
   m_ObjectHideFlags: 0
@@ -124,7 +89,7 @@ GameObject:
   - component: {fileID: 8267426766884782307}
   - component: {fileID: 1306662255296442457}
   - component: {fileID: 72868186197826526}
-  - component: {fileID: 3544537407906541623}
+  - component: {fileID: 590503062315862236}
   m_Layer: 15
   m_Name: Bone.008
   m_TagString: Item
@@ -298,7 +263,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &3544537407906541623
+--- !u!114 &590503062315862236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -307,31 +272,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1869226887663793559}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 5397495808355805781}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &3060341731289224924
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,7 +764,7 @@ GameObject:
   - component: {fileID: 2027491782290597266}
   - component: {fileID: 8494737050302169887}
   - component: {fileID: 5645919049326685605}
-  - component: {fileID: 1322232791983959359}
+  - component: {fileID: 193231490669725179}
   m_Layer: 15
   m_Name: Bone.017
   m_TagString: Item
@@ -977,7 +938,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &1322232791983959359
+--- !u!114 &193231490669725179
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -986,31 +947,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 4266592936200013764}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 6966225548743057572}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &4504774997987339882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1023,7 +980,7 @@ GameObject:
   - component: {fileID: 7190983425332935329}
   - component: {fileID: 7622274098847312203}
   - component: {fileID: 7539877365281329340}
-  - component: {fileID: 2672033728969842906}
+  - component: {fileID: 8074770519743296990}
   m_Layer: 15
   m_Name: Bone.015
   m_TagString: Item
@@ -1196,7 +1153,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &2672033728969842906
+--- !u!114 &8074770519743296990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1205,31 +1162,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 4504774997987339882}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 8148784497476911404}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &4634981637604585460
 GameObject:
   m_ObjectHideFlags: 0
@@ -1241,8 +1194,8 @@ GameObject:
   - component: {fileID: 1515102517409062134}
   - component: {fileID: 2777712449734662853}
   - component: {fileID: 965312873132233550}
-  - component: {fileID: 2381178965610379081}
   - component: {fileID: 3500213225200276564}
+  - component: {fileID: 3087975395472771522}
   m_Layer: 15
   m_Name: Bone.021
   m_TagString: Item
@@ -1315,40 +1268,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2381178965610379081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4634981637604585460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 1515102517409062134}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!153 &3500213225200276564
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -1451,6 +1370,36 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &3087975395472771522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4634981637604585460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &4776217198661047925
 GameObject:
   m_ObjectHideFlags: 0
@@ -1463,7 +1412,7 @@ GameObject:
   - component: {fileID: 4739374772246963339}
   - component: {fileID: 7527440298069478191}
   - component: {fileID: 2001085611540407666}
-  - component: {fileID: 2634819904341014552}
+  - component: {fileID: 4272300878339458244}
   m_Layer: 15
   m_Name: Bone.004
   m_TagString: Item
@@ -1637,7 +1586,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &2634819904341014552
+--- !u!114 &4272300878339458244
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1646,31 +1595,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 4776217198661047925}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 2328737628410224743}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &4846683473824292657
 GameObject:
   m_ObjectHideFlags: 0
@@ -1867,9 +1812,9 @@ GameObject:
   - component: {fileID: 787603843195524807}
   - component: {fileID: 2735088011189009032}
   - component: {fileID: 2732781041161288567}
-  - component: {fileID: 2216273389800853652}
   - component: {fileID: 3351349485540994778}
   - component: {fileID: 5579763868983266175}
+  - component: {fileID: 7589160865691673202}
   m_Layer: 15
   m_Name: Bone.002
   m_TagString: Item
@@ -1944,40 +1889,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2216273389800853652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4883166308011506454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 787603843195524807}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!114 &3351349485540994778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2032,7 +1943,6 @@ MonoBehaviour:
   - {fileID: 4754315734113295855}
   - {fileID: 9161135124524694600}
   - {fileID: 7622274098847312203}
-  networkGuard: {fileID: 0}
 --- !u!114 &5579763868983266175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2050,6 +1960,36 @@ MonoBehaviour:
   syncInterval: 0
   itemId: player_ragdoll
   instanceId: player_ragdoll
+--- !u!114 &7589160865691673202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4883166308011506454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &5058831246677955800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2062,7 +2002,6 @@ GameObject:
   - component: {fileID: 6327029739555629428}
   - component: {fileID: 2917243388553348230}
   - component: {fileID: 2437897763050120737}
-  - component: {fileID: 6597980106432023926}
   m_Layer: 15
   m_Name: Bone.003
   m_TagString: Item
@@ -2236,40 +2175,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &6597980106432023926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5058831246677955800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 2240642329939533986}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!1 &5063315213133554362
 GameObject:
   m_ObjectHideFlags: 0
@@ -2282,7 +2187,7 @@ GameObject:
   - component: {fileID: 5248131320108005277}
   - component: {fileID: 4167162990408111942}
   - component: {fileID: 8768405888611868986}
-  - component: {fileID: 7233003548871984688}
+  - component: {fileID: 6616635145824558413}
   m_Layer: 15
   m_Name: Bone.016
   m_TagString: Item
@@ -2456,7 +2361,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &7233003548871984688
+--- !u!114 &6616635145824558413
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2465,31 +2370,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 5063315213133554362}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 4254214014221329926}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &5466549823149942057
 GameObject:
   m_ObjectHideFlags: 0
@@ -2721,7 +2622,7 @@ GameObject:
   - component: {fileID: 3119306206013114485}
   - component: {fileID: 9012078384029458851}
   - component: {fileID: 8545066436260661406}
-  - component: {fileID: 4132837491996027763}
+  - component: {fileID: 9176944650000707421}
   m_Layer: 15
   m_Name: Bone.019
   m_TagString: Item
@@ -2895,7 +2796,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &4132837491996027763
+--- !u!114 &9176944650000707421
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2904,31 +2805,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 6005284266850179749}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 4455185412985137123}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &6049648407801933761
 GameObject:
   m_ObjectHideFlags: 0
@@ -2941,7 +2838,7 @@ GameObject:
   - component: {fileID: 3148500915110511837}
   - component: {fileID: 4754315734113295855}
   - component: {fileID: 8801957206777932795}
-  - component: {fileID: 5839260845540020989}
+  - component: {fileID: 7910653803520621071}
   m_Layer: 15
   m_Name: Bone.007
   m_TagString: Item
@@ -3114,7 +3011,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &5839260845540020989
+--- !u!114 &7910653803520621071
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3123,31 +3020,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 6049648407801933761}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 2519438938969319465}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &6119399077391551537
 GameObject:
   m_ObjectHideFlags: 0
@@ -3160,7 +3053,7 @@ GameObject:
   - component: {fileID: 2296527876006997956}
   - component: {fileID: 2144802620286690762}
   - component: {fileID: 2495890852872858529}
-  - component: {fileID: 9066580115096735517}
+  - component: {fileID: 8666307177815286292}
   m_Layer: 15
   m_Name: Bone.011
   m_TagString: Item
@@ -3334,7 +3227,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &9066580115096735517
+--- !u!114 &8666307177815286292
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3343,31 +3236,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 6119399077391551537}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 6473911855476915085}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &6770657914585380203
 GameObject:
   m_ObjectHideFlags: 0
@@ -3749,7 +3638,7 @@ GameObject:
   - component: {fileID: 8044695972601459127}
   - component: {fileID: 529283915870102219}
   - component: {fileID: 6379230045314624636}
-  - component: {fileID: 2264683114226530945}
+  - component: {fileID: 6939540479385156708}
   m_Layer: 15
   m_Name: Bone.009
   m_TagString: Item
@@ -3923,7 +3812,7 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &2264683114226530945
+--- !u!114 &6939540479385156708
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3932,31 +3821,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 7650123103854381548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: fefbf321dd7e4748841bfd8b041965e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkRigidbodyCustom
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 5057722113480376691}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  useFixedUpdate: 0
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  sendRate: 20
+  positionThreshold: 0.005
+  rotationThreshold: 0.5
+  velocityThreshold: 0.05
+  interpolationDelay: 0.1
+  maxBufferSize: 32
+  positionSpring: 6
+  rotationSpring: 6
+  maxLinearCorrection: 3
+  maxAngularCorrection: 12
+  minPositionError: 0.02
+  minRotationError: 1.5
+  teleportPositionThreshold: 5.125
+  teleportRotationThreshold: 90
+  _log: 0
 --- !u!1 &8233049732000222802
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Game.Entity;
 using Game.Scripts.GameFiles.Entity.GlobalView;
@@ -13,43 +12,70 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         [SerializeField] private GameObject ragdollPrefab;
         [SerializeField] private MainCharacter player;
         [SerializeField] private SkinnedMeshRenderer playerMeshRenderer;
+
+        [SyncVar(hook = nameof(OnRagdollIdentityChanged))]
+        private NetworkIdentity _ragdollIdentity;
+
         private PlayerNetworkRagdoll _ragdollInstance;
         private Dictionary<string, Rigidbody> _playerBoneDict;
 
-
-        private void Start()
+        private void Awake()
         {
-            Setup();
-        }
-
-        public override void EnableRagdoll()
-        {
-            if (!_ragdollInstance)
-            {
-                Setup();
-            }
-            _ragdollInstance?.EnableRagdoll();
-            DisablePlayer();
-        }
-
-        private void Setup()
-        {
-            var go = Instantiate(ragdollPrefab, transform.position, transform.rotation);
-            var physItem = go.GetComponentInChildren<PhysicalItem>(true);
-            if (physItem && physItem.Network && string.IsNullOrEmpty(physItem.Network.itemId))
-            {
-                physItem.Network.itemId = "ragdoll";
-                physItem.Network.instanceId = Guid.NewGuid().ToString();
-            }
-            if(NetworkServer.active) NetworkServer.Spawn(go); 
-            _ragdollInstance = go.GetComponent<PlayerNetworkRagdoll>();
             _playerBoneDict = new Dictionary<string, Rigidbody>();
             foreach (var rb in rigidbodies)
             {
                 if (rb && !_playerBoneDict.ContainsKey(rb.name))
                     _playerBoneDict.Add(rb.name, rb);
             }
+        }
+
+        private void Start()
+        {
+            if (!NetworkServer.active) return;
+            Setup();
+        }
+
+        private void OnRagdollIdentityChanged(NetworkIdentity oldVal, NetworkIdentity newVal)
+        {
+            if (!newVal)
+            {
+                _ragdollInstance = null;
+                return;
+            }
+
+            _ragdollInstance = newVal.GetComponent<PlayerNetworkRagdoll>();
+
+            if (_ragdollInstance && player)
+                _ragdollInstance.Setup(player, _playerBoneDict);
+        }
+
+        private void Setup()
+        {
+            if (!NetworkServer.active) return;
+            var go = Instantiate(ragdollPrefab, transform.position, transform.rotation);
+            var physItem = go.GetComponentInChildren<PhysicalItem>(true);
+            if (physItem && physItem.Network && string.IsNullOrEmpty(physItem.Network.itemId))
+            {
+                physItem.Network.itemId = "ragdoll";
+                physItem.Network.instanceId = System.Guid.NewGuid().ToString();
+            }
+            NetworkServer.Spawn(go);
+            _ragdollInstance = go.GetComponent<PlayerNetworkRagdoll>();
+            _ragdollIdentity = go.GetComponent<NetworkIdentity>();
             if (player) _ragdollInstance.Setup(player, _playerBoneDict);
+        }
+
+        public override void EnableRagdoll()
+        {
+            if (!_ragdollInstance)
+            {
+                Debug.LogWarning($"[RagdollHandler] {name}: _ragdollInstance == null " +
+                                 $"(isServer={isServer})");
+                return;
+            }
+
+            _ragdollInstance.EnableRagdoll();
+            DisablePlayer();
         }
 
         public override void DisableRagdoll()

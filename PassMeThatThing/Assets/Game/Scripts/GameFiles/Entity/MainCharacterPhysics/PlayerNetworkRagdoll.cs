@@ -64,6 +64,15 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             }
         }
 
+        private void ApplyBonesLayer(int layer)
+        {
+            foreach (var bone in ragdollBones)
+                if (bone) bone.gameObject.layer = layer;
+        }
+
+        [ClientRpc]
+        private void RpcSetBonesLayer(int layer) => ApplyBonesLayer(layer);
+
         public void EnableRagdoll()
         {
             SyncBones(true);
@@ -71,12 +80,17 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
             {
                 ragdollCamera.transform.rotation = _playerCamera.transform.rotation;
                 ragdollCamera.enabled = true;
-                
+
                 if (_mainAudioListener) _mainAudioListener.enabled = false;
                 if (_ragdollAudioListener) _ragdollAudioListener.enabled = true;
             }
-            foreach (var bone in ragdollBones) 
-                bone.gameObject.layer = LayerMask.NameToLayer("Interactable");
+
+            int layer = LayerMask.NameToLayer("Interactable");
+            if (isServer)
+                RpcSetBonesLayer(layer);   
+            else
+                ApplyBonesLayer(layer);    
+
             networkMeshRenderer.enabled = true;
         }
 
@@ -84,15 +98,19 @@ namespace Game.Scripts.GameFiles.Entity.MainCharacterPhysics
         {
             SyncBones(false);
             ragdollCamera.enabled = false;
-            
+
             if (_player && _player.isLocalPlayer)
             {
                 if (_ragdollAudioListener) _ragdollAudioListener.enabled = false;
                 if (_mainAudioListener) _mainAudioListener.enabled = true;
             }
-            
-            foreach (var bone in ragdollBones) 
-                bone.gameObject.layer = LayerMask.NameToLayer("OutOfBounds");
+
+            int layer = LayerMask.NameToLayer("OutOfBounds");
+            if (isServer)
+                RpcSetBonesLayer(layer);
+            else
+                ApplyBonesLayer(layer);
+
             networkMeshRenderer.enabled = false;
         }
     }
