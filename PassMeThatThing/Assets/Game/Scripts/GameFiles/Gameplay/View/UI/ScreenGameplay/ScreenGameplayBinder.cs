@@ -521,7 +521,8 @@ namespace Game.Gameplay.View.UI
             ClearEvents();
             foreach (var task in ViewModel.gameTasksManager.GameTasksData.Values)
             {
-                Sprite s = defaultTestSprite;
+                var s = defaultTestSprite;
+                var typeSprite = ViewModel.gameEventsDatabase.taskTypeIcons[task.gameTaskType];
 
                 switch (task.gameTaskType)
                 {
@@ -538,7 +539,9 @@ namespace Game.Gameplay.View.UI
                         break;
                 }
 
-                AddGameTask(task.gameTaskId, s, task.cost, task.isTaskOverdue, task.gameTaskType);
+                
+
+                AddGameTask(task.gameTaskId, s, typeSprite, task.cost, task.isTaskOverdue, task.gameTaskType);
             }
         }
 
@@ -560,9 +563,11 @@ namespace Game.Gameplay.View.UI
                 return;
             }
 
-            Sprite s = defaultTestSprite;
-            
+            var s = defaultTestSprite;
+
             var newTaskData = ViewModel.gameTasksManager.GameTasksData[key];
+
+            var typeSprite = ViewModel.gameEventsDatabase.taskTypeIcons[newTaskData.gameTaskType];
 
             switch (newTaskData.gameTaskType)
             {
@@ -583,19 +588,19 @@ namespace Game.Gameplay.View.UI
             {
                 case SyncDictionary<int, GameTaskData>.Operation.OP_ADD:
 
-                    AddGameTask(newTaskData.gameTaskId, s, newTaskData.cost, newTaskData.isTaskOverdue, newTaskData.gameTaskType);
+                    AddGameTask(newTaskData.gameTaskId, s, typeSprite, newTaskData.cost, newTaskData.isTaskOverdue, newTaskData.gameTaskType);
                     break;
                 case SyncDictionary<int, GameTaskData>.Operation.OP_SET:
 
                     //Debug.Log("[TASKS] DATA OP_SET");
-                    UpdateGameTask(newTaskData.gameTaskId, s, newTaskData.cost, newTaskData.isTaskOverdue);
+                    UpdateGameTask(newTaskData.gameTaskId, s, typeSprite, newTaskData.cost, newTaskData.isTaskOverdue);
                     break;
                 case SyncDictionary<int, GameTaskData>.Operation.OP_REMOVE:
                     break;
             }
         }
 
-        private void AddGameTask(int taskId, Sprite icon, int cost, bool isOverdue, GameTaskType taskType)
+        private void AddGameTask(int taskId, Sprite icon, Sprite typeIcon, int cost, bool isOverdue, GameTaskType taskType)
         {
             if (_gameEvents.ContainsKey(taskId)) return;
             
@@ -615,6 +620,7 @@ namespace Game.Gameplay.View.UI
             customGameEvent.style.unityBackgroundImageTintColor = taskTintColors[taskType];
 
             gameEventTempl.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+            gameEventTempl.Q<VisualElement>("TypeImg").style.backgroundImage = new StyleBackground(typeIcon);
             gameEventTempl.Q<Label>("EventLb").text = $"#{cost}";
             gameEventTempl.Q<VisualElement>("OverdueInd").visible = isOverdue;
 
@@ -622,11 +628,12 @@ namespace Game.Gameplay.View.UI
             gameEventTempl.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
         }
         
-        private void UpdateGameTask(int taskId, Sprite icon, int cost, bool isOverdue)
+        private void UpdateGameTask(int taskId, Sprite icon, Sprite typeIcon, int cost, bool isOverdue)
         {
             if (_gameEvents.TryGetValue(taskId, out var gameEvent) && gameEvent != null)
             {
                 gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
+                gameEvent.Q<VisualElement>("TypeImg").style.backgroundImage = new StyleBackground(typeIcon);
                 gameEvent.Q<Label>("EventLb").text = $"#{cost}";
                 //Debug.Log($"[TASKS] OverdueInd).visible {taskData.isTaskOverdue}");
                 gameEvent.Q<VisualElement>("OverdueInd").visible = isOverdue;
