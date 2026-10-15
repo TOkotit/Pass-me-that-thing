@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Scripts.Enums;
 using UnityEngine;
@@ -5,6 +6,35 @@ using UnityEngine.Serialization;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 {
+    
+    public enum RoomCountOperator
+    {
+        LessOrEqual,
+        Equal,      
+        GreaterOrEqual 
+    }
+
+    [Serializable]
+    public struct ClusterRoomSetting
+    {
+        [Tooltip("Тип комнаты, разрешенный в кластерах")]
+        public RoomType roomType;
+        [Tooltip("Может ли эта комната встречаться в множественном числе внутри одного кластера")]
+        public bool allowMultiplePerCluster;
+    }
+
+    [Serializable]
+    public struct LevelRoomConstraint
+    {
+        [Tooltip("Тип комнаты")]
+        public RoomType roomType;
+        [Tooltip("Условие ограничения количества на весь уровень")]
+        public RoomCountOperator countOperator;
+        [Tooltip("Целевое количество комнат")]
+        public int targetCount;
+    }
+    
+    
     /// <summary>
     /// ScriptableObject конфигурации генератора уровней.
     /// Позволяет настраивать параметры генерации прямо из инспектора Unity.
@@ -12,65 +42,38 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
     [CreateAssetMenu(fileName = "LevelConfig", menuName = "Level Generation/Level Generator Config")]
     public class LevelConfig : ScriptableObject
     {
-        [FormerlySerializedAs("_useRandomSeed")] [Header("Seed Settings")] [SerializeField]
-        private bool useRandomSeed = true;
-
+      [Header("Seed Settings")]
+        [SerializeField] private bool useRandomSeed = true;
         [SerializeField] private int customSeed;
 
-        [Header("Room Count Limits")] [SerializeField]
-        private int difficulty = 1;
-
+        [Header("Room Count Limits")]
+        [SerializeField] private int difficulty = 1;
         [SerializeField] private int minRooms = 10;
         [SerializeField] private int maxRooms = 30;
         [SerializeField] private int absoluteMinRooms = 7;
         [SerializeField] private int maxConnectionsPerRoom = 4;
 
-        [Header("Cluster Settings")] [SerializeField]
-        private int minClusterSize = 2;
-
+        [Header("Cluster Size Bounds")]
+        [SerializeField] private int minClusterSize = 2;
         [SerializeField] private int maxClusterSize = 4;
 
-        [Header("Core Cluster Rooms")]
-        [Tooltip("Комнаты, которые гарантированно создаются в базовом кластере.")]
-        [SerializeField]
-        private List<RoomType> coreRooms = new()
-        {
-            RoomType.CommandCenter,
-            RoomType.Generator,
-            RoomType.Warehouse,
-            RoomType.LivingBlock
-        };
+        [Header("Core Rooms (Base Hub)")]
+        [Tooltip("Комнаты, гарантированно создаваемые в базовом ядре уровня.")]
+        [SerializeField] private List<RoomType> coreRooms = new();
 
-        [Header("Mandatory Pools")] [Tooltip("Комнаты, обязательные для распределения по кластерам.")] [SerializeField]
-        private List<RoomType> mandatoryRooms = new()
-        {
-            RoomType.Laboratory,
-            RoomType.Armory,
-            RoomType.Workshop,
-            RoomType.MedicalBlock
-        };
+        [Header("Mandatory Rooms (At least 1 on level)")]
+        [Tooltip("Список комнат, каждая из которых обязана появиться на уровне хотя бы в единичном экземпляре.")]
+        [SerializeField] private List<RoomType> mandatoryRooms = new();
 
-        [Header("Event Rooms")] [SerializeField]
-        private List<RoomType> eventRooms = new()
-        {
-            RoomType.Server,
-            RoomType.WaterPurification
-        };
+        [Header("Cluster Room Pool")]
+        [Tooltip("Все типы комнат, которые могут распределяться по обычным кластерам.")]
+        [SerializeField] private List<ClusterRoomSetting> clusterRoomSettings = new();
 
-        [SerializeField] private int highEventThreshold = 20;
-        [SerializeField] private int lowEventThreshold = 15;
+        [Header("Level-Wide Room Constraints")]
+        [Tooltip("Правила ограничения количества конкретных комнат на весь уровень.")]
+        [SerializeField] private List<LevelRoomConstraint> levelConstraints = new();
 
-        [Header("Repeatable Rooms Pool")] [Tooltip("Базовый пул повторно используемых комнат.")] [SerializeField]
-        private List<RoomType> _baseRepeatableRooms = new()
-        {
-            RoomType.LivingBlock,
-            RoomType.LivingBlock,
-            RoomType.Warehouse,
-            RoomType.Warehouse
-        };
-
-        [SerializeField] private int _maxMedicalBlocksOnLevel = 2;
-
+        // Публичные свойства для доступа из генератора
         public bool UseRandomSeed => useRandomSeed;
         public int CustomSeed => customSeed;
         public int Difficulty => difficulty;
@@ -82,10 +85,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         public int MaxClusterSize => maxClusterSize;
         public IReadOnlyList<RoomType> CoreRooms => coreRooms;
         public IReadOnlyList<RoomType> MandatoryRooms => mandatoryRooms;
-        public IReadOnlyList<RoomType> EventRooms => eventRooms;
-        public int HighEventThreshold => highEventThreshold;
-        public int LowEventThreshold => lowEventThreshold;
-        public IReadOnlyList<RoomType> BaseRepeatableRooms => _baseRepeatableRooms;
-        public int MaxMedicalBlocksOnLevel => _maxMedicalBlocksOnLevel;
+        public IReadOnlyList<ClusterRoomSetting> ClusterRoomSettings => clusterRoomSettings;
+        public IReadOnlyList<LevelRoomConstraint> LevelConstraints => levelConstraints;
     }
 }

@@ -10,7 +10,7 @@ namespace Game.Scripts.GameFiles.Items
         {
             var scope = LifetimeScope.Find<GameplayScope>();
     
-            if (scope != null)
+            if (scope)
             {
                 if (scope.Container != null)
                 {

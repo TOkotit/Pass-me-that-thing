@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Scripts.Enums;
 
 namespace Game.Scripts.GameFiles.LevelGeneration.Graph
@@ -17,9 +18,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         private readonly Random _random;
         private readonly LevelConfig _config;
         private readonly int _targetRoomCount;
-        private int nextNodeId = 0;
-        private int nextClusterId = 0;
-        private int _medicalBlockCount;
+        private int nextNodeId = 1;
+        private int nextClusterId = 1;
+        
+        private readonly Dictionary<RoomType, int> _spawnedRoomCounts = new();
 
         /// <summary>
         /// Рассчитывается целевое количество комнат на уровне(<see cref="_targetRoomCount"/>) выбирается случайное число между минимальным и максимальным значениями из конфигурации.<br/>
@@ -53,17 +55,20 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
         public List<RoomCluster> GenerateClusters()
         {
             var clusters = new List<RoomCluster>();
-            _medicalBlockCount = 0;
+            _spawnedRoomCounts.Clear();
             
             nextNodeId = 1;
             nextClusterId = 1;
             
+            // 1. Создание ядра
             var coreCluster = BuildCoreCluster();
             clusters.Add(coreCluster);
 
             var remainingRooms = _targetRoomCount - coreCluster.Rooms.Count;
             var clusterSizes = CalculateClusterSizes(remainingRooms);
-            var mandatoryPool = BuildMandatoryPool();
+            
+            // 2. Формирование пула обязательных комнат (гарантированно хотя бы по 1 разу)
+            var mandatoryPool = new List<RoomType>(_config.MandatoryRooms);
 
             for (var i = 0; i < clusterSizes.Count; i++)
             {
@@ -90,17 +95,20 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
                 var cluster = new RoomCluster(nextClusterId++);
 
+                // Добавляем обязательные комнаты
                 for (var m = 0; m < mandatoryToTake; m++)
                 {
-                    var node = CreateNode(mandatoryPool[0], cluster.Id);
-                    cluster.AddRoom(node);
+                    var roomType = mandatoryPool[0];
+                    AddNodeToCluster(cluster, roomType);
                     mandatoryPool.RemoveAt(0);
                 }
 
+                // Заполняем оставшееся место в кластере случайными комнатами из разрешенного пула
                 var repeatablesToTake = size - cluster.Rooms.Count;
                 for (var r = 0; r < repeatablesToTake; r++)
                 {
-                    cluster.Rooms.Add(CreateNode(GetRandomRepeatableRoom(cluster), cluster.Id));
+                    var repeatableType = GetValidRepeatableRoom(cluster);
+                    AddNodeToCluster(cluster, repeatableType);
                 }
 
                 clusters.Add(cluster);
@@ -120,10 +128,20 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
 
             foreach (var roomType in _config.CoreRooms)
             {
-                var node = CreateNode(roomType, cluster.Id);
-                cluster.AddRoom(node);
+                AddNodeToCluster(cluster, roomType);
             }
             return cluster;
+        }
+        
+        
+        private void AddNodeToCluster(RoomCluster cluster, RoomType type)
+        {
+            cluster.Rooms.Add(new RoomNode(nextNodeId++, type, cluster.Id));
+            
+            if (_spawnedRoomCounts.ContainsKey(type))
+                _spawnedRoomCounts[type]++;
+            else
+                _spawnedRoomCounts[type] = 1;
         }
 
         /// <summary>
@@ -166,85 +184,52 @@ namespace Game.Scripts.GameFiles.LevelGeneration.Graph
             return sizes;
         }
         
-        /// <summary>
-        /// Создаёт список комнат, которые обязательно должны появиться на уровне
-        /// В зависимости от общего размера уровня добавляются ивентовые комнаты
-        /// </summary>
-        /// <returns>Список типов комнат</returns>
-        private List<RoomType> BuildMandatoryPool()
+        private RoomType GetValidRepeatableRoom(RoomCluster currentCluster)
         {
-            var pool = new List<RoomType>(_config.MandatoryRooms);
+            var validCandidates = new List<RoomType>();
 
-            if (_medicalBlockCount < _config.MaxMedicalBlocksOnLevel && pool.Contains(RoomType.MedicalBlock))
+            foreach (var setting in _config.ClusterRoomSettings)
             {
-                _medicalBlockCount++;
+                var roomType = setting.roomType;
+
+                // Проверка на множественное число внутри кластера
+                if (!setting.allowMultiplePerCluster && currentCluster.Rooms.Exists(r => r.Type == roomType))
+                {
+                    continue;
+                }
+
+                // Проверка глобальных ограничений на уровне (Level Constraints)
+                if (ViolatesLevelConstraints(roomType))
+                {
+                    continue;
+                }
+
+                validCandidates.Add(roomType);
             }
 
-            var events = new List<RoomType>(_config.EventRooms);
-
-            if (events.Count > 0)
+            // Если по какой-то причине кандидатов не осталось, берем любой разрешенный тип из пула кластера
+            if (validCandidates.Count == 0 && _config.ClusterRoomSettings.Count > 0)
             {
-                pool.AddRange(events);
+                return _config.ClusterRoomSettings[_random.Next(_config.ClusterRoomSettings.Count)].roomType;
             }
 
-            ShuffleList(pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// Использует список с типами комнат дубликатами.<br/>
-        /// Проводятся проверки состава текущего кластера. <see cref="RoomType.Workshop"/> и <see cref="RoomType.Armory"/> добавляются в список возможных вариантов только если их еще нет в этом конкретном кластере.<br/>
-        /// <see cref="RoomType.MedicalBlock"/> добавляется в список возможных вариантов только если его нет в текущем кластере и общее количество медицинских блоков на уровне меньше 2.<br/>
-        /// Из сформированного списка выбирается случайная комната
-        /// </summary>
-        /// <param name="currentCluster">Кластер</param>
-        /// <returns>Тип комнаты для заполнения кластера</returns>
-        private RoomType GetRandomRepeatableRoom(RoomCluster currentCluster)
-        {
-            var types = new List<RoomType>(_config.BaseRepeatableRooms);
-
-            if (!currentCluster.Rooms.Exists(r => r.Type == RoomType.Workshop))
-            {
-                types.Add(RoomType.Workshop);
-            }
-
-            if (!currentCluster.Rooms.Exists(r => r.Type == RoomType.Armory))
-            {
-                types.Add(RoomType.Armory);
-            }
-
-            if (_medicalBlockCount < _config.MaxMedicalBlocksOnLevel && !currentCluster.Rooms.Exists(r => r.Type == RoomType.MedicalBlock))
-            {
-                types.Add(RoomType.MedicalBlock);
-            }
-
-            var selected = types[_random.Next(types.Count)];
-
-            if (selected == RoomType.MedicalBlock)
-            {
-                _medicalBlockCount++;
-            }
-
-            return selected;
+            return validCandidates[_random.Next(validCandidates.Count)];
         }
         
-        
-        /// <summary>
-        /// Перемешивает случайным образом список
-        /// </summary>
-        /// <param name="list">Список элементов</param>
-        /// <typeparam name="T">Элемент</typeparam>
-        private void ShuffleList<T>(IList<T> list)
+        private bool ViolatesLevelConstraints(RoomType roomType)
         {
-            var n = list.Count;
-            while (n > 1)
+            var constraint = _config.LevelConstraints.FirstOrDefault(c => c.roomType == roomType);
+            if (constraint.roomType == RoomType.None) return false;
+
+            var currentCount = _spawnedRoomCounts.TryGetValue(roomType, out var count) ? count : 0;
+
+            return constraint.countOperator switch
             {
-                n--;
-                var k = _random.Next(n + 1);
-                (list[k], list[n]) = (list[n], list[k]);
-            }
+                RoomCountOperator.LessOrEqual => currentCount >= constraint.targetCount,
+                RoomCountOperator.Equal => currentCount >= constraint.targetCount,
+                RoomCountOperator.GreaterOrEqual => false, // Превысить или сравняться с >= всегда можно при генерации
+                _ => false
+            };
         }
     }
-    
-    
 }

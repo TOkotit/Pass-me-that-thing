@@ -22,9 +22,17 @@ MonoBehaviour:
   minClusterSize: 2
   maxClusterSize: 4
   coreRooms: 01000000020000000300000004000000
-  mandatoryRooms: 080000000c0000000900000005000000
-  eventRooms: 0a0000000b000000
-  highEventThreshold: 20
-  lowEventThreshold: 15
-  _baseRepeatableRooms: 04000000040000000300000003000000
-  _maxMedicalBlocksOnLevel: 2
+  mandatoryRooms: 09000000
+  clusterRoomSettings:
+  - roomType: 3
+    allowMultiplePerCluster: 1
+  - roomType: 4
+    allowMultiplePerCluster: 1
+  - roomType: 8
+    allowMultiplePerCluster: 1
+  - roomType: 12
+    allowMultiplePerCluster: 1
+  levelConstraints:
+  - roomType: 9
+    countOperator: 1
+    targetCount: 1
