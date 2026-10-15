@@ -1,4 +1,5 @@
 ﻿using System;
+using Ami.BroAudio;
 using Game.Scripts.GameFiles.LevelGeneration;
 using Mirror;
 using UnityEngine;
@@ -134,7 +135,7 @@ namespace Game.Scripts.GameFiles.GameRoot
         public void ServerSceneChanging(string newSceneName)
         {
             _isTransitioning = true;
- 
+            BroAudio.Stop(BroAudioType.All);
             // Старый сид больше не актуален, иначе клиент мог бы получить сид прошлой миссии
             _serverMissionSeed = null;
  
@@ -203,7 +204,7 @@ namespace Game.Scripts.GameFiles.GameRoot
         public void ClientSceneChanging()
         {
             if (NetworkServer.active) return; 
- 
+            BroAudio.Stop(BroAudioType.All);
             _clientMissionSeed = null;
             _isLevelGeneratedOnClient = false;
         }
