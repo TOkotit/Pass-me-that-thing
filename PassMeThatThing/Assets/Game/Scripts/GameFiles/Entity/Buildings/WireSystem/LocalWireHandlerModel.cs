@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -31,28 +31,28 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         private void ClearNode(int nodeId)
         {
-            Debug.Log($"[W] ClearNode {nodeId}");
+            //Debug.Log($"[W] ClearNode {nodeId}");
             OnWireNodeCleared?.Invoke(nodeId);
         }
 
         private void Highlight(int nodeId, int entryId)
         {
-            Debug.Log($"[W] Highlight {nodeId}");
+            //Debug.Log($"[W] Highlight {nodeId}");
             OnWireNodeHighlighted?.Invoke(nodeId, entryId);
         }
 
         private void MatchPair(int firstNodeId, int secondNodeId, int firstEntryId, int secondEntryId)
         {
-            Debug.Log($"[W] MatchPair {firstNodeId} {secondNodeId}");
+            //Debug.Log($"[W] MatchPair {firstNodeId} {secondNodeId}");
             OnWireNodePairMatched?.Invoke(firstNodeId, secondNodeId, firstEntryId, secondEntryId);
         }
 
 
         public void HighlightNode(int nodeId, int entryId, WireType type)
         {
-            Debug.Log($"[W] highlighted node {nodeId} {entryId}");
+            //Debug.Log($"[W] highlighted node {nodeId} {entryId}");
 
-            //нода уже выбрана
+            //РЅРѕРґР° СѓР¶Рµ РІС‹Р±СЂР°РЅР°
             if (_highlightedNodesId.Any(x => x.Item1 == nodeId))
             {
                 _highlightedNodesId.Clear();
@@ -62,7 +62,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 OnTypesChanged?.Invoke(_highlightedNodesTypes);
                 
             }
-            else //не выбрана
+            else //РЅРµ РІС‹Р±СЂР°РЅР°
             {
                 _highlightedNodesId.Enqueue((nodeId, entryId));
                 Highlight(nodeId, entryId);
@@ -70,7 +70,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
                 _highlightedNodesTypes.Add(type);
                 OnTypesChanged?.Invoke(_highlightedNodesTypes);
 
-                if (_highlightedNodesId.Count == 2) // выбрано 2 ноды
+                if (_highlightedNodesId.Count == 2) // РІС‹Р±СЂР°РЅРѕ 2 РЅРѕРґС‹
                 {
                     var first = _highlightedNodesId.Dequeue();
                     var second = _highlightedNodesId.Dequeue();

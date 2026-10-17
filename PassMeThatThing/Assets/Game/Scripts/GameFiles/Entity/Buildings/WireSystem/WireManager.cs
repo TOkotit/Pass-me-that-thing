@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Game.Scripts.GameFiles.Entity.Buildings.WireSystem;
@@ -357,14 +357,14 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         private void PrintDebugInfo()
         {
-            Debug.Log("[W] AllNodes" + string.Join("\n", AllNodes
-                .Select(n => $"{n.Value.NodeId} : {n.Value.NetId}")));
+            //Debug.Log("[W] AllNodes" + string.Join("\n", AllNodes
+            //    .Select(n => $"{n.Value.NodeId} : {n.Value.NetId}")));
             
-            Debug.Log("[W] WireNets" + string.Join("\n", WireNets
-                .Select(n => $"{n.Key} : {string.Join(", ", n.Value.nodesId)}")));
+            //Debug.Log("[W] WireNets" + string.Join("\n", WireNets
+            //    .Select(n => $"{n.Key} : {string.Join(", ", n.Value.nodesId)}")));
 
-            Debug.Log("[W] usedEntries" + string.Join("\n", _usedEntries
-                .Select(n => $"{n.Item1} - {n.Item2}")));
+            //Debug.Log("[W] usedEntries" + string.Join("\n", _usedEntries
+            //    .Select(n => $"{n.Item1} - {n.Item2}")));
         }
     }
 

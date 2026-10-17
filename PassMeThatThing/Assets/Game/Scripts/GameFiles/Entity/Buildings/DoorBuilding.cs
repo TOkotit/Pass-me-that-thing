@@ -25,7 +25,7 @@ namespace Assets.Game.Scripts.GameFiles.Entity.Buildings
 
         public override void OnHealthChanged(int currentHealth, int maxHealth)
         {
-            Debug.Log($"[door] OnHealthChanged {currentHealth} / {maxHealth}");
+            //Debug.Log($"[door] OnHealthChanged {currentHealth} / {maxHealth}");
         }
     }
 }

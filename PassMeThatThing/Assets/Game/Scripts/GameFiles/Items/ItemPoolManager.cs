@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
@@ -18,8 +18,8 @@ namespace Game.Scripts.GameFiles.Items
             InitializePool();
         }
 
-        //Теперь префабы предметов регистрируются как все объекты 
-        //через NetworkManager
+        //РўРµРїРµСЂСЊ РїСЂРµС„Р°Р±С‹ РїСЂРµРґРјРµС‚РѕРІ СЂРµРіРёСЃС‚СЂРёСЂСѓСЋС‚СЃСЏ РєР°Рє РІСЃРµ РѕР±СЉРµРєС‚С‹ 
+        //С‡РµСЂРµР· NetworkManager
         public void InitializePool()
         {
             foreach (var item in database.allItems)
@@ -46,7 +46,7 @@ namespace Game.Scripts.GameFiles.Items
             
             NetworkServer.Spawn(newObj);
             
-            Debug.Log($"[IP] CreateNewObject {netItem.itemId} instanceId: {netItem.instanceId}");
+            //Debug.Log($"[IP] CreateNewObject {netItem.itemId} instanceId: {netItem.instanceId}");
             return newObj;
         }
 
@@ -54,7 +54,7 @@ namespace Game.Scripts.GameFiles.Items
         public void DeleteAndDestroyObject(NetworkItem networkItem)
         {
             PoolDict.Remove(networkItem.instanceId);
-            Debug.Log($"[IP] DeleteAndDestroyObject {networkItem.itemId} instanceId: {networkItem.instanceId}");
+            //Debug.Log($"[IP] DeleteAndDestroyObject {networkItem.itemId} instanceId: {networkItem.instanceId}");
             NetworkServer.Destroy(networkItem.gameObject);
         }
         
@@ -67,7 +67,7 @@ namespace Game.Scripts.GameFiles.Items
             {
                 RpcActivateItem(selectedObj);
                 
-                Debug.Log($"[IP] GetFromPool {selectedObj.itemId} instanceId: {selectedObj.instanceId}");
+                //Debug.Log($"[IP] GetFromPool {selectedObj.itemId} instanceId: {selectedObj.instanceId}");
                 return selectedObj;
             }
 
@@ -81,7 +81,7 @@ namespace Game.Scripts.GameFiles.Items
             
             RpcDeactivateItem(networkItem);
             
-            Debug.Log($"[IP] ReturnToPool {networkItem.itemId} instanceId: {networkItem.instanceId}");
+            //Debug.Log($"[IP] ReturnToPool {networkItem.itemId} instanceId: {networkItem.instanceId}");
         }
 
         [ClientRpc]

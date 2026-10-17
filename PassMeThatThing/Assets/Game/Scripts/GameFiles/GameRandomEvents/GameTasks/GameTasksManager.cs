@@ -191,7 +191,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         [Server]
         public void SetCompleteTaskStep(int taskId, int stepIndex, bool isComplete, Action onCompleteAndDestroyTask)
         {
-            Debug.Log($"[GameTasks] SetCompleteTaskStep {taskId} {stepIndex} {isComplete}");
+            //Debug.Log($"[GameTasks] SetCompleteTaskStep {taskId} {stepIndex} {isComplete}");
             if (_gameTasksData.TryGetValue(taskId, out var taskData))
             {
                 if (0 <= stepIndex && stepIndex < taskData.steps.Length)

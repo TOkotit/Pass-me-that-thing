@@ -58,7 +58,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.WireTasks
                 _portSubs.Add(
                     ports[i].OnWireStateChanged.Subscribe(newValue =>
                     {
-                        Debug.Log("[GameTasks] port Subscribe");
+                        //Debug.Log("[GameTasks] port Subscribe");
                         SetCompleteStep(newValue.Item2, index);
                     }));
             }

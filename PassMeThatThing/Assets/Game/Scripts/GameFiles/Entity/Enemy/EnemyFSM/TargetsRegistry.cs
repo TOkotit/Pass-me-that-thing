@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Entity;
 using Enums;
@@ -31,7 +31,7 @@ namespace Game.Entity
             var gameObject = target.gameObject;
             if (!_enemyTargetObjects[target.DamagableType].ContainsKey(gameObject))
                 _enemyTargetObjects[target.DamagableType].Add(gameObject, target); 
-            Debug.Log($"[EnemyTargetObject] {target.gameObject.name} has been registered");
+            //Debug.Log($"[EnemyTargetObject] {target.gameObject.name} has been registered");
         }
         
         

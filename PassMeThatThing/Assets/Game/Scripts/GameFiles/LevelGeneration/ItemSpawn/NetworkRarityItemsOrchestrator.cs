@@ -147,7 +147,7 @@ namespace Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
             var physItem = itemToDrop.GetComponent<PhysicalItem>();
             _physicalItemRegistry.Register(physItem);
 
-            Debug.Log($"Spawning item: {itemId}");
+            //Debug.Log($"Spawning item: {itemId}");
         }
     }
 }
