@@ -1,5 +1,7 @@
 ﻿using Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks;
 using Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks;
+using Assets.Game.Scripts.GameFiles.GameRandomEvents.WireTasks;
+using Game.Scripts.Enums;
 using Mirror;
 using System;
 using System.Collections;
@@ -34,6 +36,10 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         //терминалы сдачи предметов
         private int _idItemTaskDepotGenerator = 1;
         private readonly SyncDictionary<int, ItemTaskDepotPoint> _itemTasksDepots = new();
+
+        //задания на провода
+        private int _idWireTaskHandlerGenerator = 1;
+        private readonly SyncDictionary<int, WireTaskHandler> _wireTaskHandlers = new();
 
         public SyncDictionary<int, GameTask> GameTasks => _gameTasks;
         public SyncDictionary<int, GameTaskData> GameTasksData => _gameTasksData;
@@ -124,14 +130,18 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
             newTask.InitTask(parameters.timeLimit);
             newTask.OnTaskTimerEnd += OverdueGameTask;
 
+            _gameTasks.Add(_idTaskGenerator, newTask);
+
+
             var newTaskData = new GameTaskData();
 
             newTaskData.gameTaskId = _idTaskGenerator;
             newTaskData.gameTaskType = parameters.gameTaskType;
+            newTaskData.structType = parameters.structType;
             newTaskData.taskField = parameters.taskField;
             newTaskData.cost = parameters.cost;
-
-            _gameTasks.Add(_idTaskGenerator, newTask);
+            newTaskData.steps = parameters.steps;
+            
             _gameTasksData.Add(_idTaskGenerator, newTaskData);
 
             return newTask;
@@ -144,6 +154,7 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
             {
                 taskData.isTaskOverdue = true;
                 taskData.cost /= 2;
+
 
                 _gameTasksData[taskId] = taskData;
             }
@@ -172,10 +183,31 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
             if (_gameTasksData.TryGetValue(taskId, out var taskData))
             {
                 AddTaskCostQuota(taskData.cost);
-            }
 
-            DestroyGameTask(taskId);
+                DestroyGameTask(taskId);
+            }
         }
+
+        [Server]
+        public void SetCompleteTaskStep(int taskId, int stepIndex, bool isComplete, Action onCompleteAndDestroyTask)
+        {
+            //Debug.Log($"[GameTasks] SetCompleteTaskStep {taskId} {stepIndex} {isComplete}");
+            if (_gameTasksData.TryGetValue(taskId, out var taskData))
+            {
+                if (0 <= stepIndex && stepIndex < taskData.steps.Length)
+                {
+                    taskData.steps[stepIndex].isComplete = isComplete;
+
+                    _gameTasksData[taskId] = taskData;
+
+                    if (taskData.steps.All(x => x.isComplete))
+                    {
+                        onCompleteAndDestroyTask();
+                    }
+                }
+            }
+        }
+
 
         [Server]
         public void AddTaskCostQuota(int value)
@@ -218,6 +250,41 @@ namespace Game.Scripts.GameFiles.GameRandomEvents.GameTasks
                     .TaskItems[Random.Range(0, _itemDatabase.TaskItems.Count)];
 
                 depot.CreateItemTask(randomItemData.Id);
+            }
+        }
+
+        //Wire TASKS
+        [Server]
+        public int RegisterSceneWireTaskHandler(WireTaskHandler wireTaskHandler)
+        {
+            var assignedId = _idWireTaskHandlerGenerator;
+
+            _idWireTaskHandlerGenerator++;
+            Debug.Log($"WireTaskHandler, id: {assignedId}");
+
+            _wireTaskHandlers.Add(assignedId, wireTaskHandler);
+
+            return assignedId;
+        }
+
+        [Server]
+        public void UnregisterSceneWireTaskHandler(int wireTaskHandlerId)
+        {
+            if (_wireTaskHandlers.ContainsKey(wireTaskHandlerId))
+            {
+                _wireTaskHandlers.Remove(wireTaskHandlerId);
+            }
+        }
+
+        [Server]
+        public void TryTriggerRandomWireTask(int taskCount = 1)
+        {
+            var handler = _wireTaskHandlers.Values.First();
+            if (handler == null) return;
+
+            for (var i = 0; i < taskCount; i++)
+            {
+                handler.CreateWireTask();
             }
         }
 

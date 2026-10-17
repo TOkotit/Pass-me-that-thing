@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Mirror;
 using UnityEngine;
 
@@ -14,6 +14,8 @@ namespace Game.Scripts.GameFiles.GameRoot
         {
             base.OnServerChangeScene(newSceneName);
             Debug.Log($"[CNRM] OnServerChangeScene new - {newSceneName}");
+
+            Flow.ServerSceneChanging(newSceneName);
             OnServerSceneLoadStateChanged?.Invoke(true);
         }
 
@@ -31,6 +33,7 @@ namespace Game.Scripts.GameFiles.GameRoot
             if (NetworkServer.active) return;
             
             Debug.Log("[CNRM] OnClientChangeScene");
+            Flow.ClientSceneChanging();
             OnClientSceneLoadStateChanged?.Invoke(true);
         }
 

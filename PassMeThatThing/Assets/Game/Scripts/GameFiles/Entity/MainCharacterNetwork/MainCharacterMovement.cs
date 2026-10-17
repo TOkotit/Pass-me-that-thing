@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using Ami.BroAudio;
 using DI;
@@ -49,7 +49,7 @@ public class MainCharacterMovement : NetworkBehaviour, IControllable
     public CharacterController CharacterController => characterController;
     public void Control(bool isPressed)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public void DisableController() => characterController.enabled = false;

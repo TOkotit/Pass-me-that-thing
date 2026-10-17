@@ -54,13 +54,13 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.ItemTasks
         {
 
             var p = new GameTaskParameters();
-
+            p.structType = GameTaskStructureType.Default;
             p.gameTaskType = GameTaskType.Item;
             p.timeLimit = taskTimeLimit;
             p.taskField = itemId;
             p.cost = _globalStageDatabase.BaseQuotaConst;
 
-            var task = taskHandler.CreateGameTask(p);
+            var task = taskHandler.GameTasksManager.CreateGameTask(p);
 
             task.OnTaskTimerEnd += OnTaskTimerEnd;
 

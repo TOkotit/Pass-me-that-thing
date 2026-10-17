@@ -171,11 +171,11 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
                 _gameTaskManager.ResetDestroyedGameTasksCount();
                 _currentLevelData = _globalStageDatabase.GetLevelData(newStageData.Level);
 
-                if (newStageData.Level == 1)
-                {
-                    StartCoroutine(FirstTaskCoroutine());
-                }
-                else
+                //if (newStageData.Level == 1)
+                //{
+                //    StartCoroutine(FirstTaskCoroutine());
+                //}
+                //else
                 {
                     var stepDuration = (_currentLevelData.FightPhaseTime - 10) / _currentLevelData.TasksPoints;
 
@@ -218,7 +218,7 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         [Server]
         private void FirstTask()
         {
-            _gameRandomEventManager.TriggerEventByType(GameEventsType.BlackoutBlowFuse, 180);
+            _gameRandomEventManager.TriggerEventByType(GameEventsType.BlackoutBlowFuse, 15);
 
             RpcTutorFirstTaskBegin();
         }
@@ -228,19 +228,27 @@ namespace Game.Scripts.GameFiles.GlobalStageManager
         {
             for (var i=0; i < number; i++)
             {
-                if (Random.value >= 0.5f)
-                {
-                    //таск от ивента появляется в самом ивенте при старте
-                    _gameRandomEventManager.TriggerManyGameEvents();
-                }
-                else
-                {
-                    _gameTaskManager.TryTriggerRandomItemTasks();
-                }
+                TriggerRandomTask();
 
                 yield return new WaitForSeconds(
                     RandomUtilities.RandNearMult(stepDuration, 
                         _globalStageDatabase.TaskCreateStepSpreadPercent / 100f, 0f));
+            }
+        }
+
+        [Server]
+        private void TriggerRandomTask()
+        {
+
+            //if (Random.value >= 0.5f)
+            //{
+            //    //таск от ивента появляется в самом ивенте при старте
+            //    _gameRandomEventManager.TriggerManyGameEvents();
+            //}
+            //else
+            {
+                //_gameTaskManager.TryTriggerRandomItemTasks();
+                _gameTaskManager.TryTriggerRandomWireTask();
             }
         }
 

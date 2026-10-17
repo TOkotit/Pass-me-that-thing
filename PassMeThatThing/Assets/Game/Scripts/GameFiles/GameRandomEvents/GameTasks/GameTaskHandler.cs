@@ -15,31 +15,31 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
 
         public GameTasksManager GameTasksManager => _gameTasksManager;
 
-        [Server]
-        public GameTask CreateGameTask(GameTaskParameters gameTaskParameters)
-        {
+        //[Server]
+        //public GameTask CreateGameTask(GameTaskParameters gameTaskParameters)
+        //{
 
-            var t = _gameTasksManager.CreateGameTask(gameTaskParameters);
-            return t;
-        }
+        //    var t = _gameTasksManager.CreateGameTask(gameTaskParameters);
+        //    return t;
+        //}
 
-        [Server]
-        public void OverdueGameTask(int taskId)
-        {
-            _gameTasksManager.OverdueGameTask(taskId);
-        }
+        //[Server]
+        //public void OverdueGameTask(int taskId)
+        //{
+        //    _gameTasksManager.OverdueGameTask(taskId);
+        //}
 
-        [Server]
-        public void CompleteAndDestroyGameTask(int taskId)
-        {
-            _gameTasksManager.CompleteAndDestroyGameTask(taskId);
-        }
+        //[Server]
+        //public void CompleteAndDestroyGameTask(int taskId)
+        //{
+        //    _gameTasksManager.CompleteAndDestroyGameTask(taskId);
+        //}
 
-        [Server]
-        public void DestroyGameTask(int taskId)
-        {
-            _gameTasksManager.DestroyGameTask(taskId);
-        }
+        //[Server]
+        //public void DestroyGameTask(int taskId)
+        //{
+        //    _gameTasksManager.DestroyGameTask(taskId);
+        //}
 
 
 

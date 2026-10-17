@@ -1,6 +1,9 @@
 ﻿using Game.Scripts.Enums;
 using Game.Scripts.GameFiles.GameRandomEvents;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
@@ -12,6 +15,9 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
 
         public GameTaskType gameTaskType;
         public string taskField; //тип ивента или id предмета
+
+        public GameTaskStructureType structType;
+        public CompositeTaskStepData[] steps;
     }
 
     public struct GameTaskData
@@ -20,9 +26,22 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
         public bool isTaskOverdue;
         public int cost;
 
+        public string message;
+
+        public GameTaskStructureType structType;
+        public CompositeTaskStepData[] steps;
+
         public GameTaskType gameTaskType;
         public string taskField; //тип ивента или id предмета
-        
+    }
+
+    public struct CompositeTaskStepData
+    {
+        public string message;
+        public bool isComplete;
+
+        public GameTaskType gameTaskType;
+        public string taskField;
     }
 
     // только таймеры
@@ -44,10 +63,7 @@ namespace Assets.Game.Scripts.GameFiles.GameRandomEvents.GameTasks
             this.timeLimit = timeLimit;
         }
 
-        public void DestroyTask()
-        {
-
-        }
+        public void DestroyTask() { }
 
         public void TickTimer()
         {

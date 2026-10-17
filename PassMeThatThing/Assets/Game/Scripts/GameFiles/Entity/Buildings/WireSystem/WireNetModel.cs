@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -72,7 +72,7 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
             _wireManager.ServerSumRes();
 
-            Debug.Log($"[W] Net {id} Value {availableQuantity}/{requiredQuantity}");
+            //Debug.Log($"[W] Net {id} Value {availableQuantity}/{requiredQuantity}");
         }
 
         public WireType GetWireType()

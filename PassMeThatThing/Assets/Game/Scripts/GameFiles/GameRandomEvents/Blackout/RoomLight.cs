@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.GameFiles.LevelGeneration.Room_Envieroments;
@@ -65,7 +65,7 @@ public class RoomLight : MonoBehaviour
 
     public void SetLampState(RoomLightState state)
     {
-        Debug.Log($"[RoomLight] SetLampState was called on state {state}");
+        //Debug.Log($"[RoomLight] SetLampState was called on state {state}");
         CurrentState = state;
 
         switch (state)
@@ -79,7 +79,7 @@ public class RoomLight : MonoBehaviour
                 lampWarningPrefab.SetActive(false);
                 warningLighContainerPrefab.SetActive(false);
 
-                Debug.Log($"[RoomLight] Common is activate");
+                //Debug.Log($"[RoomLight] Common is activate");
                 break;
             
             case RoomLightState.Off:
@@ -89,7 +89,7 @@ public class RoomLight : MonoBehaviour
                 lampWarningPrefab.SetActive(false);
                 commonLightComponent.enabled = false;
                 warningLighContainerPrefab.SetActive(false);
-                Debug.Log($"[RoomLight] Off is activate");
+                //Debug.Log($"[RoomLight] Off is activate");
                 break;
             
             case RoomLightState.Warning:
@@ -99,7 +99,7 @@ public class RoomLight : MonoBehaviour
                 lampOnCommonPrefab.SetActive(false);
                 lampOffPrefab.SetActive(false);
                 commonLightComponent.enabled = false;
-                Debug.Log($"[RoomLight] Warning is activate");
+                //Debug.Log($"[RoomLight] Warning is activate");
                 StartCoroutine(LampWarning(warningDuration));
                 break;
             
@@ -125,6 +125,6 @@ public class RoomLight : MonoBehaviour
             yield return null; 
         }
         SetLampState(RoomLightState.Common);
-        Debug.Log("[RoomLight]  Lamp warning off");
+        //Debug.Log("[RoomLight]  Lamp warning off");
     }
 }
