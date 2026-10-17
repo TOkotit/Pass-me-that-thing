@@ -1,10 +1,9 @@
-using System;
 using Mirror;
+using System;
 using UnityEngine;
 
-namespace Game.Scripts.GameFiles.GameRoot
+namespace Assets.Game.Scripts.GameFiles.GameRoot
 {
-    
     public class CustomNetworkRoomManager : NetworkRoomManager
     {
         public event Action<bool> OnServerSceneLoadStateChanged;
@@ -14,8 +13,6 @@ namespace Game.Scripts.GameFiles.GameRoot
         {
             base.OnServerChangeScene(newSceneName);
             Debug.Log($"[CNRM] OnServerChangeScene new - {newSceneName}");
-
-            Flow.ServerSceneChanging(newSceneName);
             OnServerSceneLoadStateChanged?.Invoke(true);
         }
 
@@ -27,18 +24,20 @@ namespace Game.Scripts.GameFiles.GameRoot
             OnServerSceneLoadStateChanged?.Invoke(false);
         }
         
+        
+
         public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
         {
             base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
             if (NetworkServer.active) return;
             
             Debug.Log("[CNRM] OnClientChangeScene");
-            Flow.ClientSceneChanging();
             OnClientSceneLoadStateChanged?.Invoke(true);
         }
 
         public override void OnClientSceneChanged()
         {
+            
             base.OnClientSceneChanged();
             if (NetworkServer.active) return;
 
