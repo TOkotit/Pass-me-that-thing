@@ -9536,6 +9536,7 @@ Transform:
   - {fileID: 1391811966}
   - {fileID: 1120299300}
   - {fileID: 1499316200469020275}
+  - {fileID: 2196479041073743552}
   - {fileID: 3337024704042310337}
   - {fileID: 497965364}
   - {fileID: 593705335}
@@ -19797,6 +19798,10 @@ PrefabInstance:
       propertyPath: globalStageManager
       value: 
       objectReference: {fileID: 1071794826}
+    - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
+      propertyPath: levelSessionManager
+      value: 
+      objectReference: {fileID: 2196479041073743553}
     - target: {fileID: 5825311960308788030, guid: 3771d6f244528ae40a9365eaff79a1b6, type: 3}
       propertyPath: particlePoolManager
       value: 
@@ -32163,6 +32168,95 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae84d8eef3886ba44af4bebda433c83f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn.NetworkRarityItemsOrchestrator
+--- !u!1001 &2196479041073743551
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 529245399}
+    m_Modifications:
+    - target: {fileID: 4619958693614752587, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: _levelOrchestrator
+      value: 
+      objectReference: {fileID: 1391811967}
+    - target: {fileID: 4619958693614752587, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: networkObjectsOrchestrator
+      value: 
+      objectReference: {fileID: 1120299301}
+    - target: {fileID: 4619958693614752587, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: networkRarityItemsOrchestrator
+      value: 
+      objectReference: {fileID: 1499316200469020276}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312974753860652359, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: sceneId
+      value: 3971087811
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839223144276532914, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+      propertyPath: m_Name
+      value: LevelSessionManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+--- !u!4 &2196479041073743552 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5768338202012277448, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+  m_PrefabInstance: {fileID: 2196479041073743551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2196479041073743553 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4619958693614752587, guid: 67662caf492dcec42a5df25df3993463, type: 3}
+  m_PrefabInstance: {fileID: 2196479041073743551}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14015f90653d4c26a2a233c1b992f35a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.GameFiles.GameRoot.LevelSessionManager
 --- !u!1001 &3337024704042310336
 PrefabInstance:
   m_ObjectHideFlags: 0

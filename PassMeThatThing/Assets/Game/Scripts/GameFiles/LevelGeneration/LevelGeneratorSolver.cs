@@ -175,11 +175,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
                 if (startNode == null) return false;
 
-                var candidates = _roomDatabase.GetSuitableRooms(startNode.Type, 1, false);
-                if (isCore) 
-                {
-                    candidates = candidates.OrderBy(r => r.PrefabGameObject.name).ToList();
-                }
+                var candidates = _roomDatabase.GetSuitableRooms(startNode.Type, 1, false)
+                    .OrderBy(r => r.PrefabGameObject.name)
+                    .ToList();
 
                 if (candidates.Count == 0) return false;
 

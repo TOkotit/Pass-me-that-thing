@@ -19,7 +19,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 Debug.LogError("[СБОЙ] Ссылка на LevelOrchestrator не назначена в инспекторе.");
                 return;
             }
-            orchestrator.GenerateLevelFromConfig("BootStrapper");
+            orchestrator.GenerateLevelFromConfig("BootStrapper", _config.CustomSeed, _config);
         }
 
         private void Start()

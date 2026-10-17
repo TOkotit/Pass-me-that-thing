@@ -66,6 +66,7 @@ namespace DI
         [SerializeField] private GlobalInventoryManager globalInventoryManager;
         [SerializeField] private ParticlePoolManager particlePoolManager;
         [SerializeField] private LevelOrchestrator levelOrchestrator;
+        [SerializeField] private LevelSessionManager levelSessionManager;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -98,6 +99,7 @@ namespace DI
             builder.RegisterComponent(globalInventoryManager);
             builder.RegisterComponent(particlePoolManager);
             builder.RegisterComponent(levelOrchestrator);
+            builder.RegisterComponent(levelSessionManager);
             
             builder.Register<DamageSystem>(Lifetime.Singleton);
             

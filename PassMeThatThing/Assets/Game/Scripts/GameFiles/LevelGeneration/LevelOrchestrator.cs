@@ -10,6 +10,7 @@ using Game.Scripts.GameFiles.LevelGeneration.Graph;
 using Game.Scripts.GameFiles.LevelGeneration.ItemSpawn;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using VContainer;
 
 namespace Game.Scripts.GameFiles.LevelGeneration
@@ -67,8 +68,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
     {
         [SerializeField] private RoomDatabase roomDatabase;
         [SerializeField] public LevelGrid levelGrid;
-        [SerializeField] public NetworkObjectsOrchestrator networkObjectsOrchestrator;
-        [SerializeField] public NetworkRarityItemsOrchestrator networkRarityItemsOrchestrator;
         [SerializeField] private Transform levelContainer;
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private GameObject wallWithPassagePrefab;
@@ -80,11 +79,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
 
         public List<NetworkObjectSpot> AllLevelSpots { get; private set; } = new();
         public Dictionary<LevelRoom, List<NetworkRarityItemSpot>> AllLevelRarityItemSpots { get; private set; } = new();
-
         public IReadOnlyList<PlacedRoomDataCluster> AllPlacedRooms => _solver?.AllPlacedRooms;
         public IReadOnlyList<RoomCluster> Clusters => _solver?.Clusters;
-
-        [SerializeField] private LevelConfig levelConfig;
         
         /// <summary>
         /// Получает пустышку на сцене как контейнер и создаёт экземпляр <see cref="LevelGeneratorSolver"/>
@@ -95,46 +91,29 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             _solver = new LevelGeneratorSolver(roomDatabase, levelGrid, wallPrefab, wallWithPassagePrefab);
         }
 
-        [Inject]
-        private void Construct(
-            ItemRarityDatabase rarityDatabase,
-            ItemPoolManager itemPoolManager,
-            PhysicalItemRegistry physicalItemRegistry)
-        {
-            networkRarityItemsOrchestrator.Init(rarityDatabase, itemPoolManager, physicalItemRegistry);
-        }
+       
         
         /// <summary>
-        /// Запуск генерации по конфигу.
+        /// Запуск генерации.
         /// </summary>
         /// <param name="who"></param>
-        /// <param name="forcedSeed"></param>
-        public int GenerateLevelFromConfig(string who, int? forcedSeed = null)
+        public int GenerateLevelFromConfig(string who, int seed, LevelConfig config)
         {
-            if (!levelConfig)
-            {
-                Debug.LogError($"[GENERATOR] ({who}) LevelConfig не назначен в LevelOrchestrator!");
-                return 0;
-            }
 
-            var activeSeed = forcedSeed ?? (levelConfig.UseRandomSeed 
-                ? UnityEngine.Random.Range(int.MinValue, int.MaxValue) 
-                : levelConfig.CustomSeed);
-
-            var generator = new LevelGenerator(levelConfig, activeSeed);
+            var generator = new LevelGenerator(config, seed);
             var clusters = generator.GenerateClusters();
 
-            if (clusters != null && clusters.Count > 0)
+            if (clusters is { Count: > 0 })
             {
-                GeneratePhysicalLevel(clusters, activeSeed);
-                Debug.Log($"[GENERATOR] ({who}) Уровень сгенерирован. Seed: {activeSeed}, Кластеров: {clusters.Count}.");
+                GeneratePhysicalLevel(clusters, seed);
+                Debug.Log($"[GENERATOR] ({who}) Уровень сгенерирован. Seed: {seed}, Кластеров: {clusters.Count}.");
             }
             else
             {
                 Debug.LogError($"[GENERATOR] ({who}) Ошибка: Не удалось сгенерировать кластеры.");
             }
 
-            return activeSeed;
+            return seed;
         }
 
         /// <summary>
@@ -145,8 +124,6 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         /// <param name="seed">Сид</param>
         public void GeneratePhysicalLevel(List<RoomCluster> clusters, int seed)
         {
-            ClearLevel();
-
             if (clusters == null || clusters.Count == 0) return;
 
             if (_solver == null)
@@ -158,11 +135,8 @@ namespace Game.Scripts.GameFiles.LevelGeneration
             if (!success) return;
 
             InstantiateVirtualLevel();
-
-            networkObjectsOrchestrator.SpawnNetworkObjects(AllLevelSpots);
             BakeNavMeshes();
-            networkRarityItemsOrchestrator.SpawnNetworkRarityItem(AllLevelRarityItemSpots);
-
+            
             Debug.Log($"[GENERATOR] Total clusters: {clusters.Count}. Total placed rooms: {_solver.AllPlacedRooms.Count}.");
             
             OnLevelGenerated?.Invoke();
@@ -250,7 +224,7 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         /// <summary>
         /// Очищает всё от старых префабов и списки
         /// </summary>
-        private void ClearLevel()
+        public void ClearLevel()
         {
             levelGrid.ClearGrid();
             _solver?.Reset();
@@ -264,7 +238,10 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 var child = levelContainer.GetChild(i).gameObject;
 
                 if (Application.isPlaying)
+                {
+                    child.SetActive(false);
                     Destroy(child);
+                }
                 else
                     DestroyImmediate(child);
             }

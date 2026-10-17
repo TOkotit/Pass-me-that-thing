@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using Assets.Game.Scripts.GameFiles.GameRoot;
+using Game.Scripts.GameFiles.GameRoot;
 using UnityEditor;
 using Mirror;
 using UnityEngine;

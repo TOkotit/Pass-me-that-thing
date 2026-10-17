@@ -149,5 +149,11 @@ namespace Assets.Game.Scripts.GameFiles.LevelGeneration.ItemSpawn
 
             Debug.Log($"Spawning item: {itemId}");
         }
+
+        [Server]
+        public void ClearItems()
+        {
+            
+        }
     }
 }

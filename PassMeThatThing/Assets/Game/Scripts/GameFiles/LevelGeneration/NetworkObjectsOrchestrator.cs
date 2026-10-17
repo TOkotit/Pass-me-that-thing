@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Game.Scripts.Enums;
 using Mirror;
 using UnityEngine;
@@ -13,7 +14,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
         [SerializeField] NetworkObjectsDatabase _networkObjectsDatabase;
         private List<NetworkObjectSpot> _levelSpots = new();
         private readonly List<NetworkObjectPlacement> _pendingObjects = new();
-            
+
+        private List<GameObject> _spawnedObjects = new();
+
         private void Awake()
         {
             Instance = this;
@@ -64,9 +67,9 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                 }
 
                 placement.SetSpotIndex(i);
-
+                
                 NetworkServer.Spawn(createdObject);
-
+                _spawnedObjects.Add(createdObject);
             }
         }
         
@@ -168,6 +171,13 @@ namespace Game.Scripts.GameFiles.LevelGeneration
                     _pendingObjects.RemoveAt(i);
                 }
             }
+        }
+        public void ClearSpawnObjects()
+        {
+            foreach (var obj in _spawnedObjects.Where(obj => obj))
+                NetworkServer.Destroy(obj);
+
+            _spawnedObjects.Clear();
         }
     }
 }
