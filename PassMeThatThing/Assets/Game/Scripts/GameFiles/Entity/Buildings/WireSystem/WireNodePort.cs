@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using Game.Scripts.GameFiles.InteractableObjects;
 using Mirror;
+using R3;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -32,9 +33,12 @@ namespace Game.Scripts.GameFiles.Entity.Buildings.WireSystem
 
         public event Action<WireType, bool> OnWireNetStateChanged;
 
+        public Subject<(WireType, bool)> OnWireStateChanged = new();
+
         public void OnWireNetWorkingStateChanged(bool isNetWorking)
         {
             OnWireNetStateChanged?.Invoke(WireType, isNetWorking);
+            OnWireStateChanged.OnNext((WireType, isNetWorking));
         }
         
         public void RecalculateNet()

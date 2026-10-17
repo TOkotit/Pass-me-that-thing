@@ -40,6 +40,7 @@ namespace Game.Gameplay.View.UI
         
         [SerializeField] private UIDocument uiDocument;
         [SerializeField] private VisualTreeAsset gameEventPrefab;
+        [SerializeField] private VisualTreeAsset taskStepPrefab;
         [SerializeField] private VisualTreeAsset hintPrefab;
         [SerializeField] private VisualTreeAsset addedResPrefab;
 
@@ -519,29 +520,29 @@ namespace Game.Gameplay.View.UI
         public void InitTasks()
         {
             ClearEvents();
-            foreach (var task in ViewModel.gameTasksManager.GameTasksData.Values)
+            foreach (var taskData in ViewModel.gameTasksManager.GameTasksData.Values)
             {
                 var s = defaultTestSprite;
-                var typeSprite = ViewModel.gameEventsDatabase.taskTypeIcons[task.gameTaskType];
+                var typeSprite = ViewModel.gameEventsDatabase.taskTypeIcons[taskData.gameTaskType];
 
-                switch (task.gameTaskType)
+                switch (taskData.gameTaskType)
                 {
                     case GameTaskType.GameEvent:
-                        if (Enum.TryParse(task.taskField, out GameEventsType result))
+                        if (Enum.TryParse(taskData.taskField, out GameEventsType result))
                         {
                             var eData = ViewModel.gameEventsDatabase.GetEvent(result);
                             s = eData.EventImage;
                         }
                         break;
                     case GameTaskType.Item:
-                        var itemData = ViewModel.itemDatabase.GetItem(task.taskField);
+                        var itemData = ViewModel.itemDatabase.GetItem(taskData.taskField);
                         s = itemData.ItemImage;
                         break;
                 }
 
                 
 
-                AddGameTask(task.gameTaskId, s, typeSprite, task.cost, task.isTaskOverdue, task.gameTaskType);
+                AddGameTask(taskData.gameTaskId, s, typeSprite, taskData);
             }
         }
 
@@ -588,19 +589,19 @@ namespace Game.Gameplay.View.UI
             {
                 case SyncDictionary<int, GameTaskData>.Operation.OP_ADD:
 
-                    AddGameTask(newTaskData.gameTaskId, s, typeSprite, newTaskData.cost, newTaskData.isTaskOverdue, newTaskData.gameTaskType);
+                    AddGameTask(newTaskData.gameTaskId, s, typeSprite, newTaskData);
                     break;
                 case SyncDictionary<int, GameTaskData>.Operation.OP_SET:
 
                     //Debug.Log("[TASKS] DATA OP_SET");
-                    UpdateGameTask(newTaskData.gameTaskId, s, typeSprite, newTaskData.cost, newTaskData.isTaskOverdue);
+                    UpdateGameTask(newTaskData.gameTaskId, s, typeSprite, newTaskData);
                     break;
                 case SyncDictionary<int, GameTaskData>.Operation.OP_REMOVE:
                     break;
             }
         }
 
-        private void AddGameTask(int taskId, Sprite icon, Sprite typeIcon, int cost, bool isOverdue, GameTaskType taskType)
+        private void AddGameTask(int taskId, Sprite icon, Sprite typeIcon, GameTaskData taskData)
         {
             if (_gameEvents.ContainsKey(taskId)) return;
             
@@ -617,26 +618,56 @@ namespace Game.Gameplay.View.UI
                 customGameEvent.UpdateTimeProgress(task.time, task.timeLimit);
                 task.OnTaskTimerTicked += customGameEvent.UpdateTimeProgress;
             }
-            customGameEvent.style.unityBackgroundImageTintColor = taskTintColors[taskType];
+            customGameEvent.style.unityBackgroundImageTintColor = taskTintColors[taskData.gameTaskType];
 
             gameEventTempl.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
             gameEventTempl.Q<VisualElement>("TypeImg").style.backgroundImage = new StyleBackground(typeIcon);
-            gameEventTempl.Q<Label>("EventLb").text = $"#{cost}";
-            gameEventTempl.Q<VisualElement>("OverdueInd").visible = isOverdue;
+            gameEventTempl.Q<Label>("EventLb").text = $"#{taskData.cost}";
+            gameEventTempl.Q<VisualElement>("OverdueInd").visible = taskData.isTaskOverdue;
+
+
+            if (taskData.structType == GameTaskStructureType.CompositeParent)
+            {
+                var stepsContainer = gameEventTempl.Q<VisualElement>("Steps");
+
+                foreach (var s in taskData.steps)
+                {
+                    var taskStep = taskStepPrefab.Instantiate();
+                    stepsContainer.Add(taskStep);
+
+                    taskStep.Q<VisualElement>("CompleteInd").visible = s.isComplete;
+                    taskStep.Q<Label>("EventLb").text = $"{s.message}";
+                }
+            }
 
 
             gameEventTempl.DOScale(1f, 0.2f).From(new Vector2(0f,0f)).SetEase(Ease.InOutBack);
         }
-        
-        private void UpdateGameTask(int taskId, Sprite icon, Sprite typeIcon, int cost, bool isOverdue)
+
+
+        private void UpdateGameTask(int taskId, Sprite icon, Sprite typeIcon, GameTaskData taskData)
         {
             if (_gameEvents.TryGetValue(taskId, out var gameEvent) && gameEvent != null)
             {
                 gameEvent.Q<VisualElement>("EventImg").style.backgroundImage = new StyleBackground(icon);
                 gameEvent.Q<VisualElement>("TypeImg").style.backgroundImage = new StyleBackground(typeIcon);
-                gameEvent.Q<Label>("EventLb").text = $"#{cost}";
+                gameEvent.Q<Label>("EventLb").text = $"#{taskData.cost}";
                 //Debug.Log($"[TASKS] OverdueInd).visible {taskData.isTaskOverdue}");
-                gameEvent.Q<VisualElement>("OverdueInd").visible = isOverdue;
+                gameEvent.Q<VisualElement>("OverdueInd").visible = taskData.isTaskOverdue;
+
+                if (taskData.structType == GameTaskStructureType.CompositeParent)
+                {
+                    var stepsContainer = gameEvent.Q<VisualElement>("Steps");
+                    stepsContainer.Clear();
+                    foreach (var s in taskData.steps)
+                    {
+                        var taskStep = taskStepPrefab.Instantiate();
+                        stepsContainer.Add(taskStep);
+
+                        taskStep.Q<VisualElement>("CompleteInd").visible = s.isComplete;
+                        taskStep.Q<Label>("EventLb").text = $"{s.message}";
+                    }
+                }
             }
         }
 
